@@ -36,7 +36,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     > then all of these hold:
     > - [checker](../canon/CANON.md#term-checker) does not write the [statement](#term-generated-statement) of the unit when it generates
     > - checker does not report the statement of the unit
-  - [`@spec a-document-that-does-not-name-the-plugin-is-left-as-it-is`](#spec-a-document-that-does-not-name-the-plugin-is-left-as-it-is) — The checker neither writes nor reports the statements of a document that the [Alloy plugin](#term-alloy-plugin) does not run over.
+  - [`@spec a-document-that-does-not-name-the-plugin-is-left-as-it-is`](#spec-a-document-that-does-not-name-the-plugin-is-left-as-it-is) — The checker neither writes nor reports the statements of a document that the *Alloy plugin* does not run over.
   - [`@spec a-unit-with-a-formula-and-no-statement-is-unwritten`](#spec-a-unit-with-a-formula-and-no-statement-is-unwritten) —
     > The [statement](#term-generated-statement) of a [unit](../canon/CANON.md#term-unit) is unwritten when all of these hold:
     > - the unit holds a formula
@@ -119,7 +119,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
   - [`@spec a-report-of-a-missing-intent-fails-check`](#spec-a-report-of-a-missing-intent-fails-check) — For every [run](../canon/CANON.md#term-run), every [check command](#term-alloy-plugin) and every [unit](../canon/CANON.md#term-unit): when the run asks for the check command and [checker](../canon/CANON.md#term-checker) reports that the unit has no [intent](#term-intent), the run does not exit with code 0.
   - [`@spec generate-fails-on-a-handwritten-statement-and-says-so`](#spec-generate-fails-on-a-handwritten-statement-and-says-so) — For every [run](../canon/CANON.md#term-run), every [generate command](#term-alloy-plugin) and every [unit](../canon/CANON.md#term-unit): when the run asks for the generate command and the [statement](#term-generated-statement) of the unit is handwritten, [checker](../canon/CANON.md#term-checker) reports the statement of the unit and the run does not exit with code 0.
   - [`@spec generate-fails-on-an-unsayable-formula-and-says-why`](#spec-generate-fails-on-an-unsayable-formula-and-says-why) — For every [run](../canon/CANON.md#term-run), every [generate command](#term-alloy-plugin) and every [unit](../canon/CANON.md#term-unit): when the run asks for the generate command and the formula of the unit cannot be said in words, [checker](../canon/CANON.md#term-checker) says why the formula of the unit cannot be said and the run does not exit with code 0.
-  - [`@spec the-prose-check-does-not-read-a-generated-statement`](#spec-the-prose-check-does-not-read-a-generated-statement) — The prose check does not read a [generated statement](#term-generated-statement).
+  - [`@spec the-prose-check-does-not-read-a-generated-statement`](#spec-the-prose-check-does-not-read-a-generated-statement) — The prose check does not read a *generated statement*.
   - [`@spec a-word-that-a-reading-says-and-nothing-declares-is-undeclared`](#spec-a-word-that-a-reading-says-and-nothing-declares-is-undeclared) —
     > A [word](#term-word) is said by a reading and declared by nothing when all of these hold:
     > - there is a [unit_1](../canon/CANON.md#term-unit) such that a reading in unit_1 says the word
@@ -139,7 +139,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     >
     > then no claim, definition or fact uses the word.
   - [`@spec a-word-that-a-fact-a-parent-signature-or-a-predicate-names-is-used`](#spec-a-word-that-a-fact-a-parent-signature-or-a-predicate-names-is-used) — A word that a fact, a parent signature or a predicate names counts as used.
-  - [`@spec a-word-that-a-scenario-names-is-used`](#spec-a-word-that-a-scenario-names-is-used) — A word that a [scenario](#term-scenario) names counts as used.
+  - [`@spec a-word-that-a-scenario-names-is-used`](#spec-a-word-that-a-scenario-names-is-used) — A word that a *scenario* names counts as used.
   - [`@spec a-field-that-another-signature-shares-is-used-only-through-its-own-signature`](#spec-a-field-that-another-signature-shares-is-used-only-through-its-own-signature) — When two signatures give a field the same name, a unit uses the field only through its own signature.
   - [`@spec a-field-is-used-wherever-a-formula-names-it`](#spec-a-field-is-used-wherever-a-formula-names-it) — A unit uses a field wherever a formula of it names the field: after a dot, before a dot, or on its own.
     - [`@spec a-field-named-after-a-dot-is-used`](#spec-a-field-named-after-a-dot-is-used) — A field that a formula names after a dot, as in `x.field`, counts as used.
@@ -172,7 +172,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     > - a claim, a definition or a fact uses word_1
     > - [checker](../canon/CANON.md#term-checker) does not report the word word_1
   - [`@spec a-signature-a-field-and-a-predicate-are-declared-words`](#spec-a-signature-a-field-and-a-predicate-are-declared-words) — A unit declares each signature, field and predicate that a model block of it writes.
-  - [`@spec a-declaration-in-a-comment-declares-nothing`](#spec-a-declaration-in-a-comment-declares-nothing) — A declaration that only a comment writes declares no [word](#term-word).
+  - [`@spec a-declaration-in-a-comment-declares-nothing`](#spec-a-declaration-in-a-comment-declares-nothing) — A declaration that only a comment writes declares no *word*.
   - [`@spec a-reading-is-keyed-by-a-field-alone-or-with-its-signature-or-as-a-primed-set`](#spec-a-reading-is-keyed-by-a-field-alone-or-with-its-signature-or-as-a-primed-set) — A reading says the word it is keyed to: a field alone or with its signature, or a primed set.
   - [`@spec a-flagged-word-fails-check`](#spec-a-flagged-word-fails-check) — For every [run](../canon/CANON.md#term-run), every [check command](#term-alloy-plugin) and every [word_1](#term-word): when the run asks for the check command and [checker](../canon/CANON.md#term-checker) reports the word word_1, the run does not exit with code 0.
   - [`@spec check-reports-nothing-about-a-word-that-is-in-order`](#spec-check-reports-nothing-about-a-word-that-is-in-order) —
@@ -191,7 +191,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     > - word_1 is declared in a unit that is not a term
     > - the reading of word_1 is in another unit than its declaration
     > - no claim, definition or fact uses word_1
-  - [`@spec a-scenario-gets-a-statement-that-says-it-must-be-possible`](#spec-a-scenario-gets-a-statement-that-says-it-must-be-possible) — When the checker can say the formula of a [scenario](#term-scenario), its statement opens with "It must be possible that:".
+  - [`@spec a-scenario-gets-a-statement-that-says-it-must-be-possible`](#spec-a-scenario-gets-a-statement-that-says-it-must-be-possible) — When the checker can say the formula of a *scenario*, its statement opens with "It must be possible that:".
   - [`@spec the-statement-of-a-scenario-sits-just-above-its-block`](#spec-the-statement-of-a-scenario-sits-just-above-its-block) — The checker writes the statement of a scenario just above its block.
   - [`@spec the-statement-of-a-scenario-is-not-the-statement-of-its-unit`](#spec-the-statement-of-a-scenario-is-not-the-statement-of-its-unit) — The checker does not take the generated statement of a scenario for the statement of the unit that holds the scenario.
   - [`@spec generate-writes-the-statement-of-a-scenario-that-is-missing-or-stale`](#spec-generate-writes-the-statement-of-a-scenario-that-is-missing-or-stale) — Generate writes the statement of a scenario that is not what its formula says, when the checker can say the formula.
@@ -229,7 +229,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
   - [`@spec a-formula-with-no-keyword-is-a-claim-to-hold`](#spec-a-formula-with-no-keyword-is-a-claim-to-hold) — When a [unit](../canon/CANON.md#term-unit) holds a formula with no keyword, the analyzer is asked to hold the formula of the unit.
   - [`@spec a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim`](#spec-a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim) — The definitions of a unit that holds only definitions are part of the model, and the analyzer does not hold them as a claim.
   - [`@spec the-scope-of-a-document-is-given-to-every-search`](#spec-the-scope-of-a-document-is-given-to-every-search) — Every search uses the scope that the document asks for.
-  - [`@spec a-search-about-the-units-together-asks-for-every-held-unit-and-no-other`](#spec-a-search-about-the-units-together-asks-for-every-held-unit-and-no-other) — The [search](#term-search) about all the held units together asks every held unit to hold, and no other.
+  - [`@spec a-search-about-the-units-together-asks-for-every-held-unit-and-no-other`](#spec-a-search-about-the-units-together-asks-for-every-held-unit-and-no-other) — The *search* about all the held units together asks every held unit to hold, and no other.
   - [`@spec each-scenario-gets-a-search-with-every-held-unit`](#spec-each-scenario-gets-a-search-with-every-held-unit) — The analyzer asks about each scenario in a search that asks every held unit to hold.
   - [`@spec the-first-searches-leave-no-unit-out`](#spec-the-first-searches-leave-no-unit-out) — When a [search](#term-search) is asked before any scenario is known to be impossible, the search leaves no unit out.
   - [`@spec a-trial-is-made-only-for-a-scenario-that-cannot-happen`](#spec-a-trial-is-made-only-for-a-scenario-that-cannot-happen) —
@@ -322,7 +322,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     > - document_2 is [context](../canon/CANON.md#term-extension) for document_1
     > - document_2 [holds](../canon/CANON.md#term-hold) the unit
     > - the unit holds a formula with no keyword
-  - [`@spec a-group-with-no-block-of-a-checked-document-is-not-asked-about`](#spec-a-group-with-no-block-of-a-checked-document-is-not-asked-about) — The analyzer is not asked about a [group](#term-group) none of whose blocks is in a document that the project checks.
+  - [`@spec a-group-with-no-block-of-a-checked-document-is-not-asked-about`](#spec-a-group-with-no-block-of-a-checked-document-is-not-asked-about) — The analyzer is not asked about a *group* none of whose blocks is in a document that the project checks.
 - [`@axiom a-formula-can-be-held-against-the-other-formulas`](#axiom-a-formula-can-be-held-against-the-other-formulas) —
   > All of these hold:
   > - [checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a signature when all of these hold:
@@ -378,12 +378,12 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     - [`@exception a-formula-whose-other-words-can-be-contradicted-is-reported`](#exception-a-formula-whose-other-words-can-be-contradicted-is-reported) — The checker reports a formula that is lone on a signature, even when the other words of the formula let another formula contradict it.
   - [`@spec a-lone-formula-fails-check`](#spec-a-lone-formula-fails-check) — For every [run](../canon/CANON.md#term-run), every [check command](#term-alloy-plugin), every [unit](../canon/CANON.md#term-unit) and every [word](#term-word): when the run asks for the check command and [checker](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word, the run does not exit with code 0.
 - [`@axiom check-runs-wherever-node-runs`](#axiom-check-runs-wherever-node-runs) — Every check of `canon check` runs with Node alone. Only `canon alloy:logic` needs Java and the Alloy analyzer.
-  - [`@spec the-lone-check-reads-text-only`](#spec-the-lone-check-reads-text-only) — The checker finds the formulas that are [lone](#term-lone-formula) on a signature by reading the text of the blocks, without the Alloy analyzer.
-- [`@axiom a-scenario-that-can-happen-can-be-read`](#axiom-a-scenario-that-can-happen-can-be-read) — The author can read a [world](#term-world) in which a scenario happens while every held unit holds, in the words of the canon.
+  - [`@spec the-lone-check-reads-text-only`](#spec-the-lone-check-reads-text-only) — The checker finds the formulas that are *lone* on a signature by reading the text of the blocks, without the Alloy analyzer.
+- [`@axiom a-scenario-that-can-happen-can-be-read`](#axiom-a-scenario-that-can-happen-can-be-read) — The author can read a *world* in which a scenario happens while every held unit holds, in the words of the canon.
   - [`@spec show-prints-the-world-of-each-scenario-it-names`](#spec-show-prints-the-world-of-each-scenario-it-names) — `canon alloy:logic --show <scenario>` prints, after the report, a world in which the named scenario happens while every held unit holds. The author can give `--show` more than once.
   - [`@spec show-of-a-scenario-that-cannot-happen-prints-no-world`](#spec-show-of-a-scenario-that-cannot-happen-prints-no-world) — `canon alloy:logic --show` of a scenario that cannot happen prints no world, and the report says that the scenario cannot happen.
   - [`@spec show-of-a-name-that-is-no-scenario-stops-logic`](#spec-show-of-a-name-that-is-no-scenario-stops-logic) — A run of `alloy:logic` exits with code 2 and prints no report when `--show` names no scenario that it checks in the documents.
-  - [`@spec show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit`](#spec-show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit) — `--show scenario-<n>-<unit>` shows the `n`th scenario of the unit in the document, whichever [group](#term-group) the analyzer asks about it in.
+  - [`@spec show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit`](#spec-show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit) — `--show scenario-<n>-<unit>` shows the `n`th scenario of the unit in the document, whichever *group* the analyzer asks about it in.
   - [`@spec show-prints-a-world-once-under-the-document-that-holds-its-scenario`](#spec-show-prints-a-world-once-under-the-document-that-holds-its-scenario) — `canon alloy:logic --show` prints the world of a scenario once, under the document that holds the scenario, and not under a document that extends it.
   - [`@spec a-world-the-analyzer-did-not-write-is-reported-and-the-report-stands`](#spec-a-world-the-analyzer-did-not-write-is-reported-and-the-report-stands) — When the analyzer writes no world for a scenario that can happen, `canon alloy:logic --show` says so under the scenario. The report and the exit code stay as they are.
   - [`@spec a-world-is-said-step-by-step`](#spec-a-world-is-said-step-by-step) — The checker says a world as its steps in order, each under `step <n>:`, counted from 0.
@@ -406,15 +406,15 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     - [`@spec a-word-with-no-reading-is-said-with-its-alloy-name`](#spec-a-word-with-no-reading-is-said-with-its-alloy-name) — The checker says a tuple of a word with no reading and no noun in Alloy. It gives the name of the word, then its things: `Ended: claim_1`, `Lane.claim: lane_1 -> claim_1`.
   - [`@spec a-world-says-which-thing-each-variable-of-the-scenario-is`](#spec-a-world-says-which-thing-each-variable-of-the-scenario-is) — A world opens with the thing that each variable of its scenario stands for, as `c is claim_1`.
 - [`@axiom the-parts-of-a-unit-with-logic-are-handled-through-commands`](#axiom-the-parts-of-a-unit-with-logic-are-handled-through-commands) — People and sessions read and change the intent and the readings of a canon through the commands of the plugin, by unit and by key. No one has to edit the text around a generated region by hand.
-  - [`@spec intent-prints-the-intent-of-each-unit-it-is-given`](#spec-intent-prints-the-intent-of-each-unit-it-is-given) — `alloy:intent` prints the [intent](#term-intent) of each unit that its command line names by id, in the documents the plugin runs over.
+  - [`@spec intent-prints-the-intent-of-each-unit-it-is-given`](#spec-intent-prints-the-intent-of-each-unit-it-is-given) — `alloy:intent` prints the *intent* of each unit that its command line names by id, in the documents the plugin runs over.
     - [`@spec intent-heads-each-intent-with-where-its-unit-starts-and-its-id`](#spec-intent-heads-each-intent-with-where-its-unit-starts-and-its-id) — `alloy:intent` prints a line with the document and the line where a unit starts and its id, above the intent of the unit.
-    - [`@spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block`](#spec-intent-prints-the-prose-between-the-statement-and-the-first-fenced-block) — `alloy:intent` prints the [intent](#term-intent) of a unit as the document writes it. The intent ends before the first fenced block or generated region of the unit.
-    - [`@spec a-derives-from-line-before-the-intent-is-no-part-of-it`](#spec-a-derives-from-line-before-the-intent-is-no-part-of-it) — A "Derives from:" line or a "Site:" line between the statement of a unit and its intent is no part of the [intent](#term-intent).
-    - [`@spec intent-of-a-unit-with-no-intent-says-none`](#spec-intent-of-a-unit-with-no-intent-says-none) — When a unit with a formula has no [intent](#term-intent), `alloy:intent` prints `none` under its line.
+    - [`@spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block`](#spec-intent-prints-the-prose-between-the-statement-and-the-first-fenced-block) — `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block or generated region of the unit.
+    - [`@spec a-derives-from-line-before-the-intent-is-no-part-of-it`](#spec-a-derives-from-line-before-the-intent-is-no-part-of-it) — A "Derives from:" line or a "Site:" line between the statement of a unit and its intent is no part of the *intent*.
+    - [`@spec intent-of-a-unit-with-no-intent-says-none`](#spec-intent-of-a-unit-with-no-intent-says-none) — When a unit with a formula has no *intent*, `alloy:intent` prints `none` under its line.
     - [`@spec intent-of-a-unit-that-holds-no-formula-is-refused`](#spec-intent-of-a-unit-that-holds-no-formula-is-refused) — When the command line of `alloy:intent` names a unit that holds no formula, the plugin says so and changes nothing. The run exits with code 2.
     - [`@spec intent-of-a-name-that-names-no-unit-is-refused`](#spec-intent-of-a-name-that-names-no-unit-is-refused) — When the command line of `alloy:intent` holds a name of no unit of the plugin's documents, the plugin says so. The run exits with code 2.
-    - [`@spec intent-reads-the-ids-of-a-dash-from-standard-input`](#spec-intent-reads-the-ids-of-a-dash-from-standard-input) — `alloy:intent -` prints the [intent](#term-intent) of each unit whose id a line of standard input holds. A blank line names no unit.
-  - [`@spec intent-with-write-replaces-the-intent-of-its-unit`](#spec-intent-with-write-replaces-the-intent-of-its-unit) — `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the [intent](#term-intent) of the unit in its document.
+    - [`@spec intent-reads-the-ids-of-a-dash-from-standard-input`](#spec-intent-reads-the-ids-of-a-dash-from-standard-input) — `alloy:intent -` prints the *intent* of each unit whose id a line of standard input holds. A blank line names no unit.
+  - [`@spec intent-with-write-replaces-the-intent-of-its-unit`](#spec-intent-with-write-replaces-the-intent-of-its-unit) — `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the *intent* of the unit in its document.
     - [`@spec write-puts-the-text-from-standard-input-in-place-of-the-intent`](#spec-write-puts-the-text-from-standard-input-in-place-of-the-intent) — After `alloy:intent <unit> --write`, the intent of the unit is the text that standard input gave, without the blank lines around it.
     - [`@spec write-gives-a-unit-with-no-intent-one-after-its-statement-and-its-derivation-line`](#spec-write-gives-a-unit-with-no-intent-one-after-its-statement-and-its-derivation-line) — When the unit has no intent, `alloy:intent --write` puts the text after its statement and its "Derives from:" line, before its first fenced block.
     - [`@spec write-changes-nothing-but-the-intent-of-its-unit`](#spec-write-changes-nothing-but-the-intent-of-its-unit) — `alloy:intent --write` leaves every line of the document outside the intent of its unit as it was. That holds the heading, the statement, the "Derives from:" line, the formula, the scenarios, the readings and the generated regions.
@@ -602,6 +602,9 @@ Together.rel: the analyzer is asked about {1} together with {2} | the analyzer i
 
 > A formula is lone on a signature when it uses the signature, no other unit names the signature, and no scenario names it.
 
+Word: adjective
+- also: lone
+
 A unit names a signature when one of its blocks writes the name outside the declaration of that signature. A claim, a definition, a fact, the type of a field and the parent of another signature all name it. A unit of a document that the document extends names it too.
 
 Nothing else constrains a signature that one formula alone names. The analyzer can give it a value that makes the formula hold, so no other formula can contradict the formula.
@@ -700,7 +703,7 @@ all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies (u n
 
 #### @spec a-document-that-does-not-name-the-plugin-is-left-as-it-is
 
-> The checker neither writes nor reports the statements of a document that the [Alloy plugin](#term-alloy-plugin) does not run over.
+> The checker neither writes nor reports the statements of a document that the *Alloy plugin* does not run over.
 
 This follows because the statements are the work of one plugin, and a document that does not ask for it asks for no statements.
 
@@ -1000,7 +1003,7 @@ all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Reported) impli
 > then [checker](../canon/CANON.md#term-checker) reports that the unit has no intent.
 <!-- statement-spec-check-reports-a-unit-with-a-formula-and-no-intent:end -->
 
-The [intent](#term-intent) is the measure of a formula. A reader holds the generated statement against it to see whether the formula says what its author meant. A unit with a formula and no intent leaves the reader nothing to hold the statement against. So in a document that keeps readings, check reports such a unit.
+The *intent* is the measure of a formula. A reader holds the generated statement against it to see whether the formula says what its author meant. A unit with a formula and no intent leaves the reader nothing to hold the statement against. So in a document that keeps readings, check reports such a unit.
 
 ```alloy
 all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical and u not in Intended) implies u in Aimless
@@ -1094,7 +1097,7 @@ all r: Run, c: GenerateCommand, u: Unit | (r->c in Ask.rel and u in Unsayable) i
 
 #### @spec the-prose-check-does-not-read-a-generated-statement
 
-> The prose check does not read a [generated statement](#term-generated-statement).
+> The prose check does not read a *generated statement*.
 
 This follows because the words of a generated statement are the words of the readings, and a rule of style cannot mend them. The author mends the readings.
 
@@ -1167,7 +1170,7 @@ This follows because the model relies on such a word even where no claim names i
 
 #### @spec a-word-that-a-scenario-names-is-used
 
-> A word that a [scenario](#term-scenario) names counts as used.
+> A word that a *scenario* names counts as used.
 
 This follows because a scenario is a claim that something is possible, and its statement says the words it names. The lone check counts a scenario as tying a signature to the model for the same reason.
 
@@ -1260,7 +1263,7 @@ This follows because these are the three things of a model that a statement may 
 
 #### @spec a-declaration-in-a-comment-declares-nothing
 
-> A declaration that only a comment writes declares no [word](#term-word).
+> A declaration that only a comment writes declares no *word*.
 
 This follows because a comment is not the model, and the claims never rely on it.
 
@@ -1322,7 +1325,7 @@ all w: Word | (w in Undeclared or w in Misplaced or w in Apart or w in Unused) i
 
 #### @spec a-scenario-gets-a-statement-that-says-it-must-be-possible
 
-> When the checker can say the formula of a [scenario](#term-scenario), its statement opens with "It must be possible that:".
+> When the checker can say the formula of a *scenario*, its statement opens with "It must be possible that:".
 
 This follows because a scenario is a claim that something can happen. A reader who sees only its formula would not know whether it states a rule or a possibility.
 
@@ -1469,7 +1472,7 @@ This follows because a claim that holds in a scope too small to show its flaw wo
 
 #### @spec a-search-about-the-units-together-asks-for-every-held-unit-and-no-other
 
-> The [search](#term-search) about all the held units together asks every held unit to hold, and no other.
+> The *search* about all the held units together asks every held unit to hold, and no other.
 
 This follows because the units contradict each other only if they cannot hold at once.
 
@@ -1776,7 +1779,7 @@ all d: Document, e: Document, u: Unit | (d in Checked and d->e in Context.rel an
 
 #### @spec a-group-with-no-block-of-a-checked-document-is-not-asked-about
 
-> The analyzer is not asked about a [group](#term-group) none of whose blocks is in a document that the project checks.
+> The analyzer is not asked about a *group* none of whose blocks is in a document that the project checks.
 
 This follows because the extended document is checked where it lives. Asking again would repeat the work and report the same units twice.
 
@@ -1795,7 +1798,7 @@ This follows because the extended document is checked where it lives. Asking aga
 
 A reader takes a unit with a formula as checked. The analyzer holds its formula against the other formulas, and would find a contradiction between them. That holds only when something else in the model speaks of the words the formula uses. A formula that no other formula can contradict holds whatever the rest of the canon says. It looks checked and is not, and the reader trusts a claim that nothing has checked.
 
-So the checker reports a formula that no other formula can contradict, and only such a formula. It finds one by the signatures it is [lone](#term-lone-formula) on. The author can tie the signature to the rest of the model, with a definition, a fact or a scenario that names it. Or the author can take the formula away and write the statement of the unit by hand, so that the unit no longer looks checked. Then its test guards it.
+So the checker reports a formula that no other formula can contradict, and only such a formula. It finds one by the signatures it is *lone* on. The author can tie the signature to the rest of the model, with a definition, a fact or a scenario that names it. Or the author can take the formula away and write the statement of the unit by hand, so that the unit no longer looks checked. Then its test guards it.
 
 ```alloy
 (all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (some w: Signature | u->w in Expose.rel)) and (all u: Unit, w: Word | u->w in Expose.rel implies u in Unchallenged)
@@ -2018,13 +2021,13 @@ A project runs `canon check` on every change, in its continuous integration too.
 
 #### @spec the-lone-check-reads-text-only
 
-> The checker finds the formulas that are [lone](#term-lone-formula) on a signature by reading the text of the blocks, without the Alloy analyzer.
+> The checker finds the formulas that are *lone* on a signature by reading the text of the blocks, without the Alloy analyzer.
 
 This follows because the lone check is part of `canon check`.
 
 ## @axiom a-scenario-that-can-happen-can-be-read
 
-> The author can read a [world](#term-world) in which a scenario happens while every held unit holds, in the words of the canon.
+> The author can read a *world* in which a scenario happens while every held unit holds, in the words of the canon.
 
 A scenario that cannot happen is a strong result: no world within the scope has it. A scenario that can happen is a weak one.
 
@@ -2054,7 +2057,7 @@ This follows because a misspelt name would otherwise show nothing, and the autho
 
 #### @spec show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit
 
-> `--show scenario-<n>-<unit>` shows the `n`th scenario of the unit in the document, whichever [group](#term-group) the analyzer asks about it in.
+> `--show scenario-<n>-<unit>` shows the `n`th scenario of the unit in the document, whichever *group* the analyzer asks about it in.
 
 This follows because the author reads the name off the statement of the scenario, which counts the scenarios of the unit in the document.
 
@@ -2194,7 +2197,7 @@ This narrows the commands that handle the canon to the parts that the plugin giv
 
 #### @spec intent-prints-the-intent-of-each-unit-it-is-given
 
-> `alloy:intent` prints the [intent](#term-intent) of each unit that its command line names by id, in the documents the plugin runs over.
+> `alloy:intent` prints the *intent* of each unit that its command line names by id, in the documents the plugin runs over.
 
 This follows because a session that changes a formula reads its intent first, to measure the change. The intent sits among generated text, which the session should not have to cut around.
 
@@ -2206,19 +2209,19 @@ This follows because `show` heads a unit the same way. A reader can then search 
 
 ##### @spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
 
-> `alloy:intent` prints the [intent](#term-intent) of a unit as the document writes it. The intent ends before the first fenced block or generated region of the unit.
+> `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block or generated region of the unit.
 
 This follows because the intent is the author's own prose, and the reader measures the formula against those exact words.
 
 ##### @spec a-derives-from-line-before-the-intent-is-no-part-of-it
 
-> A "Derives from:" line or a "Site:" line between the statement of a unit and its intent is no part of the [intent](#term-intent).
+> A "Derives from:" line or a "Site:" line between the statement of a unit and its intent is no part of the *intent*.
 
 This follows because the checker reads those lines as the derivation and the site of the unit, and a body opens with its derivation line. A command that changed the intent would otherwise change what the unit derives from.
 
 ##### @spec intent-of-a-unit-with-no-intent-says-none
 
-> When a unit with a formula has no [intent](#term-intent), `alloy:intent` prints `none` under its line.
+> When a unit with a formula has no *intent*, `alloy:intent` prints `none` under its line.
 
 This follows because a reader who asked for the intent must not take silence for an empty answer.
 
@@ -2236,7 +2239,7 @@ This follows because a reader who asked for a unit must not take silence for an 
 
 ##### @spec intent-reads-the-ids-of-a-dash-from-standard-input
 
-> `alloy:intent -` prints the [intent](#term-intent) of each unit whose id a line of standard input holds. A blank line names no unit.
+> `alloy:intent -` prints the *intent* of each unit whose id a line of standard input holds. A blank line names no unit.
 
 Derives from: [`spec-a-dash-stands-for-the-names-on-standard-input`](../canon/CANON.md#spec-a-dash-stands-for-the-names-on-standard-input)
 
@@ -2244,7 +2247,7 @@ This follows because a session reads the intents of the units that another comma
 
 #### @spec intent-with-write-replaces-the-intent-of-its-unit
 
-> `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the [intent](#term-intent) of the unit in its document.
+> `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the *intent* of the unit in its document.
 
 This follows because a session that rewords an intent would otherwise edit the document by its text, between a generated statement and a fence.
 
