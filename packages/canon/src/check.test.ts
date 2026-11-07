@@ -6,12 +6,12 @@
  * This file tests the checker's own tooling, not a project's canon, so it lives
  * outside any declared suite directory and carries no `@canon` tag.
  */
-import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
+import { spawned } from '../test/canon/project.ts';
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), 'cli.ts');
 
@@ -39,7 +39,7 @@ const canon = (units: string): string => `${HEAD}\n${units}`;
  * project names a tracker, so a bug owes an issue, and the run is offline, so
  * the tracker is not asked.
  */
-function check(document: string, test: string): Record<string, number> {
+async function check(document: string, test: string): Promise<Record<string, number>> {
   const dir = mkdtempSync(join(tmpdir(), 'canon-check-'));
   DIRS.push(dir);
   mkdirSync(join(dir, 'test', 'canon'), { recursive: true });
@@ -51,8 +51,8 @@ function check(document: string, test: string): Record<string, number> {
   );
   writeFileSync(join(dir, 'CANON.md'), document);
   writeFileSync(join(dir, 'test', 'canon', 'a.test.ts'), test);
-  spawnSync(process.execPath, [CLI, 'generate'], { cwd: dir });
-  const run = spawnSync(process.execPath, [CLI, 'check', '--offline'], { cwd: dir, encoding: 'utf8' });
+  await spawned(process.execPath, [CLI, 'generate'], { cwd: dir });
+  const run = await spawned(process.execPath, [CLI, 'check', '--offline'], { cwd: dir });
   const counts: Record<string, number> = {};
   for (const line of run.stdout.split('\n')) {
     const found = /^(\S+) — .*: (\d+)$/.exec(line);
@@ -85,17 +85,17 @@ ${mark}('checks it', () => {});
 `;
 
 describe('a spec that holds nested specs', () => {
-  it('owes no test of its own, and the leaf under it owes one', () => {
-    expect(check(canon(PARENT), tagged('spec-the-first-case-holds'))).toEqual({});
+  it('owes no test of its own, and the leaf under it owes one', async () => {
+    expect(await check(canon(PARENT), tagged('spec-the-first-case-holds'))).toEqual({});
   });
 
-  it('is a finding when a test cites it, which belongs to its leaf', () => {
-    const found = check(canon(PARENT), tagged('spec-a-parent-names-its-cases') + tagged('spec-the-first-case-holds'));
+  it('is a finding when a test cites it, which belongs to its leaf', async () => {
+    const found = await check(canon(PARENT), tagged('spec-a-parent-names-its-cases') + tagged('spec-the-first-case-holds'));
     expect(found['parent-cited']).toBe(1);
   });
 
-  it('leaves its leaf untested when only the parent is cited', () => {
-    const found = check(canon(PARENT), tagged('spec-a-parent-names-its-cases'));
+  it('leaves its leaf untested when only the parent is cited', async () => {
+    const found = await check(canon(PARENT), tagged('spec-a-parent-names-its-cases'));
     expect(found['parent-cited']).toBe(1);
     expect(found['untested']).toBeGreaterThan(0);
   });
@@ -108,28 +108,28 @@ describe('a bug', () => {
 > The code does another thing.
 ${issue ? '\nIssue: #7\n' : ''}`;
 
-  it('is clean when it names an issue and a test marked to fail cites it', () => {
-    expect(check(canon(BUG(true)), tagged('bug-the-leaf-breaks', 'it.fails'))).toEqual({});
+  it('is clean when it names an issue and a test marked to fail cites it', async () => {
+    expect(await check(canon(BUG(true)), tagged('bug-the-leaf-breaks', 'it.fails'))).toEqual({});
   });
 
-  it('is a finding when it names no issue', () => {
-    const found = check(canon(BUG(false)), tagged('bug-the-leaf-breaks', 'it.fails'));
+  it('is a finding when it names no issue', async () => {
+    const found = await check(canon(BUG(false)), tagged('bug-the-leaf-breaks', 'it.fails'));
     expect(found['untracked-bug']).toBe(1);
   });
 
-  it('is a finding when a test cites it without being marked to fail', () => {
-    const found = check(canon(BUG(true)), tagged('bug-the-leaf-breaks'));
+  it('is a finding when a test cites it without being marked to fail', async () => {
+    const found = await check(canon(BUG(true)), tagged('bug-the-leaf-breaks'));
     expect(found['unpinned-bug']).toBe(1);
   });
 
-  it('counts as a test of the spec it breaks, which stays a leaf', () => {
-    const found = check(canon(BUG(true)), tagged('bug-the-leaf-breaks', 'it.fails'));
+  it('counts as a test of the spec it breaks, which stays a leaf', async () => {
+    const found = await check(canon(BUG(true)), tagged('bug-the-leaf-breaks', 'it.fails'));
     expect(found['untested']).toBeUndefined();
     expect(found['parent-cited']).toBeUndefined();
   });
 
-  it('makes a test marked to fail a finding when it cites no bug or exception', () => {
-    const found = check(canon(LEAF), tagged('spec-a-leaf-says-one-thing') + tagged('spec-a-leaf-says-one-thing', 'it.fails'));
+  it('makes a test marked to fail a finding when it cites no bug or exception', async () => {
+    const found = await check(canon(LEAF), tagged('spec-a-leaf-says-one-thing') + tagged('spec-a-leaf-says-one-thing', 'it.fails'));
     expect(found['fails-without-bug']).toBe(1);
   });
 });
@@ -153,20 +153,20 @@ ${issue ? '\nIssue: #9\n' : ''}`;
     '[`spec-a-leaf-says-one-thing`](#spec-a-leaf-says-one-thing), [`spec-a-leaf-says-another-thing`](#spec-a-leaf-says-another-thing)';
   const TESTS = tagged('spec-a-leaf-says-one-thing') + tagged('spec-a-leaf-says-another-thing');
 
-  it('is clean when it names two units and an issue, and owes no test', () => {
-    expect(check(canon(CONFLICT(BOTH, true)), TESTS)).toEqual({});
+  it('is clean when it names two units and an issue, and owes no test', async () => {
+    expect(await check(canon(CONFLICT(BOTH, true)), TESTS)).toEqual({});
   });
 
-  it('is a finding when it names no issue', () => {
-    expect(check(canon(CONFLICT(BOTH, false)), TESTS)['untracked-conflict']).toBe(1);
+  it('is a finding when it names no issue', async () => {
+    expect((await check(canon(CONFLICT(BOTH, false)), TESTS))['untracked-conflict']).toBe(1);
   });
 
-  it('is a finding when its "Between:" line names fewer than two units', () => {
+  it('is a finding when its "Between:" line names fewer than two units', async () => {
     const one = '[`spec-a-leaf-says-one-thing`](#spec-a-leaf-says-one-thing)';
-    expect(check(canon(CONFLICT(one, true)), TESTS)['lone-conflict']).toBe(1);
+    expect((await check(canon(CONFLICT(one, true)), TESTS))['lone-conflict']).toBe(1);
   });
 
-  it('is a finding when it sits inside a unit', () => {
+  it('is a finding when it sits inside a unit', async () => {
     const nested = `${LEAF}${SECOND}
 #### @conflict the-leaves-disagree
 
@@ -176,6 +176,6 @@ Between: ${BOTH}
 
 Issue: #9
 `;
-    expect(check(canon(nested), TESTS)['misnested']).toBe(1);
+    expect((await check(canon(nested), TESTS))['misnested']).toBe(1);
   });
 });
