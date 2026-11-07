@@ -76,10 +76,10 @@ describe.each(CANONS)('the canon of $name', ({ dir, src, context, least }) => {
 });
 
 describe('the canon of the checker', () => {
-  it('states the pointers of the units it keeps in the first statement of a term', () => {
+  it('names the terms it uses in the first statement that mentions them, by term mark', () => {
     const statements = new Map(readUnits(CORE_CANON).map(u => [u.id, u.statement ?? '']));
-    expect(statements.get('term-unfounded')).toContain('[cites](#term-cite)');
-    expect(statements.get('term-unfounded')).toContain('[spec](#term-spec)');
-    expect(statements.get('spec-a-spec-cites-an-axiom-or-a-spec')).toContain('[checker](#term-checker) reports a [freelancing](#term-freelancing)');
+    expect(statements.get('term-unfounded')).toContain('*cites*');
+    expect(statements.get('term-unfounded')).toContain('*spec*');
+    expect(statements.get('spec-a-spec-cites-an-axiom-or-a-spec')).toContain('*checker* reports a *freelancing*');
   });
 });

@@ -297,6 +297,9 @@ export function mark(words: string, target: string | undefined): string {
 /** The words without the marks of their links. */
 export const plain = (words: string): string => words.replace(LINK_MARK, (_, __, word: string) => word);
 
+/** Whether a word may name the target of its link as a term mark, `*word*`, instead of the link. */
+export type Marked = (target: string, word: string) => boolean;
+
 /**
  * Resolve the marks of links, in the order a reader meets them. Only the first
  * mention of a term is a link, and nothing links to `self`, the href of the
@@ -310,6 +313,13 @@ export function resolveLinks(text: string, links: boolean, self: string | undefi
     return `[${word}](${target})`;
   });
 }
+
+/**
+ * Each link of finished words that `marked` allows, as a term mark: `[run](#term-run)` is `*run*`. It reads the words
+ * as the reader gets them, after the numbers of variables are settled, so that a mark spells what the reader reads.
+ */
+export const markTerms = (text: string, marked: Marked): string =>
+  text.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (link: string, word: string, target: string) => (marked(target, word) ? `*${word}*` : link));
 
 /** A formula with the names of this module as plain names: `this/Ran` and `@Ran` are `Ran`, and `fun/min`, `fun/max` and `fun/next` are `min`, `max` and `next`. */
 export function unqualified(node: Node): Node {

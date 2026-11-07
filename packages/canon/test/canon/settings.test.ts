@@ -4,13 +4,13 @@
  * canon field of a package still serves. Each case builds a small project in a
  * temporary directory and runs the command line over it.
  */
-import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 import { readFrontmatter } from '../../src/frontmatter.ts';
+import { spawned } from './project.ts';
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'cli.ts');
 /** The tags, spelled apart so the checker does not read this file's templates as citations. */
@@ -44,8 +44,8 @@ function write(files: Record<string, string>): string {
 }
 
 /** Run the command line in `cwd` under the new directory; what it printed and its exit code. */
-function run(dir: string, cwd: string, ...args: string[]) {
-  const done = spawnSync(process.execPath, [CLI, ...args], { cwd: join(dir, cwd), encoding: 'utf8' });
+async function run(dir: string, cwd: string, ...args: string[]) {
+  const done = await spawned(process.execPath, [CLI, ...args], { cwd: join(dir, cwd) });
   return { out: `${done.stdout}${done.stderr}`, code: done.status };
 }
 
@@ -53,10 +53,10 @@ describe('the entry document', () => {
   /**
    * @canon spec-a-run-takes-its-settings-from-its-entry-document
    */
-  it('takes the settings of a project that has no package.json', () => {
+  it('takes the settings of a project that has no package.json', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'sources: [checks]', 'command: node cli.ts']), 'checks/a.test.ts': TEST });
-    run(dir, '.', 'generate');
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('1 declared suite(s)');
     expect(code).toBe(0);
   });
@@ -64,10 +64,10 @@ describe('the entry document', () => {
   /**
    * @canon spec-a-run-takes-its-settings-from-its-entry-document
    */
-  it('finds the nearest document above the folder where the command runs', () => {
+  it('finds the nearest document above the folder where the command runs', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks']), 'checks/a.test.ts': TEST, 'deeper/still/file.txt': '' });
-    run(dir, '.', 'generate');
-    const { out, code } = run(dir, 'deeper/still', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    const { out, code } = await run(dir, 'deeper/still', 'check', '--offline');
     expect(out).toContain('1 declared suite(s)');
     expect(code).toBe(0);
   });
@@ -75,14 +75,14 @@ describe('the entry document', () => {
   /**
    * @canon spec-a-run-takes-its-settings-from-its-entry-document
    */
-  it('prefers the settings of the document to the canon field of the package', () => {
+  it('prefers the settings of the document to the canon field of the package', async () => {
     const dir = write({
       'package.json': JSON.stringify({ canon: { suites: 'elsewhere' } }),
       'CANON.md': canon(['suites: checks']),
       'checks/a.test.ts': TEST
     });
-    run(dir, '.', 'generate');
-    expect(run(dir, '.', 'check', '--offline').out).toContain('1 declared suite(s)');
+    await run(dir, '.', 'generate');
+    expect((await run(dir, '.', 'check', '--offline')).out).toContain('1 declared suite(s)');
   });
 
   /**
@@ -100,10 +100,10 @@ describe('the paths of a setting', () => {
   /**
    * @canon spec-a-path-of-a-setting-is-read-from-the-folder-of-the-entry-document
    */
-  it('starts from the folder of the entry document, and not from the folder of the run', () => {
+  it('starts from the folder of the entry document, and not from the folder of the run', async () => {
     const dir = write({ 'app/CANON.md': canon(['suites: checks']), 'app/checks/a.test.ts': TEST, 'checks/other.test.ts': TEST });
-    run(dir, 'app', 'generate');
-    const { out } = run(dir, 'app/checks', 'check', '--offline');
+    await run(dir, 'app', 'generate');
+    const { out } = await run(dir, 'app/checks', 'check', '--offline');
     expect(out).toContain('1 declared suite(s)');
     expect(out).toContain(join(dir, 'app'));
   });
@@ -113,9 +113,9 @@ describe('a document that is not the entry document', () => {
   /**
    * @canon spec-a-setting-outside-the-entry-document-is-refused
    */
-  it('refuses a setting in a sibling document that the project checks', () => {
+  it('refuses a setting in a sibling document that the project checks', async () => {
     const dir = write({ 'CANON.md': canon(['documents: [more.md]']), 'more.md': `---\ncommand: other\n---\n# More\n` });
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('more.md: frontmatter:');
     expect(out).toContain('entry document');
     expect(code).toBe(2);
@@ -124,13 +124,13 @@ describe('a document that is not the entry document', () => {
   /**
    * @canon spec-a-setting-outside-the-entry-document-is-refused
    */
-  it('does not refuse a setting in a document that is only context', () => {
+  it('does not refuse a setting in a document that is only context', async () => {
     const dir = write({
       'app/CANON.md': canon(['extends: ["../base/CANON.md"]', 'suites: checks']),
       'app/checks/a.test.ts': TEST,
       'base/CANON.md': canon(['suites: base-checks'])
     });
-    const { out } = run(dir, 'app', 'check', '--offline');
+    const { out } = await run(dir, 'app', 'check', '--offline');
     expect(out).not.toContain('frontmatter:');
   });
 });
@@ -144,9 +144,9 @@ describe('a key that a plugin defines', () => {
   /**
    * @canon spec-a-key-that-a-listed-plugin-defines-is-known
    */
-  it('is handed to the plugin when the document lists the plugin', () => {
+  it('is handed to the plugin when the document lists the plugin', async () => {
     const dir = write({ 'CANON.md': canon(['plugins: ["canon-fake"]', 'fake: {jar: tools/a.jar, nested: {depth: 2}}']), ...PLUGIN });
-    const { out, code } = run(dir, '.', 'fake');
+    const { out, code } = await run(dir, '.', 'fake');
     expect(JSON.parse(out.trim())).toEqual({ jar: 'tools/a.jar', nested: { depth: '2' } });
     expect(code).toBe(0);
   });
@@ -154,9 +154,9 @@ describe('a key that a plugin defines', () => {
   /**
    * @canon spec-a-key-that-a-listed-plugin-defines-is-known
    */
-  it('is refused when the document does not list the plugin', () => {
+  it('is refused when the document does not list the plugin', async () => {
     const dir = write({ 'CANON.md': canon(['plugins: []', 'fake: {jar: tools/a.jar}']), ...PLUGIN });
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('unknown key "fake"');
     expect(code).toBe(2);
   });
@@ -166,14 +166,14 @@ describe('the canon field of a package', () => {
   /**
    * @canon spec-a-package-field-serves-a-run-that-enters-no-document
    */
-  it('serves a run when no document holds a setting', () => {
+  it('serves a run when no document holds a setting', async () => {
     const dir = write({
       'package.json': JSON.stringify({ canon: { suites: 'checks' } }),
       'CANON.md': canon(['plugins: []']),
       'checks/a.test.ts': TEST
     });
-    run(dir, '.', 'generate');
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('1 declared suite(s)');
     expect(code).toBe(0);
   });
@@ -183,10 +183,10 @@ describe('a source the checker cannot parse', () => {
   /**
    * @canon spec-a-source-the-checker-cannot-parse-fails-the-run
    */
-  it('names a module of the sources that does not parse, and exits with code 2', () => {
+  it('names a module of the sources that does not parse, and exits with code 2', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'sources: [checks]']), 'checks/a.test.ts': TEST, 'checks/broken.ts': 'export const = ;\n' });
-    run(dir, '.', 'generate');
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('checks/broken.ts');
     expect(code).toBe(2);
   });
@@ -194,10 +194,10 @@ describe('a source the checker cannot parse', () => {
   /**
    * @canon spec-a-source-the-checker-cannot-parse-fails-the-run
    */
-  it('names a declared suite that does not parse, and exits with code 2', () => {
+  it('names a declared suite that does not parse, and exits with code 2', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'sources: [checks]']), 'checks/a.test.ts': `${TEST}it('is broken', () => {\n` });
-    run(dir, '.', 'generate');
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('checks/a.test.ts');
     expect(code).toBe(2);
   });
@@ -207,9 +207,9 @@ describe('the setting runners', () => {
   /**
    * @canon spec-a-runner-the-checker-does-not-know-is-refused
    */
-  it('refuses a runner that is no preset, and exits with code 2', () => {
+  it('refuses a runner that is no preset, and exits with code 2', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'runners: [vitset]']), 'checks/a.test.ts': TEST });
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('vitset');
     expect(code).toBe(2);
   });
@@ -217,9 +217,9 @@ describe('the setting runners', () => {
   /**
    * @canon spec-a-runner-the-checker-does-not-know-is-refused
    */
-  it('refuses a runner written as a map with a key it does not know, and exits with code 2', () => {
+  it('refuses a runner written as a map with a key it does not know, and exits with code 2', async () => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'runners: [{calls: [specify], hooks: [before]}]']), 'checks/a.test.ts': TEST });
-    const { out, code } = run(dir, '.', 'check', '--offline');
+    const { out, code } = await run(dir, '.', 'check', '--offline');
     expect(out).toContain('hooks');
     expect(code).toBe(2);
   });
@@ -229,17 +229,17 @@ describe('a runner marker the checker cannot read', () => {
   const marker = ['@', 'runner'].join('');
 
   /** A project whose suites directory holds `files` beside a suite that cites the spec. */
-  const project = (files: Record<string, string>) => {
+  const project = async (files: Record<string, string>) => {
     const dir = write({ 'CANON.md': canon(['suites: checks', 'sources: [checks]']), 'checks/a.test.ts': TEST, ...files });
-    run(dir, '.', 'generate');
-    return run(dir, '.', 'check', '--offline');
+    await run(dir, '.', 'generate');
+    return await run(dir, '.', 'check', '--offline');
   };
 
   /**
    * @canon spec-a-runner-marker-with-a-word-other-than-fails-is-refused
    */
-  it('refuses a marker with a word other than fails, and exits with code 2', () => {
-    const { out, code } = project({ 'checks/helpers.ts': `/** ${marker} fail */\nexport const check = (name: string, fn: () => void) => it(name, fn);\n` });
+  it('refuses a marker with a word other than fails, and exits with code 2', async () => {
+    const { out, code } = await project({ 'checks/helpers.ts': `/** ${marker} fail */\nexport const check = (name: string, fn: () => void) => it(name, fn);\n` });
     expect(out).toContain('checks/helpers.ts');
     expect(code).toBe(2);
   });
@@ -247,26 +247,26 @@ describe('a runner marker the checker cannot read', () => {
   /**
    * @canon spec-a-runner-marker-the-settings-do-not-list-is-refused
    */
-  it('refuses a marker in a project whose runners leave out "@runner", and reads it when they list it', () => {
+  it('refuses a marker in a project whose runners leave out "@runner", and reads it when they list it', async () => {
     const helpers = `/** ${marker} */\nexport const check = (name: string, fn: () => void) => it(name, fn);\n`;
-    const listed = (runners: string) => {
+    const listed = async (runners: string) => {
       const dir = write({ 'CANON.md': canon(['suites: checks', 'sources: [checks]', `runners: ${runners}`]), 'checks/a.test.ts': TEST, 'checks/helpers.ts': helpers });
-      run(dir, '.', 'generate');
-      return run(dir, '.', 'check', '--offline');
+      await run(dir, '.', 'generate');
+      return await run(dir, '.', 'check', '--offline');
     };
-    const left = listed('[vitest]');
+    const left = await listed('[vitest]');
     expect(left.out).toContain('checks/helpers.ts');
     expect(left.out).toContain('"@runner"');
     expect(left.code).toBe(2);
-    expect(listed('[]').code).toBe(2);
-    expect(listed('["@runner", vitest]').code).toBe(0);
+    expect((await listed('[]')).code).toBe(2);
+    expect((await listed('["@runner", vitest]')).code).toBe(0);
   });
 
   /**
    * @canon spec-a-runner-marker-on-no-declaration-is-refused
    */
-  it('refuses a marker above no declaration, and exits with code 2', () => {
-    const { out, code } = project({ 'checks/helpers.ts': `/** ${marker} */\nconsole.log('loaded');\n` });
+  it('refuses a marker above no declaration, and exits with code 2', async () => {
+    const { out, code } = await project({ 'checks/helpers.ts': `/** ${marker} */\nconsole.log('loaded');\n` });
     expect(out).toContain('checks/helpers.ts:1 — the runner marker is above no declaration');
     expect(code).toBe(2);
   });
@@ -276,10 +276,10 @@ describe('a check with no runner', () => {
   /**
    * @canon spec-a-check-with-no-runner-says-it-reads-no-test
    */
-  it('says in its report that it reads no tests', () => {
+  it('says in its report that it reads no tests', async () => {
     const none = write({ 'CANON.md': canon(['suites: checks', 'runners: []']), 'checks/a.test.ts': TEST });
-    expect(run(none, '.', 'check', '--offline').out).toContain('tests: none read');
+    expect((await run(none, '.', 'check', '--offline')).out).toContain('tests: none read');
     const some = write({ 'CANON.md': canon(['suites: checks']), 'checks/a.test.ts': TEST });
-    expect(run(some, '.', 'check', '--offline').out).not.toContain('tests: none read');
+    expect((await run(some, '.', 'check', '--offline')).out).not.toContain('tests: none read');
   });
 });

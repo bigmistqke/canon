@@ -226,7 +226,7 @@ The camera has no pitch and no bearing, so a tile is seen close to head-on. Mipm
 
 ## 13. Units with logic
 
-A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can state its units as formulas. The plugin writes each statement from its formula, and it asks the Alloy analyzer whether the claims can all hold. [The plugin's README](https://github.com/bigmistqke/skills/blob/main/packages/canon-plugin-alloy/README.md) has the full grammar.
+A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can state its units as formulas. The plugin writes each statement from its formula, and it asks the Alloy analyzer whether the claims can all hold. [The plugin's README](https://github.com/bigmistqke/canon/blob/main/packages/canon-plugin-alloy/README.md) has the full grammar.
 
 1. Write the formula of a unit in an `alloy` block in its body. Declare the sets and relations that units share in an `alloy vocabulary` block, in the term that names them.
 2. Write a situation that the units must allow in an `alloy scenario` block. A scenario is a claim that something is possible, and `canon alloy:logic` reports one that cannot happen.

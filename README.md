@@ -7,13 +7,13 @@ Agent skills by [bigmistqke](https://github.com/bigmistqke), and the tools they 
 Any agent that reads [Agent Skills](https://agentskills.io):
 
 ```
-npx skills add bigmistqke/skills
+npx skills add bigmistqke/canon
 ```
 
 Claude Code, as a plugin:
 
 ```
-/plugin marketplace add bigmistqke/skills
+/plugin marketplace add bigmistqke/canon
 /plugin install canon@bigmistqke
 ```
 

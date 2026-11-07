@@ -4,13 +4,13 @@
  * refuses. Each case builds a small project in a temporary directory and runs
  * the command line over it.
  */
-import { spawnSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, describe, expect, it } from 'vitest';
 import { readFrontmatter } from '../../src/frontmatter.ts';
+import { spawned } from './project.ts';
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'src', 'cli.ts');
 /** The tags, spelled apart so the checker does not read this file's templates as citations. */
@@ -39,7 +39,7 @@ ${TOC}
 `;
 
 /** A project whose documents are the first of `files` only; `generate` has run over it, and `check` has run. */
-function project(files: Record<string, string>, checked = Object.keys(files).slice(0, 1)) {
+async function project(files: Record<string, string>, checked = Object.keys(files).slice(0, 1)) {
   const dir = mkdtempSync(join(tmpdir(), 'canon-extends-'));
   DIRS.push(dir);
   mkdirSync(join(dir, 'test', 'canon'), { recursive: true });
@@ -48,8 +48,8 @@ function project(files: Record<string, string>, checked = Object.keys(files).sli
     mkdirSync(dirname(join(dir, name)), { recursive: true });
     writeFileSync(join(dir, name), text);
   }
-  spawnSync(process.execPath, [CLI, 'generate'], { cwd: dir });
-  const run = spawnSync(process.execPath, [CLI, 'check'], { cwd: dir, encoding: 'utf8' });
+  await spawned(process.execPath, [CLI, 'generate'], { cwd: dir });
+  const run = await spawned(process.execPath, [CLI, 'check'], { cwd: dir });
   return { out: run.stdout, err: run.stderr, code: run.status };
 }
 
@@ -67,10 +67,10 @@ describe('the extends key', () => {
   /**
    * @canon spec-a-path-is-read-from-the-folder-of-the-document-that-lists-it
    */
-  it('reads a path from the folder of the document, and not from the root of the project', () => {
-    const from = project({ 'alloy/CANON.md': canon('a-child', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
+  it('reads a path from the folder of the document, and not from the root of the project', async () => {
+    const from = await project({ 'alloy/CANON.md': canon('a-child', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
     expect(from.err).not.toContain('frontmatter');
-    const fromRoot = project({ 'alloy/CANON.md': canon('a-child', ['canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
+    const fromRoot = await project({ 'alloy/CANON.md': canon('a-child', ['canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
     expect(fromRoot.err).toContain('alloy/CANON.md: frontmatter:');
     expect(fromRoot.code).toBe(2);
   });
@@ -80,8 +80,8 @@ describe('the documents a document extends', () => {
   /**
    * @canon spec-a-unit-of-an-extended-document-is-not-reported-for-the-document-that-extends-it
    */
-  it('owe nothing here: their units are not reported for the document that extends them', () => {
-    const { out } = project({ 'alloy/CANON.md': canon('a-child', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
+  it('owe nothing here: their units are not reported for the document that extends them', async () => {
+    const { out } = await project({ 'alloy/CANON.md': canon('a-child', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-parent') });
     expect(out).toContain('alloy/CANON.md');
     expect(out).not.toContain('canon/CANON.md#');
   });
@@ -90,8 +90,8 @@ describe('the documents a document extends', () => {
    * @canon spec-a-document-is-context-for-the-documents-that-extend-it-and-for-theirs
    * @canon spec-an-id-that-an-extended-document-declares-too-is-repeated
    */
-  it('reach the documents they extend: an id that one of those declares too is reported', () => {
-    const { out, code } = project({
+  it('reach the documents they extend: an id that one of those declares too is reported', async () => {
+    const { out, code } = await project({
       'a/CANON.md': canon('a-shared', ['../b/CANON.md']),
       'b/CANON.md': canon('a-middle', ['../c/CANON.md']),
       'c/CANON.md': canon('a-shared')
@@ -104,8 +104,8 @@ describe('the documents a document extends', () => {
   /**
    * @canon spec-an-id-that-an-extended-document-declares-too-is-repeated
    */
-  it('are read with the document: an id that both declare is reported, and names both places', () => {
-    const { out, code } = project({ 'alloy/CANON.md': canon('a-shared', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-shared') });
+  it('are read with the document: an id that both declare is reported, and names both places', async () => {
+    const { out, code } = await project({ 'alloy/CANON.md': canon('a-shared', ['../canon/CANON.md']), 'canon/CANON.md': canon('a-shared') });
     expect(out).toContain('axiom-a-shared');
     expect(out).toContain('canon/CANON.md');
     expect(code).toBe(1);
@@ -118,8 +118,8 @@ describe('what the checker refuses', () => {
    * @canon spec-a-document-with-a-refused-frontmatter-is-reported
    * @canon spec-a-report-of-an-unreadable-frontmatter-stops-the-run
    */
-  it('a path that names no document', () => {
-    const { err, code } = project({ 'alloy/CANON.md': canon('a-child', ['../nowhere/CANON.md']) });
+  it('a path that names no document', async () => {
+    const { err, code } = await project({ 'alloy/CANON.md': canon('a-child', ['../nowhere/CANON.md']) });
     expect(err).toContain('alloy/CANON.md: frontmatter:');
     expect(err).toContain('../nowhere/CANON.md');
     expect(code).toBe(2);
@@ -129,8 +129,8 @@ describe('what the checker refuses', () => {
    * @canon spec-an-extension-that-leads-back-is-refused
    * @canon spec-a-report-of-an-unreadable-frontmatter-stops-the-run
    */
-  it('an extension that leads back to the document that lists it', () => {
-    const { err, code } = project({ 'a/CANON.md': canon('a-first', ['../b/CANON.md']), 'b/CANON.md': canon('a-second', ['../a/CANON.md']) });
+  it('an extension that leads back to the document that lists it', async () => {
+    const { err, code } = await project({ 'a/CANON.md': canon('a-first', ['../b/CANON.md']), 'b/CANON.md': canon('a-second', ['../a/CANON.md']) });
     expect(err).toContain('leads back');
     expect(code).toBe(2);
   });

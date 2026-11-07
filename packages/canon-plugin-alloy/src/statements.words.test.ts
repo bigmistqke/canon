@@ -78,21 +78,24 @@ always all n: Node | n in Started implies eventually finished[n]
 \`\`\`
 `;
 
-  it('link to the terms that say them, the first time each is mentioned', () => {
+  it('name the terms that say them, the first time each is mentioned', () => {
     const { src } = write(linked);
     const unit = readUnits(src).find(u => u.id === 'axiom-a-node-finishes');
-    expect(unit?.statement).toContain('for every [node](#term-node)');
-    // "started" is said by the term for the node, which the statement has already linked: a term is linked once
+    // "node" spells the stem of its term, so it is a term mark; "finished" spells no form of term-done, so it is a link.
+    expect(unit?.statement).toContain('for every *node*');
+    // "started" is said by the term for the node, which the statement has already named: a term is named once
     expect(unit?.statement).toContain('the node has started');
     expect(unit?.statement).not.toContain('[started]');
+    expect(unit?.statement).not.toContain('*started*');
     expect(unit?.statement).toContain('[finished](#term-done)');
   });
 
-  it('never link a statement to its own unit', () => {
+  it('never name its own unit in a statement', () => {
     const { src } = write(linked);
     const unit = readUnits(src).find(u => u.id === 'term-done');
-    expect(unit?.statement).toContain('[node](#term-node)');
+    expect(unit?.statement).toContain('*node*');
     expect(unit?.statement).not.toContain('(#term-done)');
+    expect(unit?.statement).not.toContain('*finished*');
   });
 });
 
