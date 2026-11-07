@@ -41,6 +41,46 @@ const ANY_HEADING = /^(#{1,6})[ \t]+/gm;
  */
 const SITE = /^Site: (.+)$/m;
 
+/** The roles that each part of speech of a word list allows; `also` is allowed for each. */
+export const ROLES: Readonly<Record<string, readonly string[]>> = {
+  noun: ['plural'],
+  verb: ['third person', 'past', 'participle', 'gerund'],
+  adjective: [],
+  name: []
+};
+
+/** A term's word list: its part of speech, the spelling of each role it lists, and what in it the checker cannot read. */
+export interface Word {
+  part: string;
+  forms: Array<{ role: string; spelling: string }>;
+  /** Each part of speech or role the list names that the checker does not know, as written. */
+  unknown: string[];
+}
+
+/**
+ * The word list in a unit's own text: a line `Word: <part of speech>`, and
+ * the items `- <role>: <spelling>` right under it. Undefined when the own text
+ * has no such line.
+ */
+export function wordOf(own: string): Word | undefined {
+  const lines = own.split('\n');
+  const at = lines.findIndex(line => /^Word:[ \t]/.test(line));
+  if (at === -1) return undefined;
+  const part = (lines[at] as string).slice('Word:'.length).trim();
+  const word: Word = { part, forms: [], unknown: [] };
+  const roles = ROLES[part];
+  if (roles === undefined) word.unknown.push(part);
+  for (const line of lines.slice(at + 1)) {
+    const item = /^[-*+][ \t]+([^:]+):[ \t]*(.*)$/.exec(line);
+    if (!item) break;
+    const role = (item[1] as string).trim();
+    const spelling = (item[2] as string).trim();
+    if (role !== 'also' && !(roles ?? []).includes(role)) word.unknown.push(role);
+    else if (spelling !== '') word.forms.push({ role, spelling });
+  }
+  return word;
+}
+
 export interface Unit {
   /** `spec-<stem>`: the kind and the stem, joined. */
   id: string;
@@ -63,6 +103,8 @@ export interface Unit {
   own: string;
   /** The place in the code its "Site:" line names. */
   site?: string;
+  /** A term's word list, from its "Word:" line. */
+  word?: Word;
 }
 
 /** The statement a unit's own text opens with: its first blockquote, joined. */
@@ -112,6 +154,7 @@ export function readUnits(src: string): Unit[] {
     unit.own = body.split(/^#{1,6}[ \t]/m)[0];
     unit.statement = statementOf(unit.own);
     unit.site = SITE.exec(unit.own)?.[1]?.trim();
+    if (unit.kind === 'term') unit.word = wordOf(unit.own);
   }
   return units;
 }

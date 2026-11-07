@@ -24,7 +24,7 @@ import { configKeysOf, CORE_COMMANDS, documentsFor, findCommands, findNamed, typ
 import { beginMarker, replaceRegion } from './regions.ts';
 import { contextOf } from './extends.ts';
 import { hasSettings, readFrontmatter } from './frontmatter.ts';
-import { maskFences, readUnits } from './units.ts';
+import { maskFences, readUnits, wordOf } from './units.ts';
 import { parseSource, testsOf, type Exports, type Syntax, type TestBlock } from './tests.ts';
 import { MARKER, marksOf, runnersOf, type Runner } from './runners.ts';
 
@@ -268,6 +268,12 @@ function scan(src: string): { withId: Element[]; anchors: Anchor[] } {
 const OVERFULL_HEADING = /^#{1,6}[ \t]+@[a-z]+[ \t]+\S+[ \t]+\S.*$/gm;
 /** A `<tr>`/`<td>` unit in an HTML table the document kept. */
 const TABLE_UNIT = /<t([rd])\b[^>]*\bid="([^"]*)"[^>]*>/g;
+
+/** The words of the stem of a term: its stem with a space for each hyphen, `outdated tracking` for `term-outdated-tracking`. */
+const stemWords = (id: string): string => id.slice(id.indexOf('-') + 1).replace(/-/g, ' ');
+
+/** The spelling of the words of a term mark or a form, as the checker compares it: in lowercase, with single spaces. */
+const spelling = (words: string): string => words.trim().toLowerCase().split(/\s+/).join(' ');
 
 /** Text between two single asterisks, `*words*`: not touching a third asterisk, and with no space just inside either one. */
 const TERM_MARK = /(?<![*\\\w])\*(?![*\s])([^*\n]+?)(?<![\s\\])\*(?![*\w])/g;
@@ -1156,7 +1162,29 @@ function analyse(write: boolean): Analysis {
     // A term mark names the term of its own document whose stem its words spell,
     // or, as the text of a link, the target of the link.
     if (rel.endsWith('.md')) {
-      const ownIds = new Set(readUnits(docSource).map(u => u.id));
+      const terms = readUnits(docSource).filter(u => u.kind === 'term');
+      const termIds = terms.map(u => u.id);
+      // The spellings that each term's word list gives, besides the words of its stem.
+      const given = new Map<string, string[]>();
+      for (const t of terms) {
+        const own = spelling(stemWords(t.id));
+        const forms = [...new Set((t.word?.forms ?? []).map(f => spelling(f.spelling)))].filter(f => f !== own);
+        given.set(t.id, forms);
+        for (const unknown of t.word?.unknown ?? [])
+          findings.rot.push(`${rel}#${t.id} — its word list names "${unknown}", which is no part of speech or no role of "${t.word?.part}"`);
+      }
+      // Each spelling, with the terms whose stem it spells and the terms a plugin gives it for.
+      const byStem = new Map(termIds.map(id => [spelling(stemWords(id)), id]));
+      const byForm = new Map<string, string[]>();
+      for (const id of termIds) for (const form of given.get(id) ?? []) byForm.set(form, [...(byForm.get(form) ?? []), id]);
+
+      // A form that another term goes by too leaves a mark that spells it unable to say which term it names.
+      for (const [form, ids] of byForm) {
+        const stem = byStem.get(form);
+        if (stem !== undefined) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')} and the stem of ${stem}, so a term mark cannot say which term it names`);
+        else if (ids.length > 1) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')}, so a term mark cannot say which term it names`);
+      }
+
       for (const mark of termMarks(docSource)) {
         const where = `${rel}:${docLineAt(mark.at)}`;
         if (mark.href !== undefined) {
@@ -1164,9 +1192,11 @@ function analyse(write: boolean): Analysis {
           if (!frag.startsWith('term-')) findings.rot.push(`${where} — term mark "*${mark.words}*" links to ${mark.href}, which is no term`);
           continue;
         }
-        const id = `term-${mark.words.toLowerCase().split(/\s+/).join('-')}`;
-        if (ownIds.has(id)) citedTargets.add(`${rel}#${id}`);
-        else findings.rot.push(`${where} — term mark "*${mark.words}*" names no term: ${rel} declares no ${id}`);
+        const words = spelling(mark.words);
+        const named = byStem.get(words) ?? (byForm.get(words)?.length === 1 ? byForm.get(words)?.[0] : undefined);
+        if (named !== undefined) citedTargets.add(`${rel}#${named}`);
+        else if ((byForm.get(words)?.length ?? 0) > 1) findings.rot.push(`${where} — term mark "*${mark.words}*" spells a form of ${byForm.get(words)?.join(' and ')}, so it names neither`);
+        else findings.rot.push(`${where} — term mark "*${mark.words}*" names no term: ${rel} declares no term with that form`);
       }
     }
   }
@@ -2360,7 +2390,8 @@ function show(names: string[], parts?: Parts, ids = false): void {
       listed('Derives from:', derivesFrom.map(u => unitLine(u, '', 2))),
       listed('Sitting in it:', within.map(u => unitLine(u, tally(u), 2))),
       listed('Deriving from it:', derivers.map(u => unitLine(u, '', 2))),
-      listed('Tested by:', (testsAt.get(key) ?? []).map(test => `${test.where}  ${test.title}`))
+      listed('Tested by:', (testsAt.get(key) ?? []).map(test => `${test.where}  ${test.title}`)),
+      ...(unit.kind === 'term-' ? [listed('Forms:', [stemWords(unit.id), ...(wordOf(unit.own ?? '')?.forms ?? []).map(f => spelling(f.spelling)).filter(f => f !== spelling(stemWords(unit.id)))])] : [])
     );
     printed.push(out.join('\n'));
   }

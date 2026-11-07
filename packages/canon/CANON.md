@@ -55,7 +55,13 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term unpinning`](#term-unpinning) — An unpinning is a finding for a plain test that checks a bug.
 - [`@term unexplained-failure`](#term-unexplained-failure) — An unexplained failure is a finding for an expected failure that checks no bug and no exception.
 - [`@term untesting`](#term-untesting) — An untesting is a finding for a leaf spec, an exception or a bug that no test checks.
-- [`@term rotting`](#term-rotting) — A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, for a pointer that names no target, and for a term mark that names no term.
+- [`@term rotting`](#term-rotting) —
+  > A rotting is a finding for one of these:
+  > - a tag that names no unit, names a file as well as a unit, or names an id that two documents declare
+  > - a pointer that names no target
+  > - a term mark that names no term
+  > - a form of a term that spells the stem or a form of another term of its document
+  > - a word list that names a part of speech or a role that the checker does not know
 - [`@term uncitation`](#term-uncitation) — An uncitation is a finding for a test in a declared suite that carries no tag.
 - [`@term misaiming`](#term-misaiming) — A misaiming is a finding for a test in a declared suite that checks a unit that is no claim.
 - [`@term overreach`](#term-overreach) — An overreach is a finding for a test that checks a claim another claim refines.
@@ -100,6 +106,8 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term source`](#term-source) — A source is a module in the sources that the canon field of the project names.
 - [`@term code-span`](#term-code-span) — A code span is text between backticks in a document.
 - [`@term term-mark`](#term-term-mark) — A term mark is text between two single asterisks in the prose of a document, on its own or as the text of a link: `*tracker*`, `[*checker*](../canon/CANON.md#term-checker)`.
+- [`@term form`](#term-form) — A form of a term is a spelling that names the term: its stem as words, or a spelling its word list holds.
+- [`@term word-list`](#term-word-list) — A word list is a line `Word:` in the own text of a term, with the items of the list right under it. The line names the part of speech of the term, and each item gives a role and a spelling.
 - [`@term comment`](#term-comment) — A comment is a comment in a source.
 - [`@term tag`](#term-tag) — A tag is a line of the documentation comment of a test.
 - [`@term carry`](#term-carry) — A test carries each tag in the documentation comment of the test.
@@ -196,6 +204,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@fact playwright-declares-a-test-with-test`](#fact-playwright-declares-a-test-with-test) — Playwright 1.64 declares a test with a call of `test`, with any of the modifiers `only`, `skip` and `fixme` between, and marks an expected failure with `fail`. A call of `test.skip`, `test.fixme` or `test.fail` with no body after its first argument declares no test: it marks the tests around it. Playwright refuses a test declared after its file has loaded, so a test inside the body of another test.
 - [`@fact node-declares-a-test-with-it-or-test`](#fact-node-declares-a-test-with-it-or-test) — Node's test runner declares a test with a call of `it` or `test` from `node:test`, with any of the modifiers `only`, `skip` and `todo` between. It has no modifier that marks an expected failure.
 - [`@fact a-runner-takes-the-body-of-a-test-after-its-title`](#fact-a-runner-takes-the-body-of-a-test-after-its-title) — Vitest, Jest, Playwright and Node's test runner take the body of a test as a function after its title.
+- [`@fact node-parses-no-code-into-a-syntax-tree`](#fact-node-parses-no-code-into-a-syntax-tree) — Node 24 has no module that parses JavaScript or TypeScript into a syntax tree, and none that says which declaration a name refers to.
 - [`@axiom every-claim-says-what-it-follows-from`](#axiom-every-claim-says-what-it-follows-from) —
   > All of these hold:
   > - when a [unit](#term-unit) is [unfounded](#term-unfounded), [checker](#term-checker) reports a [finding](#term-finding) for the unit
@@ -270,8 +279,16 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec a-pointer-names-a-target`](#spec-a-pointer-names-a-target) — When a [pointer](#term-pointer) [names](#term-name) no [target](#term-target), [checker](#term-checker) reports a [rotting](#term-rotting) for the pointer.
       - [`@bug a-file-pointer-is-not-checked`](#bug-a-file-pointer-is-not-checked) — When a file pointer names no target, checker reports no rotting for the file pointer.
     - [`@spec a-term-mark-names-a-term`](#spec-a-term-mark-names-a-term) — When a [term mark](#term-term-mark) [names](#term-name) no [term](#term-term), [checker](#term-checker) reports a [rotting](#term-rotting) for the term mark.
+    - [`@spec a-word-list-names-a-part-of-speech-and-its-roles`](#spec-a-word-list-names-a-part-of-speech-and-its-roles) — When a word list names a part of speech or a role the checker does not know, it reports a rotting. The roles of a part of speech are those its *word list* term gives.
+    - [`@spec a-form-names-one-term`](#spec-a-form-names-one-term) — When a form of a term spells the stem or a form of another term, the checker reports a rotting for the form.
     - [`@spec a-term-mark-names-the-term-its-words-or-its-link-lead-to`](#spec-a-term-mark-names-the-term-its-words-or-its-link-lead-to) — A term mark names one term: the term of its own document that its words spell, or the term its link names.
-      - [`@spec a-term-mark-names-the-term-whose-stem-its-words-spell`](#spec-a-term-mark-names-the-term-whose-stem-its-words-spell) — A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
+      - [`@spec a-term-mark-names-the-term-whose-form-its-words-spell`](#spec-a-term-mark-names-the-term-whose-form-its-words-spell) — A term mark outside a link names the term of its document that has a *form* its words spell.
+        - [`@spec a-term-mark-names-the-term-whose-stem-its-words-spell`](#spec-a-term-mark-names-the-term-whose-stem-its-words-spell) — A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
+        - [`@spec a-term-mark-names-the-term-whose-listed-form-its-words-spell`](#spec-a-term-mark-names-the-term-whose-listed-form-its-words-spell) — A term mark outside a link names the term whose word list gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its word list holds `- plural: outdated trackings`.
+        - [`@spec each-spelling-of-a-word-list-is-a-form-of-its-term`](#spec-each-spelling-of-a-word-list-is-a-form-of-its-term) — Each spelling in the word list of a term, whatever its role, is a form of the term.
+        - [`@spec a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form`](#spec-a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form) — A term with no word list has one form: the words of its stem.
+        - [`@spec a-stem-wins-over-a-form-of-another-term`](#spec-a-stem-wins-over-a-form-of-another-term) — A term mark whose words spell the stem of one term and a form of another names the term of the stem.
+        - [`@spec a-form-that-two-terms-share-names-neither`](#spec-a-form-that-two-terms-share-names-neither) — A term mark whose words spell a form of two terms, and the stem of neither, names no term.
       - [`@spec a-term-mark-names-its-term-whatever-its-case`](#spec-a-term-mark-names-its-term-whatever-its-case) — A term mark names the same term in capitals or not: `*Checker*` names `term-checker`.
       - [`@spec a-term-mark-in-a-link-names-the-target-of-the-link`](#spec-a-term-mark-in-a-link-names-the-target-of-the-link) — A term mark that is the text of a link names the term that the link names, whatever its words spell: `[*names*](#term-name)` names `term-name`.
       - [`@spec a-term-mark-names-no-term-of-another-document`](#spec-a-term-mark-names-no-term-of-another-document) — A term mark outside a link names no term of another document, not even of a document that its own document extends.
@@ -529,6 +546,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec show-lists-the-units-that-sit-in-a-unit`](#spec-show-lists-the-units-that-sit-in-a-unit) — `show` lists the units that sit in a unit, each with the number of tests that check it.
     - [`@spec show-lists-the-units-that-derive-from-a-unit-on-their-derives-from-line`](#spec-show-lists-the-units-that-derive-from-a-unit-on-their-derives-from-line) — `show` lists the units whose "Derives from:" line names a unit.
     - [`@spec show-lists-the-tests-that-check-a-unit`](#spec-show-lists-the-tests-that-check-a-unit) — `show` lists each test that checks a unit, by its file, its line and its title.
+    - [`@spec show-of-a-term-lists-its-forms`](#spec-show-of-a-term-lists-its-forms) — `show` lists each *form* of a term under "Forms:", the words of its stem first.
     - [`@spec show-reads-an-id-as-the-heading-or-the-tree-writes-it`](#spec-show-reads-an-id-as-the-heading-or-the-tree-writes-it) — `show` reads a unit as its id, as its kind and stem after an `@`, or in words as the tree writes it.
     - [`@spec show-of-a-name-that-names-no-unit-fails-the-run`](#spec-show-of-a-name-that-names-no-unit-fails-the-run) — When a name on the command line of `show` names no unit, the checker says so, and the run exits with code 2.
   - [`@spec show-with-a-part-prints-only-that-part-of-each-unit`](#spec-show-with-a-part-prints-only-that-part-of-each-unit) — When the command line of `show` names parts of a unit, `show` prints where each unit starts and the id of the unit. Below that, it prints only the parts named: the statement, or the body.
@@ -589,6 +607,9 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
   - [`@spec a-dry-run-of-rename-lists-each-change-and-makes-none`](#spec-a-dry-run-of-rename-lists-each-change-and-makes-none) — `rename --dry-run` lists each line that `rename` would change, and changes no file.
     - [`@spec a-dry-run-lists-each-line-it-would-change`](#spec-a-dry-run-lists-each-line-it-would-change) — `rename --dry-run` prints the file and the number of each line it would change, with the line as it is and the line as it would be.
     - [`@spec a-dry-run-changes-no-file`](#spec-a-dry-run-changes-no-file) — After `rename --dry-run`, every file of the project is as it was.
+- [`@axiom the-checker-depends-on-node-alone`](#axiom-the-checker-depends-on-node-alone) — The package of the checker depends on no package outside Node. What needs a library comes to the checker as a plugin.
+  - [`@spec the-package-of-the-checker-lists-no-dependency`](#spec-the-package-of-the-checker-lists-no-dependency) — The `package.json` of the checker lists no package under `dependencies`.
+    - [`@exception the-checker-reads-the-code-of-a-project-with-a-parser`](#exception-the-checker-reads-the-code-of-a-project-with-a-parser) — The `package.json` of the checker lists `acorn`, `@sveltejs/acorn-typescript` and `periscopic` under `dependencies`, and no other package.
 <!-- toc:end -->
 
 ## Terms
@@ -1095,7 +1116,12 @@ Untesting: [checker](#term-checker) reports an [untesting] for {1} | [checker](#
 
 ### @term rotting
 
-> A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, for a pointer that names no target, and for a term mark that names no term.
+> A rotting is a finding for one of these:
+> - a tag that names no unit, names a file as well as a unit, or names an id that two documents declare
+> - a pointer that names no target
+> - a term mark that names no term
+> - a form of a term that spells the stem or a form of another term of its document
+> - a word list that names a part of speech or a role that the checker does not know
 
 The checker prints `rot`.
 
@@ -1553,6 +1579,23 @@ sig TermMark extends Thing {}
 noun TermMark: [term mark]
 TermMark: {1} is a [term mark] | {1} is not a [term mark]
 ```
+
+### @term form
+
+> A form of a term is a spelling that names the term: its stem as words, or a spelling its word list holds.
+
+The words of a stem are the stem with a space for each hyphen: the stem `outdated-tracking` has the words `outdated tracking`. Its *word list* can give `outdated trackings` as another form.
+
+### @term word-list
+
+> A word list is a line `Word:` in the own text of a term, with the items of the list right under it. The line names the part of speech of the term, and each item gives a role and a spelling.
+
+```md
+Word: noun
+- plural: outdated trackings
+```
+
+The parts of speech are `noun`, `verb`, `adjective` and `name`. A noun has the role `plural`. A verb has the roles `third person`, `past`, `participle` and `gerund`. An adjective and a name have none, because English does not inflect them. Each part of speech has the role `also`, for a spelling that is no inflection of the stem: `also: ambiguous` on the term `ambiguity`.
 
 ### @term comment
 
@@ -2225,6 +2268,12 @@ The file `test.d.ts` of `@types/node` 26 declares these in the module `node:test
 
 The body can follow an options object, as in Vitest's `test(name, options, fn)`. A call with no function after its first argument runs no code of its own, such as `test.todo('name')` or Playwright's `test.skip(condition, 'reason')`.
 
+## @fact node-parses-no-code-into-a-syntax-tree
+
+> Node 24 has no module that parses JavaScript or TypeScript into a syntax tree, and none that says which declaration a name refers to.
+
+Node runs code and can strip the types from TypeScript, but it gives a program no tree of the code it reads. A program that asks where a call comes from needs a parser and an analysis of scopes of its own.
+
 ## @axiom every-claim-says-what-it-follows-from
 
 <!-- statement-axiom-every-claim-says-what-it-follows-from:begin — generated by `canon generate`; edits are overwritten -->
@@ -2808,15 +2857,53 @@ A term mark says that its words are a word of the canon, defined by a term. When
 all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
 ```
 
+#### @spec a-word-list-names-a-part-of-speech-and-its-roles
+
+> When a word list names a part of speech or a role the checker does not know, it reports a rotting. The roles of a part of speech are those its *word list* term gives.
+
+This follows because a word list the checker cannot read leaves the forms of its term unknown. A typo such as `plral:` would drop a form without a word.
+
+#### @spec a-form-names-one-term
+
+> When a form of a term spells the stem or a form of another term, the checker reports a rotting for the form.
+
+This follows because a term mark that spells such a form cannot say which term it names. The checker reports it before any mark spells it, so the author learns of it before a mark lands on the wrong term.
+
 #### @spec a-term-mark-names-the-term-its-words-or-its-link-lead-to
 
 > A term mark names one term: the term of its own document that its words spell, or the term its link names.
 
 This follows because a term mark leads where it says, as a pointer does, and it leads by the cheapest means that stays exact. The words of a mark name a term of the document the reader is in. A term of another document is one link away.
 
-##### @spec a-term-mark-names-the-term-whose-stem-its-words-spell
+##### @spec a-term-mark-names-the-term-whose-form-its-words-spell
+
+> A term mark outside a link names the term of its document that has a *form* its words spell.
+
+This follows because each form of a term is a spelling the author may write for it, the words of its stem first among them.
+
+###### @spec a-term-mark-names-the-term-whose-stem-its-words-spell
 
 > A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
+
+###### @spec a-term-mark-names-the-term-whose-listed-form-its-words-spell
+
+> A term mark outside a link names the term whose word list gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its word list holds `- plural: outdated trackings`.
+
+###### @spec each-spelling-of-a-word-list-is-a-form-of-its-term
+
+> Each spelling in the word list of a term, whatever its role, is a form of the term.
+
+###### @spec a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form
+
+> A term with no word list has one form: the words of its stem.
+
+###### @spec a-stem-wins-over-a-form-of-another-term
+
+> A term mark whose words spell the stem of one term and a form of another names the term of the stem.
+
+###### @spec a-form-that-two-terms-share-names-neither
+
+> A term mark whose words spell a form of two terms, and the stem of neither, names no term.
 
 ##### @spec a-term-mark-names-its-term-whatever-its-case
 
@@ -4308,6 +4395,12 @@ This follows because these follow from the unit too. They can sit in another par
 
 This follows because a change to a claim changes the tests that check it, and a tag sits in another file than its unit.
 
+#### @spec show-of-a-term-lists-its-forms
+
+> `show` lists each *form* of a term under "Forms:", the words of its stem first.
+
+This follows because the reader of a term mark sees through `show` which spellings name the term, the words of its stem among them.
+
 #### @spec show-reads-an-id-as-the-heading-or-the-tree-writes-it
 
 > `show` reads a unit as its id, as its kind and stem after an `@`, or in words as the tree writes it.
@@ -4687,3 +4780,23 @@ This follows because the author judges a change by the line it lands in.
 > After `rename --dry-run`, every file of the project is as it was.
 
 This follows because a dry run that wrote would be a rename the author did not ask for.
+
+## @axiom the-checker-depends-on-node-alone
+
+> The package of the checker depends on no package outside Node. What needs a library comes to the checker as a plugin.
+
+A project that installs the checker installs nothing else with it, and a library that a project does not use cannot break its check. A document asks for the plugin whose library it needs, by name in its frontmatter.
+
+### @spec the-package-of-the-checker-lists-no-dependency
+
+> The `package.json` of the checker lists no package under `dependencies`.
+
+This follows because a package that the checker lists, every project that installs the checker installs too.
+
+#### @exception the-checker-reads-the-code-of-a-project-with-a-parser
+
+> The `package.json` of the checker lists `acorn`, `@sveltejs/acorn-typescript` and `periscopic` under `dependencies`, and no other package.
+
+Derives from: [`fact-node-parses-no-code-into-a-syntax-tree`](#fact-node-parses-no-code-into-a-syntax-tree)
+
+The checker reads which calls of a suite declare a test. It also reads where the name of each call comes from. `acorn` parses the code, with `@sveltejs/acorn-typescript` for TypeScript. `periscopic` says which declaration each name refers to. Node does none of that. Every check of the tests needs it, so the parser stays in the package of the checker.
