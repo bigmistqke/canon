@@ -21,8 +21,8 @@ dispose: pulse disposes {1} | pulse does not dispose {1}
 );
 
 verbalize('always all o: Owner, c: Cleanup | (dispose[o] and c.on = o) implies eventually c in Ran', readings);
-// Now and at every later moment, for every owner_1 and every cleanup_1:
-//   when pulse disposes owner_1 and cleanup_1 is on owner_1, then now or at a later moment, cleanup_1 has run.
+// From now on, for every owner and every cleanup:
+//   when pulse disposes the owner and the cleanup is on the owner, then now or later, the cleanup has run.
 ```
 
 The [canon plugin for Alloy](../canon-plugin-alloy) uses naturalloy to write the statement of each unit of a canon from its formula.
@@ -35,9 +35,9 @@ A table of readings says each name a formula uses. A line `key: positive | negat
 
 ## How a formula reads
 
-A formula reads as sentences where it can. A "there is" or "there is no" over a variable that is said once becomes a noun phrase in its place: `spec_1 cites no axiom`, `unit_1 names an issue that tracker does not know`, `another unit sits in unit_1`, `a test checks a bug that sits in unit_1`; what else is true of the variable becomes a relative clause. Up to three short clauses stand in one sentence, a subject that two clauses share is said once, and a rule that fits on a line says "when …, …". A definition whose alternatives each begin by saying what kind of thing it is about is said by cases, one noun phrase to a kind. Anything that does not fit these is said in full, with "there is … such that" and lists.
+A formula reads as sentences where it can. A "there is" or "there is no" over a variable that is said once becomes a noun phrase in its place: `spec S1 cites no axiom`, `unit U1 names an issue that tracker does not know`, `another unit sits in unit U1`, `a test checks a bug that sits in unit U1`; what else is true of the variable becomes a relative clause. Up to three short clauses stand in one sentence, a subject that two clauses share is said once, and a rule that fits on a line says "when …, …". A definition whose alternatives each begin by saying what kind of thing it is about is said by cases, one noun phrase to a kind. Anything that does not fit these is said in full, with "there is … such that" and lists.
 
-A variable is named after its noun and the number it is, `unit_1`, `unit_2`, `spec_1`, whatever the formula called it, so the name says what the variable is wherever it is read; the names are numbered again in each statement.
+A variable is named after the first letter of its noun and the number it is, `U1`, `U2`, `S1`, whatever the formula called it, and its noun comes before its name wherever the words name it: `for every unit U1 and every unit U2`, `unit U1 cites unit U2`. Two nouns of one statement that begin alike take more letters until they differ, `Un1` for a unit and `Us1` for a use, and a noun of several words takes the first letter of each, `LF1` for a listing frontmatter. A variable that is the only one of its noun, where no other word says that noun, is named the noun alone: `the unit`. The names are given again in each statement. In the Markdown layout, a line that opens a part of the statement ends in a line break, `\`, in place of an empty line.
 
 The temporal operators read as moments: `always` is "now and at every later moment", `eventually` "now or at a later moment", `after` "at the next moment", `before` "there is a moment before, and at it", `once` "now or at an earlier moment", `historically` "now and at every earlier moment". `until` and `since` read in two parts, the moment where the second side holds and the stretch of moments where the first does, each set apart. `releases` and `triggered` read as the alternatives they mean: `a releases b` is `always b or (b until (a and b))`. `;` reads as one clause where both its sides are plain clauses. A primed set or field with no line of its own reads "at the next moment, …" when it is the one changing part of its clause.
 
@@ -51,7 +51,7 @@ An override, a restriction, `iden`, `none` and a set comprehension each read as 
 
 A time phrase at the start of a sentence covers the whole sentence. Where it covers one part, the parts are bullets. A part whose end the words cannot mark is set apart on lines of its own, below "the following holds": a time phrase before another, a rule inside a rule, and a side of `until` that is more than one plain clause.
 
-The analyzer keeps integers in a fixed bit width and wraps a number that leaves it. So a comparison of integers opens with "in integers that wrap around at the analyzer's bit width". A count, a sum or a division gets a name, `number_1`. The words after "where" say what it is: "the number of values of owner_1 such that c is on owner_1". A division says how it rounds and what dividing by zero gives.
+The analyzer keeps integers in a fixed bit width and wraps a number that leaves it. So a comparison of integers opens with "in integers that wrap around at the analyzer's bit width". A count, a sum or a division gets a name, `number_1`. The words after "where" say what it is: "the number of values of owner O1 such that c is on owner O1". A division says how it rounds and what dividing by zero gives.
 
 Whatever cannot be said without loss is refused with the reason, never skipped: a name with no reading, a reading that leaves out a variable the formula gives, a comparison of sides that Alloy does not compare, a construct with no words. Among those constructs are a variable of several things, an arrow with a multiplicity and a shift. Two sets compared are said member by member. [Issue #29](https://github.com/bigmistqke/canon/issues/29) lists, production by production of Alloy's grammar, what is said and what is not yet.
 

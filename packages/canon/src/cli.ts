@@ -2289,7 +2289,9 @@ const asWords = (line: string): string =>
   line
     .split(/(`+[^`]*`+)/)
     .map((part, i) => (i % 2 === 1 ? part : part.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(TERM_MARK, (_, words: string) => words)))
-    .join('');
+    .join('')
+    // A backslash that ends the line is a line break of the page, no word of the statement.
+    .replace(/\\$/, '');
 
 /**
  * A unit's own text split at its statement: the statement as it reads, its

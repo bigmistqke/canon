@@ -6,6 +6,8 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { isDefinition, parseDefinitions, parseReadings, Refusal, verbalize, verbalizeDefinition, withDefinitions } from '../../src/index.ts';
+import { RULE } from '../../src/core/constructs.ts';
+import { markdownLines } from '../../src/core/layout.ts';
 
 const FIXTURE = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'fixtures', 'lifetimes');
 const read = (name: string): string => readFileSync(join(FIXTURE, name), 'utf8');
@@ -60,7 +62,7 @@ describe('the words', () => {
    */
   it('says a quantifier with the noun of its type, repeated for each variable', () => {
     expect(say('all o: Owner, k: Owner, c: Cleanup | c in Ran')).toBe(
-      'For every owner_1, every owner_2 and every cleanup:\n  the cleanup has run.'
+      'For every owner O1, every owner O2 and every cleanup:\n  the cleanup has run.'
     );
   });
 
@@ -68,8 +70,8 @@ describe('the words', () => {
    * @canon spec-three-things-a-for-every-names-are-a-list
    */
   it('writes three things a for every or a for some names as a list', () => {
-    expect(say('all c: Cleanup, o, p: Owner | c in Ran implies o in Disposed')).toMatch(/^For every cleanup, every owner_1 and every owner_2:/);
-    expect(say('some c: Cleanup, o, p: Owner | o in c.on and p not in c.on')).toMatch(/^For some cleanup, some owner_1 and some owner_2:/);
+    expect(say('all c: Cleanup, o, p: Owner | c in Ran implies o in Disposed')).toMatch(/^For every cleanup, every owner O1 and every owner O2:/);
+    expect(say('some c: Cleanup, o, p: Owner | o in c.on and p not in c.on')).toMatch(/^For some cleanup, some owner O1 and some owner O2:/);
     expect(say('all c: Cleanup, o: Owner | c in Ran implies o in Disposed')).toMatch(/^For every cleanup and every owner:/);
   });
 
@@ -78,7 +80,7 @@ describe('the words', () => {
    */
   it('says some over several variables as for some each of them, and over one as there is', () => {
     expect(say('some c: Cleanup, o: Owner | o in c.on and c in Ran')).toBe('For some cleanup and some owner:\n  the cleanup is on the owner and has run.');
-    expect(say('some c, d: Cleanup | c != d and c in Ran')).toContain('For some cleanup_1 and some cleanup_2:');
+    expect(say('some c, d: Cleanup | c != d and c in Ran')).toContain('For some cleanup C1 and some cleanup C2:');
     expect(say('some c: Cleanup | c in Ran and c in Registered')).toMatch(/^There is a cleanup such that /);
   });
 
@@ -87,8 +89,8 @@ describe('the words', () => {
    */
   it('names a variable after its noun and the number it is, whatever the formula called it', () => {
     const readings = parseReadings('noun Unit: unit\nnoun Spec: spec\nnoun ExpectedFailure: expected failure\nRan: {1} has run | {1} has not run');
-    expect(say('all x, y: Unit, z: Spec | x in Ran', readings)).toBe('For every unit_1, every unit_2 and every spec:\n  unit_1 has run.');
-    expect(say('all u: Unit | all u2: Unit | u in Ran', readings)).toBe('For every unit_1 and every unit_2:\n  unit_1 has run.');
+    expect(say('all x, y: Unit, z: Spec | x in Ran', readings)).toBe('For every unit U1, every unit U2 and every spec:\n  unit U1 has run.');
+    expect(say('all u: Unit | all u2: Unit | u in Ran', readings)).toBe('For every unit U1 and every unit U2:\n  unit U1 has run.');
   });
 
   /**
@@ -102,7 +104,7 @@ describe('the words', () => {
     expect(say('one x: Owner | x in c.on')).toBe('There is exactly one owner such that c is on the owner.');
     // A link's target is not a word the reader sees: "(#term-unit)" does not say the noun again.
     const linked = parseReadings('noun Unit: [unit]\nRan: {1} has [run] | {1} has not [run]', '#term-unit');
-    expect(verbalize('all u: Unit | u in Ran', linked, 'markdown')).toBe('For every [unit](#term-unit):\n\nthe unit has run.');
+    expect(verbalize('all u: Unit | u in Ran', linked, 'markdown')).toBe('For every [unit](#term-unit):\\\nthe unit has run.');
   });
 
   /**
@@ -214,10 +216,10 @@ describe('the words', () => {
    */
   it('says a "disj" quantifier with the condition that its variables are different', () => {
     expect(say('all disj c, d: Cleanup | c in Ran implies d in Ran')).toBe(
-      'For every cleanup_1 and every cleanup_2:\n  cleanup_2 has run when all of these hold:\n    - cleanup_1 and cleanup_2 are different\n    - cleanup_1 has run'
+      'For every cleanup C1 and every cleanup C2:\n  cleanup C2 has run when all of these hold:\n    - cleanup C1 and cleanup C2 are different\n    - cleanup C1 has run'
     );
-    expect(say('all disj c, d: Cleanup | d in Ran')).toBe('For every cleanup_1 and every cleanup_2:\n  when cleanup_1 and cleanup_2 are different, cleanup_2 has run.');
-    expect(say('some disj c, d: Cleanup | c in Ran and d in Ran')).toBe('For some cleanup_1 and some cleanup_2:\n  all of these hold:\n    - cleanup_1 and cleanup_2 are different\n    - cleanup_1 has run\n    - cleanup_2 has run');
+    expect(say('all disj c, d: Cleanup | d in Ran')).toBe('For every cleanup C1 and every cleanup C2:\n  when cleanup C1 and cleanup C2 are different, cleanup C2 has run.');
+    expect(say('some disj c, d: Cleanup | c in Ran and d in Ran')).toBe('For some cleanup C1 and some cleanup C2:\n  all of these hold:\n    - cleanup C1 and cleanup C2 are different\n    - cleanup C1 has run\n    - cleanup C2 has run');
   });
 
   /**
@@ -337,7 +339,7 @@ describe('the words', () => {
   it('refuses an equality with a side whose type the vocabulary does not tell', () => {
     const other = withDefinitions(parseReadings(`${read('readings.txt')}\nm/Gone: {1} is gone in m | {1} is not gone in m`), read('vocabulary.als'));
     expect(() => say('m/Gone = Disposed', other)).toThrow('the vocabulary does not tell what kind of thing "m/Gone" holds');
-    expect(say('all p: Owner | p.*parent = Disposed')).toContain('For every owner_1 and every owner_2:');
+    expect(say('all p: Owner | p.*parent = Disposed')).toContain('For every owner O1 and every owner O2:');
   });
 
   /**
@@ -369,7 +371,7 @@ describe('the words', () => {
     expect(say("c.on' = o", comma)).toMatch(/^For every owner:\n/);
     const beside = say('(c.on = o and c in Ran) implies c in Registered', withDefinitions(parseReadings('noun Owner: owner\non: {1} is on {2}, as planned | {1} is not on {2}, as planned\nRan: {1} has run | {1} has not run\nRegistered: code has registered {1} | code has not registered {1}'), 'sig Owner {} sig Cleanup { var on: set Owner }'));
     expect(beside).toContain('for every owner:');
-    expect(beside).not.toContain('owner_2');
+    expect(beside).not.toContain('owner O2');
     expect(say('c.on != o', many)).toBe('There is an owner such that exactly one of these holds:\n  - c is on the owner\n  - the owner and o are the same');
   });
 
@@ -381,7 +383,7 @@ describe('the words', () => {
     expect(say("c.on' = c.on")).toBe('For every owner:\n  c is on the owner at the next moment exactly when c is on the owner now.');
     const beside = say('(c.on = d.on and c in Ran) implies c in Registered');
     expect(beside).toContain('for every owner:');
-    expect(beside).not.toContain('owner_2');
+    expect(beside).not.toContain('owner O2');
     expect(say('c.on != d.on')).toBe('There is an owner such that exactly one of these holds:\n  - c is on the owner\n  - d is on the owner');
   });
 
@@ -496,10 +498,10 @@ describe('a predicate with no reading of its own', () => {
     const readings = defined('pred has_pending { some c: Cleanup | c in Registered and c not in Ran }');
     expect(say('all c: Cleanup | has_pending and c in Ran', readings)).toBe(
       [
-        'For every cleanup_1:',
+        'For every cleanup C1:',
         '  all of these hold:',
-        '    - there is a cleanup_2 such that code has registered cleanup_2 and cleanup_2 has not run',
-        '    - cleanup_1 has run'
+        '    - there is a cleanup C2 such that code has registered cleanup C2 and cleanup C2 has not run',
+        '    - cleanup C1 has run'
       ].join('\n')
     );
   });
@@ -509,7 +511,7 @@ describe('a predicate with no reading of its own', () => {
    */
   it('never gives a variable the name of an argument of the call, even when the argument has a name of the same kind', () => {
     const readings = defined('pred registered_other[x: Cleanup] { some c: Cleanup | c in Registered and x in Registered }');
-    expect(say('registered_other[cleanup_1]', readings)).toContain('a cleanup_2 such that');
+    expect(say('registered_other[cleanup_1]', readings)).toContain('a cleanup C2 such that');
   });
 
   /**
@@ -517,11 +519,11 @@ describe('a predicate with no reading of its own', () => {
    */
   it('lets the alternatives of a list reuse a name, and keeps it taken for what follows', () => {
     const readings = defined('pred p { (some c: Cleanup | c in Registered) or (some c: Cleanup | c in Registered and c in Ran) }');
-    expect(say('some c: Cleanup | p and c in Registered', readings)).toContain('- there is a cleanup_2 such that code has registered cleanup_2\n      - there is a cleanup_2 such that');
+    expect(say('some c: Cleanup | p and c in Registered', readings)).toContain('- there is a cleanup C2 such that code has registered cleanup C2\n      - there is a cleanup C2 such that');
     expect(say('(some c: Cleanup | c in Registered) or (some c: Cleanup | c in Registered and c in Ran)', readings)).toMatch(
       /^At least one of these holds:\n  - there is a cleanup such that code has registered the cleanup\n  - there is a cleanup such that /
     );
-    expect(say('((some c: Cleanup | c in Registered) or (some c: Cleanup | c in Registered and c in Ran)) and (some c: Cleanup | c in Registered)', readings)).toContain('there is a cleanup_2 such that code has registered cleanup_2');
+    expect(say('((some c: Cleanup | c in Registered) or (some c: Cleanup | c in Registered and c in Ran)) and (some c: Cleanup | c in Registered)', readings)).toContain('there is a cleanup C2 such that code has registered cleanup C2');
   });
 
   /**
@@ -533,7 +535,7 @@ describe('a predicate with no reading of its own', () => {
     expect(say('(all c: Cleanup | c in Ran) and (all c: Cleanup | c in Registered)', readings)).toBe(
       ['All of these hold:', '  - for every cleanup:', '      the cleanup has run', '  - for every cleanup:', '      code has registered the cleanup.'].join('\n')
     );
-    expect(say('(some c: Cleanup | c in Registered) and (some c: Cleanup | c in Registered)', readings)).toContain('there is a cleanup_2 such that code has registered cleanup_2');
+    expect(say('(some c: Cleanup | c in Registered) and (some c: Cleanup | c in Registered)', readings)).toContain('there is a cleanup C2 such that code has registered cleanup C2');
   });
 
   /**
@@ -611,7 +613,7 @@ describe('a definition', () => {
    */
   it('says what it names exactly when its body holds, for every value of its parameters', () => {
     expect(verbalizeDefinition('pred orphan[u: Unit] { u in Spec and no v: Unit | u->v in Sits.rel }', readings)).toBe(
-      ['For every unit_1:', '  unit_1 is an orphan exactly when unit_1 is a spec that sits in no unit.'].join('\n')
+      ['For every unit U1:', '  unit U1 is an orphan exactly when unit U1 is a spec that sits in no unit.'].join('\n')
     );
   });
 
@@ -622,7 +624,7 @@ describe('a definition', () => {
     const vocabulary = 'sig Cleanup {} var sig Ran in Cleanup {} pred pair[disj c, d: Cleanup] { c in Ran } pred both[disj c, d: Cleanup] { c in Ran }';
     const readings = withDefinitions(parseReadings('noun Cleanup: cleanup\nRan: {1} has run | {1} has not run\npair: {1} pairs with {2} | {1} does not pair with {2}'), vocabulary);
     expect(verbalizeDefinition('pred pair[disj c, d: Cleanup] { c in Ran }', readings)).toBe(
-      'For every cleanup_1 and every cleanup_2:\n  cleanup_1 pairs with cleanup_2 exactly when all of these hold:\n    - cleanup_1 and cleanup_2 are different\n    - cleanup_1 has run'
+      'For every cleanup C1 and every cleanup C2:\n  cleanup C1 pairs with cleanup C2 exactly when all of these hold:\n    - cleanup C1 and cleanup C2 are different\n    - cleanup C1 has run'
     );
     expect(say('both[a, b]', readings)).toBe('All of these hold:\n  - a and b are different\n  - a has run');
   });
@@ -649,7 +651,7 @@ describe('a definition', () => {
    */
   it('says each parameter of several, with the noun of its type', () => {
     expect(verbalizeDefinition('pred pair[a, b: Unit] { a->b in Sits.rel }', readings)).toBe(
-      'For every unit_1 and every unit_2:\n  unit_1 and unit_2 are a pair exactly when unit_1 sits in unit_2.'
+      'For every unit U1 and every unit U2:\n  unit U1 and unit U2 are a pair exactly when unit U1 sits in unit U2.'
     );
   });
 
@@ -686,7 +688,7 @@ describe('a definition', () => {
       'A unit is an orphan exactly when the following holds:\n  when the unit is a spec, the unit is a spec.'
     );
     expect(verbalizeDefinition('pred orphan[u: Unit] { all v: Unit | u->v in Sits.rel }', readings)).toBe(
-      'For every unit_1:\n  unit_1 is an orphan exactly when the following holds:\n    for every unit_2:\n      unit_1 sits in unit_2.'
+      'For every unit U1:\n  unit U1 is an orphan exactly when the following holds:\n    for every unit U2:\n      unit U1 sits in unit U2.'
     );
   });
 
@@ -725,7 +727,7 @@ describe('a definition', () => {
    */
   it('reads a predicate of a signature with this as its first parameter', () => {
     expect(verbalizeDefinition('pred Unit.orphan { this in Spec }', readings)).toBe('A unit is an orphan exactly when the unit is a spec.');
-    expect(verbalizeDefinition('pred Unit.pair[v: Unit] { this->v in Sits.rel }', readings)).toBe('For every unit_1 and every unit_2:\n  unit_1 and unit_2 are a pair exactly when unit_1 sits in unit_2.');
+    expect(verbalizeDefinition('pred Unit.pair[v: Unit] { this->v in Sits.rel }', readings)).toBe('For every unit U1 and every unit U2:\n  unit U1 and unit U2 are a pair exactly when unit U1 sits in unit U2.');
     const called = withDefinitions(parseReadings('noun Cleanup: cleanup\nRan: {1} has run | {1} has not run'), 'sig Cleanup {} var sig Ran in Cleanup {} pred Cleanup.settled { this in Ran }');
     expect(say('d.settled', called)).toBe('d has run.');
     expect(say('settled[d]', called)).toBe('d has run.');
@@ -735,7 +737,7 @@ describe('a definition', () => {
    * @canon spec-a-body-of-several-formulas-is-said-as-them-holding-together
    */
   it('says a body of several formulas as them holding together', () => {
-    expect(verbalizeDefinition('pred orphan[u: Unit] {\n  u in Spec\n  no v: Unit | u->v in Sits.rel\n}', readings)).toBe('For every unit_1:\n  unit_1 is an orphan exactly when unit_1 is a spec that sits in no unit.');
+    expect(verbalizeDefinition('pred orphan[u: Unit] {\n  u in Spec\n  no v: Unit | u->v in Sits.rel\n}', readings)).toBe('For every unit U1:\n  unit U1 is an orphan exactly when unit U1 is a spec that sits in no unit.');
     expect(say('{\n  c in Ran\n  d in Ran\n}')).toBe('c has run and d has run.');
   });
 
@@ -766,8 +768,8 @@ describe('a definition', () => {
    */
   it('says a function as its value holding a member exactly when its body does', () => {
     const homes = parseReadings(['noun Unit: unit', 'Sits.rel: {1} sits in {2} | {1} does not sit in {2}', 'home: {2} is a home of {1} | {2} is not a home of {1}'].join('\n'));
-    expect(verbalizeDefinition('fun home[u: Unit]: Unit { u.(Sits.rel) }', homes)).toBe('For every unit_1 and every unit_2:\n  unit_2 is a home of unit_1 exactly when unit_1 sits in unit_2.');
-    expect(verbalizeDefinition('fun home[u: Unit]: set Unit { u.(Sits.rel) }', homes)).toBe('For every unit_1 and every unit_2:\n  unit_2 is a home of unit_1 exactly when unit_1 sits in unit_2.');
+    expect(verbalizeDefinition('fun home[u: Unit]: Unit { u.(Sits.rel) }', homes)).toBe('For every unit U1 and every unit U2:\n  unit U2 is a home of unit U1 exactly when unit U1 sits in unit U2.');
+    expect(verbalizeDefinition('fun home[u: Unit]: set Unit { u.(Sits.rel) }', homes)).toBe('For every unit U1 and every unit U2:\n  unit U2 is a home of unit U1 exactly when unit U1 sits in unit U2.');
   });
 
   /**
@@ -799,7 +801,7 @@ describe('the words several clauses share', () => {
     expect(verbalize('all u: Unit | u in A and u in B', shared)).toBe('For every unit:\n  the unit is a definition with an alternative A and is a definition with an alternative B.');
     // Negations of a noun phrase's variable share "is not", and each says its own "a definition with".
     expect(verbalize('all v: Unit | some u: Unit | v->u in Cite.rel and u not in A and u not in B', shared)).toBe(
-      'For every unit_1:\n  unit_1 cites a unit that is not a definition with an alternative A or a definition with an alternative B.'
+      'For every unit U1:\n  unit U1 cites a unit that is not a definition with an alternative A or a definition with an alternative B.'
     );
     // The kinds of a definition share "is", and each says what else holds of its kind in full.
     expect(verbalizeDefinition('pred kept[u: Unit] { (u in Spec and u in A) or (u in Bug and u in B) }', shared)).toBe(
@@ -825,7 +827,7 @@ describe('a definition by cases', () => {
    */
   it('is said as a noun phrase for each kind: "a spec that cites no axiom and cites no spec"', () => {
     expect(define('(u in Spec and (no a: Unit | u->a in Cite.rel) and u not in Bug) or (u in Bug and (no s: Unit | u->s in Cite.rel))')).toBe(
-      ['unit_1 is unfounded exactly when unit_1 is one of these:', '    - a spec that cites no unit and is not a bug', '    - a bug that cites no unit'].join('\n')
+      ['unit U1 is unfounded exactly when unit U1 is one of these:', '    - a spec that cites no unit and is not a bug', '    - a bug that cites no unit'].join('\n')
     );
   });
 
@@ -834,7 +836,7 @@ describe('a definition by cases', () => {
    */
   it('puts the alternatives of one kind together with "or"', () => {
     expect(define('(u in Spec and (no a: Unit | u->a in Cite.rel)) or (u in Spec and u not in Bug) or (u in Bug and (no s: Unit | u->s in Cite.rel))')).toBe(
-      ['unit_1 is unfounded exactly when unit_1 is one of these:', '    - a spec that cites no unit or is not a bug', '    - a bug that cites no unit'].join('\n')
+      ['unit U1 is unfounded exactly when unit U1 is one of these:', '    - a spec that cites no unit or is not a bug', '    - a bug that cites no unit'].join('\n')
     );
   });
 
@@ -851,7 +853,7 @@ describe('a definition by cases', () => {
    * @canon spec-a-definition-with-one-kind-is-one-sentence
    */
   it('is one sentence when there is one kind', () => {
-    expect(define('u in Spec and (no a: Unit | u->a in Cite.rel)')).toBe('unit_1 is unfounded exactly when unit_1 is a spec that cites no unit.');
+    expect(define('u in Spec and (no a: Unit | u->a in Cite.rel)')).toBe('unit U1 is unfounded exactly when unit U1 is a spec that cites no unit.');
   });
 
   /**
@@ -867,7 +869,7 @@ describe('a definition by cases', () => {
    */
   it('is said as it stands when a run of "and" would be read two ways beside another alternative of its kind', () => {
     expect(define('(u in Spec and u not in Bug and u not in Axiom) or (u in Spec and (no a: Unit | u->a in Cite.rel)) or (u in Bug and u not in Spec)').split('\n')[0]).toBe(
-      'unit_1 is unfounded exactly when at least one of these holds:'
+      'unit U1 is unfounded exactly when at least one of these holds:'
     );
   });
 
@@ -876,7 +878,7 @@ describe('a definition by cases', () => {
    */
   it('is said as it stands when what an alternative says is not about its subject', () => {
     expect(define('(u in Spec and (some a: Unit | a->u in Cite.rel and a in Spec)) or (u in Bug and u not in Spec)').split('\n')[0]).toBe(
-      'unit_1 is unfounded exactly when at least one of these holds:'
+      'unit U1 is unfounded exactly when at least one of these holds:'
     );
   });
 
@@ -886,7 +888,7 @@ describe('a definition by cases', () => {
   it('is said as it stands when an option of a kind holds a comma and the kind has more than two options', () => {
     const cites = 'some v: Unit | u->v in Cite.rel and v not in Axiom and v not in Spec and v not in Bug';
     expect(define(`(u in Bug and ((${cites}) or u not in Tested or u not in Spec)) or (u in Spec and u not in Tested)`).split('\n')[0]).toBe(
-      'unit_1 is unfounded exactly when at least one of these holds:'
+      'unit U1 is unfounded exactly when at least one of these holds:'
     );
   });
 
@@ -896,7 +898,7 @@ describe('a definition by cases', () => {
   it.fails('is said as it stands when an option of a kind holds a comma and the kind has two options', () => {
     const cites = 'some v: Unit | u->v in Cite.rel and v not in Axiom and v not in Spec and v not in Bug';
     expect(define(`(u in Bug and ((${cites}) or u not in Tested)) or (u in Spec and u not in Tested)`).split('\n')[0]).toBe(
-      'unit_1 is unfounded exactly when at least one of these holds:'
+      'unit U1 is unfounded exactly when at least one of these holds:'
     );
   });
 
@@ -998,7 +1000,7 @@ describe('a word that names a term', () => {
    */
   it('links the nouns of a quantifier, and picks the article by the word and not the brackets', () => {
     expect(markdown('some o: Owner | o in Ran')).toBe('There is an [owner](#term-x) that has run.');
-    expect(markdown('all u: Unit | u in Done')).toBe('For every [unit](#term-x):\n\nthe unit is done.');
+    expect(markdown('all u: Unit | u in Done')).toBe('For every [unit](#term-x):\\\nthe unit is done.');
   });
 
   /**
@@ -1043,14 +1045,14 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase
    */
   it('takes the place of the variable when the variable is said once: "sits in no unit"', () => {
-    expect(said('no v: Unit | u->v in Sit.rel')).toBe('unit_1 sits in no unit.');
-    expect(said('some v: Unit | u->v in Sit.rel')).toBe('unit_1 sits in a unit.');
+    expect(said('no v: Unit | u->v in Sit.rel')).toBe('unit U1 sits in no unit.');
+    expect(said('some v: Unit | u->v in Sit.rel')).toBe('unit U1 sits in a unit.');
   });
 
   /**
    * @canon spec-a-noun-phrase-can-be-the-subject-of-a-sentence
    */
-  it('can be the subject: "a tag names unit_1"', () => {
+  it('can be the subject: "a tag names unit U1"', () => {
     expect(said('some p: Tag | p->u in Name.rel')).toBe('a tag names the unit.');
     expect(said('no p: Tag | p->u in Name.rel')).toBe('no tag names the unit.');
   });
@@ -1059,10 +1061,10 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-what-else-is-true-of-the-variable-is-a-relative-clause
    */
   it('says what else is true of the variable in a relative clause', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and v in Spec')).toBe('unit_1 sits in a unit that is a spec.');
-    expect(said('some v: Unit | u->v in Sit.rel and v not in Spec')).toBe('unit_1 sits in a unit that is not a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and v in Spec')).toBe('unit U1 sits in a unit that is a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and v not in Spec')).toBe('unit U1 sits in a unit that is not a spec.');
     expect(said('some i: Issue | u->i in Name.rel and i not in Known')).toBe('the unit names an issue that tracker does not know.');
-    expect(said('some v: Unit | u->v in Sit.rel and v->u in Sit.rel')).toBe('unit_1 sits in a unit that sits in unit_1.');
+    expect(said('some v: Unit | u->v in Sit.rel and v->u in Sit.rel')).toBe('unit U1 sits in a unit that sits in unit U1.');
   });
 
   /**
@@ -1070,7 +1072,7 @@ describe('a quantifier said as a noun phrase', () => {
    */
   it('puts several negations in one: "that is not an axiom, a spec or a fact"', () => {
     expect(said('some v: Unit | u->v in Sit.rel and v not in Axiom and v not in Spec and v not in Fact')).toBe(
-      'unit_1 sits in a unit that is not an axiom, a spec or a fact.'
+      'unit U1 sits in a unit that is not an axiom, a spec or a fact.'
     );
   });
 
@@ -1078,23 +1080,23 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-a-variable-that-must-differ-from-another-of-its-kind-is-said-as-another
    */
   it('says "another" for a variable that must not be the other one of its kind', () => {
-    expect(said('some v: Unit | v != u and v->u in Sit.rel')).toBe('another unit sits in unit_1.');
-    expect(said('some a, b: Unit | a != b and u->a in Name.rel and u->b in Name.rel')).toBe('unit_1 names a unit and names another unit.');
+    expect(said('some v: Unit | v != u and v->u in Sit.rel')).toBe('another unit sits in unit U1.');
+    expect(said('some a, b: Unit | a != b and u->a in Name.rel and u->b in Name.rel')).toBe('unit U1 names a unit and names another unit.');
   });
 
   /**
    * @canon spec-a-variable-that-must-differ-from-one-value-is-said-as-other-than-it
    */
   it('says "other than" for a variable that must differ from one value, and in full when it must differ from more', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and v != w')).toBe('unit_1 sits in a unit other than w.');
-    expect(said('some v: Unit | u->v in Sit.rel and not v = w')).toBe('unit_1 sits in a unit other than w.');
-    expect(said('some v: Unit | u->v in Sit.rel and v != w and v != x')).toBe('there is a unit_2 such that all of these hold:\n    - unit_1 sits in unit_2\n    - unit_2 and w are different\n    - unit_2 and x are different');
+    expect(said('some v: Unit | u->v in Sit.rel and v != w')).toBe('unit U1 sits in a unit other than w.');
+    expect(said('some v: Unit | u->v in Sit.rel and not v = w')).toBe('unit U1 sits in a unit other than w.');
+    expect(said('some v: Unit | u->v in Sit.rel and v != w and v != x')).toBe('there is a unit U2 such that all of these hold:\n    - unit U1 sits in unit U2\n    - unit U2 and w are different\n    - unit U2 and x are different');
   });
 
   /**
    * @canon spec-variables-of-different-kinds-nest-as-phrases
    */
-  it('nests when the variables are of different kinds: "a test checks a bug that sits in unit_1"', () => {
+  it('nests when the variables are of different kinds: "a test checks a bug that sits in unit U1"', () => {
     expect(said('some t: Test, b: Bug | t->b in Check.rel and b->u in Sit.rel')).toBe('a test checks a bug that sits in the unit.');
   });
 
@@ -1114,25 +1116,25 @@ describe('a quantifier said as a noun phrase', () => {
    */
   it('is said in full when it does not fit', () => {
     // no fact for the variable beside another thing, and the variable not the subject of every condition
-    expect(said('some v: Unit | v in Known')).toBe('there is a unit_2 such that tracker knows unit_2.');
+    expect(said('some v: Unit | v in Known')).toBe('there is a unit U2 such that tracker knows unit U2.');
     // a reading that says the variable twice
-    expect(said('some v: Unit | u->v in Twice.rel')).toBe('there is a unit_2 such that unit_1 sits in unit_2 and in unit_2.');
+    expect(said('some v: Unit | u->v in Twice.rel')).toBe('there is a unit U2 such that unit U1 sits in unit U2 and in unit U2.');
     // "no" with "another" says something else than "another"
-    expect(said('no v: Unit | v != u and v->u in Sit.rel')).toBe('there is no unit_2 such that all of these hold:\n    - unit_2 and unit_1 are different\n    - unit_2 sits in unit_1');
+    expect(said('no v: Unit | v != u and v->u in Sit.rel')).toBe('there is no unit U2 such that all of these hold:\n    - unit U2 and unit U1 are different\n    - unit U2 sits in unit U1');
   });
 
   /**
    * @canon spec-a-condition-that-is-not-about-the-variable-is-said-apart
    */
   it('says a condition that is not about the variable beside the quantifier, outside it', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and u in Spec')).toBe('unit_1 sits in a unit and is a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and u in Spec')).toBe('unit U1 sits in a unit and is a spec.');
   });
 
   /**
    * @canon spec-a-condition-under-no-that-is-not-about-the-variable-is-said-in-full
    */
   it('keeps the quantifier in full under "no" when a condition is not about its variable', () => {
-    expect(said('no v: Unit | u->v in Sit.rel and u in Spec')).toBe('there is no unit_2 such that unit_1 sits in unit_2 and is a spec.');
+    expect(said('no v: Unit | u->v in Sit.rel and u in Spec')).toBe('there is no unit U2 such that unit U1 sits in unit U2 and is a spec.');
   });
 });
 
@@ -1165,7 +1167,7 @@ describe('a quantifier about its variable alone', () => {
    */
   it('says it in full when the conditions under "no" are many, or when "no" would meet "no"', () => {
     expect(said('no v: Unit | v in Spec and v in Axiom and v in Fact and v not in Spec')).toMatch(/^There is no unit such that all of these hold:/);
-    expect(said('no v: Unit | no w: Unit | v->w in Twice.rel')).toMatch(/^There is no unit_1 such that /);
+    expect(said('no v: Unit | no w: Unit | v->w in Twice.rel')).toMatch(/^There is no unit U1 such that /);
   });
 });
 
@@ -1179,16 +1181,16 @@ describe('a set equal to a variable', () => {
    * @canon spec-a-set-equal-to-a-variable-is-said-as-the-variable-and-no-other
    */
   it('says the variable in the set, and no other member of its type', () => {
-    expect(say('all c: Cleanup, o: Owner | c.on = o')).toBe('For every cleanup and every owner_1:\n  the cleanup is on owner_1 and is on no other owner.');
-    expect(say("all c: Cleanup, o: Owner | o = c.on'")).toBe('For every cleanup and every owner_1:\n  at the next moment, the cleanup is on owner_1 and is on no other owner.');
-    expect(say('all o: Owner | Disposed = o')).toBe('For every owner_1:\n  pulse has disposed owner_1 and pulse has disposed no other owner.');
+    expect(say('all c: Cleanup, o: Owner | c.on = o')).toBe('For every cleanup and every owner O1:\n  the cleanup is on owner O1 and is on no other owner.');
+    expect(say("all c: Cleanup, o: Owner | o = c.on'")).toBe('For every cleanup and every owner O1:\n  at the next moment, the cleanup is on owner O1 and is on no other owner.');
+    expect(say('all o: Owner | Disposed = o')).toBe('For every owner O1:\n  pulse has disposed owner O1 and pulse has disposed no other owner.');
   });
 
   /**
    * @canon spec-a-field-of-many-values-equal-to-a-variable-is-said-member-by-member
    */
   it('says it member by member when being in the set is more than one plain clause', () => {
-    expect(say('all c: Cleanup, o: Owner | c.on.parent = o')).toContain('owner_2 and owner_1 are the same');
+    expect(say('all c: Cleanup, o: Owner | c.on.parent = o')).toContain('owner O2 and owner O1 are the same');
   });
 });
 
@@ -1255,7 +1257,7 @@ describe('the items of a list said in a sentence', () => {
    */
   it('are a list when a clause before the last holds a relative clause', () => {
     expect(say('(no x: Owner | x in c.on and x in Disposed) and c in Registered')).toBe('All of these hold:\n  - c is on no owner that pulse has disposed\n  - code has registered c');
-    expect(said('(some v: Unit | u->v in Sit.rel and v in Spec) and u in Axiom')).toBe('all of these hold:\n    - unit_1 sits in a unit that is a spec\n    - unit_1 is an axiom');
+    expect(said('(some v: Unit | u->v in Sit.rel and v in Spec) and u in Axiom')).toBe('all of these hold:\n    - unit U1 sits in a unit that is a spec\n    - unit U1 is an axiom');
     expect(say('some c.on & Disposed and c in Ran')).toBe('All of these hold:\n  - c is on an owner that pulse has disposed\n  - c has run');
     expect(say('c in Ran and (some x: Owner | x in c.on and x in Disposed)')).toBe('c has run and is on an owner that pulse has disposed.');
   });
@@ -1288,7 +1290,7 @@ describe('the items of a list said in a sentence', () => {
    */
   it('put the "then" of a rule on a line of its own when the first side begins with a time phrase', () => {
     expect(say("c in Ran' implies d in Ran")).toBe('When the following holds:\n  at the next moment, c has run\nthen d has run.');
-    expect(verbalize("c in Ran' implies d in Ran", READINGS, 'markdown')).toBe('When the following holds:\n\nat the next moment, c has run\n\nthen d has run.');
+    expect(verbalize("c in Ran' implies d in Ran", READINGS, 'markdown')).toBe('When the following holds:\\\nat the next moment, c has run\\\nthen d has run.');
   });
 
   /**
@@ -1386,14 +1388,14 @@ describe('the items of a list said in a sentence', () => {
    * @canon spec-a-subject-is-said-once-when-clauses-begin-with-it
    */
   it('say a subject once, when clauses beside each other begin with it', () => {
-    expect(said('u in Spec and (no v: Unit | u->v in Sit.rel)')).toBe('unit_1 is a spec and sits in no unit.');
+    expect(said('u in Spec and (no v: Unit | u->v in Sit.rel)')).toBe('unit U1 is a spec and sits in no unit.');
   });
 
   /**
    * @canon spec-a-list-with-a-clause-about-a-pair-of-variables-is-bullets
    */
   it('say a pair of variables as it is, and not as a subject', () => {
-    expect(said('all v: Unit | (u != v and u in Spec) implies v in Spec')).toContain('unit_2 is a spec when all of these hold:\n    - unit_1 and unit_2 are different\n    - unit_1 is a spec');
+    expect(said('all v: Unit | (u != v and u in Spec) implies v in Spec')).toContain('unit U2 is a spec when all of these hold:\n    - unit U1 and unit U2 are different\n    - unit U1 is a spec');
   });
 
   /**
@@ -1494,7 +1496,7 @@ describe('an expression said through the types of its columns', () => {
     expect(say('Ran = Registered')).toBe('For every cleanup:\n  the cleanup has run exactly when code has registered the cleanup.');
     expect(say("Ran in Ran'")).toBe('When a cleanup has run, then at the next moment, the cleanup has run.');
     expect(say("all c: Cleanup | Registered' = Registered + c")).toBe(
-      ['For every cleanup_1 and every cleanup_2:', '  both or neither of these hold:', '    - at the next moment, code has registered cleanup_2', '    - at least one of these holds:', '        - code has registered cleanup_2', '        - cleanup_2 and cleanup_1 are the same'].join('\n')
+      ['For every cleanup C1 and every cleanup C2:', '  both or neither of these hold:', '    - at the next moment, code has registered cleanup C2', '    - at least one of these holds:', '        - code has registered cleanup C2', '        - cleanup C2 and cleanup C1 are the same'].join('\n')
     );
     expect(say("on' = on")).toBe('For every cleanup and every owner:\n  the cleanup is on the owner at the next moment exactly when the cleanup is on the owner now.');
   });
@@ -1503,8 +1505,8 @@ describe('an expression said through the types of its columns', () => {
    * @canon spec-two-expressions-that-are-equal-are-said-member-by-member
    */
   it('says two expressions that are equal member by member', () => {
-    expect(say('c.on.parent = o')).toBe('For every owner_1:\n  both or neither of these hold:\n    - c is on an owner that owner_1 is the parent of\n    - owner_1 and o are the same');
-    expect(say('c.on.parent != o')).toBe('There is an owner_1 such that exactly one of these holds:\n  - c is on an owner that owner_1 is the parent of\n  - owner_1 and o are the same');
+    expect(say('c.on.parent = o')).toBe('For every owner O1:\n  both or neither of these hold:\n    - c is on an owner that owner O1 is the parent of\n    - owner O1 and o are the same');
+    expect(say('c.on.parent != o')).toBe('There is an owner O1 such that exactly one of these holds:\n  - c is on an owner that owner O1 is the parent of\n  - owner O1 and o are the same');
   });
 
   /**
@@ -1566,7 +1568,7 @@ describe('calls', () => {
   it('says a call with an expression by the body, with the expression in place', () => {
     const readings = withDefinitions(parseReadings(read('readings.txt')), `${read('vocabulary.als')}\npred settled[x: Cleanup] { x in Registered and x not in Ran }`);
     expect(say('settled[on.o]', readings)).toBe(
-      ['All of these hold:', '  - for every cleanup_1:', '      when cleanup_1 is on o, code has registered cleanup_1', '  - a cleanup that has not run is on o'].join('\n')
+      ['All of these hold:', '  - for every cleanup C1:', '      when cleanup C1 is on o, code has registered cleanup C1', '  - a cleanup that has not run is on o'].join('\n')
     );
   });
 
@@ -1730,15 +1732,15 @@ describe('relations and atoms', () => {
    * @canon spec-a-closure-is-said-as-reaching-in-one-or-more-steps
    */
   it('says a closure as reaching in one or more steps', () => {
-    expect(say('o->p in ^parent')).toBe('o reaches p in one or more steps, where a step from owner_1 to owner_2 is that owner_2 is the parent of owner_1.');
-    expect(say('p not in o.^parent')).toBe('o does not reach p in one or more steps, where a step from owner_1 to owner_2 is that owner_2 is the parent of owner_1.');
+    expect(say('o->p in ^parent')).toBe('o reaches p in one or more steps, where a step from owner O1 to owner O2 is that owner O2 is the parent of owner O1.');
+    expect(say('p not in o.^parent')).toBe('o does not reach p in one or more steps, where a step from owner O1 to owner O2 is that owner O2 is the parent of owner O1.');
   });
 
   /**
    * @canon spec-a-reflexive-closure-is-said-as-reaching-in-zero-or-more-steps
    */
   it('says a reflexive closure as reaching in zero or more steps', () => {
-    expect(say('p in o.*parent')).toBe('o reaches p in zero or more steps, where a step from owner_1 to owner_2 is that owner_2 is the parent of owner_1.');
+    expect(say('p in o.*parent')).toBe('o reaches p in zero or more steps, where a step from owner O1 to owner O2 is that owner O2 is the parent of owner O1.');
   });
 
   /**
@@ -1839,10 +1841,10 @@ describe('relations and atoms', () => {
       parseReadings('noun Owner: owner\nnoun Cleanup: cleanup\non: {1} is on {2} | {1} is not on {2}\nhome: {2} is the home of {1} | {2} is not the home of {1}'),
       'sig Owner {} sig Cleanup { on: set Owner, home: one Owner }'
     );
-    expect(say('all o, p: Owner | o in p', owners)).toBe('For every owner_1 and every owner_2:\n  owner_1 and owner_2 are the same.');
-    expect(say('all o, p: Owner | o not in p', owners)).toBe('For every owner_1 and every owner_2:\n  owner_1 and owner_2 are different.');
+    expect(say('all o, p: Owner | o in p', owners)).toBe('For every owner O1 and every owner O2:\n  owner O1 and owner O2 are the same.');
+    expect(say('all o, p: Owner | o not in p', owners)).toBe('For every owner O1 and every owner O2:\n  owner O1 and owner O2 are different.');
     expect(say('all p: Owner | c.home in p', owners)).toBe(say('all p: Owner | c.home = p', owners));
-    expect(say('all p: Owner | c.on in p', owners)).toBe('For every owner_1 and every owner_2:\n  when c is on owner_2, owner_2 and owner_1 are the same.');
+    expect(say('all p: Owner | c.on in p', owners)).toBe('For every owner O1 and every owner O2:\n  when c is on owner O2, owner O2 and owner O1 are the same.');
     expect(() => say('c in Mystery', owners)).toThrow('no reading for "Mystery"');
   });
 
@@ -1970,8 +1972,8 @@ describe('integers', () => {
    * @canon spec-a-count-is-said-as-the-number-of-values
    */
   it('says a count as the number of values', () => {
-    expect(said('#c.on > 2')).toBe(`${WRAP}number_1 is greater than 2, where number_1 is the number of values of owner_1 such that c is on owner_1.`);
-    expect(said('#on > 2')).toBe(`${WRAP}number_1 is greater than 2, where number_1 is the number of combinations of cleanup_1 and owner_1 such that cleanup_1 is on owner_1.`);
+    expect(said('#c.on > 2')).toBe(`${WRAP}number_1 is greater than 2, where number_1 is the number of values of owner O1 such that c is on owner O1.`);
+    expect(said('#on > 2')).toBe(`${WRAP}number_1 is greater than 2, where number_1 is the number of combinations of cleanup C1 and owner O1 such that cleanup C1 is on owner O1.`);
   });
 
   /**
@@ -1979,7 +1981,7 @@ describe('integers', () => {
    */
   it('names each part that is more than a number, and says it after where', () => {
     expect(said('#c.on != #d.on')).toBe(
-      [`${WRAP}number_1 is not equal to number_2, where:`, '  - number_1 is the number of values of owner_1 such that c is on owner_1', '  - number_2 is the number of values of owner_2 such that d is on owner_2'].join('\n')
+      [`${WRAP}number_1 is not equal to number_2, where:`, '  - number_1 is the number of values of owner O1 such that c is on owner O1', '  - number_2 is the number of values of owner O2 such that d is on owner O2'].join('\n')
     );
   });
 
@@ -1989,7 +1991,7 @@ describe('integers', () => {
    */
   it('says a sum over a variable as the sum over every value', () => {
     expect(said('(sum x: Cleanup | #x.on) > 3')).toBe(
-      `${WRAP}number_1 is greater than 3, where number_1 is the sum, over every cleanup, of the number of values of owner_1 such that the cleanup is on owner_1.`
+      `${WRAP}number_1 is greater than 3, where number_1 is the sum, over every cleanup, of the number of values of owner O1 such that the cleanup is on owner O1.`
     );
   });
 
@@ -1998,7 +2000,7 @@ describe('integers', () => {
    */
   it('says a set of integers where a number belongs as the sum of its members', () => {
     for (const formula of ['c.n < 3', 'int[c.n] < 3', 'int c.n < 3', 'sum c.n < 3', 'c.n.sum < 3']) {
-      expect(said(formula)).toBe(`${WRAP}number_1 is less than 3, where number_1 is the sum of the values of integer_1 such that c counts integer_1.`);
+      expect(said(formula)).toBe(`${WRAP}number_1 is less than 3, where number_1 is the sum of the values of integer I1 such that c counts integer I1.`);
     }
   });
 
@@ -2009,7 +2011,7 @@ describe('integers', () => {
     expect(said('plus[x, 1] = y')).toBe(`${WRAP}x plus 1 is equal to y.`);
     expect(said('x.minus[1] < 2')).toBe(`${WRAP}x minus 1 is less than 2.`);
     expect(said('mul[x, y] > 0')).toBe(`${WRAP}x times y is greater than 0.`);
-    expect(said('plus[#c.on, 1] > 2')).toBe(`${WRAP}number_1 plus 1 is greater than 2, where number_1 is the number of values of owner_1 such that c is on owner_1.`);
+    expect(said('plus[#c.on, 1] > 2')).toBe(`${WRAP}number_1 plus 1 is greater than 2, where number_1 is the number of values of owner O1 such that c is on owner O1.`);
   });
 
   /**
@@ -2077,7 +2079,7 @@ describe('integers', () => {
     expect(said('x->y in next')).toBe('y is the integer after x without wrapping around.');
     expect(said('y in x.next')).toBe('y is the integer after x without wrapping around.');
     expect(said('x->y not in next')).toBe('y is not the integer after x without wrapping around.');
-    expect(said('x.next < 3')).toBe(`${WRAP}number_1 is less than 3, where number_1 is the sum of the values of integer_1 such that integer_1 is the integer after x without wrapping around.`);
+    expect(said('x.next < 3')).toBe(`${WRAP}number_1 is less than 3, where number_1 is the sum of the values of integer I1 such that integer I1 is the integer after x without wrapping around.`);
   });
 
   /**
@@ -2114,7 +2116,7 @@ describe('connectives, quantifiers and let', () => {
     expect(say('(c in Ran iff d in Ran) until d in Registered')).toContain('at every moment from now until the first such moment, not including it, the following holds:\n      both or neither of these hold:');
     const readings = withDefinitions(parseReadings('noun Cleanup: cleanup\nRan: {1} has run | {1} has not run\nsame: {1} goes with {2} | {1} does not go with {2}'), 'sig Cleanup {}');
     expect(verbalizeDefinition('pred same[c, d: Cleanup] { c in Ran iff d in Ran }', readings)).toBe(
-      'For every cleanup_1 and every cleanup_2:\n  cleanup_1 goes with cleanup_2 exactly when both or neither of these hold:\n    - cleanup_1 has run\n    - cleanup_2 has run'
+      'For every cleanup C1 and every cleanup C2:\n  cleanup C1 goes with cleanup C2 exactly when both or neither of these hold:\n    - cleanup C1 has run\n    - cleanup C2 has run'
     );
   });
 
@@ -2153,7 +2155,7 @@ describe('connectives, quantifiers and let', () => {
    */
   it('says "one" as exactly one', () => {
     expect(say('one c: Cleanup | c in Ran')).toBe('There is exactly one cleanup such that the cleanup has run.');
-    expect(say('one c: Cleanup, o: Owner | c.on = o')).toBe('There is exactly one combination of cleanup_1 and owner_1 such that cleanup_1 is on owner_1.');
+    expect(say('one c: Cleanup, o: Owner | c.on = o')).toBe('There is exactly one combination of cleanup C1 and owner O1 such that cleanup C1 is on owner O1.');
   });
 
   /**
@@ -2161,7 +2163,7 @@ describe('connectives, quantifiers and let', () => {
    */
   it('says "lone" as at most one', () => {
     expect(say('lone c: Cleanup | c in Ran')).toBe('There is at most one cleanup such that the cleanup has run.');
-    expect(say('lone c: Cleanup, o: Owner | c.on = o')).toBe('There is at most one combination of cleanup_1 and owner_1 such that cleanup_1 is on owner_1.');
+    expect(say('lone c: Cleanup, o: Owner | c.on = o')).toBe('There is at most one combination of cleanup C1 and owner O1 such that cleanup C1 is on owner O1.');
   });
 
   /**
@@ -2369,7 +2371,7 @@ describe('fields that relate more than two things', () => {
    */
   it('says a field of pairs through its columns, so a frame condition of it reads', () => {
     expect(say("Clock.older' = Clock.older")).toBe(
-      'For every cleanup_1 and every cleanup_2:\n  code registered cleanup_1 before cleanup_2 at the next moment exactly when code registered cleanup_1 before cleanup_2 now.'
+      'For every cleanup C1 and every cleanup C2:\n  code registered cleanup C1 before cleanup C2 at the next moment exactly when code registered cleanup C1 before cleanup C2 now.'
     );
     expect(() => say("all c: Cleanup | Clock.older' = Clock.older + (Registered -> c)")).not.toThrow();
   });
@@ -2381,7 +2383,7 @@ describe('rare constructs', () => {
    */
   it('says membership in an else of sets through each branch', () => {
     expect(say('all o, p: Owner | o in (p in Disposed implies Disposed else Stopped)')).toBe(
-      'For every owner_1 and every owner_2:\n  when pulse has disposed owner_2, pulse has disposed owner_1; otherwise, the dispose of owner_1 has been stopped.'
+      'For every owner O1 and every owner O2:\n  when pulse has disposed owner O2, pulse has disposed owner O1; otherwise, the dispose of owner O1 has been stopped.'
     );
   });
 
@@ -2410,7 +2412,7 @@ describe('an override with a variable in it', () => {
    */
   it('says an override with a pair of variables, as a state is updated', () => {
     const sweep = withDefinitions(parseReadings('noun Owner: owner\nnoun Cleanup: cleanup\non: {1} is on {2} | {1} is not on {2}'), 'sig Owner {} sig Cleanup { var on: set Owner }');
-    expect(say("all c: Cleanup, o: Owner | on' = on ++ (c -> o)", sweep)).toMatch(/^For every cleanup_1, every owner_1, every cleanup_2 and every owner_2:\n  both or neither of these hold:\n    - at the next moment, cleanup_2 is on owner_2/);
+    expect(say("all c: Cleanup, o: Owner | on' = on ++ (c -> o)", sweep)).toMatch(/^For every cleanup C1, every owner O1, every cleanup C2 and every owner O2:\n  both or neither of these hold:\n    - at the next moment, cleanup C2 is on owner O2/);
   });
 });
 
@@ -2564,7 +2566,7 @@ describe('what it refuses', () => {
     expect(say('c in Registered until { c in Ran o in Disposed }')).toBe(until('c has run and pulse has disposed o', 'code has registered c'));
     expect(say('c in Registered until not (c in Ran and o in Disposed)')).toBe(until('c has not run or pulse has not disposed o', 'code has registered c'));
     expect(say('#c.on > 1 until c in Registered')).toBe(
-      until('code has registered c', "in integers that wrap around at the analyzer's bit width, number_1 is greater than 1, where number_1 is the number of values of owner_1 such that c is on owner_1")
+      until('code has registered c', "in integers that wrap around at the analyzer's bit width, number_1 is greater than 1, where number_1 is the number of values of owner O1 such that c is on owner O1")
     );
     expect(say('c in Registered until c in Ran')).toBe('c has run now or later, and until then, code has registered c.');
   });
@@ -2718,5 +2720,45 @@ describe('what it refuses', () => {
    */
   it('refuses a line of readings it cannot read', () => {
     expect(() => parseReadings('this is not a reading')).toThrow('cannot read the line of readings');
+  });
+});
+
+describe('the names of the variables', () => {
+  const named = parseReadings(['noun Unit: [unit]', 'noun Use: use', 'noun Listing: listing frontmatter', 'Cite.rel: {1} cites {2} | {1} does not cite {2}', 'On.rel: {1} is on {2} | {1} is not on {2}'].join('\n'), '#term-unit');
+
+  /**
+   * @canon spec-a-variable-is-named-after-its-noun-and-its-number
+   */
+  it('names a variable by the first letter of its noun and its number, after its noun wherever the words name it', () => {
+    expect(verbalize('all u, v: Unit | u->v in Cite.rel', named, 'markdown')).toBe('For every [unit](#term-unit) U1 and every unit U2:\\\nunit U1 cites unit U2.');
+  });
+
+  /**
+   * @canon spec-nouns-with-the-same-letters-take-more-letters-until-they-differ
+   */
+  it('takes more letters of two nouns that begin alike, and the first letter of each word of a noun of several words', () => {
+    expect(verbalize('all u, v: Unit, s, t: Use | u->s in On.rel and v->t in On.rel', named)).toContain('every unit Un1, every unit Un2, every use Us1 and every use Us2');
+    expect(verbalize('all l, m: Listing | l->m in Cite.rel', named)).toBe('For every listing frontmatter LF1 and every listing frontmatter LF2:\n  listing frontmatter LF1 cites listing frontmatter LF2.');
+  });
+});
+
+describe('the lines of the Markdown layout', () => {
+  const named = parseReadings(['noun Unit: [unit]', 'Ran: {1} has run | {1} has not run'].join('\n'), '#term-unit');
+
+  /**
+   * @canon spec-a-line-that-opens-a-part-ends-in-a-line-break-in-markdown
+   */
+  it('ends a line that opens a part with a line break, and opens a list right under its line', () => {
+    expect(verbalize('all u: Unit | u in Ran', named, 'markdown')).toBe('For every [unit](#term-unit):\\\nthe unit has run.');
+    const listed = verbalize('all c, d: Cleanup | (c in Ran and c in Registered and d in Ran) implies d in Disposed', READINGS, 'markdown');
+    expect(listed).toBe('For every cleanup C1 and every cleanup C2:\\\npulse has disposed cleanup C2 when all of these hold:\n- cleanup C1 has run\n- code has registered cleanup C1\n- cleanup C2 has run');
+  });
+
+  /**
+   * @canon spec-a-line-that-opens-a-part-ends-in-a-line-break-in-markdown
+   */
+  it('keeps a blank line after a list, where a line break cannot end it', () => {
+    const doc = { kind: 'rule' as const, lead: RULE.when, when: { kind: 'list' as const, intro: 'all of these hold', items: ['a holds', 'b holds'] }, then: 'c holds' };
+    expect(markdownLines(doc)).toEqual(['when all of these hold:', '- a holds', '- b holds', '', 'then c holds']);
   });
 });

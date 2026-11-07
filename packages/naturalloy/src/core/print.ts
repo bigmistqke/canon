@@ -6,6 +6,7 @@
  * The printer names the variables: each by the noun of its type and the next number free for that noun, in the order
  * a reader meets them. The items of a list that stand on their own may each use the same names.
  */
+import { shortNames } from './names.ts';
 import { type Readings, LINK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
 import type { Clause, Num, Sentence, Term, Var } from './ir.ts';
 import type { PrintOptions } from './pass.ts';
@@ -565,13 +566,15 @@ export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | und
   };
   const marking = (text: string): string => (marked === undefined || layout !== 'markdown' ? text : markTerms(text, marked));
   let text = said(doc);
-  if (!options.dropLoneNumbers) return marking(text);
-  // Whether a variable is named the noun alone shows only in the whole of the words, so they are said again without the "for every" it can leave out.
-  if (options.aNounForEvery) {
-    const without = withoutEvery(doc, new Set(lone(text).keys()));
-    if (without !== doc) text = said(without);
+  if (options.dropLoneNumbers) {
+    // Whether a variable is named the noun alone shows only in the whole of the words, so they are said again without the "for every" it can leave out.
+    if (options.aNounForEvery) {
+      const without = withoutEvery(doc, new Set(lone(text).keys()));
+      if (without !== doc) text = said(without);
+    }
+    text = unnumbered(text);
   }
-  return marking(unnumbered(text));
+  return marking(options.shortNames === true ? shortNames(text) : text);
 }
 
 /**

@@ -62,6 +62,15 @@ describe('the units of a document', () => {
   });
 
   /**
+   * @canon spec-a-line-break-is-no-part-of-a-statement
+   */
+  it('leaves out the backslash that ends a line of the blockquote', () => {
+    const statementOf = (quote: string): string | undefined => readUnits(`# Canon\n\n## ${AXIOM} a-root\n\n${quote}\n`)[0]?.statement;
+    expect(statementOf('> For every unit U1:\\\n> U1 has run.')).toBe('For every unit U1: U1 has run.');
+    expect(statementOf('> when these hold:\\\n> - a holds\n> - b holds')).toBe('when these hold:\n- a holds\n- b holds');
+  });
+
+  /**
    * @canon spec-a-statement-with-a-list-keeps-its-lines
    */
   it('keeps the lines of a blockquote that holds a list', () => {

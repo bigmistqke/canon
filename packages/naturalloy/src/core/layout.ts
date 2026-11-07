@@ -61,17 +61,23 @@ export function markdownLines(doc: Doc): string[] {
     });
     return [`${doc.intro}:`, ...items];
   }
-  if (doc.kind === 'block') return [`${doc.intro}:`, '', ...markdownLines(doc.body)];
+  if (doc.kind === 'block') return broken([`${doc.intro}:`], markdownLines(doc.body));
   const [when, then] = [markdownLines(doc.when), markdownLines(doc.then)];
   const otherwise = doc.otherwise === undefined ? undefined : markdownLines(doc.otherwise);
-  return [
-    `${doc.lead} ${when[0]}${when.length === 1 ? ',' : ''}`,
-    ...when.slice(1),
-    '',
-    `${RULE.then} ${then[0]}`,
-    ...then.slice(1),
-    ...(otherwise === undefined ? [] : ['', `${RULE.otherwise} ${otherwise[0]}`, ...otherwise.slice(1)])
-  ];
+  const first = broken([`${doc.lead} ${when[0]}${when.length === 1 ? ',' : ''}`, ...when.slice(1)], [`${RULE.then} ${then[0]}`, ...then.slice(1)]);
+  return otherwise === undefined ? first : broken(first, [`${RULE.otherwise} ${otherwise[0]}`, ...otherwise.slice(1)]);
+}
+
+/**
+ * Two parts of a doc, one after the other, as lines of Markdown. A line break, a `\` at the end of the first part's
+ * last line, keeps the second on a line of its own with no empty line above it. A list needs no break before it,
+ * since it opens on a line of its own; after one, a blank line ends it, as text right after a list would read as
+ * part of its last item.
+ */
+function broken(before: string[], after: string[]): string[] {
+  if ((after[0] ?? '').startsWith('- ')) return [...before, ...after];
+  if (before.some(line => line.startsWith('- '))) return [...before, '', ...after];
+  return [...before.slice(0, -1), `${before.at(-1) ?? ''}\\`, ...after];
 }
 
 interface Line {
