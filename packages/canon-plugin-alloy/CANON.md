@@ -2540,9 +2540,9 @@ This follows because the intent ends at the first fenced block. A fence in the t
 
 ###### @spec a-write-of-text-with-a-fold-is-refused
 
-> `alloy:intent --write` refuses text that holds a line that opens a [fold](../canon/CANON.md#term-fold).
+> `alloy:intent --write` refuses text that holds a line that opens a [fold](../canon/CANON.md#term-fold), or the header of a *reading table* or a *noun table*.
 
-This follows because the intent ends at the first fold, as it does at the first fenced block. A fold in the text would end it early.
+This follows because the intent ends at the first fold or table, as it does at the first fenced block. One in the text would end it early.
 
 ###### @spec a-write-of-text-with-a-heading-is-refused
 

@@ -77,6 +77,7 @@ export function refusalOf(text: string): string | undefined {
   for (const line of text.split('\n')) {
     if (FENCE.test(line)) return `the text holds a fenced block, which would end the intent: ${line.trim()}`;
     if (FOLD.test(line)) return `the text holds a fold, which would end the intent: ${line.trim()}`;
+    if (kindOf(line) !== undefined) return `the text holds the header of a ${kindOf(line)} table, which would end the intent: ${line.trim()}`;
     if (HEADING.test(line)) return `the text holds a heading, which would end the unit: ${line.trim()}`;
     if (QUOTE.test(line)) return `the text holds a quote, which the checker reads as a statement: ${line.trim()}`;
     if (STRUCTURE.test(line)) return `the text holds a line the checker reads as a derivation or a site: ${line.trim()}`;

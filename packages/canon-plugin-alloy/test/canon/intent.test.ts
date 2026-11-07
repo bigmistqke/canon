@@ -293,6 +293,16 @@ describe('alloy:intent --write', () => {
   });
 
   /**
+   * @canon spec-a-write-of-text-with-a-fold-is-refused
+   */
+  it('refuses text with the header of a reading table', () => {
+    const run = refused('Words.\n\n| reading | holds | does not hold |\n|---|---|---|\n', 'spec-a-leaf');
+    expect(run.err).toContain('reading table');
+    expect(run.code).toBe(2);
+    expect(run.changed).toBe(false);
+  });
+
+  /**
    * @canon spec-a-write-of-text-with-a-fenced-block-is-refused
    * @canon spec-a-refused-write-changes-no-file
    */
