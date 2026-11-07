@@ -484,7 +484,7 @@ A row says what a `noun` line says with the noun in brackets, `noun Installed: [
 
 ### @term intent
 
-> The intent of a unit with a formula is the prose between its statement and its first fenced block or fold. In it, the author says what the unit is for.
+> The intent of a unit with a formula is the prose between its statement and its first fenced block, fold, *reading table* or *noun table*. In it, the author says what the unit is for.
 
 The intent measures the formula. When the generated statement says something the intent does not mean, the formula slipped, or the intent did. A "Derives from:" line and a "Site:" line come right after the statement, so they come before the intent. The intent ends early at a generated region, such as the statement of a scenario.
 
@@ -2466,7 +2466,7 @@ This follows because `show` heads a unit the same way. A reader can then search 
 
 ##### @spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
 
-> `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block, fold or generated region of the unit.
+> `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block, fold, reading table, noun table or generated region of the unit.
 
 This follows because the intent is the author's own prose, and the reader measures the formula against those exact words.
 

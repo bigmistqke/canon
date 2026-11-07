@@ -34,7 +34,8 @@ export interface Table {
   rows: Row[];
 }
 
-const kindOf = (line: string): TableKind | undefined => {
+/** The kind of table whose header the line is, or undefined when it is no header of a reading table or a noun table. */
+export const kindOf = (line: string): TableKind | undefined => {
   if (!ROW.test(line)) return undefined;
   const cells = cellsOf(line).map(cell => cell.toLowerCase());
   return (Object.keys(HEADERS) as TableKind[]).find(kind => HEADERS[kind].length === cells.length && HEADERS[kind].every((h, i) => cells[i] === h));

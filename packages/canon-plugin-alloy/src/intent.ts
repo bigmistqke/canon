@@ -1,7 +1,7 @@
 /**
  * `canon alloy:intent`: the intent of a unit with a formula, read and written
  * by its unit. The intent is the author's prose between the statement of the
- * unit and its first fenced block or fold; a "Derives from:" or "Site:" line after the
+ * unit and its first fenced block, fold, reading table or noun table; a "Derives from:" or "Site:" line after the
  * statement comes before it, and a generated region ends it, as the statement
  * of a scenario does.
  */
@@ -10,7 +10,7 @@ import { resolve } from 'node:path';
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { readUnits, type Unit } from '@bigmistqke/canon/units';
 import { regionName } from './statements.ts';
-import { readingBlocks } from './tables.ts';
+import { kindOf, readingBlocks } from './tables.ts';
 
 /** Where the intent of a unit is, as lines of the document: `from` up to, not including, `to`; the two are equal when it has none. */
 export interface Place {
@@ -61,7 +61,8 @@ export function placeOf(src: string, unit: Unit): Place {
     else break;
   }
   const from = at;
-  while (at < end && !FENCE.test(lines[at] as string) && !FOLD.test(lines[at] as string) && !COMMENT.test(lines[at] as string)) at++;
+  const ends = (line: string): boolean => FENCE.test(line) || FOLD.test(line) || kindOf(line) !== undefined || COMMENT.test(line);
+  while (at < end && !ends(lines[at] as string)) at++;
   let to = at;
   while (to > from && (lines[to - 1] as string).trim() === '') to--;
   return { unit, line, from, to, lines };

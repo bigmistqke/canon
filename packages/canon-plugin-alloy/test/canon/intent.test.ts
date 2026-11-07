@@ -172,6 +172,16 @@ describe('alloy:intent', () => {
   });
 
   /**
+   * @canon spec-intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
+   */
+  it('prints the prose before a reading table that stands outside a fold', () => {
+    const tabled = DOC.replace('The fold comes after this.\n', 'The table comes after this.\n\n| reading | holds | does not hold |\n|---|---|---|\n| Done | {1} is done | {1} is not done |\n');
+    const { runs } = projectOf(tabled, { args: ['alloy:intent', 'spec-a-folded-leaf'] });
+    expect(runs[0]?.out).toContain('spec-a-folded-leaf\n\nThe table comes after this.\n');
+    expect(runs[0]?.out).not.toContain('| reading');
+  });
+
+  /**
    * @canon spec-a-derives-from-line-before-the-intent-is-no-part-of-it
    */
   it('leaves the derivation line out of the intent', () => {
