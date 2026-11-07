@@ -1480,13 +1480,13 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 
 ### @spec a-row-of-a-reading-table-is-a-reading
 
-> The checker reads each row of a *reading table* as the reading of its key, with the words of `holds` as its positive side and the words of `does not hold` as its negative side.
+> The checker reads each row of a *reading table* as the reading of its key. Its `holds` cell is the positive side, and its `does not hold` cell the negative side.
 
-This follows because a statement is said with the readings of its words, wherever the document writes them.
+This follows because the checker says a statement with the readings of its words, wherever the document writes them.
 
 ### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
 
-> The checker reads each row of a *noun table* as the noun of its signature, linked to the term of the unit that holds the row. The article of a noun, `an hour`, is no part of the link.
+> The checker reads each row of a *noun table* as the noun of its signature. The noun links to the term of the unit that holds the row. Its article, as in `an hour`, is no part of the link.
 
 This follows because the noun of a signature names its things in a statement, wherever the document writes it. A signature is declared in the term that defines it, so its noun links there.
 
@@ -1494,11 +1494,11 @@ This follows because the noun of a signature names its things in a statement, wh
 
 > When a reading links a word to a term that has no [form](../canon/CANON.md#term-form) the word spells, `check` reports the word as `undefined`. A word in brackets links to the term of the unit that holds the reading, or to the term its link names.
 
-This follows because a generated statement writes the word as a link to that term, and the reader who follows it looks for what the word means. A term that has no form the word spells does not say it. Link the word the term defines: `{1} [sits] in {2}` links `sits`, a form of the term `sit`. A noun needs no such check: its signature is declared in the term that defines it, and the noun links there.
+This follows because a generated statement writes the word as a link to that term. A reader who follows the link looks for what the word means. A term that has no form the word spells does not say it. Link the word the term defines: `{1} [sits] in {2}` links `sits`, a form of the term `sit`. A noun needs no such check: its signature is declared in the term that defines it, and the noun links there.
 
 ### @spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun
 
-> A signature with no noun, declared in a term whose stem its name spells, has the words of that stem as its noun, linked to the term. The name `TermMark` spells the stem `term-mark`: each capital starts a word.
+> A signature with no noun takes one from the term that declares it, when its name spells the stem of that term. Its noun is then the words of the stem, linked to the term. A capital after a lowercase letter starts a word, so `TermMark` spells `term-mark`.
 
 This follows because such a noun says nothing the declaration does not: the term names the signature, and its things are what the term defines. A signature named otherwise has no noun until a noun table gives it one.
 
@@ -2630,7 +2630,7 @@ This follows because a reading has a positive side and a negative side. A readin
 
 ### @spec generate-aligns-the-columns-of-each-reading-table-and-noun-table
 
-> `generate` pads the cells of each *reading table* and each *noun table* so that the cells of a column are as wide as its widest cell, and the dashes under its headers as wide too. It changes no cell but by its spaces.
+> `generate` pads the cells of each *reading table* and each *noun table* to the width of their column. The dashes under the headers get the same width. It changes no cell but by its spaces.
 
 This follows because the writer of a reading changes its words, and lining up the columns by hand is handling the document by its text. A table out of line still says what it said, so check reports nothing for it.
 
