@@ -61,7 +61,7 @@ export interface Grammar {
 }
 
 /** The cells of a table row, trimmed: `| a | b |` gives `['a', 'b']`. */
-const cellsOf = (line: string): string[] =>
+export const cellsOf = (line: string): string[] =>
   line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
 
 const GRAMMAR_HEADER = /^[ \t]*\|[ \t]*grammar[ \t]*\|[ \t]*\|[ \t]*$/;
@@ -110,6 +110,22 @@ export function grammarOf(own: string): Grammar | undefined {
 }
 
 /**
+ * The lines of a table, its header, the line of dashes and its rows, with each
+ * cell padded to the width of its column and the dashes as wide, at least
+ * three. The table keeps as many columns as its header has.
+ */
+export function alignTable(table: string[]): string[] {
+  const rows = table.map(cellsOf);
+  rows.splice(1, 1);
+  const columns = (rows[0] ?? []).length;
+  const width = Array.from({ length: columns }, (_, col) => Math.max(3, ...rows.map(row => (row[col] ?? '').length)));
+  const print = (cells: string[]): string => `| ${cells.join(' | ')} |`;
+  const out = rows.map(row => print(width.map((w, col) => (row[col] ?? '').padEnd(w))));
+  out.splice(1, 0, print(width.map(w => '-'.repeat(w))));
+  return out;
+}
+
+/**
  * The document with the cells of each grammar table padded, so that every
  * cell of a column is as wide as its widest cell, and the dashes under the
  * headers as wide too, with at least three. A table inside a fenced block or
@@ -137,13 +153,7 @@ export function alignGrammarTables(src: string): string {
     if (!table) continue;
     const at = first + table.at;
     const end = first + table.end;
-    const rows = lines.slice(at, end).map(cellsOf);
-    rows.splice(1, 1);
-    const width = [0, 1].map(col => Math.max(3, ...rows.map(row => (row[col] ?? '').length)));
-    const print = (row: string[]): string => `| ${(row[0] ?? '').padEnd(width[0] as number)} | ${(row[1] ?? '').padEnd(width[1] as number)} |`;
-    const out = rows.map(print);
-    out.splice(1, 0, `| ${'-'.repeat(width[0] as number)} | ${'-'.repeat(width[1] as number)} |`);
-    lines.splice(at, end - at, ...out);
+    lines.splice(at, end - at, ...alignTable(lines.slice(at, end)));
   }
   return lines.join('\n');
 }

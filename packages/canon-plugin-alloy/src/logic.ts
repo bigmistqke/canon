@@ -12,6 +12,7 @@ import { checkMaps, reviewMaps } from './map.ts';
 import { listReadings, rewordReading } from './readings.ts';
 import type { Plugin } from '@bigmistqke/canon/plugin';
 import * as statements from './statements.ts';
+import { alignTables } from './tables.ts';
 import type { Context } from './statements.ts';
 import type { Readings } from '@bigmistqke/naturalloy';
 import { checkLoneFormulas, checkWords } from './words.ts';
@@ -141,7 +142,9 @@ export function generateStatements(documents: string[], root: string): number {
       if (state.kind === 'unsayable' || state.kind === 'handwritten') code = 1;
       if (state.kind === 'handwritten') console.log(`${doc}: ${state.unit}: handwritten: ${WHAT.handwritten}`);
     }
-    const { src: next, written } = statements.write(src, context);
+    const { src: stated, written } = statements.write(src, context);
+    // The reading tables and noun tables are lined up, which changes no word of them.
+    const next = alignTables(stated);
     if (next === src) continue;
     writeFileSync(file, next);
     for (const unit of written) console.log(`wrote the statement of ${unit} in ${doc}`);

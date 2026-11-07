@@ -19,15 +19,24 @@ It adds the command `alloy:logic` (or `logic` while no other plugin has a comman
 
 ## Statements said from predicates
 
-A document that keeps a `readings` block has the statement of each unit with an Alloy predicate written from that predicate, in the same words every time, so the statement cannot say anything the predicate does not. `canon generate` writes it between two markers below the unit's heading, and `canon check` reports it when it is missing or stale. No language model is involved.
+A document that keeps readings has the statement of each unit with an Alloy predicate written from that predicate, in the same words every time, so the statement cannot say anything the predicate does not. `canon generate` writes it between two markers below the unit's heading, and `canon check` reports it when it is missing or stale. No language model is involved.
 
-````md
-```readings
-noun Owner: owner
-Ran: {1} has run | {1} has not run
-dispose: pulse disposes {1} | pulse does not dispose {1}
+```md
+| reading | holds              | does not hold              |
+| ------- | ------------------ | -------------------------- |
+| Ran     | {1} has run        | {1} has not run            |
+| dispose | pulse disposes {1} | pulse does not dispose {1} |
 ```
-````
+
+A reading table has the headers `reading`, `holds` and `does not hold`, and a noun table the headers `signature` and `noun`:
+
+```md
+| signature | noun               |
+| --------- | ------------------ |
+| Installed | [installed plugin] |
+```
+
+A signature named after the term that declares it needs no noun row: `sig Owner`, declared in the term `owner`, has the noun `[owner]`, which links to that term. `canon generate` lines up the columns of each table. A `readings` fence holds the same lines naturalloy reads, `Ran: {1} has run | {1} has not run` and `noun Owner: owner`, and the plugin reads it too.
 
 The words come from [naturalloy](../naturalloy), which says a formula only in words that translate it without loss and refuses one it cannot say that way. Its README says how a formula reads.
 
@@ -41,7 +50,7 @@ A document that extends another (`extends` in its frontmatter) says its statemen
 
 Under the generated statement, and under a "Derives from:" line if the unit has one, the author writes the intent of the unit: the prose up to its first fenced block or `<details>` fold. `canon alloy:intent <unit>` prints it, under the place and the id of the unit. `canon alloy:intent <unit> --write` reads a new intent from standard input and puts it in place of the old one, and changes nothing else. It refuses text with a fence, a heading, a quote, a comment, or a "Derives from:" or "Site:" line. In a document that keeps readings, `canon check` reports a unit with a formula and no intent (`intentless`).
 
-The statement is the plugin's to write: `generate` never overwrites one that a person wrote, and says so; delete it to let it be generated. In a document that keeps readings, a statement outside the markers is `handwritten`, whatever else its unit holds. Keep the sentence of a person in the body, below the generated statement, as an explanation that adds no claim. A document without a `readings` block is left as it is.
+The statement is the plugin's to write: `generate` never overwrites one that a person wrote, and says so; delete it to let it be generated. In a document that keeps readings, a statement outside the markers is `handwritten`, whatever else its unit holds. Keep the sentence of a person in the body, below the generated statement, as an explanation that adds no claim. A document that keeps no readings is left as it is.
 
 ## The logic layer
 
@@ -56,7 +65,7 @@ The claims of the documents a document extends join its model, so a claim of the
 ```alloy              the unit's own predicate; a bare formula is named after the unit
 ````
 
-In a document without a `readings` block, a person writes each statement. A unit with a predicate then also holds a `map` block, whose lines say which words of the statement became which part of the predicate. A person reads a map against both and marks it reviewed:
+In a document that keeps no readings, a person writes each statement. A unit with a predicate then also holds a `map` block, whose lines say which words of the statement became which part of the predicate. A person reads a map against both and marks it reviewed:
 
 ````md
 ```map reviewed=3d2900e5d6b6

@@ -19,6 +19,8 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
 - [`@term group`](#term-group)
 - [`@term lone-formula`](#term-lone-formula)
 - [`@term world`](#term-world)
+- [`@term reading-table`](#term-reading-table)
+- [`@term noun-table`](#term-noun-table)
 - [`@term intent`](#term-intent)
 - [`@axiom a-statement-says-what-its-logic-says`](#axiom-a-statement-says-what-its-logic-says)
   - [`@spec a-document-that-keeps-no-readings-is-left-as-it-is`](#spec-a-document-that-keeps-no-readings-is-left-as-it-is)
@@ -82,6 +84,9 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
   - [`@spec a-word-of-an-extended-document-links-to-that-document`](#spec-a-word-of-an-extended-document-links-to-that-document)
   - [`@spec generate-writes-no-statement-for-a-unit-of-an-extended-document`](#spec-generate-writes-no-statement-for-a-unit-of-an-extended-document)
   - [`@spec a-word-declared-in-an-extended-document-is-declared`](#spec-a-word-declared-in-an-extended-document-is-declared)
+  - [`@spec a-row-of-a-reading-table-is-a-reading`](#spec-a-row-of-a-reading-table-is-a-reading)
+  - [`@spec a-row-of-a-noun-table-gives-the-noun-of-its-signature`](#spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature)
+  - [`@spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun`](#spec-a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun)
 - [`@axiom the-claims-of-a-canon-never-contradict-each-other`](#axiom-the-claims-of-a-canon-never-contradict-each-other)
   - [`@spec a-formula-with-no-keyword-is-a-claim-to-hold`](#spec-a-formula-with-no-keyword-is-a-claim-to-hold)
   - [`@spec a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim`](#spec-a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim)
@@ -182,6 +187,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     - [`@spec a-reword-of-a-key-that-names-no-reading-is-refused`](#spec-a-reword-of-a-key-that-names-no-reading-is-refused)
     - [`@spec a-reword-of-a-key-that-names-more-than-one-reading-is-refused`](#spec-a-reword-of-a-key-that-names-more-than-one-reading-is-refused)
     - [`@spec a-reword-that-is-not-two-sides-is-refused`](#spec-a-reword-that-is-not-two-sides-is-refused)
+  - [`@spec generate-aligns-the-columns-of-each-reading-table-and-noun-table`](#spec-generate-aligns-the-columns-of-each-reading-table-and-noun-table)
 - [`@fact only-solving-a-model-decides-whether-a-formula-constrains-a-signature`](#fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature)
 <!-- toc:end -->
 
@@ -200,14 +206,17 @@ A document asks for it in its frontmatter. The commands `generate`, `check` and 
 one sig GenerateCommand, CheckCommand, LogicCommand in Command {}
 ```
 
-```readings
-noun GenerateCommand: [generate command]
-noun CheckCommand: [check command]
-noun LogicCommand: [logic command]
-LogicCommand: {1} is the [command] `alloy:logic` | {1} is not the [command] `alloy:logic`
-GenerateCommand: {1} is the [command] `generate` | {1} is not the [command] `generate`
-CheckCommand: {1} is the [command] `check` | {1} is not the [command] `check`
-```
+| signature       | noun               |
+| --------------- | ------------------ |
+| GenerateCommand | [generate command] |
+| CheckCommand    | [check command]    |
+| LogicCommand    | [logic command]    |
+
+| reading         | holds                              | does not hold                          |
+| --------------- | ---------------------------------- | -------------------------------------- |
+| LogicCommand    | {1} is the [command] `alloy:logic` | {1} is not the [command] `alloy:logic` |
+| GenerateCommand | {1} is the [command] `generate`    | {1} is not the [command] `generate`    |
+| CheckCommand    | {1} is the [command] `check`       | {1} is not the [command] `check`       |
 
 </details>
 
@@ -231,25 +240,25 @@ sig Worded in Document {}
 sig Stated in Unit {}
 ```
 
-```readings
-Logical: {1} holds a formula | {1} holds no formula
-Generated: the [statement] of {1} sits between the markers of a generated region | the [statement] of {1} does not sit between the markers of a generated region
-Differs: the [statement] of {1} differs from what its formula says | the [statement] of {1} does not differ from what its formula says
-Wordless: the formula of {1} names a word that has no reading | the formula of {1} names no word that has no reading
-Twofold: {1} holds more than one formula | {1} does not hold more than one formula
-Faulted: the verbalizer fails on the formula of {1} with a fault of its own | the verbalizer does not fail on the formula of {1} with a fault of its own
-Unsayable: the formula of {1} cannot be said in words | the formula of {1} can be said in words
-Current: the [statement] of {1} is current | the [statement] of {1} is not current
-Misread: the [statement] of {1} reads back as more or other than its formula | the [statement] of {1} reads back as its formula alone
-Stale: the [statement] of {1} is stale | the [statement] of {1} is not stale
-Unwritten: the [statement] of {1} is unwritten | the [statement] of {1} is not unwritten
-Handwritten: the [statement] of {1} is handwritten | the [statement] of {1} is not handwritten
-Reported: [checker](../canon/CANON.md#term-checker) reports the [statement] of {1} | [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}
-Rewritten: [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates
-Explained: [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said | [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said
-Worded: {1} keeps readings | {1} keeps no readings
-Stated: {1} has a [statement](../canon/CANON.md#term-statement) | {1} has no [statement](../canon/CANON.md#term-statement)
-```
+| reading     | holds                                                                                     | does not hold                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Logical     | {1} holds a formula                                                                       | {1} holds no formula                                                                              |
+| Generated   | the [statement] of {1} sits between the markers of a generated region                     | the [statement] of {1} does not sit between the markers of a generated region                     |
+| Differs     | the [statement] of {1} differs from what its formula says                                 | the [statement] of {1} does not differ from what its formula says                                 |
+| Wordless    | the formula of {1} names a word that has no reading                                       | the formula of {1} names no word that has no reading                                              |
+| Twofold     | {1} holds more than one formula                                                           | {1} does not hold more than one formula                                                           |
+| Faulted     | the verbalizer fails on the formula of {1} with a fault of its own                        | the verbalizer does not fail on the formula of {1} with a fault of its own                        |
+| Unsayable   | the formula of {1} cannot be said in words                                                | the formula of {1} can be said in words                                                           |
+| Current     | the [statement] of {1} is current                                                         | the [statement] of {1} is not current                                                             |
+| Misread     | the [statement] of {1} reads back as more or other than its formula                       | the [statement] of {1} reads back as its formula alone                                            |
+| Stale       | the [statement] of {1} is stale                                                           | the [statement] of {1} is not stale                                                               |
+| Unwritten   | the [statement] of {1} is unwritten                                                       | the [statement] of {1} is not unwritten                                                           |
+| Handwritten | the [statement] of {1} is handwritten                                                     | the [statement] of {1} is not handwritten                                                         |
+| Reported    | [checker](../canon/CANON.md#term-checker) reports the [statement] of {1}                  | [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}                  |
+| Rewritten   | [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates |
+| Explained   | [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said      | [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said      |
+| Worded      | {1} keeps readings                                                                        | {1} keeps no readings                                                                             |
+| Stated      | {1} has a [statement](../canon/CANON.md#term-statement)                                   | {1} has no [statement](../canon/CANON.md#term-statement)                                          |
 
 </details>
 
@@ -271,21 +280,23 @@ one sig Voice { rel: Unit -> Word }
 one sig Rely { rel: Unit -> Word }
 ```
 
-```readings
-noun Word: [word]
-noun Signature: signature
-Signature: {1} is a signature | {1} is not a signature
-Field: {1} is a field of a signature | {1} is not a field of a signature
-Predicate: {1} is a predicate | {1} is not a predicate
-Undeclared: {1} is said by a reading and declared by nothing | {1} is said by no reading or is declared
-Misplaced: {1} is declared in a unit that is not a term | {1} is not declared in a unit that is not a term
-Apart: the reading of {1} is in another unit than its declaration | the reading of {1} is in the unit of its declaration
-Unused: no claim, definition or fact uses {1} | a claim, a definition or a fact uses {1}
-Flagged: [checker](../canon/CANON.md#term-checker) reports the [word] {1} | [checker](../canon/CANON.md#term-checker) does not report the [word] {1}
-Introduce.rel: {1} declares {2} | {1} does not declare {2}
-Voice.rel: a reading in {1} says {2} | no reading in {1} says {2}
-Rely.rel: a claim, a definition or a fact of {1} uses {2} | no claim, definition or fact of {1} uses {2}
-```
+| signature | noun      |
+| --------- | --------- |
+| Signature | signature |
+
+| reading       | holds                                                            | does not hold                                                            |
+| ------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Signature     | {1} is a signature                                               | {1} is not a signature                                                   |
+| Field         | {1} is a field of a signature                                    | {1} is not a field of a signature                                        |
+| Predicate     | {1} is a predicate                                               | {1} is not a predicate                                                   |
+| Undeclared    | {1} is said by a reading and declared by nothing                 | {1} is said by no reading or is declared                                 |
+| Misplaced     | {1} is declared in a unit that is not a term                     | {1} is not declared in a unit that is not a term                         |
+| Apart         | the reading of {1} is in another unit than its declaration       | the reading of {1} is in the unit of its declaration                     |
+| Unused        | no claim, definition or fact uses {1}                            | a claim, a definition or a fact uses {1}                                 |
+| Flagged       | [checker](../canon/CANON.md#term-checker) reports the [word] {1} | [checker](../canon/CANON.md#term-checker) does not report the [word] {1} |
+| Introduce.rel | {1} declares {2}                                                 | {1} does not declare {2}                                                 |
+| Voice.rel     | a reading in {1} says {2}                                        | no reading in {1} says {2}                                               |
+| Rely.rel      | a claim, a definition or a fact of {1} uses {2}                  | no claim, definition or fact of {1} uses {2}                             |
 
 </details>
 
@@ -307,15 +318,14 @@ one sig Frees { rel: Unit -> Scenario }
 one sig Blame { rel: Scenario -> Unit }
 ```
 
-```readings
-noun Scenario: [scenario]
-Possible: {1} is a [scenario] that can happen while every held unit holds | {1} is not a [scenario] that can happen while every held unit holds
-Impossible: {1} is a [scenario] that cannot happen while every held unit holds | {1} is not a [scenario] that cannot happen while every held unit holds
-Raised: [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen
-Probe.rel: the author asks about leaving out {2} for {1} | the author does not ask about leaving out {2} for {1}
-Frees.rel: leaving out {1} lets {2} happen | leaving out {1} does not let {2} happen
-Blame.rel: [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1}
-```
+| reading    | holds                                                                    | does not hold                                                                    |
+| ---------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Possible   | {1} is a [scenario] that can happen while every held unit holds          | {1} is not a [scenario] that can happen while every held unit holds              |
+| Impossible | {1} is a [scenario] that cannot happen while every held unit holds       | {1} is not a [scenario] that cannot happen while every held unit holds           |
+| Raised     | [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen |
+| Probe.rel  | the author asks about leaving out {2} for {1}                            | the author does not ask about leaving out {2} for {1}                            |
+| Frees.rel  | leaving out {1} lets {2} happen                                          | leaving out {1} does not let {2} happen                                          |
+| Blame.rel  | [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1} |
 
 </details>
 
@@ -338,20 +348,19 @@ one sig Leave { rel: Search -> Unit }
 sig Checked in Document {}
 ```
 
-```readings
-noun Search: [search]
-Trial: {1} leaves one unit out | {1} leaves no unit out
-First: {1} is asked before any scenario is known to be impossible | {1} is not asked before any scenario is known to be impossible
-Afterwards: {1} is asked after the first [search] is answered | {1} is not asked after the first [search] is answered
-BareFormula: {1} holds a formula with no keyword | {1} holds no formula without a keyword
-Held: the analyzer is asked to hold the formula of {1} | the analyzer is not asked to hold the formula of {1}
-Contradicting: {1} is held with units that cannot all hold | {1} is held with units that can all hold
-Named: [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction
-Checked: the project lists {1} among the documents it checks | the project does not list {1} among the documents it checks
-Pose.units: {1} requires {2} to hold | {1} does not require {2} to hold
-Pose.scenario: {1} requires {2} to happen | {1} does not require {2} to happen
-Leave.rel: {1} leaves out {2} | {1} does not leave out {2}
-```
+| reading       | holds                                                                                | does not hold                                                                                |
+| ------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Trial         | {1} leaves one unit out                                                              | {1} leaves no unit out                                                                       |
+| First         | {1} is asked before any scenario is known to be impossible                           | {1} is not asked before any scenario is known to be impossible                               |
+| Afterwards    | {1} is asked after the first [search] is answered                                    | {1} is not asked after the first [search] is answered                                        |
+| BareFormula   | {1} holds a formula with no keyword                                                  | {1} holds no formula without a keyword                                                       |
+| Held          | the analyzer is asked to hold the formula of {1}                                     | the analyzer is not asked to hold the formula of {1}                                         |
+| Contradicting | {1} is held with units that cannot all hold                                          | {1} is held with units that can all hold                                                     |
+| Named         | [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction |
+| Checked       | the project lists {1} among the documents it checks                                  | the project does not list {1} among the documents it checks                                  |
+| Pose.units    | {1} requires {2} to hold                                                             | {1} does not require {2} to hold                                                             |
+| Pose.scenario | {1} requires {2} to happen                                                           | {1} does not require {2} to happen                                                           |
+| Leave.rel     | {1} leaves out {2}                                                                   | {1} does not leave out {2}                                                                   |
 
 </details>
 
@@ -373,11 +382,11 @@ one sig Together { rel: Unit -> Unit }
 fact linked { Chain.rel = ^(Share.rel + ~(Share.rel)) }
 ```
 
-```readings
-Share.rel: {1} shares a word with {2} | {1} shares no word with {2}
-Chain.rel: {1} is linked to {2} through shared words | {1} is not linked to {2} through shared words
-Together.rel: the analyzer is asked about {1} together with {2} | the analyzer is asked about {1} apart from {2}
-```
+| reading      | holds                                             | does not hold                                  |
+| ------------ | ------------------------------------------------- | ---------------------------------------------- |
+| Share.rel    | {1} shares a word with {2}                        | {1} shares no word with {2}                    |
+| Chain.rel    | {1} is linked to {2} through shared words         | {1} is not linked to {2} through shared words  |
+| Together.rel | the analyzer is asked about {1} together with {2} | the analyzer is asked about {1} apart from {2} |
 
 </details>
 
@@ -405,13 +414,13 @@ sig Unchallenged in Unit {}
 pred loneOn[u: Unit, w: Word] { u->w in Rely.rel and (no v: Unit | v != u and v->w in Utter.rel) and (no v: Unit | v->w in Picture.rel) }
 ```
 
-```readings
-Utter.rel: a block of {1} names {2} outside its declaration | no block of {1} names {2} outside its declaration
-Picture.rel: a scenario of {1} names {2} | no scenario of {1} names {2}
-Expose.rel: [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2}
-Unchallenged: no other formula can contradict the formula of {1} | another formula can contradict the formula of {1}
-loneOn: the formula of {1} is [lone](#term-lone-formula) on {2} | the formula of {1} is not lone on {2}
-```
+| reading      | holds                                                                               | does not hold                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Utter.rel    | a block of {1} names {2} outside its declaration                                    | no block of {1} names {2} outside its declaration                                           |
+| Picture.rel  | a scenario of {1} names {2}                                                         | no scenario of {1} names {2}                                                                |
+| Expose.rel   | [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2} |
+| Unchallenged | no other formula can contradict the formula of {1}                                  | another formula can contradict the formula of {1}                                           |
+| loneOn       | the formula of {1} is [lone](#term-lone-formula) on {2}                             | the formula of {1} is not lone on {2}                                                       |
 
 </details>
 
@@ -420,6 +429,41 @@ loneOn: the formula of {1} is [lone](#term-lone-formula) on {2} | the formula of
 > A world is what the analyzer finds when a search can hold. It has the things of each signature and the tuples of each field, at each step of a trace.
 
 A thing is an element of a signature, which the analyzer names after the signature and a number, such as `Claim$0`. A trace has a step for each moment, and ends by looping back to one of its steps, which makes it go on for ever.
+
+### @term reading-table
+
+> A reading table is a table in the own text of a unit whose headers are `reading`, `holds` and `does not hold`. Each row gives the key of a reading, its words when the key holds, and its words when it does not.
+
+| grammar |                |
+| ------- | -------------- |
+| type    | noun           |
+| plural  | reading tables |
+
+```md
+| reading   | holds                         | does not hold                     |
+| --------- | ----------------------------- | --------------------------------- |
+| Installed | the project has installed {1} | the project has not installed {1} |
+```
+
+A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading.
+
+### @term noun-table
+
+> A noun table is a table in the own text of a unit whose headers are `signature` and `noun`. Each row gives a signature and its noun.
+
+| grammar |             |
+| ------- | ----------- |
+| type    | noun        |
+| plural  | noun tables |
+
+```md
+| signature | noun               |
+| --------- | ------------------ |
+| Installed | [installed plugin] |
+| Missing   | [missing plugin]   |
+```
+
+A row says what a `noun` line says, `noun Installed: [installed plugin]`. A signature named after the term that declares it needs no row: its noun is the term.
 
 ### @term intent
 
@@ -434,10 +478,10 @@ The intent measures the formula. When the generated statement says something the
 sig Intended, Aimless in Unit {}
 ```
 
-```readings
-Intended: {1} has an [intent] | {1} has no [intent]
-Aimless: [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent]
-```
+| reading  | holds                                                                      | does not hold                                                                      |
+| -------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Intended | {1} has an [intent]                                                        | {1} has no [intent]                                                                |
+| Aimless  | [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent] |
 
 </details>
 
@@ -1416,6 +1460,24 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 ```
 
 </details>
+
+### @spec a-row-of-a-reading-table-is-a-reading
+
+> The checker reads each row of a *reading table* as the reading of its key, with the words of `holds` as its positive side and the words of `does not hold` as its negative side.
+
+This follows because a statement is said with the readings of its words, wherever the document writes them.
+
+### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
+
+> The checker reads each row of a *noun table* as the noun of its signature.
+
+This follows because the noun of a signature names its things in a statement, wherever the document writes it.
+
+### @spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun
+
+> A signature with no noun, declared in a term whose stem its name spells, has the words of that stem as its noun, linked to the term. The name `TermMark` spells the stem `term-mark`: each capital starts a word.
+
+This follows because such a noun says nothing the declaration does not: the term names the signature, and its things are what the term defines. A signature named otherwise has no noun until a noun table gives it one.
 
 ## @axiom the-claims-of-a-canon-never-contradict-each-other
 
@@ -2542,6 +2604,12 @@ This follows because the command cannot tell which reading the author means. A r
 > When the new words do not part at one bar into two sides that both hold words, `alloy:readings --write` says so and changes nothing. The run exits with code 2.
 
 This follows because a reading has a positive side and a negative side. A reading that lost one could not say a formula that needs it.
+
+### @spec generate-aligns-the-columns-of-each-reading-table-and-noun-table
+
+> `generate` pads the cells of each *reading table* and each *noun table* so that the cells of a column are as wide as its widest cell, and the dashes under its headers as wide too. It changes no cell but by its spaces.
+
+This follows because the writer of a reading changes its words, and lining up the columns by hand is handling the document by its text. A table out of line still says what it said, so check reports nothing for it.
 
 ## @fact only-solving-a-model-decides-whether-a-formula-constrains-a-signature
 

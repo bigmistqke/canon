@@ -492,10 +492,9 @@ One entry of a canon: a heading with a kind and a stem, and a statement under it
 abstract sig Unit extends Thing {}
 ```
 
-```readings
-noun Unit: [unit]
-Unit: {1} is a [unit] | {1} is not a [unit]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Unit    | {1} is a [unit] | {1} is not a [unit] |
 
 </details>
 
@@ -510,10 +509,9 @@ Unit: {1} is a [unit] | {1} is not a [unit]
 sig Axiom extends Unit {}
 ```
 
-```readings
-noun Axiom: [axiom]
-Axiom: {1} is an [axiom] | {1} is not an [axiom]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Axiom   | {1} is an [axiom] | {1} is not an [axiom] |
 
 </details>
 
@@ -528,10 +526,9 @@ Axiom: {1} is an [axiom] | {1} is not an [axiom]
 sig Fact extends Unit {}
 ```
 
-```readings
-noun Fact: [fact]
-Fact: {1} is a [fact] | {1} is not a [fact]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Fact    | {1} is a [fact] | {1} is not a [fact] |
 
 </details>
 
@@ -546,10 +543,9 @@ Fact: {1} is a [fact] | {1} is not a [fact]
 sig Spec extends Claim {}
 ```
 
-```readings
-noun Spec: [spec]
-Spec: {1} is a [spec] | {1} is not a [spec]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Spec    | {1} is a [spec] | {1} is not a [spec] |
 
 </details>
 
@@ -564,10 +560,9 @@ Spec: {1} is a [spec] | {1} is not a [spec]
 sig Exception extends Claim {}
 ```
 
-```readings
-noun Exception: [exception]
-Exception: {1} is an [exception] | {1} is not an [exception]
-```
+| reading   | holds                 | does not hold             |
+| --------- | --------------------- | ------------------------- |
+| Exception | {1} is an [exception] | {1} is not an [exception] |
 
 </details>
 
@@ -582,10 +577,9 @@ Exception: {1} is an [exception] | {1} is not an [exception]
 sig Bug extends Claim {}
 ```
 
-```readings
-noun Bug: [bug]
-Bug: {1} is a [bug] | {1} is not a [bug]
-```
+| reading | holds          | does not hold      |
+| ------- | -------------- | ------------------ |
+| Bug     | {1} is a [bug] | {1} is not a [bug] |
 
 </details>
 
@@ -600,10 +594,9 @@ Bug: {1} is a [bug] | {1} is not a [bug]
 sig Conflict extends Unit {}
 ```
 
-```readings
-noun Conflict: [conflict]
-Conflict: {1} is a [conflict] | {1} is not a [conflict]
-```
+| reading  | holds               | does not hold           |
+| -------- | ------------------- | ----------------------- |
+| Conflict | {1} is a [conflict] | {1} is not a [conflict] |
 
 </details>
 
@@ -622,10 +615,9 @@ A thread is a thought the owner does not want to deal with yet, and does not wan
 sig Thread extends Unit {}
 ```
 
-```readings
-noun Thread: [thread]
-Thread: {1} is a [thread] | {1} is not a [thread]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Thread  | {1} is a [thread] | {1} is not a [thread] |
 
 </details>
 
@@ -640,10 +632,9 @@ Thread: {1} is a [thread] | {1} is not a [thread]
 sig Term extends Unit {}
 ```
 
-```readings
-noun Term: [term]
-Term: {1} is a [term] | {1} is not a [term]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Term    | {1} is a [term] | {1} is not a [term] |
 
 </details>
 
@@ -671,9 +662,9 @@ A unit sitting in another is nested there.
 one sig Sit { rel: Unit -> Unit }
 ```
 
-```readings
-Sit.rel: {1} [sits in] {2} | {1} does not [sit in] {2}
-```
+| reading | holds             | does not hold             |
+| ------- | ----------------- | ------------------------- |
+| Sit.rel | {1} [sits in] {2} | {1} does not [sit in] {2} |
 
 </details>
 
@@ -695,9 +686,9 @@ That line comes right after the unit's statement.
 one sig Derive { rel: Unit -> Unit }
 ```
 
-```readings
-Derive.rel: {1} [derives from] {2} | {1} does not [derive from] {2}
-```
+| reading    | holds                  | does not hold                  |
+| ---------- | ---------------------- | ------------------------------ |
+| Derive.rel | {1} [derives from] {2} | {1} does not [derive from] {2} |
 
 </details>
 
@@ -730,9 +721,9 @@ A unit cites what it follows from, and it has two ways to say so. It *sits* in t
 pred cites[u, v: Unit] { u->v in Sit.rel or u->v in Derive.rel }
 ```
 
-```readings
-cites: {1} [cites] {2} | {1} does not [cite] {2}
-```
+| reading | holds           | does not hold           |
+| ------- | --------------- | ----------------------- |
+| cites   | {1} [cites] {2} | {1} does not [cite] {2} |
 
 </details>
 
@@ -751,10 +742,13 @@ sig Finding in Thing {}
 fact finding_kinds { Finding = Freelancing + Misnesting + Untracking + Mistracking + OutdatedTracking + Unpairing + Unpinning + UnexplainedFailure + Untesting + Rotting + Uncitation + Misaiming + Overreach + Orphaning + Misanchoring + Misindexing + Mislocation + Cycle }
 ```
 
-```readings
-noun Thing: [thing]
-Finding: [checker](#term-checker) reports a [finding] for {1} | [checker](#term-checker) reports no [finding] for {1}
-```
+| signature | noun    |
+| --------- | ------- |
+| Thing     | [thing] |
+
+| reading | holds                                                | does not hold                                         |
+| ------- | ---------------------------------------------------- | ----------------------------------------------------- |
+| Finding | [checker](#term-checker) reports a [finding] for {1} | [checker](#term-checker) reports no [finding] for {1} |
 
 </details>
 
@@ -771,9 +765,9 @@ The checker prints `freelancing`.
 sig Freelancing in Finding {}
 ```
 
-```readings
-Freelancing: [checker](#term-checker) reports a [freelancing] for {1} | [checker](#term-checker) reports no [freelancing] for {1}
-```
+| reading     | holds                                                    | does not hold                                             |
+| ----------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| Freelancing | [checker](#term-checker) reports a [freelancing] for {1} | [checker](#term-checker) reports no [freelancing] for {1} |
 
 </details>
 
@@ -790,9 +784,9 @@ The checker prints `misnested`.
 sig Misnesting in Finding {}
 ```
 
-```readings
-Misnesting: [checker](#term-checker) reports a [misnesting] for {1} | [checker](#term-checker) reports no [misnesting] for {1}
-```
+| reading    | holds                                                   | does not hold                                            |
+| ---------- | ------------------------------------------------------- | -------------------------------------------------------- |
+| Misnesting | [checker](#term-checker) reports a [misnesting] for {1} | [checker](#term-checker) reports no [misnesting] for {1} |
 
 </details>
 
@@ -819,9 +813,9 @@ pred unfounded[u: Unit] {
 }
 ```
 
-```readings
-unfounded: {1} is [unfounded] | {1} is not [unfounded]
-```
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| unfounded | {1} is [unfounded] | {1} is not [unfounded] |
 
 </details>
 
@@ -859,9 +853,9 @@ pred miscited[u: Unit] {
 }
 ```
 
-```readings
-miscited: {1} is [miscited] | {1} is not [miscited]
-```
+| reading  | holds             | does not hold         |
+| -------- | ----------------- | --------------------- |
+| miscited | {1} is [miscited] | {1} is not [miscited] |
 
 </details>
 
@@ -884,9 +878,9 @@ one sig Depend { rel: Unit -> Unit }
 fact depend_closure { Depend.rel = ^(Sit.rel + Derive.rel) }
 ```
 
-```readings
-Depend.rel: {1} [depends on] {2} | {1} does not [depend on] {2}
-```
+| reading    | holds                | does not hold                |
+| ---------- | -------------------- | ---------------------------- |
+| Depend.rel | {1} [depends on] {2} | {1} does not [depend on] {2} |
 
 </details>
 
@@ -907,9 +901,9 @@ A unit is circular when it *depends* on itself. Follow what it cites, and what t
 pred circular[u: Unit] { some v: Unit | cites[u, v] and v->u in Depend.rel }
 ```
 
-```readings
-circular: {1} is [circular] | {1} is not [circular]
-```
+| reading  | holds             | does not hold         |
+| -------- | ----------------- | --------------------- |
+| circular | {1} is [circular] | {1} is not [circular] |
 
 </details>
 
@@ -926,9 +920,9 @@ The checker prints `cycle`, once for each loop, with every unit in it.
 sig Cycle in Finding {}
 ```
 
-```readings
-Cycle: [checker](#term-checker) reports a [cycle] for {1} | [checker](#term-checker) reports no [cycle] for {1}
-```
+| reading | holds                                              | does not hold                                       |
+| ------- | -------------------------------------------------- | --------------------------------------------------- |
+| Cycle   | [checker](#term-checker) reports a [cycle] for {1} | [checker](#term-checker) reports no [cycle] for {1} |
 
 </details>
 
@@ -945,9 +939,9 @@ The checker prints `untracked-bug` or `untracked-conflict`.
 sig Untracking in Finding {}
 ```
 
-```readings
-Untracking: [checker](#term-checker) reports an [untracking] for {1} | [checker](#term-checker) reports no [untracking] for {1}
-```
+| reading    | holds                                                    | does not hold                                            |
+| ---------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| Untracking | [checker](#term-checker) reports an [untracking] for {1} | [checker](#term-checker) reports no [untracking] for {1} |
 
 </details>
 
@@ -964,9 +958,9 @@ The checker prints `missing-issue`.
 sig Mistracking in Finding {}
 ```
 
-```readings
-Mistracking: [checker](#term-checker) reports a [mistracking] for {1} | [checker](#term-checker) reports no [mistracking] for {1}
-```
+| reading     | holds                                                    | does not hold                                             |
+| ----------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| Mistracking | [checker](#term-checker) reports a [mistracking] for {1} | [checker](#term-checker) reports no [mistracking] for {1} |
 
 </details>
 
@@ -983,9 +977,9 @@ The checker prints `closed-issue`.
 sig OutdatedTracking in Finding {}
 ```
 
-```readings
-OutdatedTracking: [checker](#term-checker) reports an [outdated tracking] for {1} | [checker](#term-checker) reports no [outdated tracking] for {1}
-```
+| reading          | holds                                                           | does not hold                                                   |
+| ---------------- | --------------------------------------------------------------- | --------------------------------------------------------------- |
+| OutdatedTracking | [checker](#term-checker) reports an [outdated tracking] for {1} | [checker](#term-checker) reports no [outdated tracking] for {1} |
 
 </details>
 
@@ -1002,9 +996,9 @@ The checker prints `lone-conflict`.
 sig Unpairing in Finding {}
 ```
 
-```readings
-Unpairing: [checker](#term-checker) reports an [unpairing] for {1} | [checker](#term-checker) reports no [unpairing] for {1}
-```
+| reading   | holds                                                   | does not hold                                           |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Unpairing | [checker](#term-checker) reports an [unpairing] for {1} | [checker](#term-checker) reports no [unpairing] for {1} |
 
 </details>
 
@@ -1021,9 +1015,9 @@ The checker prints `unpinned-bug`.
 sig Unpinning in Finding {}
 ```
 
-```readings
-Unpinning: [checker](#term-checker) reports an [unpinning] for {1} | [checker](#term-checker) reports no [unpinning] for {1}
-```
+| reading   | holds                                                   | does not hold                                           |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Unpinning | [checker](#term-checker) reports an [unpinning] for {1} | [checker](#term-checker) reports no [unpinning] for {1} |
 
 </details>
 
@@ -1040,9 +1034,9 @@ The checker prints `fails-without-bug`.
 sig UnexplainedFailure in Finding {}
 ```
 
-```readings
-UnexplainedFailure: [checker](#term-checker) reports an [unexplained failure] for {1} | [checker](#term-checker) reports no [unexplained failure] for {1}
-```
+| reading            | holds                                                             | does not hold                                                     |
+| ------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------------- |
+| UnexplainedFailure | [checker](#term-checker) reports an [unexplained failure] for {1} | [checker](#term-checker) reports no [unexplained failure] for {1} |
 
 </details>
 
@@ -1059,9 +1053,9 @@ The checker prints `untested`.
 sig Untesting in Finding {}
 ```
 
-```readings
-Untesting: [checker](#term-checker) reports an [untesting] for {1} | [checker](#term-checker) reports no [untesting] for {1}
-```
+| reading   | holds                                                   | does not hold                                           |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Untesting | [checker](#term-checker) reports an [untesting] for {1} | [checker](#term-checker) reports no [untesting] for {1} |
 
 </details>
 
@@ -1083,9 +1077,9 @@ The checker prints `rot`.
 sig Rotting in Finding {}
 ```
 
-```readings
-Rotting: [checker](#term-checker) reports a [rotting] for {1} | [checker](#term-checker) reports no [rotting] for {1}
-```
+| reading | holds                                                | does not hold                                         |
+| ------- | ---------------------------------------------------- | ----------------------------------------------------- |
+| Rotting | [checker](#term-checker) reports a [rotting] for {1} | [checker](#term-checker) reports no [rotting] for {1} |
 
 </details>
 
@@ -1102,9 +1096,9 @@ The checker prints `uncited`.
 sig Uncitation in Finding {}
 ```
 
-```readings
-Uncitation: [checker](#term-checker) reports an [uncitation] for {1} | [checker](#term-checker) reports no [uncitation] for {1}
-```
+| reading    | holds                                                    | does not hold                                            |
+| ---------- | -------------------------------------------------------- | -------------------------------------------------------- |
+| Uncitation | [checker](#term-checker) reports an [uncitation] for {1} | [checker](#term-checker) reports no [uncitation] for {1} |
 
 </details>
 
@@ -1121,9 +1115,9 @@ The checker prints `missing-spec`.
 sig Misaiming in Finding {}
 ```
 
-```readings
-Misaiming: [checker](#term-checker) reports a [misaiming] for {1} | [checker](#term-checker) reports no [misaiming] for {1}
-```
+| reading   | holds                                                  | does not hold                                           |
+| --------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| Misaiming | [checker](#term-checker) reports a [misaiming] for {1} | [checker](#term-checker) reports no [misaiming] for {1} |
 
 </details>
 
@@ -1140,9 +1134,9 @@ The checker prints `parent-cited`.
 sig Overreach in Finding {}
 ```
 
-```readings
-Overreach: [checker](#term-checker) reports an [overreach] for {1} | [checker](#term-checker) reports no [overreach] for {1}
-```
+| reading   | holds                                                   | does not hold                                           |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Overreach | [checker](#term-checker) reports an [overreach] for {1} | [checker](#term-checker) reports no [overreach] for {1} |
 
 </details>
 
@@ -1159,9 +1153,9 @@ The checker prints `dead`.
 sig Orphaning in Finding {}
 ```
 
-```readings
-Orphaning: [checker](#term-checker) reports an [orphaning] for {1} | [checker](#term-checker) reports no [orphaning] for {1}
-```
+| reading   | holds                                                   | does not hold                                           |
+| --------- | ------------------------------------------------------- | ------------------------------------------------------- |
+| Orphaning | [checker](#term-checker) reports an [orphaning] for {1} | [checker](#term-checker) reports no [orphaning] for {1} |
 
 </details>
 
@@ -1178,9 +1172,9 @@ The checker prints `unreachable`.
 sig Misanchoring in Finding {}
 ```
 
-```readings
-Misanchoring: [checker](#term-checker) reports a [misanchoring] for {1} | [checker](#term-checker) reports no [misanchoring] for {1}
-```
+| reading      | holds                                                     | does not hold                                              |
+| ------------ | --------------------------------------------------------- | ---------------------------------------------------------- |
+| Misanchoring | [checker](#term-checker) reports a [misanchoring] for {1} | [checker](#term-checker) reports no [misanchoring] for {1} |
 
 </details>
 
@@ -1197,9 +1191,9 @@ The checker prints `stale-toc`.
 sig Misindexing in Finding {}
 ```
 
-```readings
-Misindexing: [checker](#term-checker) reports a [misindexing] for {1} | [checker](#term-checker) reports no [misindexing] for {1}
-```
+| reading     | holds                                                    | does not hold                                             |
+| ----------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| Misindexing | [checker](#term-checker) reports a [misindexing] for {1} | [checker](#term-checker) reports no [misindexing] for {1} |
 
 </details>
 
@@ -1216,9 +1210,9 @@ The checker prints `stale-site`.
 sig Mislocation in Finding {}
 ```
 
-```readings
-Mislocation: [checker](#term-checker) reports a [mislocation] for {1} | [checker](#term-checker) reports no [mislocation] for {1}
-```
+| reading     | holds                                                    | does not hold                                             |
+| ----------- | -------------------------------------------------------- | --------------------------------------------------------- |
+| Mislocation | [checker](#term-checker) reports a [mislocation] for {1} | [checker](#term-checker) reports no [mislocation] for {1} |
 
 </details>
 
@@ -1235,10 +1229,9 @@ A unit that a test can contradict.
 abstract sig Claim extends Unit {}
 ```
 
-```readings
-noun Claim: [claim]
-Claim: {1} is a [claim] | {1} is not a [claim]
-```
+| reading | holds            | does not hold        |
+| ------- | ---------------- | -------------------- |
+| Claim   | {1} is a [claim] | {1} is not a [claim] |
 
 </details>
 
@@ -1257,9 +1250,9 @@ A claim is refined when a spec or an exception sits in it and works it out furth
 pred refined[c: Claim] { (some s: Spec | s->c in Sit.rel) or (some e: Exception | e->c in Sit.rel) }
 ```
 
-```readings
-refined: {1} is [refined] | {1} is not [refined]
-```
+| reading | holds            | does not hold        |
+| ------- | ---------------- | -------------------- |
+| refined | {1} is [refined] | {1} is not [refined] |
 
 </details>
 
@@ -1278,9 +1271,9 @@ A leaf states what the code does, and only a test holds the code to it. A leaf i
 pred unguarded[c: Claim] { not refined[c] and not tested[c] }
 ```
 
-```readings
-unguarded: {1} is [unguarded] | {1} is not [unguarded]
-```
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| unguarded | {1} is [unguarded] | {1} is not [unguarded] |
 
 </details>
 
@@ -1306,9 +1299,9 @@ pred adrift[t: Test] {
 }
 ```
 
-```readings
-adrift: {1} is [adrift] | {1} is not [adrift]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| adrift  | {1} is [adrift] | {1} is not [adrift] |
 
 </details>
 
@@ -1325,10 +1318,9 @@ A test of the project, in any file the checker reads: a suite the canon names, o
 abstract sig Test extends Thing {}
 ```
 
-```readings
-noun Test: [test]
-Test: {1} is a [test] | {1} is not a [test]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Test    | {1} is a [test] | {1} is not a [test] |
 
 </details>
 
@@ -1354,9 +1346,9 @@ A test in a declared suite owes a tag, and so does a test that a helper module b
 sig Declared in Test {}
 ```
 
-```readings
-Declared: [project](#term-project) [declares] {1} | [project](#term-project) does not [declare] {1}
-```
+| reading  | holds                                   | does not hold                                   |
+| -------- | --------------------------------------- | ----------------------------------------------- |
+| Declared | [project](#term-project) [declares] {1} | [project](#term-project) does not [declare] {1} |
 
 </details>
 
@@ -1373,10 +1365,9 @@ A relative link in a document, outside its index. A link to the web is no pointe
 abstract sig Pointer extends Thing {}
 ```
 
-```readings
-noun Pointer: [pointer]
-Pointer: {1} is a [pointer] | {1} is not a [pointer]
-```
+| reading | holds              | does not hold          |
+| ------- | ------------------ | ---------------------- |
+| Pointer | {1} is a [pointer] | {1} is not a [pointer] |
 
 </details>
 
@@ -1402,10 +1393,9 @@ sig Target in Unit + Section + File {}
 fact target_kinds { Target = Unit + Section + File }
 ```
 
-```readings
-noun Target: [target]
-Target: {1} is a [target] | {1} is not a [target]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Target  | {1} is a [target] | {1} is not a [target] |
 
 </details>
 
@@ -1422,10 +1412,9 @@ A heading of a document that is no unit, or any other element with an id.
 sig Section {}
 ```
 
-```readings
-noun Section: [section]
-Section: {1} is a [section] | {1} is not a [section]
-```
+| reading | holds              | does not hold          |
+| ------- | ------------------ | ---------------------- |
+| Section | {1} is a [section] | {1} is not a [section] |
 
 </details>
 
@@ -1440,9 +1429,9 @@ Section: {1} is a [section] | {1} is not a [section]
 sig File {}
 ```
 
-```readings
-File: {1} is a [file] | {1} is not a [file]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| File    | {1} is a [file] | {1} is not a [file] |
 
 </details>
 
@@ -1477,9 +1466,9 @@ pred used[u: Unit] {
 }
 ```
 
-```readings
-used: {1} is [used] | {1} is not [used]
-```
+| reading | holds         | does not hold     |
+| ------- | ------------- | ----------------- |
+| used    | {1} is [used] | {1} is not [used] |
 
 </details>
 
@@ -1502,10 +1491,9 @@ A unit's heading is its kind and its id, and nothing after: `### @spec a-leaf`. 
 sig Trailer {}
 ```
 
-```readings
-noun Trailer: [trailer]
-Trailer: {1} is a [trailer] | {1} is not a [trailer]
-```
+| reading | holds              | does not hold          |
+| ------- | ------------------ | ---------------------- |
+| Trailer | {1} is a [trailer] | {1} is not a [trailer] |
 
 </details>
 
@@ -1528,9 +1516,9 @@ one sig Repeat { rel: Unit -> Unit }
 fact repeats_another { no iden & Repeat.rel }
 ```
 
-```readings
-Repeat.rel: {1} [repeats] {2} | {1} does not [repeat] {2}
-```
+| reading    | holds             | does not hold             |
+| ---------- | ----------------- | ------------------------- |
+| Repeat.rel | {1} [repeats] {2} | {1} does not [repeat] {2} |
 
 </details>
 
@@ -1550,9 +1538,9 @@ Repeat.rel: {1} [repeats] {2} | {1} does not [repeat] {2}
 one sig Follow { rel: Trailer -> Unit }
 ```
 
-```readings
-Follow.rel: {1} [follows] {2} | {1} does not [follow] {2}
-```
+| reading    | holds             | does not hold             |
+| ---------- | ----------------- | ------------------------- |
+| Follow.rel | {1} [follows] {2} | {1} does not [follow] {2} |
 
 </details>
 
@@ -1567,10 +1555,9 @@ Follow.rel: {1} [follows] {2} | {1} does not [follow] {2}
 sig Document extends Thing {}
 ```
 
-```readings
-noun Document: [document]
-Document: {1} is a [document] | {1} is not a [document]
-```
+| reading  | holds               | does not hold           |
+| -------- | ------------------- | ----------------------- |
+| Document | {1} is a [document] | {1} is not a [document] |
 
 </details>
 
@@ -1587,10 +1574,9 @@ The region between the `toc:begin` and `toc:end` markers, which `generate` write
 sig Index {}
 ```
 
-```readings
-noun Index: [index]
-Index: {1} is an [index] | {1} is not an [index]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Index   | {1} is an [index] | {1} is not an [index] |
 
 </details>
 
@@ -1610,11 +1596,11 @@ Index: {1} is an [index] | {1} is not an [index]
 one sig Hold { units: Document -> Unit, indexes: Document -> Index, symbols: Source -> Site }
 ```
 
-```readings
-Hold.units: {1} [holds] {2} | {1} does not [hold] {2}
-Hold.indexes: {1} [holds] {2} | {1} does not [hold] {2}
-Hold.symbols: {1} [holds] {2} | {1} does not [hold] {2}
-```
+| reading      | holds           | does not hold           |
+| ------------ | --------------- | ----------------------- |
+| Hold.units   | {1} [holds] {2} | {1} does not [hold] {2} |
+| Hold.indexes | {1} [holds] {2} | {1} does not [hold] {2} |
+| Hold.symbols | {1} [holds] {2} | {1} does not [hold] {2} |
 
 </details>
 
@@ -1636,9 +1622,9 @@ An index matches its document when it is what `generate` writes for the document
 one sig Match { rel: Index -> Document }
 ```
 
-```readings
-Match.rel: {1} [matches] {2} | {1} does not [match] {2}
-```
+| reading   | holds             | does not hold            |
+| --------- | ----------------- | ------------------------ |
+| Match.rel | {1} [matches] {2} | {1} does not [match] {2} |
 
 </details>
 
@@ -1655,10 +1641,9 @@ A claim that answers for one place in the code names it on a line of its own: ``
 sig Site {}
 ```
 
-```readings
-noun Site: [site]
-Site: {1} is a [site] | {1} is not a [site]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| Site    | {1} is a [site] | {1} is not a [site] |
 
 </details>
 
@@ -1673,10 +1658,9 @@ Site: {1} is a [site] | {1} is not a [site]
 sig Source {}
 ```
 
-```readings
-noun Source: [source]
-Source: {1} is a [source] | {1} is not a [source]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Source  | {1} is a [source] | {1} is not a [source] |
 
 </details>
 
@@ -1699,10 +1683,9 @@ A term mark says that its words are a word of the project's language, and it cos
 sig TermMark extends Thing {}
 ```
 
-```readings
-noun TermMark: [term mark]
-TermMark: {1} is a [term mark] | {1} is not a [term mark]
-```
+| reading  | holds                | does not hold            |
+| -------- | -------------------- | ------------------------ |
+| TermMark | {1} is a [term mark] | {1} is not a [term mark] |
 
 </details>
 
@@ -1749,10 +1732,9 @@ A `@canon` line, or an `@axiom` line. The checker reads the tags of every test i
 sig Tag extends Thing {}
 ```
 
-```readings
-noun Tag: [tag]
-Tag: {1} is a [tag] | {1} is not a [tag]
-```
+| reading | holds          | does not hold      |
+| ------- | -------------- | ------------------ |
+| Tag     | {1} is a [tag] | {1} is not a [tag] |
 
 </details>
 
@@ -1772,9 +1754,9 @@ Tag: {1} is a [tag] | {1} is not a [tag]
 one sig Carry { rel: Test -> Tag }
 ```
 
-```readings
-Carry.rel: {1} [carries] {2} | {1} does not [carry] {2}
-```
+| reading   | holds             | does not hold            |
+| --------- | ----------------- | ------------------------ |
+| Carry.rel | {1} [carries] {2} | {1} does not [carry] {2} |
 
 </details>
 
@@ -1789,10 +1771,9 @@ Carry.rel: {1} [carries] {2} | {1} does not [carry] {2}
 sig PlainTest extends Test {}
 ```
 
-```readings
-noun PlainTest: [plain test]
-PlainTest: {1} is a [plain test] | {1} is not a [plain test]
-```
+| reading   | holds                 | does not hold             |
+| --------- | --------------------- | ------------------------- |
+| PlainTest | {1} is a [plain test] | {1} is not a [plain test] |
 
 </details>
 
@@ -1807,10 +1788,9 @@ PlainTest: {1} is a [plain test] | {1} is not a [plain test]
 sig ExpectedFailure extends Test {}
 ```
 
-```readings
-noun ExpectedFailure: [expected failure]
-ExpectedFailure: {1} is an [expected failure] | {1} is not an [expected failure]
-```
+| reading         | holds                        | does not hold                    |
+| --------------- | ---------------------------- | -------------------------------- |
+| ExpectedFailure | {1} is an [expected failure] | {1} is not an [expected failure] |
 
 </details>
 
@@ -1836,9 +1816,9 @@ A test's tags are how it points at what it holds the code to: it checks the unit
 pred checks[t: Test, u: Unit] { some g: Tag | t->g in Carry.rel and g->u in Name.tag }
 ```
 
-```readings
-checks: {1} [checks] {2} | {1} does not [check] {2}
-```
+| reading | holds            | does not hold            |
+| ------- | ---------------- | ------------------------ |
+| checks  | {1} [checks] {2} | {1} does not [check] {2} |
 
 </details>
 
@@ -1858,10 +1838,9 @@ checks: {1} [checks] {2} | {1} does not [check] {2}
 sig Issue {}
 ```
 
-```readings
-noun Issue: [issue]
-Issue: {1} is an [issue] | {1} is not an [issue]
-```
+| reading | holds             | does not hold         |
+| ------- | ----------------- | --------------------- |
+| Issue   | {1} is an [issue] | {1} is not an [issue] |
 
 </details>
 
@@ -1880,12 +1859,11 @@ sig Known, Closed in Issue {}
 fact issues_are_the_trackers { no Tracker implies no Issue }
 ```
 
-```readings
-noun Tracker: [tracker]
-Tracker: [project](#term-project) has a [tracker] | [project](#term-project) has no [tracker]
-Known: [tracker] knows {1} | [tracker] does not know {1}
-Closed: [tracker] has closed {1} | [tracker] has not closed {1}
-```
+| reading | holds                                    | does not hold                             |
+| ------- | ---------------------------------------- | ----------------------------------------- |
+| Tracker | [project](#term-project) has a [tracker] | [project](#term-project) has no [tracker] |
+| Known   | [tracker] knows {1}                      | [tracker] does not know {1}               |
+| Closed  | [tracker] has closed {1}                 | [tracker] has not closed {1}              |
 
 </details>
 
@@ -1916,14 +1894,14 @@ one sig Name {
 }
 ```
 
-```readings
-Name.issue: {1} [names] {2} | {1} does not [name] {2}
-Name.between: {1} [names] {2} | {1} does not [name] {2}
-Name.tag: {1} [names] {2} | {1} does not [name] {2}
-Name.pointer: {1} [names] {2} | {1} does not [name] {2}
-Name.mark: {1} [names] {2} | {1} does not [name] {2}
-Name.site: {1} [names] {2} | {1} does not [name] {2}
-```
+| reading      | holds           | does not hold           |
+| ------------ | --------------- | ----------------------- |
+| Name.issue   | {1} [names] {2} | {1} does not [name] {2} |
+| Name.between | {1} [names] {2} | {1} does not [name] {2} |
+| Name.tag     | {1} [names] {2} | {1} does not [name] {2} |
+| Name.pointer | {1} [names] {2} | {1} does not [name] {2} |
+| Name.mark    | {1} [names] {2} | {1} does not [name] {2} |
+| Name.site    | {1} [names] {2} | {1} does not [name] {2} |
 
 </details>
 
@@ -1947,9 +1925,9 @@ pred tested[u: Unit] {
 }
 ```
 
-```readings
-tested: {1} is [tested] | {1} is not [tested]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| tested  | {1} is [tested] | {1} is not [tested] |
 
 </details>
 
@@ -1968,9 +1946,9 @@ A conflict sets units against each other, so it needs two sides. It must name at
 pred paired[c: Conflict] { some a, b: Unit | a != b and c->a in Name.between and c->b in Name.between }
 ```
 
-```readings
-paired: {1} is [paired] | {1} is not [paired]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| paired  | {1} is [paired] | {1} is not [paired] |
 
 </details>
 
@@ -2006,9 +1984,9 @@ pred hidden[x: Unit] {
 }
 ```
 
-```readings
-hidden: {1} is [hidden] | {1} is not [hidden]
-```
+| reading | holds           | does not hold       |
+| ------- | --------------- | ------------------- |
+| hidden  | {1} is [hidden] | {1} is not [hidden] |
 
 </details>
 
@@ -2034,9 +2012,9 @@ pred misleading[t: Test] {
 }
 ```
 
-```readings
-misleading: {1} is [misleading] | {1} is not [misleading]
-```
+| reading    | holds               | does not hold           |
+| ---------- | ------------------- | ----------------------- |
+| misleading | {1} is [misleading] | {1} is not [misleading] |
 
 </details>
 
@@ -2060,14 +2038,16 @@ sig Installed, Missing, Unfound in Plugin {}
 fact plugin_kinds { Plugin = Installed + Missing and no Installed & Missing }
 ```
 
-```readings
-noun Plugin: [plugin]
-noun Installed: [installed plugin]
-Installed: the project has installed {1} | the project has not installed {1}
-noun Missing: [missing plugin]
-Missing: the project lacks {1} | the project does not lack {1}
-Unfound: [checker](#term-checker) reports that the project lacks {1} | [checker](#term-checker) does not report that the project lacks {1}
-```
+| signature | noun               |
+| --------- | ------------------ |
+| Installed | [installed plugin] |
+| Missing   | [missing plugin]   |
+
+| reading   | holds                                                       | does not hold                                                       |
+| --------- | ----------------------------------------------------------- | ------------------------------------------------------------------- |
+| Installed | the project has installed {1}                               | the project has not installed {1}                                   |
+| Missing   | the project lacks {1}                                       | the project does not lack {1}                                       |
+| Unfound   | [checker](#term-checker) reports that the project lacks {1} | [checker](#term-checker) does not report that the project lacks {1} |
 
 </details>
 
@@ -2086,13 +2066,12 @@ sig Core, Unknown, Clashed in Command {}
 one sig Add { rel: Plugin -> Command }
 ```
 
-```readings
-noun Command: [command]
-Core: the [checker](#term-checker) has {1} of its own | the [checker](#term-checker) does not have {1} of its own
-Unknown: [checker](#term-checker) reports {1} as an unknown [command] | [checker](#term-checker) does not report {1} as an unknown [command]
-Clashed: [checker](#term-checker) reports {1} as the [bare name](#term-bare-name) of more than one [command] | [checker](#term-checker) does not report {1} as the [bare name](#term-bare-name) of more than one [command]
-Add.rel: {1} adds {2} | {1} does not add {2}
-```
+| reading | holds                                                                                               | does not hold                                                                                               |
+| ------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Core    | the [checker](#term-checker) has {1} of its own                                                     | the [checker](#term-checker) does not have {1} of its own                                                   |
+| Unknown | [checker](#term-checker) reports {1} as an unknown [command]                                        | [checker](#term-checker) does not report {1} as an unknown [command]                                        |
+| Clashed | [checker](#term-checker) reports {1} as the [bare name](#term-bare-name) of more than one [command] | [checker](#term-checker) does not report {1} as the [bare name](#term-bare-name) of more than one [command] |
+| Add.rel | {1} adds {2}                                                                                        | {1} does not add {2}                                                                                        |
 
 </details>
 
@@ -2114,18 +2093,20 @@ one sig Head { rel: Document -> Frontmatter }
 one sig Bare { rel: Document -> Document }
 ```
 
-```readings
-noun Block: [block]
-noun Frontmatter: [frontmatter]
-Frontmatter: {1} is a [frontmatter] | {1} is not a [frontmatter]
-noun Listing: [listing frontmatter]
-Listing: {1} has a plugins key | {1} has no plugins key
-noun Refused: [refused frontmatter]
-Refused: the [checker](#term-checker) cannot read {1} | the [checker](#term-checker) can read {1}
-Unreadable: [checker](#term-checker) reports that {1} has a [frontmatter] it cannot read | [checker](#term-checker) does not report that {1} has a [frontmatter] it cannot read
-Head.rel: {1} starts with {2} | {1} does not start with {2}
-Bare.rel: {1} is {2} without its [frontmatter] | {1} is not {2} without its [frontmatter]
-```
+| signature | noun                  |
+| --------- | --------------------- |
+| Block     | [block]               |
+| Listing   | [listing frontmatter] |
+| Refused   | [refused frontmatter] |
+
+| reading     | holds                                                                        | does not hold                                                                        |
+| ----------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Frontmatter | {1} is a [frontmatter]                                                       | {1} is not a [frontmatter]                                                           |
+| Listing     | {1} has a plugins key                                                        | {1} has no plugins key                                                               |
+| Refused     | the [checker](#term-checker) cannot read {1}                                 | the [checker](#term-checker) can read {1}                                            |
+| Unreadable  | [checker](#term-checker) reports that {1} has a [frontmatter] it cannot read | [checker](#term-checker) does not report that {1} has a [frontmatter] it cannot read |
+| Head.rel    | {1} starts with {2}                                                          | {1} does not start with {2}                                                          |
+| Bare.rel    | {1} is {2} without its [frontmatter]                                         | {1} is not {2} without its [frontmatter]                                             |
 
 </details>
 
@@ -2144,11 +2125,10 @@ one sig Item { rel: Frontmatter -> Entry }
 one sig Spell { rel: Entry -> Plugin }
 ```
 
-```readings
-noun Entry: [entry]
-Item.rel: {1} holds {2} | {1} does not hold {2}
-Spell.rel: {1} spells {2} | {1} does not spell {2}
-```
+| reading   | holds          | does not hold          |
+| --------- | -------------- | ---------------------- |
+| Item.rel  | {1} holds {2}  | {1} does not hold {2}  |
+| Spell.rel | {1} spells {2} | {1} does not spell {2} |
 
 </details>
 
@@ -2174,9 +2154,9 @@ A frontmatter lists a plugin when one of its entries spells the plugin's name. O
 pred lists[f: Frontmatter, p: Plugin] { some e: Entry | f->e in Item.rel and e->p in Spell.rel }
 ```
 
-```readings
-lists: {1} [lists] {2} | {1} does not [list] {2}
-```
+| reading | holds           | does not hold           |
+| ------- | --------------- | ----------------------- |
+| lists   | {1} [lists] {2} | {1} does not [list] {2} |
 
 </details>
 
@@ -2204,22 +2184,25 @@ The checker reads a small part of YAML and refuses the rest, so that a mistake c
 sig Misquoted, Foreign, Unclosed, Unterminated, Doubled, Dangling, Looping in Frontmatter {}
 ```
 
-```readings
-noun Misquoted: [misquoted frontmatter]
-Misquoted: {1} has the [flaw] of an entry that starts with an at sign outside quotes | {1} does not have the [flaw] of an entry that starts with an at sign outside quotes
-noun Foreign: [foreign frontmatter]
-Foreign: {1} has the [flaw] of a key that neither the [checker](#term-checker) nor a [plugin](#term-plugin) that {1} lists defines | {1} does not have the [flaw] of a key that neither the [checker](#term-checker) nor a [plugin](#term-plugin) that {1} lists defines
-noun Unclosed: [unclosed frontmatter]
-Unclosed: {1} has the [flaw] of a list that is not closed | {1} does not have the [flaw] of a list that is not closed
-noun Unterminated: [unterminated frontmatter]
-Unterminated: {1} has the [flaw] of a string that is not closed | {1} does not have the [flaw] of a string that is not closed
-noun Doubled: [doubled frontmatter]
-Doubled: {1} has the [flaw] of a key that appears twice | {1} does not have the [flaw] of a key that appears twice
-noun Dangling: [dangling frontmatter]
-Dangling: {1} has the [flaw] of a path that names no document | {1} does not have the [flaw] of a path that names no document
-noun Looping: [circular frontmatter]
-Looping: {1} has the [flaw] of an extension that leads back to its own document | {1} does not have the [flaw] of an extension that leads back to its own document
-```
+| signature    | noun                       |
+| ------------ | -------------------------- |
+| Misquoted    | [misquoted frontmatter]    |
+| Foreign      | [foreign frontmatter]      |
+| Unclosed     | [unclosed frontmatter]     |
+| Unterminated | [unterminated frontmatter] |
+| Doubled      | [doubled frontmatter]      |
+| Dangling     | [dangling frontmatter]     |
+| Looping      | [circular frontmatter]     |
+
+| reading      | holds                                                                                                                     | does not hold                                                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Misquoted    | {1} has the [flaw] of an entry that starts with an at sign outside quotes                                                 | {1} does not have the [flaw] of an entry that starts with an at sign outside quotes                                                 |
+| Foreign      | {1} has the [flaw] of a key that neither the [checker](#term-checker) nor a [plugin](#term-plugin) that {1} lists defines | {1} does not have the [flaw] of a key that neither the [checker](#term-checker) nor a [plugin](#term-plugin) that {1} lists defines |
+| Unclosed     | {1} has the [flaw] of a list that is not closed                                                                           | {1} does not have the [flaw] of a list that is not closed                                                                           |
+| Unterminated | {1} has the [flaw] of a string that is not closed                                                                         | {1} does not have the [flaw] of a string that is not closed                                                                         |
+| Doubled      | {1} has the [flaw] of a key that appears twice                                                                            | {1} does not have the [flaw] of a key that appears twice                                                                            |
+| Dangling     | {1} has the [flaw] of a path that names no document                                                                       | {1} does not have the [flaw] of a path that names no document                                                                       |
+| Looping      | {1} has the [flaw] of an extension that leads back to its own document                                                    | {1} does not have the [flaw] of an extension that leads back to its own document                                                    |
 
 </details>
 
@@ -2243,10 +2226,10 @@ one sig Context { rel: Document -> Document }
 fact context_is_another { no iden & Context.rel }
 ```
 
-```readings
-Extend.rel: {1} [extends] {2} | {1} does not [extend] {2}
-Context.rel: {2} is [context] for {1} | {2} is not [context] for {1}
-```
+| reading     | holds                    | does not hold                |
+| ----------- | ------------------------ | ---------------------------- |
+| Extend.rel  | {1} [extends] {2}        | {1} does not [extend] {2}    |
+| Context.rel | {2} is [context] for {1} | {2} is not [context] for {1} |
 
 </details>
 
@@ -2263,10 +2246,13 @@ The checker has seven settings of its own: `documents`, `suites`, `sources`, `re
 sig Stray in Frontmatter {}
 ```
 
-```readings
-noun Stray: [stray frontmatter]
-Stray: {1} has the [flaw](#term-flaw) of a setting in a document that is not the entry document | {1} does not have the [flaw](#term-flaw) of a setting in a document that is not the entry document
-```
+| signature | noun                |
+| --------- | ------------------- |
+| Stray     | [stray frontmatter] |
+
+| reading | holds                                                                                    | does not hold                                                                                      |
+| ------- | ---------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| Stray   | {1} has the [flaw](#term-flaw) of a setting in a document that is not the entry document | {1} does not have the [flaw](#term-flaw) of a setting in a document that is not the entry document |
 
 </details>
 
@@ -2288,10 +2274,9 @@ sig Runner {}
 fact tests_are_the_runners { no Runner implies no Test }
 ```
 
-```readings
-noun Runner: [runner]
-Runner: [project](#term-project) has a [runner] | [project](#term-project) has no [runner]
-```
+| reading | holds                                   | does not hold                            |
+| ------- | --------------------------------------- | ---------------------------------------- |
+| Runner  | [project](#term-project) has a [runner] | [project](#term-project) has no [runner] |
 
 </details>
 
@@ -2330,9 +2315,9 @@ Plugins are opt-in, one document at a time. A document opts in through the front
 pred applies[p: Plugin, d: Document] { some f: Listing | d->f in Head.rel and lists[f, p] }
 ```
 
-```readings
-applies: {1} [applies] to {2} | {1} does not [apply] to {2}
-```
+| reading | holds                | does not hold               |
+| ------- | -------------------- | --------------------------- |
+| applies | {1} [applies] to {2} | {1} does not [apply] to {2} |
 
 </details>
 
@@ -2358,20 +2343,22 @@ pred stopped[r: Run] { (some f: Frontmatter, p: Missing | lists[f, p]) or (some 
 one sig Over { rel: Plugin -> Document }
 ```
 
-```readings
-noun Run: [run]
-Exits0: {1} exits with code 0 | {1} does not exit with code 0
-Exits1: {1} exits with code 1 | {1} does not exit with code 1
-Exits2: {1} exits with code 2 | {1} does not exit with code 2
-noun Given: [given document]
-Given: the command line of a [run](#term-run) names {1} | the command line of no [run](#term-run) names {1}
-Ask.rel: {1} asks for {2} | {1} does not ask for {2}
-stopped: [checker](#term-checker) stops {1} itself | [checker](#term-checker) does not stop {1} itself
-Return.code0: {1} gets code 0 from {2} | {1} does not get code 0 from {2}
-Return.code1: {1} gets code 1 from {2} | {1} does not get code 1 from {2}
-Return.code2: {1} gets code 2 from {2} | {1} does not get code 2 from {2}
-Over.rel: [checker](#term-checker) runs {1} over {2} | [checker](#term-checker) does not run {1} over {2}
-```
+| signature | noun             |
+| --------- | ---------------- |
+| Given     | [given document] |
+
+| reading      | holds                                            | does not hold                                      |
+| ------------ | ------------------------------------------------ | -------------------------------------------------- |
+| Exits0       | {1} exits with code 0                            | {1} does not exit with code 0                      |
+| Exits1       | {1} exits with code 1                            | {1} does not exit with code 1                      |
+| Exits2       | {1} exits with code 2                            | {1} does not exit with code 2                      |
+| Given        | the command line of a [run](#term-run) names {1} | the command line of no [run](#term-run) names {1}  |
+| Ask.rel      | {1} asks for {2}                                 | {1} does not ask for {2}                           |
+| stopped      | [checker](#term-checker) stops {1} itself        | [checker](#term-checker) does not stop {1} itself  |
+| Return.code0 | {1} gets code 0 from {2}                         | {1} does not get code 0 from {2}                   |
+| Return.code1 | {1} gets code 1 from {2}                         | {1} does not get code 1 from {2}                   |
+| Return.code2 | {1} gets code 2 from {2}                         | {1} does not get code 2 from {2}                   |
+| Over.rel     | [checker](#term-checker) runs {1} over {2}       | [checker](#term-checker) does not run {1} over {2} |
 
 </details>
 
@@ -2406,9 +2393,9 @@ pred calls[r: Run, p: Plugin] {
 }
 ```
 
-```readings
-calls: {1} [calls] {2} | {1} does not [call] {2}
-```
+| reading | holds           | does not hold           |
+| ------- | --------------- | ----------------------- |
+| calls   | {1} [calls] {2} | {1} does not [call] {2} |
 
 </details>
 
@@ -2445,9 +2432,9 @@ pred available[c: Command] {
 }
 ```
 
-```readings
-available: {1} is [available] | {1} is not [available]
-```
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| available | {1} is [available] | {1} is not [available] |
 
 </details>
 
@@ -2464,9 +2451,9 @@ A plugin adds each command of its own under a prefix: the name of its package, w
 one sig Shorten { rel: Command -> Command }
 ```
 
-```readings
-Shorten.rel: {1} is the [bare name] of {2} | {1} is not the [bare name] of {2}
-```
+| reading     | holds                         | does not hold                     |
+| ----------- | ----------------------------- | --------------------------------- |
+| Shorten.rel | {1} is the [bare name] of {2} | {1} is not the [bare name] of {2} |
 
 </details>
 
@@ -2509,9 +2496,9 @@ pred ambiguous[c: Command] {
 }
 ```
 
-```readings
-ambiguous: {1} is [ambiguous] | {1} is not [ambiguous]
-```
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| ambiguous | {1} is [ambiguous] | {1} is not [ambiguous] |
 
 </details>
 
@@ -2567,20 +2554,19 @@ one sig Within { rel: Fence -> Unit }
 one sig Blocks { rel: Unit -> Fence }
 ```
 
-```readings
-noun Fence: [fence]
-Languaged: {1} names a language | {1} names no language
-VocabularyWord: the second word of {1} is vocabulary | the second word of {1} is not vocabulary
-BoundsWord: the second word of {1} is bounds | the second word of {1} is not bounds
-ScenarioWord: the second word of {1} is scenario | the second word of {1} is not scenario
-NoSecondWord: {1} has no second word that names a role | {1} has a second word that names a role
-VocabularyBlock: {1} has the role of vocabulary | {1} does not have the role of vocabulary
-BoundsBlock: {1} has the role of bounds | {1} does not have the role of bounds
-ScenarioBlock: {1} has the role of scenario | {1} does not have the role of scenario
-UnitBlock: {1} has the role of the formula of its unit | {1} does not have the role of the formula of its unit
-Within.rel: {1} lies in the own text of {2} | {1} does not lie in the own text of {2}
-Blocks.rel: [checker](#term-checker) reads {2} as a block of {1} | [checker](#term-checker) does not read {2} as a block of {1}
-```
+| reading         | holds                                                | does not hold                                                |
+| --------------- | ---------------------------------------------------- | ------------------------------------------------------------ |
+| Languaged       | {1} names a language                                 | {1} names no language                                        |
+| VocabularyWord  | the second word of {1} is vocabulary                 | the second word of {1} is not vocabulary                     |
+| BoundsWord      | the second word of {1} is bounds                     | the second word of {1} is not bounds                         |
+| ScenarioWord    | the second word of {1} is scenario                   | the second word of {1} is not scenario                       |
+| NoSecondWord    | {1} has no second word that names a role             | {1} has a second word that names a role                      |
+| VocabularyBlock | {1} has the role of vocabulary                       | {1} does not have the role of vocabulary                     |
+| BoundsBlock     | {1} has the role of bounds                           | {1} does not have the role of bounds                         |
+| ScenarioBlock   | {1} has the role of scenario                         | {1} does not have the role of scenario                       |
+| UnitBlock       | {1} has the role of the formula of its unit          | {1} does not have the role of the formula of its unit        |
+| Within.rel      | {1} lies in the own text of {2}                      | {1} does not lie in the own text of {2}                      |
+| Blocks.rel      | [checker](#term-checker) reads {2} as a block of {1} | [checker](#term-checker) does not read {2} as a block of {1} |
 
 </details>
 

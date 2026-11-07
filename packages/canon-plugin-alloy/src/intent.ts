@@ -10,6 +10,7 @@ import { resolve } from 'node:path';
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { readUnits, type Unit } from '@bigmistqke/canon/units';
 import { regionName } from './statements.ts';
+import { readingBlocks } from './tables.ts';
 
 /** Where the intent of a unit is, as lines of the document: `from` up to, not including, `to`; the two are equal when it has none. */
 export interface Place {
@@ -211,7 +212,7 @@ export function checkIntents(documents: string[], root: string, contextOf: (file
     const file = resolve(root, doc);
     if (!existsSync(file)) continue;
     const src = readFileSync(file, 'utf8');
-    if (![src, ...contextOf(file)].some(text => readBlocks(text).some(b => b.lang === 'readings'))) continue;
+    if (![src, ...contextOf(file)].some(text => readingBlocks(text).length > 0)) continue;
     const units = readUnits(src);
     for (const unit of units) {
       if (!holdsFormula(src, unit, units) || textOf(placeOf(src, unit)).trim() !== '') continue;
