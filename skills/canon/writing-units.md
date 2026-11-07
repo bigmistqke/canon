@@ -241,6 +241,7 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 9. Write a formula only where the model can hold it against the others. A formula that uses a signature no other unit and no scenario names is lone, and `canon check` reports it (`lone`). No other formula can contradict it, so it looks checked and is not. Tie the signature to the model with a definition, a fact or a scenario that is true of it. Otherwise drop the formula and write the statement by hand, and let the test guard the unit.
 10. Keep `pnpm canon alloy:logic` clean. A finding names the units that cannot all hold. Treat it as a contradiction in the canon: [section 11](#11-conflicts) says what to do while the owner has not ruled.
 11. `canon alloy:logic` needs Java 17 or later and the jar of the Alloy analyzer. Give their paths as `logic: {alloy: {jar: …, java: …}}` in the frontmatter of the entry document, or as `CANON_ALLOY_JAR` and `CANON_JAVA`.
+12. Fold the `alloy` and `readings` blocks of a unit in a `<details>` element with the summary `Alloy`, so that the prose of the unit reads on its own. Leave a blank line after `<summary>` and before `</details>`, or GitHub does not render the blocks inside. The checker and the plugin read a block in a fold as any other, and the intent ends where the fold opens.
 
 ````md
 ### @spec a-started-node-is-done-eventually
@@ -250,7 +251,12 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 
 Starting a node is a promise to finish it. The work may take any number of moments, but a node never stays started forever.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 always all n: Node | n in Started implies eventually n in Done
 ```
+
+</details>
 ````

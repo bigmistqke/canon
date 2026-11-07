@@ -1,7 +1,7 @@
 /**
  * `canon alloy:intent`: the intent of a unit with a formula, read and written
  * by its unit. The intent is the author's prose between the statement of the
- * unit and its first fenced block; a "Derives from:" or "Site:" line after the
+ * unit and its first fenced block or fold; a "Derives from:" or "Site:" line after the
  * statement comes before it, and a generated region ends it, as the statement
  * of a scenario does.
  */
@@ -23,6 +23,8 @@ export interface Place {
 }
 
 const FENCE = /^ {0,3}(```|~~~)/;
+/** The line that opens a fold, a `<details>` element, which ends the intent as a fence does. */
+const FOLD = /^ {0,3}<details[\s>]/i;
 const HEADING = /^ {0,3}#{1,6}(\s|$)/;
 const COMMENT = /^\s*<!--/;
 const QUOTE = /^ {0,3}>/;
@@ -58,7 +60,7 @@ export function placeOf(src: string, unit: Unit): Place {
     else break;
   }
   const from = at;
-  while (at < end && !FENCE.test(lines[at] as string) && !COMMENT.test(lines[at] as string)) at++;
+  while (at < end && !FENCE.test(lines[at] as string) && !FOLD.test(lines[at] as string) && !COMMENT.test(lines[at] as string)) at++;
   let to = at;
   while (to > from && (lines[to - 1] as string).trim() === '') to--;
   return { unit, line, from, to, lines };
@@ -72,6 +74,7 @@ export function refusalOf(text: string): string | undefined {
   if (text.trim() === '') return 'the text is empty, and a unit with a formula owes an intent';
   for (const line of text.split('\n')) {
     if (FENCE.test(line)) return `the text holds a fenced block, which would end the intent: ${line.trim()}`;
+    if (FOLD.test(line)) return `the text holds a fold, which would end the intent: ${line.trim()}`;
     if (HEADING.test(line)) return `the text holds a heading, which would end the unit: ${line.trim()}`;
     if (QUOTE.test(line)) return `the text holds a quote, which the checker reads as a statement: ${line.trim()}`;
     if (STRUCTURE.test(line)) return `the text holds a line the checker reads as a derivation or a site: ${line.trim()}`;

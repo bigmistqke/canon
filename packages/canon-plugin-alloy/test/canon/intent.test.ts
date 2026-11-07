@@ -68,6 +68,19 @@ some n: Node | n in Done
 some n: Node | n in Done
 \`\`\`
 
+### @spec a-folded-leaf
+
+The fold comes after this.
+
+<details>
+<summary>Alloy</summary>
+
+\`\`\`alloy
+some n: Node | n in Done
+\`\`\`
+
+</details>
+
 ### @spec a-bare-leaf
 
 \`\`\`alloy
@@ -146,6 +159,16 @@ describe('alloy:intent', () => {
     expect(runs[0]?.out).not.toContain('all n: Node');
     expect(runs[1]?.out).toContain('spec-a-scenario-first\n\nThe scenario comes first here.\n');
     expect(runs[1]?.out).not.toContain('It must be possible');
+  });
+
+  /**
+   * @canon spec-intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
+   */
+  it('prints the prose before a fold, and reads the formula inside it', () => {
+    const { runs } = project({ args: ['alloy:intent', 'spec-a-folded-leaf'] });
+    expect(runs[0]?.code).toBe(0);
+    expect(runs[0]?.out).toContain('spec-a-folded-leaf\n\nThe fold comes after this.\n');
+    expect(runs[0]?.out).not.toContain('<details>');
   });
 
   /**
@@ -248,6 +271,16 @@ describe('alloy:intent --write', () => {
     const { runs, before, after } = project({ args: ['alloy:intent', ...units, '--write'], input });
     return { err: runs[0]?.err ?? '', code: runs[0]?.code, changed: after !== before };
   };
+
+  /**
+   * @canon spec-a-write-of-text-with-a-fold-is-refused
+   */
+  it('refuses text with a fold', () => {
+    const run = refused('Words.\n\n<details>\n<summary>More</summary>\n\nHidden.\n\n</details>\n', 'spec-a-leaf');
+    expect(run.err).toContain('fold');
+    expect(run.code).toBe(2);
+    expect(run.changed).toBe(false);
+  });
 
   /**
    * @canon spec-a-write-of-text-with-a-fenced-block-is-refused
