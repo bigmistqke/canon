@@ -103,9 +103,10 @@ This follows because a missing value sets nothing: …
 2. Write terms in the `## Terms` section of a canon document, as `### @term <stem>`. Join the words of a stem with hyphens, such as `loading-boundary`. No unit sits in a term, and a term sits in no unit (`misnested`).
 3. Choose one word for each concept. List the words to avoid on an `_Avoid_:` line under the statement.
 4. Define only words specific to the project. General programming concepts get no term.
-5. Link a term from the units whose meaning depends on it. A term that no unit links fails the check (`dead`).
-6. Write a term the moment a word's meaning is settled. Do not collect terms for later.
-7. To settle a vague or contested word, use the grill-with-canon skill.
+5. Mark a term in the units whose meaning depends on it: `*present*` names `term-present` of the same document. Mark a term of another document with a link around the mark, `[*present*](../other/CANON.md#term-present)`. A term that no unit marks or links fails the check (`dead`), and a mark that names no term is a rotting.
+6. List every spelling of a term other than its stem in a grammar table, in a `Grammar` fold after its prose. The row `type` names its part of speech. Each other row gives a role and its spellings, `| plural | outdated trackings |`. A mark names a term only in a spelling the term lists. `canon generate` lines up the columns.
+7. Write a term the moment a word's meaning is settled. Do not collect terms for later.
+8. To settle a vague or contested word, use the grill-with-canon skill.
 
 ```md
 ### @term present
@@ -230,7 +231,9 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 
 1. Write the formula of a unit in an `alloy` block in its body. Declare the sets and relations that units share in an `alloy vocabulary` block, in the term that names them.
 2. Write a situation that the units must allow in an `alloy scenario` block. A scenario is a claim that something is possible, and `canon alloy:logic` reports one that cannot happen.
-3. Give the words of the vocabulary in a reading table, in the term that declares them. Its headers are `reading`, `holds` and `does not hold`, and a row gives a key and its two sides, with `{1}` and `{2}` for the variables: `| Ran | {1} has run | {1} has not run |`. A noun table, with the headers `signature` and `noun`, gives the noun of a signature: `| Owner | owner |`. A signature named after the term that declares it needs no row, since its noun is the term. A noun links to the term that holds its row. A word in brackets in a reading links to a term, `{1} [sits] in {2}`, and must spell a form of it. `canon generate` lines up the columns.
+3. Give the words of the vocabulary in a reading table, in the term that declares them. Its headers are `reading`, `holds` and `does not hold`, and a row gives a key and its two sides, with `{1}` and `{2}` for the variables: `| Ran | {1} has run | {1} has not run |`. A word in brackets in a reading links to a term, `{1} [sits] in {2}`, and must spell a form of it. `canon generate` lines up the columns.
+
+   A noun table, with the headers `signature` and `noun`, gives the noun of a signature: `| Owner | owner |`. A noun links to the term that holds its row. A signature named after the term that declares it needs no row, since its noun is the term.
 4. Do not write the statement of a unit with a formula. Run `pnpm canon generate`, and it writes the statement between two markers under the heading. `canon check` reports a statement that a person wrote, or one that is stale.
 5. Under the generated statement, write the unit's intent: one paragraph in your own words. It says what the unit is for and why it follows from its parent. Explain the idea as you would to a colleague, so that the conditions of the formula follow from it. Do not restate the formula clause by clause. It replaces the "This follows because" sentence ([section 3](#3-derivation)).
 
@@ -241,7 +244,7 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 9. Write a formula only where the model can hold it against the others. A formula that uses a signature no other unit and no scenario names is lone, and `canon check` reports it (`lone`). No other formula can contradict it, so it looks checked and is not. Tie the signature to the model with a definition, a fact or a scenario that is true of it. Otherwise drop the formula and write the statement by hand, and let the test guard the unit.
 10. Keep `pnpm canon alloy:logic` clean. A finding names the units that cannot all hold. Treat it as a contradiction in the canon: [section 11](#11-conflicts) says what to do while the owner has not ruled.
 11. `canon alloy:logic` needs Java 17 or later and the jar of the Alloy analyzer. Give their paths as `logic: {alloy: {jar: …, java: …}}` in the frontmatter of the entry document, or as `CANON_ALLOY_JAR` and `CANON_JAVA`.
-12. Fold the `alloy` blocks and the tables of readings and nouns of a unit in a `<details>` element with the summary `Alloy`, so that the prose of the unit reads on its own. Leave a blank line after `<summary>` and before `</details>`, or GitHub does not render the blocks inside. The checker and the plugin read a block or a table in a fold as any other, and the intent ends where the fold opens.
+12. Fold the `alloy` blocks and the reading and noun tables of a unit in a `<details>` element with the summary `Alloy`. The prose of the unit then reads on its own. Leave a blank line after `<summary>` and before `</details>`, or GitHub does not render the blocks inside. The checker and the plugin read a block or a table in a fold as any other, and the intent ends where the fold opens.
 
 ````md
 ### @spec a-started-node-is-done-eventually

@@ -165,6 +165,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec a-pointer-names-a-target`](#spec-a-pointer-names-a-target)
       - [`@bug a-file-pointer-is-not-checked`](#bug-a-file-pointer-is-not-checked)
     - [`@spec a-term-mark-names-a-term`](#spec-a-term-mark-names-a-term)
+    - [`@spec a-grammar-table-in-a-fold-is-the-grammar-table-of-its-term`](#spec-a-grammar-table-in-a-fold-is-the-grammar-table-of-its-term)
     - [`@spec a-grammar-table-names-a-type-and-its-roles`](#spec-a-grammar-table-names-a-type-and-its-roles)
     - [`@spec a-form-names-one-term`](#spec-a-form-names-one-term)
     - [`@spec a-term-mark-names-the-term-its-words-or-its-link-lead-to`](#spec-a-term-mark-names-the-term-its-words-or-its-link-lead-to)
@@ -479,12 +480,17 @@ some c: Conflict, i: Issue, u, v: Unit | u != v and c->i in Name.issue and i in 
 
 > A unit is an axiom, a fact, a spec, an exception, a bug, a conflict, a thread or a term.
 
+One entry of a canon: a heading with a kind and a stem, and a statement under it. A unit is an *axiom*, a *fact*, a *spec*, an *exception*, a *bug*, a *conflict*, a *thread* or a *term*.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |       |
 | ------- | ----- |
 | type    | noun  |
 | plural  | units |
 
-One entry of a canon: a heading with a kind and a stem, and a statement under it. A unit is an *axiom*, a *fact*, a *spec*, an *exception*, a *bug*, a *conflict*, a *thread* or a *term*.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -649,12 +655,17 @@ The statement of a unit is the blockquote that opens its own text, whole.
 
 > A unit sits in the unit whose heading holds its own heading.
 
+A unit sitting in another is nested there.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |      |
 | ------------ | ---- |
 | type         | verb |
 | third person | sits |
 
-A unit sitting in another is nested there.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -673,12 +684,17 @@ one sig Sit { rel: Unit -> Unit }
 
 > A unit derives from each unit a link on its "Derives from:" line names.
 
+That line comes right after the unit's statement.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | derives |
 
-That line comes right after the unit's statement.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -707,13 +723,18 @@ A link elsewhere than the "Derives from:" line is a reference: it cites nothing.
 > unit_1 cites unit_2 exactly when unit_1 *sits* in unit_2 or *derives* from unit_2.
 <!-- statement-term-cite:end -->
 
+A unit cites what it follows from, and it has two ways to say so. It *sits* in that unit by nesting under it, or *derives* from it on its "Derives from:" line. A *link* in the body does neither, so it cites nothing.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |        |
 | ------------ | ------ |
 | type         | verb   |
 | third person | cites  |
 | gerund       | citing |
 
-A unit cites what it follows from, and it has two ways to say so. It *sits* in that unit by nesting under it, or *derives* from it on its "Derives from:" line. A *link* in the body does neither, so it cites nothing.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -864,12 +885,17 @@ pred miscited[u: Unit] {
 
 > A unit depends on a unit when the unit cites the unit. A unit depends on a unit when the unit cites a unit that depends on the unit.
 
+A unit depends on each unit it follows from: what it cites, what those cite, and so on up. A unit can depend on itself: it follows from itself when it cites itself, or when what it cites leads back to it.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | depends |
 
-A unit depends on each unit it follows from: what it cites, what those cite, and so on up. A unit can depend on itself: it follows from itself when it cites itself, or when what it cites leads back to it.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1333,12 +1359,17 @@ abstract sig Test extends Thing {}
 
 > Project declares each test in each file of the directory of suites that the canon field of the project names: a suite, or a helper module that a suite runs.
 
+A test in a declared suite owes a tag, and so does a test that a helper module beside the suites makes. A test elsewhere in the sources may carry one, and the checker reads it.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |          |
 | ------------ | -------- |
 | type         | verb     |
 | third person | declares |
 
-A test in a declared suite owes a tag, and so does a test that a helper module beside the suites makes. A test elsewhere in the sources may carry one, and the checker reads it.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1448,12 +1479,17 @@ sig File {}
 > - a *tag* names unit_1
 <!-- statement-term-used:end -->
 
+A unit is in use while something else leans on it. That can be a child nested in it, a unit that derives from it, or a pointer, term mark or tag that names it. Citing itself does not count, since a unit cannot keep itself alive. This matters because a unit nothing uses can stop being true without anyone noticing.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |           |
 | ------- | --------- |
 | type    | adjective |
 | also    | uses      |
 
-A unit is in use while something else leans on it. That can be a child nested in it, a unit that derives from it, or a pointer, term mark or tag that names it. Citing itself does not count, since a unit cannot keep itself alive. This matters because a unit nothing uses can stop being true without anyone noticing.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1502,12 +1538,17 @@ sig Trailer {}
 
 > A unit repeats what spells the id of the unit in a heading of another unit.
 
+When two units have one id, a pointer or a tag that names it cannot say which it means. One of the two goes unread.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | repeats |
 
-When two units have one id, a pointer or a tag that names it cannot say which it means. One of the two goes unread.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1527,10 +1568,15 @@ fact repeats_another { no iden & Repeat.rel }
 
 > A trailer follows the unit whose heading holds the trailer.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | follows |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1585,10 +1631,15 @@ sig Index {}
 
 > A document holds each unit and each index in the document. A source holds each symbol that its code declares.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar      |       |
 | ------------ | ----- |
 | type         | verb  |
 | third person | holds |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1609,12 +1660,17 @@ one sig Hold { units: Document -> Unit, indexes: Document -> Index, symbols: Sou
 
 > An index matches the document that generate writes the index for.
 
+An index matches its document when it is what `generate` writes for the document now: a line for each unit, by its kind and stem.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | matches |
 
-An index matches its document when it is what `generate` writes for the document now: a line for each unit, by its kind and stem.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1701,10 +1757,15 @@ The words of a stem are the stem with a space for each hyphen: the stem `outdate
 > A grammar table is a table in the own text of a term whose first header is `grammar` and whose second header is empty. Its row `type` names the part of speech of the term, and each other row gives a role and the spellings of that role, separated by commas.
 
 ```md
+<details>
+<summary>Grammar</summary>
+
 | grammar |                    |
 | ------- | ------------------ |
 | type    | noun               |
 | plural  | outdated trackings |
+
+</details>
 ```
 
 The types are `noun`, `verb`, `adjective` and `name`. A noun has the role `plural`. A verb has the roles `third person`, `past`, `participle` and `gerund`. An adjective and a name have none, because English does not inflect them. Each type has the role `also`, for a spelling that is no inflection of the stem: `| also | ambiguous, unambiguous |` on the term `ambiguity`.
@@ -1719,12 +1780,17 @@ A header names what its column holds, so the type of the term is a row and not a
 
 > A tag is a line of the documentation comment of a test.
 
+A `@canon` line, or an `@axiom` line. The checker reads the tags of every test in the sources, declared or not.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |      |
 | ------- | ---- |
 | type    | noun |
 | plural  | tags |
 
-A `@canon` line, or an `@axiom` line. The checker reads the tags of every test in the sources, declared or not.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1743,10 +1809,15 @@ sig Tag extends Thing {}
 
 > A test carries each tag in the documentation comment of the test.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | carries |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1803,12 +1874,17 @@ sig ExpectedFailure extends Test {}
 > the test checks the unit exactly when the test *carries* a *tag* that *names* the unit.
 <!-- statement-term-check:end -->
 
+A test's tags are how it points at what it holds the code to: it checks the units they name. Checking is not *citing*, though. Only a unit cites, because citing says what a claim follows from, and a test is not a unit.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |        |
 | ------------ | ------ |
 | type         | verb   |
 | third person | checks |
 
-A test's tags are how it points at what it holds the code to: it checks the units they name. Checking is not *citing*, though. Only a unit cites, because citing says what a claim follows from, and a test is not a unit.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1827,10 +1903,15 @@ pred checks[t: Test, u: Unit] { some g: Tag | t->g in Carry.rel and g->u in Name
 
 > An issue is an entry of the tracker of the project.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar |        |
 | ------- | ------ |
 | type    | noun   |
 | plural  | issues |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -1872,14 +1953,19 @@ fact issues_are_the_trackers { no Tracker implies no Issue }
 
 > A bug names each issue that the issue line of the bug names.
 
+A bug or a conflict names an issue on its "Issue:" line. A conflict names the units it sets against each other on its "Between:" line. A tag names the unit whose id it holds.
+
+A pointer names the target its path and fragment lead to. A *term mark* names the term its words or its link lead to. A claim names the site on its "Site:" line. A comment names each site whose symbol it holds. A code span names each unit whose id the link syntax inside it holds.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |       |
 | ------------ | ----- |
 | type         | verb  |
 | third person | names |
 
-A bug or a conflict names an issue on its "Issue:" line. A conflict names the units it sets against each other on its "Between:" line. A tag names the unit whose id it holds.
-
-A pointer names the target its path and fragment lead to. A *term mark* names the term its words or its link lead to. A claim names the site on its "Site:" line. A comment names each site whose symbol it holds. A code span names each unit whose id the link syntax inside it holds.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2023,12 +2109,17 @@ pred misleading[t: Test] {
 
 > A plugin is a package that adds commands to the checker, and that a document asks for by the name of the package.
 
+A plugin is a package the project has installed. The checker fetches nothing, so a plugin that is not installed is missing: a name that stands for no package.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |         |
 | ------- | ------- |
 | type    | noun    |
 | plural  | plugins |
 
-A plugin is a package the project has installed. The checker fetches nothing, so a plugin that is not installed is missing: a name that stands for no package.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2141,12 +2232,17 @@ one sig Spell { rel: Entry -> Plugin }
 > the frontmatter lists the plugin exactly when the frontmatter holds an *entry* that spells the plugin.
 <!-- statement-term-list:end -->
 
+A frontmatter lists a plugin when one of its entries spells the plugin's name. One entry is enough, wherever it stands among the others.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |       |
 | ------------ | ----- |
 | type         | verb  |
 | third person | lists |
 
-A frontmatter lists a plugin when one of its entries spells the plugin's name. One entry is enough, wherever it stands among the others.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2211,12 +2307,17 @@ sig Misquoted, Foreign, Unclosed, Unterminated, Doubled, Dangling, Looping in Fr
 
 > A document extends another when its frontmatter lists the path of the other. The other is then context for it: the checker reads its units and its words, and checks it where it lives.
 
+A path starts from the folder of the document that lists it. A document is context for the documents that extend it, and for the documents that those extend.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |                 |
 | ------- | --------------- |
 | type    | noun            |
 | also    | extends, extend |
 
-A path starts from the folder of the document that lists it. A document is context for the documents that extend it, and for the documents that those extend.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2306,10 +2407,15 @@ A runner marker is a line `@runner` in the JSDoc of a declaration in a suite or 
 
 > A run enters the closest document named CANON.md, in the folder it runs in or a folder above it, whose frontmatter holds a setting.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar      |        |
 | ------------ | ------ |
 | type         | verb   |
 | third person | enters |
+
+</details>
 
 ### @term apply
 
@@ -2319,12 +2425,17 @@ A runner marker is a line `@runner` in the JSDoc of a declaration in a suite or 
 > the plugin applies to the document exactly when the document starts with a [listing frontmatter](#term-frontmatter) that *lists* the plugin.
 <!-- statement-term-apply:end -->
 
+Plugins are opt-in, one document at a time. A document opts in through the frontmatter it starts with: a plugin applies when the plugins key there *lists* it. A frontmatter without a plugins key asks for no plugin.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |         |
 | ------------ | ------- |
 | type         | verb    |
 | third person | applies |
 
-Plugins are opt-in, one document at a time. A document opts in through the frontmatter it starts with: a plugin applies when the plugins key there *lists* it. A frontmatter without a plugins key asks for no plugin.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2394,12 +2505,17 @@ one sig Over { rel: Plugin -> Document }
 > - the plugin *applies* to a *document*
 <!-- statement-term-call:end -->
 
+A run calls a plugin only when the plugin has work to do. The run asks for a command the plugin adds, or for its *bare name* when that name is not *ambiguous*. Some document also asks for the plugin in its frontmatter. A plugin that no document lists stays silent, even when someone asks for its command.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |       |
 | ------------ | ----- |
 | type         | verb  |
 | third person | calls |
 
-A run calls a plugin only when the plugin has work to do. The run asks for a command the plugin adds, or for its *bare name* when that name is not *ambiguous*. Some document also asks for the plugin in its frontmatter. A plugin that no document lists stays silent, even when someone asks for its command.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2432,12 +2548,17 @@ pred calls[r: Run, p: Plugin] {
 >   the installed plugin applies to the document, adds command_2 and command_1 is the *bare name* of command_2.
 <!-- statement-term-availability:end -->
 
+A command is available when something can carry it out. The checker's own commands always are. A plugin's command is available only when the project has installed the plugin and some document lists it. Its bare name is then available too, since a run can ask for the command by it.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |           |
 | ------- | --------- |
 | type    | noun      |
 | also    | available |
 
-A command is available when something can carry it out. The checker's own commands always are. A plugin's command is available only when the project has installed the plugin and some document lists it. Its bare name is then available too, since a run can ask for the command by it.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2496,12 +2617,17 @@ one sig Shorten { rel: Command -> Command }
 >   installed_plugin_2 applies to document_2 and adds command_3.
 <!-- statement-term-ambiguity:end -->
 
+A bare name is ambiguous when it is the bare name of two commands that plugins add. It then cannot say which of the two a run asks for. The two commands must be available, so a plugin that no document lists makes no name ambiguous.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |           |
 | ------- | --------- |
 | type    | noun      |
 | also    | ambiguous |
 
-A bare name is ambiguous when it is the bare name of two commands that plugins add. It then cannot say which of the two a run asks for. The two commands must be available, so a plugin that no document lists makes no name ambiguous.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -2553,7 +2679,7 @@ all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
 </details>
 ````
 
-An author folds the blocks of a unit, so that its prose reads on its own and its logic is one click away. GitHub renders the fenced blocks in a fold when a blank line follows `<summary>` and one comes before `</details>`.
+An author folds what a unit holds for the checker and its plugins, so that its prose reads on its own and the rest is one click away. Each fold holds one kind of content, and its summary names it: `Grammar` for the *grammar table* of a term, `Alloy` for its Alloy blocks and tables. The folds come after the prose of the unit. GitHub renders the fenced blocks in a fold when a blank line follows `<summary>` and one comes before `</details>`.
 
 ### @term fence
 
@@ -3407,6 +3533,12 @@ all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
 ```
 
 </details>
+
+#### @spec a-grammar-table-in-a-fold-is-the-grammar-table-of-its-term
+
+> A *grammar table* inside a *fold* in the own text of a term is the grammar table of the term, as it would be outside the fold.
+
+This follows because a fold changes what the reader sees, not what the term holds.
 
 #### @spec a-grammar-table-names-a-type-and-its-roles
 

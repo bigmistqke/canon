@@ -76,10 +76,15 @@ How the Pele plugin of the canon checker behaves, and why. It is the canon of th
 
 > A drawn document is a [document](../canon/CANON.md#term-document) that the *Pele plugin* runs over.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar |                 |
 | ------- | --------------- |
 | type    | noun            |
 | plural  | drawn documents |
+
+</details>
 
 ### @term drawn-unit
 

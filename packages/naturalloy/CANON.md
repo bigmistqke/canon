@@ -487,14 +487,19 @@ some f: Quantifier | f in VariableWithCondition and f in NothingToAttach
 > - the quantifier does not have several conditions, one of which begins with a time phrase
 <!-- statement-term-fit:end -->
 
+A noun phrase such as `c is on no owner` is the shortest way to say a quantifier. In five cases that short form misleads, and the *verbalizer* says the quantifier in full. A reading that says the variable twice would need two phrases for one thing. A phrase with nothing named beside it, as in `a cleanup has run`, reads as a rule about every cleanup. A condition about something else would read as more about the variable.
+
+`No other cleanup is on o` hints that c is on o, which the logic does not say. And in `at the next moment, c is on an owner that p is the parent of`, the time phrase seems to cover the parent too.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar      |      |
 | ------------ | ---- |
 | type         | verb |
 | third person | fits |
 
-A noun phrase such as `c is on no owner` is the shortest way to say a quantifier. In five cases that short form misleads, and the *verbalizer* says the quantifier in full. A reading that says the variable twice would need two phrases for one thing. A phrase with nothing named beside it, as in `a cleanup has run`, reads as a rule about every cleanup. A condition about something else would read as more about the variable.
-
-`No other cleanup is on o` hints that c is on o, which the logic does not say. And in `at the next moment, c is on an owner that p is the parent of`, the time phrase seems to cover the parent too.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -513,19 +518,29 @@ pred fits[f: Quantifier] { f not in VariableTwice and f not in NothingToAttach a
 
 > A predicate call is a formula that names a predicate and gives its arguments.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar |      |
 | ------- | ---- |
 | type    | noun |
 | also    | call |
 
+</details>
+
 ### @term definition-passage
 
 > A definition is a predicate with a body that the verbalizer says as what its name means exactly when the body holds.
+
+<details>
+<summary>Grammar</summary>
 
 | grammar |            |
 | ------- | ---------- |
 | type    | noun       |
 | also    | definition |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -620,16 +635,21 @@ some f: Definition | f in OrInsideKind and f in NoKindFirst
 > - an option of one kind that holds a comma
 <!-- statement-term-by-kind:end -->
 
-| grammar |              |
-| ------- | ------------ |
-| type    | adjective    |
-| also    | kind by kind |
-
 A definition by cases reads best as one noun phrase per kind, as in `a spec that cites no axiom and cites no spec`. That shape is safe only when each alternative turns into `a <kind> that …` without changing what it says. The phrase opens with the kind, so each alternative must open with its kind. It describes the subject, so each alternative must speak of the subject, not of another unit.
 
 Three more cases would read two ways. A run of "and" beside another alternative of its kind, merged with "or", leaves the reader to guess the grouping. Kinds that share a member make "one of these" sound like exactly one. And an option of a kind that holds a comma blurs where the options of that kind end.
 
 The verbalizer can say a definition kind by kind when it has none of these five faults.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |              |
+| ------- | ------------ |
+| type    | adjective    |
+| also    | kind by kind |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -652,11 +672,6 @@ pred byKind[d: Definition] { d not in NoKindFirst and d not in AmbiguousAnd and 
 
 > A series is a run of clauses, or a rule of two sides. The verbalizer says it as a sentence, as bullets or on one line.
 
-| grammar |      |
-| ------- | ---- |
-| type    | noun |
-| also    | list |
-
 A list becomes a sentence only if eight things hold:
 
 - It has three clauses or fewer.
@@ -669,6 +684,16 @@ A list becomes a sentence only if eight things hold:
 - No clause is about a pair of variables.
 
 Any other list becomes bullets.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |      |
+| ------- | ---- |
+| type    | noun |
+| also    | list |
+
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -851,16 +876,21 @@ some f: Series | f in SecondSideFirst
 > - the list has no clause about a pair of variables
 <!-- statement-term-sentenceable:end -->
 
-| grammar |                          |
-| ------- | ------------------------ |
-| type    | adjective                |
-| also    | can be put in a sentence |
-
 A short list reads more easily as one sentence than as bullets under `All of these hold:`. `c has run, code has registered c and pulse has disposed o` takes one line where bullets take four. A sentence works only while the reader can see where each clause ends.
 
 So a list goes in a sentence only with at most three items, each a single clause, on one line. A comma inside an item is harmless in a pair, but among three items it reads as one more separator. A time phrase or a relative clause before the last clause has no visible end in running prose. Read as a sentence, `At the next moment, c has run and d has run` seems to put d at the next moment too. So such a list stays out.
 
 Two more things keep a list out of a sentence. A time phrase right above the list could seem to cover its first clause alone. And a clause about a pair, `c and d are different`, holds an "and" of its own that would read as one more join.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |                          |
+| ------- | ------------------------ |
+| type    | adjective                |
+| also    | can be put in a sentence |
+
+</details>
 
 <details>
 <summary>Alloy</summary>

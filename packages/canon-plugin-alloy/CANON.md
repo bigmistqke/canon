@@ -244,12 +244,17 @@ one sig GenerateCommand, CheckCommand, LogicCommand in Command {}
 
 > A generated statement is the statement of a unit that holds a formula, said from that formula between the markers of a generated region.
 
+A person may write the statement instead, and the checker never overwrites it. A document keeps readings when it holds a table of them: only then does the checker say statements.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |           |
 | ------- | --------- |
 | type    | noun      |
 | also    | statement |
 
-A person may write the statement instead, and the checker never overwrites it. A document keeps readings when it holds a table of them: only then does the checker say statements.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -314,7 +319,6 @@ one sig Rely { rel: Unit -> Word }
 | Rely.rel      | a claim, a definition or a fact of {1} uses {2}                  | no claim, definition or fact of {1} uses {2}                             |
 
 </details>
-
 
 ### @term signature
 
@@ -429,14 +433,19 @@ fact linked { Chain.rel = ^(Share.rel + ~(Share.rel)) }
 
 > A formula is lone on a signature when it uses the signature, no other unit names the signature, and no scenario names it.
 
+A unit names a signature when one of its blocks writes the name outside the declaration of that signature. A claim, a definition, a fact, the type of a field and the parent of another signature all name it. A unit of a document that the document extends names it too.
+
+Nothing else constrains a signature that one formula alone names. The analyzer can give it a value that makes the formula hold, so no other formula can contradict the formula.
+
+<details>
+<summary>Grammar</summary>
+
 | grammar |           |
 | ------- | --------- |
 | type    | adjective |
 | also    | lone      |
 
-A unit names a signature when one of its blocks writes the name outside the declaration of that signature. A claim, a definition, a fact, the type of a field and the parent of another signature all name it. A unit of a document that the document extends names it too.
-
-Nothing else constrains a signature that one formula alone names. The analyzer can give it a value that makes the formula hold, so no other formula can contradict the formula.
+</details>
 
 <details>
 <summary>Alloy</summary>
@@ -469,11 +478,6 @@ A thing is an element of a signature, which the analyzer names after the signatu
 
 > A reading table is a table in the own text of a unit whose headers are `reading`, `holds` and `does not hold`. Each row gives the key of a reading, its words when the key holds, and its words when it does not.
 
-| grammar |                |
-| ------- | -------------- |
-| type    | noun           |
-| plural  | reading tables |
-
 ```md
 | reading   | holds                         | does not hold                     |
 | --------- | ----------------------------- | --------------------------------- |
@@ -481,15 +485,19 @@ A thing is an element of a signature, which the analyzer names after the signatu
 ```
 
 A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading.
+<details>
+<summary>Grammar</summary>
+
+| grammar |                |
+| ------- | -------------- |
+| type    | noun           |
+| plural  | reading tables |
+
+</details>
 
 ### @term noun-table
 
 > A noun table is a table in the own text of a unit whose headers are `signature` and `noun`. Each row gives a signature and its noun.
-
-| grammar |             |
-| ------- | ----------- |
-| type    | noun        |
-| plural  | noun tables |
 
 ```md
 | signature | noun               |
@@ -499,6 +507,15 @@ A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, 
 ```
 
 A row says what a `noun` line says with the noun in brackets, `noun Installed: [installed plugin]`: the noun links to the term that holds the row. A signature named after the term that declares it needs no row: its noun is the term.
+<details>
+<summary>Grammar</summary>
+
+| grammar |             |
+| ------- | ----------- |
+| type    | noun        |
+| plural  | noun tables |
+
+</details>
 
 ### @term intent
 

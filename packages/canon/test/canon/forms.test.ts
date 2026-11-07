@@ -60,6 +60,17 @@ describe('a form a grammar table gives', () => {
   });
 });
 
+describe('a grammar table in a fold', () => {
+  /**
+   * @canon spec-a-grammar-table-in-a-fold-is-the-grammar-table-of-its-term
+   */
+  it('gives its term the spellings it lists, as it would outside the fold', async () => {
+    const folded = `\n## @term outdated-tracking\n\n> A outdated tracking is a thing.\n\nProse about it.\n\n<details>\n<summary>Grammar</summary>\n\n${grammar('type | noun', 'plural | outdated trackings')}\n\n</details>\n`;
+    const found = await check(document('Bugs have *outdated trackings*.', folded), TEST);
+    expect(found['rot']).toBeUndefined();
+  });
+});
+
 describe('a form two terms could go by', () => {
   /**
    * @canon spec-a-stem-wins-over-a-form-of-another-term

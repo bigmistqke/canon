@@ -46,10 +46,15 @@ How parse-alloy reads Alloy, and why. It is the canon of the package `@bigmistqk
 
 > A parsed formula is a formula as the parser reads it: its operators, their operands and their grouping.
 
+<details>
+<summary>Grammar</summary>
+
 | grammar |         |
 | ------- | ------- |
 | type    | noun    |
 | also    | formula |
+
+</details>
 
 ## @axiom alloy-is-read-as-the-analyzer-reads-it
 
