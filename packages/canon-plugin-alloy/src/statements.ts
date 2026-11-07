@@ -1,9 +1,9 @@
 /**
  * The statements of a document's units, said from their predicates. A document
- * that keeps a table of readings in a `readings` block has the statement of
- * each unit with an Alloy predicate written between two markers, from that
- * predicate, so the statement cannot say anything the predicate does not.
- * A document without a `readings` block is left as it is.
+ * that keeps readings, in a reading table, a noun table or a `readings` fence,
+ * has the statement of each unit with an Alloy predicate written between two
+ * markers, from that predicate, so the statement cannot say anything the
+ * predicate does not. A document that keeps none is left as it is.
  *
  * `states` says what each statement is, `write` makes the stale and missing
  * ones current, and neither touches a statement a person wrote: the person
@@ -12,7 +12,8 @@
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions';
 import { maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
-import { PARAGRAPHS } from './words.ts';
+import { declaredIn, PARAGRAPHS } from './words.ts';
+import { readingBlocks } from './tables.ts';
 import { AlloyParseError } from '@bigmistqke/parse-alloy';
 import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
 
@@ -52,15 +53,18 @@ export interface Context {
  * more its readings count, and the document's own count most.
  */
 export function readingsOf(src: string, context: Context[] = []): Readings | undefined {
-  const own = readBlocks(src);
-  const documents = [...[...context].reverse().map(c => ({ path: c.path, blocks: readBlocks(c.src) })), { path: undefined, blocks: own }];
-  if (!documents.some(d => d.blocks.some(b => b.lang === 'readings'))) return undefined;
+  const read = (path: string | undefined, text: string) => {
+    const units = readUnits(text);
+    return { path, units, blocks: readBlocks(text, units), readings: readingBlocks(text, units) };
+  };
+  const documents = [...[...context].reverse().map(c => read(c.path, c.src)), read(undefined, src)];
+  if (!documents.some(d => d.readings.length > 0)) return undefined;
   // The predicates a document defines, in its vocabulary and in the units that define them: the blocks that are Alloy paragraphs, and not bare formulas.
   const model = documents.flatMap(d => d.blocks).filter(b => b.lang === 'alloy' && (b.role === 'vocabulary' || (b.role === 'unit' && PARAGRAPHS.test(b.body))));
   // Each block is read for the unit that holds it, so that a word in brackets links to the term that says it.
   const merged = parseReadings('');
-  for (const { path, blocks } of documents) {
-    for (const block of blocks.filter(b => b.lang === 'readings')) {
+  for (const { path, readings } of documents) {
+    for (const block of readings) {
       const part = parseReadings(block.body, `${path ?? ''}#${block.unit}`, path);
       for (const [key, value] of part.nouns) merged.nouns.set(key, value);
       for (const [key, value] of part.nounTargets) merged.nounTargets.set(key, value);
@@ -68,8 +72,25 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
       for (const [key, value] of part.atoms) merged.atoms.set(key, value);
     }
   }
+  // A signature with no noun, declared in a term whose stem its name spells, has the term as its noun.
+  for (const { path, units, blocks } of documents) {
+    const stems = new Map(units.filter(u => u.kind === 'term').map(u => [u.id, u.stem.replace(/-/g, ' ')]));
+    for (const block of blocks) {
+      const stem = stems.get(block.unit);
+      if (stem === undefined || block.lang !== 'alloy' || block.role === 'bounds' || block.role === 'scenario') continue;
+      for (const word of declaredIn(block.body)) {
+        if (word.kind !== 'signature' || merged.nouns.has(word.name) || spelled(word.name) !== stem) continue;
+        // In brackets, as a noun table writes a noun that names its term, so that it links.
+        merged.nouns.set(word.name, `[${stem}]`);
+        merged.nounTargets.set(word.name, `${path ?? ''}#${block.unit}`);
+      }
+    }
+  }
   return withDefinitions(merged, model.map(b => b.body).join('\n'));
 }
+
+/** The words a name spells, each capital starting one: `TermMark` spells "term mark". */
+const spelled = (name: string): string => name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
 
 const quote = (words: string): string =>
   words

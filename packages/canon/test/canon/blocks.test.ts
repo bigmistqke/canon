@@ -65,6 +65,16 @@ describe('the blocks of a document', () => {
   });
 
   /**
+   * @canon spec-a-fenced-block-in-a-fold-belongs-to-its-unit-as-any-other
+   */
+  it('reads a block inside a fold as a block of its unit', () => {
+    const folded = DOC.replace('\`\`\`alloy\nalways some Owner\n\`\`\`', '<details>\n<summary>Alloy</summary>\n\n\`\`\`alloy\nalways some Owner\n\`\`\`\n\n</details>');
+    expect(folded).toContain('<details>');
+    const block = readBlocks(folded).find(b => b.unit === 'spec-a-leaf');
+    expect([block?.lang, block?.role, block?.body]).toEqual(['alloy', 'unit', 'always some Owner\n']);
+  });
+
+  /**
    * @canon spec-the-body-of-a-block-is-the-lines-between-its-fences
    * @canon spec-the-offset-of-a-block-is-where-its-body-starts-in-the-document
    */

@@ -109,6 +109,49 @@ describe('alloy:readings', () => {
   });
 });
 
+/** The document with the readings of its term `node` in tables, written out of line. */
+const tabled = (): string =>
+  doc().replace(
+    `\`\`\`readings\nnoun Node: [node]\n${DONE}\nStarted: {1} has started | {1} has not started\n\`\`\``,
+    '| reading | holds | does not hold |\n|---|---|---|\n| Done | {1} is done | {1} is not done |\n| Started | {1} has started | {1} has not started |'
+  );
+
+describe('a reading table', () => {
+  /**
+   * @canon spec-generate-aligns-the-columns-of-each-reading-table-and-noun-table
+   */
+  it('has its columns lined up by generate', () => {
+    const { before } = project(tabled());
+    expect(before).toContain(
+      [
+        '| reading | holds           | does not hold       |',
+        '| ------- | --------------- | ------------------- |',
+        '| Done    | {1} is done     | {1} is not done     |',
+        '| Started | {1} has started | {1} has not started |'
+      ].join('\n')
+    );
+  });
+
+  /**
+   * @canon spec-a-line-of-readings-holds-the-place-the-unit-the-key-and-the-words-of-a-reading
+   */
+  it('lists each of its rows as a reading, at the line of the row', () => {
+    const { runs, before } = project(tabled(), ['alloy:readings']);
+    const line = before.split('\n').findIndex(l => l.startsWith('| Done ')) + 1;
+    expect(runs[0]?.out).toContain(`CANON.md:${line}  term-node  ${DONE}\n`);
+  });
+
+  /**
+   * @canon spec-a-reword-changes-only-the-line-of-its-reading
+   */
+  it('has the row of a reading reworded, and no other line', () => {
+    const { runs, before, after } = project(tabled(), ['alloy:readings', 'Done', '--write', '{1} has finished | {1} has not finished']);
+    expect(runs[0]?.code).toBe(0);
+    const row = before.split('\n').find(l => l.startsWith('| Done ')) as string;
+    expect(after).toBe(before.replace(row, '| Done | {1} has finished | {1} has not finished |'));
+  });
+});
+
 describe('alloy:readings --write', () => {
   const NEW = '{1} has finished | {1} has not finished';
 

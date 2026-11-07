@@ -14,11 +14,14 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
 - [`@term alloy-plugin`](#term-alloy-plugin)
 - [`@term generated-statement`](#term-generated-statement)
 - [`@term word`](#term-word)
+- [`@term signature`](#term-signature)
 - [`@term scenario`](#term-scenario)
 - [`@term search`](#term-search)
 - [`@term group`](#term-group)
 - [`@term lone-formula`](#term-lone-formula)
 - [`@term world`](#term-world)
+- [`@term reading-table`](#term-reading-table)
+- [`@term noun-table`](#term-noun-table)
 - [`@term intent`](#term-intent)
 - [`@axiom a-statement-says-what-its-logic-says`](#axiom-a-statement-says-what-its-logic-says)
   - [`@spec a-document-that-keeps-no-readings-is-left-as-it-is`](#spec-a-document-that-keeps-no-readings-is-left-as-it-is)
@@ -82,6 +85,10 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
   - [`@spec a-word-of-an-extended-document-links-to-that-document`](#spec-a-word-of-an-extended-document-links-to-that-document)
   - [`@spec generate-writes-no-statement-for-a-unit-of-an-extended-document`](#spec-generate-writes-no-statement-for-a-unit-of-an-extended-document)
   - [`@spec a-word-declared-in-an-extended-document-is-declared`](#spec-a-word-declared-in-an-extended-document-is-declared)
+  - [`@spec a-row-of-a-reading-table-is-a-reading`](#spec-a-row-of-a-reading-table-is-a-reading)
+  - [`@spec a-row-of-a-noun-table-gives-the-noun-of-its-signature`](#spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature)
+  - [`@spec check-reports-a-linked-word-that-no-form-of-its-term-spells`](#spec-check-reports-a-linked-word-that-no-form-of-its-term-spells)
+  - [`@spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun`](#spec-a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun)
 - [`@axiom the-claims-of-a-canon-never-contradict-each-other`](#axiom-the-claims-of-a-canon-never-contradict-each-other)
   - [`@spec a-formula-with-no-keyword-is-a-claim-to-hold`](#spec-a-formula-with-no-keyword-is-a-claim-to-hold)
   - [`@spec a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim`](#spec-a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim)
@@ -167,6 +174,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     - [`@spec write-changes-nothing-but-the-intent-of-its-unit`](#spec-write-changes-nothing-but-the-intent-of-its-unit)
     - [`@spec a-write-that-cannot-hold-is-refused`](#spec-a-write-that-cannot-hold-is-refused)
       - [`@spec a-write-of-text-with-a-fenced-block-is-refused`](#spec-a-write-of-text-with-a-fenced-block-is-refused)
+      - [`@spec a-write-of-text-with-a-fold-is-refused`](#spec-a-write-of-text-with-a-fold-is-refused)
       - [`@spec a-write-of-text-with-a-heading-is-refused`](#spec-a-write-of-text-with-a-heading-is-refused)
       - [`@spec a-write-of-text-with-a-line-the-checker-reads-as-structure-is-refused`](#spec-a-write-of-text-with-a-line-the-checker-reads-as-structure-is-refused)
       - [`@spec a-write-of-no-text-is-refused`](#spec-a-write-of-no-text-is-refused)
@@ -181,6 +189,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     - [`@spec a-reword-of-a-key-that-names-no-reading-is-refused`](#spec-a-reword-of-a-key-that-names-no-reading-is-refused)
     - [`@spec a-reword-of-a-key-that-names-more-than-one-reading-is-refused`](#spec-a-reword-of-a-key-that-names-more-than-one-reading-is-refused)
     - [`@spec a-reword-that-is-not-two-sides-is-refused`](#spec-a-reword-that-is-not-two-sides-is-refused)
+  - [`@spec generate-aligns-the-columns-of-each-reading-table-and-noun-table`](#spec-generate-aligns-the-columns-of-each-reading-table-and-noun-table)
 - [`@fact only-solving-a-model-decides-whether-a-formula-constrains-a-signature`](#fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature)
 <!-- toc:end -->
 
@@ -192,18 +201,26 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
 
 A document asks for it in its frontmatter. The commands `generate`, `check` and `alloy:logic` have a part in its work.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy vocabulary
 one sig GenerateCommand, CheckCommand, LogicCommand in Command {}
 ```
 
-```readings
-noun GenerateCommand: [generate command]
-noun CheckCommand: [check command]
-noun LogicCommand: [logic command]
-LogicCommand: {1} is the [command] `alloy:logic` | {1} is not the [command] `alloy:logic`
-GenerateCommand: {1} is the [command] `generate` | {1} is not the [command] `generate`
-CheckCommand: {1} is the [command] `check` | {1} is not the [command] `check`
-```
+| signature       | noun             |
+| --------------- | ---------------- |
+| GenerateCommand | generate command |
+| CheckCommand    | check command    |
+| LogicCommand    | logic command    |
+
+| reading         | holds                                                              | does not hold                                                          |
+| --------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| LogicCommand    | {1} is the [command](../canon/CANON.md#term-command) `alloy:logic` | {1} is not the [command](../canon/CANON.md#term-command) `alloy:logic` |
+| GenerateCommand | {1} is the [command](../canon/CANON.md#term-command) `generate`    | {1} is not the [command](../canon/CANON.md#term-command) `generate`    |
+| CheckCommand    | {1} is the [command](../canon/CANON.md#term-command) `check`       | {1} is not the [command](../canon/CANON.md#term-command) `check`       |
+
+</details>
 
 ### @term generated-statement
 
@@ -216,31 +233,36 @@ CheckCommand: {1} is the [command] `check` | {1} is not the [command] `check`
 
 A person may write the statement instead, and the checker never overwrites it. A document keeps readings when it holds a table of them: only then does the checker say statements.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy vocabulary
 sig Logical, Generated, Differs, Unsayable, Wordless, Twofold, Faulted, Current, Stale, Unwritten, Handwritten, Reported, Rewritten, Explained, Misread in Unit {}
 sig Worded in Document {}
 sig Stated in Unit {}
 ```
 
-```readings
-Logical: {1} holds a formula | {1} holds no formula
-Generated: the [statement] of {1} sits between the markers of a generated region | the [statement] of {1} does not sit between the markers of a generated region
-Differs: the [statement] of {1} differs from what its formula says | the [statement] of {1} does not differ from what its formula says
-Wordless: the formula of {1} names a word that has no reading | the formula of {1} names no word that has no reading
-Twofold: {1} holds more than one formula | {1} does not hold more than one formula
-Faulted: the verbalizer fails on the formula of {1} with a fault of its own | the verbalizer does not fail on the formula of {1} with a fault of its own
-Unsayable: the formula of {1} cannot be said in words | the formula of {1} can be said in words
-Current: the [statement] of {1} is current | the [statement] of {1} is not current
-Misread: the [statement] of {1} reads back as more or other than its formula | the [statement] of {1} reads back as its formula alone
-Stale: the [statement] of {1} is stale | the [statement] of {1} is not stale
-Unwritten: the [statement] of {1} is unwritten | the [statement] of {1} is not unwritten
-Handwritten: the [statement] of {1} is handwritten | the [statement] of {1} is not handwritten
-Reported: [checker](../canon/CANON.md#term-checker) reports the [statement] of {1} | [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}
-Rewritten: [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates
-Explained: [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said | [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said
-Worded: {1} keeps readings | {1} keeps no readings
-Stated: {1} has a [statement](../canon/CANON.md#term-statement) | {1} has no [statement](../canon/CANON.md#term-statement)
-```
+| reading     | holds                                                                                     | does not hold                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Logical     | {1} holds a formula                                                                       | {1} holds no formula                                                                              |
+| Generated   | the [statement] of {1} sits between the markers of a generated region                     | the [statement] of {1} does not sit between the markers of a generated region                     |
+| Differs     | the [statement] of {1} differs from what its formula says                                 | the [statement] of {1} does not differ from what its formula says                                 |
+| Wordless    | the formula of {1} names a word that has no reading                                       | the formula of {1} names no word that has no reading                                              |
+| Twofold     | {1} holds more than one formula                                                           | {1} does not hold more than one formula                                                           |
+| Faulted     | the verbalizer fails on the formula of {1} with a fault of its own                        | the verbalizer does not fail on the formula of {1} with a fault of its own                        |
+| Unsayable   | the formula of {1} cannot be said in words                                                | the formula of {1} can be said in words                                                           |
+| Current     | the [statement] of {1} is current                                                         | the [statement] of {1} is not current                                                             |
+| Misread     | the [statement] of {1} reads back as more or other than its formula                       | the [statement] of {1} reads back as its formula alone                                            |
+| Stale       | the [statement] of {1} is stale                                                           | the [statement] of {1} is not stale                                                               |
+| Unwritten   | the [statement] of {1} is unwritten                                                       | the [statement] of {1} is not unwritten                                                           |
+| Handwritten | the [statement] of {1} is handwritten                                                     | the [statement] of {1} is not handwritten                                                         |
+| Reported    | [checker](../canon/CANON.md#term-checker) reports the [statement] of {1}                  | [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}                  |
+| Rewritten   | [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates |
+| Explained   | [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said      | [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said      |
+| Worded      | {1} keeps readings                                                                        | {1} keeps no readings                                                                             |
+| Stated      | {1} has a [statement](../canon/CANON.md#term-statement)                                   | {1} has no [statement](../canon/CANON.md#term-statement)                                          |
+
+</details>
 
 ### @term word
 
@@ -248,36 +270,61 @@ Stated: {1} has a [statement](../canon/CANON.md#term-statement) | {1} has no [st
 
 A reading says a word in the language of the project. The words of a document are in order when three things hold. Each is declared in the term that names it. Its reading is beside its declaration. A claim, a definition or a fact uses it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy vocabulary
 sig Word {}
-sig Signature, Field, Predicate, Undeclared, Misplaced, Apart, Unused, Flagged in Word {}
+sig Field, Predicate, Undeclared, Misplaced, Apart, Unused, Flagged in Word {}
 fact word_kinds { Word = Signature + Field + Predicate }
 one sig Introduce { rel: Unit -> Word }
 one sig Voice { rel: Unit -> Word }
 one sig Rely { rel: Unit -> Word }
 ```
 
-```readings
-noun Word: [word]
-noun Signature: signature
-Signature: {1} is a signature | {1} is not a signature
-Field: {1} is a field of a signature | {1} is not a field of a signature
-Predicate: {1} is a predicate | {1} is not a predicate
-Undeclared: {1} is said by a reading and declared by nothing | {1} is said by no reading or is declared
-Misplaced: {1} is declared in a unit that is not a term | {1} is not declared in a unit that is not a term
-Apart: the reading of {1} is in another unit than its declaration | the reading of {1} is in the unit of its declaration
-Unused: no claim, definition or fact uses {1} | a claim, a definition or a fact uses {1}
-Flagged: [checker](../canon/CANON.md#term-checker) reports the [word] {1} | [checker](../canon/CANON.md#term-checker) does not report the [word] {1}
-Introduce.rel: {1} declares {2} | {1} does not declare {2}
-Voice.rel: a reading in {1} says {2} | no reading in {1} says {2}
-Rely.rel: a claim, a definition or a fact of {1} uses {2} | no claim, definition or fact of {1} uses {2}
+| reading       | holds                                                            | does not hold                                                            |
+| ------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Field         | {1} is a field of a signature                                    | {1} is not a field of a signature                                        |
+| Predicate     | {1} is a predicate                                               | {1} is not a predicate                                                   |
+| Undeclared    | {1} is said by a reading and declared by nothing                 | {1} is said by no reading or is declared                                 |
+| Misplaced     | {1} is declared in a unit that is not a term                     | {1} is not declared in a unit that is not a term                         |
+| Apart         | the reading of {1} is in another unit than its declaration       | the reading of {1} is in the unit of its declaration                     |
+| Unused        | no claim, definition or fact uses {1}                            | a claim, a definition or a fact uses {1}                                 |
+| Flagged       | [checker](../canon/CANON.md#term-checker) reports the [word] {1} | [checker](../canon/CANON.md#term-checker) does not report the [word] {1} |
+| Introduce.rel | {1} declares {2}                                                 | {1} does not declare {2}                                                 |
+| Voice.rel     | a reading in {1} says {2}                                        | no reading in {1} says {2}                                               |
+| Rely.rel      | a claim, a definition or a fact of {1} uses {2}                  | no claim, definition or fact of {1} uses {2}                             |
+
+</details>
+
+
+### @term signature
+
+> A signature is a set of things that a model declares with `sig`, such as `sig Unit {}`.
+
+A signature declared `in` another is a part of that other, and one that `extends` another is a part apart from its siblings. A noun names the things of a signature in a statement.
+
+<details>
+<summary>Alloy</summary>
+
+```alloy vocabulary
+sig Signature in Word {}
 ```
+
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| Signature | {1} is a signature | {1} is not a signature |
+
+</details>
 
 ### @term scenario
 
 > A scenario is a situation that a unit says must be possible while every unit of the canon holds.
 
 A scenario sits in the unit that holds it. It is possible when the analyzer finds a world where it happens and every held unit holds. It is impossible when the analyzer finds none within the scope.
+
+<details>
+<summary>Alloy</summary>
 
 ```alloy vocabulary
 sig Scenario {}
@@ -288,21 +335,25 @@ one sig Frees { rel: Unit -> Scenario }
 one sig Blame { rel: Scenario -> Unit }
 ```
 
-```readings
-noun Scenario: [scenario]
-Possible: {1} is a [scenario] that can happen while every held unit holds | {1} is not a [scenario] that can happen while every held unit holds
-Impossible: {1} is a [scenario] that cannot happen while every held unit holds | {1} is not a [scenario] that cannot happen while every held unit holds
-Raised: [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen
-Probe.rel: the author asks about leaving out {2} for {1} | the author does not ask about leaving out {2} for {1}
-Frees.rel: leaving out {1} lets {2} happen | leaving out {1} does not let {2} happen
-Blame.rel: [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1}
-```
+| reading    | holds                                                                    | does not hold                                                                    |
+| ---------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| Possible   | {1} is a [scenario] that can happen while every held unit holds          | {1} is not a [scenario] that can happen while every held unit holds              |
+| Impossible | {1} is a [scenario] that cannot happen while every held unit holds       | {1} is not a [scenario] that cannot happen while every held unit holds           |
+| Raised     | [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen |
+| Probe.rel  | the author asks about leaving out {2} for {1}                            | the author does not ask about leaving out {2} for {1}                            |
+| Frees.rel  | leaving out {1} lets {2} happen                                          | leaving out {1} does not let {2} happen                                          |
+| Blame.rel  | [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1} |
+
+</details>
 
 ### @term search
 
 > A search is one run of the analyzer over some units: it asks whether they can hold, with a scenario or without.
 
 The analyzer is asked first about all the held units together and about each scenario with them. Only afterwards, for a scenario that cannot happen, it is asked once more for each unit left out.
+
+<details>
+<summary>Alloy</summary>
 
 ```alloy vocabulary
 sig Search {}
@@ -314,20 +365,21 @@ one sig Leave { rel: Search -> Unit }
 sig Checked in Document {}
 ```
 
-```readings
-noun Search: [search]
-Trial: {1} leaves one unit out | {1} leaves no unit out
-First: {1} is asked before any scenario is known to be impossible | {1} is not asked before any scenario is known to be impossible
-Afterwards: {1} is asked after the first [search] is answered | {1} is not asked after the first [search] is answered
-BareFormula: {1} holds a formula with no keyword | {1} holds no formula without a keyword
-Held: the analyzer is asked to hold the formula of {1} | the analyzer is not asked to hold the formula of {1}
-Contradicting: {1} is held with units that cannot all hold | {1} is held with units that can all hold
-Named: [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction
-Checked: the project lists {1} among the documents it checks | the project does not list {1} among the documents it checks
-Pose.units: {1} requires {2} to hold | {1} does not require {2} to hold
-Pose.scenario: {1} requires {2} to happen | {1} does not require {2} to happen
-Leave.rel: {1} leaves out {2} | {1} does not leave out {2}
-```
+| reading       | holds                                                                                | does not hold                                                                                |
+| ------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| Trial         | {1} leaves one unit out                                                              | {1} leaves no unit out                                                                       |
+| First         | {1} is asked before any scenario is known to be impossible                           | {1} is not asked before any scenario is known to be impossible                               |
+| Afterwards    | {1} is asked after the first [search] is answered                                    | {1} is not asked after the first [search] is answered                                        |
+| BareFormula   | {1} holds a formula with no keyword                                                  | {1} holds no formula without a keyword                                                       |
+| Held          | the analyzer is asked to hold the formula of {1}                                     | the analyzer is not asked to hold the formula of {1}                                         |
+| Contradicting | {1} is held with units that cannot all hold                                          | {1} is held with units that can all hold                                                     |
+| Named         | [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction |
+| Checked       | the project lists {1} among the documents it checks                                  | the project does not list {1} among the documents it checks                                  |
+| Pose.units    | {1} requires {2} to hold                                                             | {1} does not require {2} to hold                                                             |
+| Pose.scenario | {1} requires {2} to happen                                                           | {1} does not require {2} to happen                                                           |
+| Leave.rel     | {1} leaves out {2}                                                                   | {1} does not leave out {2}                                                                   |
+
+</details>
 
 ### @term group
 
@@ -337,6 +389,9 @@ A shared word is a signature, a field or a predicate that one unit declares and 
 
 Units in different groups talk about different things, so none of them can contradict a unit of another group. Two units are linked when a chain of units joins them, each sharing a word with the next.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy vocabulary
 one sig Share { rel: Unit -> Unit }
 one sig Chain { rel: Unit -> Unit }
@@ -344,11 +399,13 @@ one sig Together { rel: Unit -> Unit }
 fact linked { Chain.rel = ^(Share.rel + ~(Share.rel)) }
 ```
 
-```readings
-Share.rel: {1} shares a word with {2} | {1} shares no word with {2}
-Chain.rel: {1} is linked to {2} through shared words | {1} is not linked to {2} through shared words
-Together.rel: the analyzer is asked about {1} together with {2} | the analyzer is asked about {1} apart from {2}
-```
+| reading      | holds                                             | does not hold                                  |
+| ------------ | ------------------------------------------------- | ---------------------------------------------- |
+| Share.rel    | {1} shares a word with {2}                        | {1} shares no word with {2}                    |
+| Chain.rel    | {1} is linked to {2} through shared words         | {1} is not linked to {2} through shared words  |
+| Together.rel | the analyzer is asked about {1} together with {2} | the analyzer is asked about {1} apart from {2} |
+
+</details>
 
 ### @term lone-formula
 
@@ -363,6 +420,9 @@ A unit names a signature when one of its blocks writes the name outside the decl
 
 Nothing else constrains a signature that one formula alone names. The analyzer can give it a value that makes the formula hold, so no other formula can contradict the formula.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy vocabulary
 one sig Utter { rel: Unit -> Word }
 one sig Picture { rel: Unit -> Word }
@@ -371,13 +431,15 @@ sig Unchallenged in Unit {}
 pred loneOn[u: Unit, w: Word] { u->w in Rely.rel and (no v: Unit | v != u and v->w in Utter.rel) and (no v: Unit | v->w in Picture.rel) }
 ```
 
-```readings
-Utter.rel: a block of {1} names {2} outside its declaration | no block of {1} names {2} outside its declaration
-Picture.rel: a scenario of {1} names {2} | no scenario of {1} names {2}
-Expose.rel: [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2}
-Unchallenged: no other formula can contradict the formula of {1} | another formula can contradict the formula of {1}
-loneOn: the formula of {1} is [lone](#term-lone-formula) on {2} | the formula of {1} is not lone on {2}
-```
+| reading      | holds                                                                               | does not hold                                                                               |
+| ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| Utter.rel    | a block of {1} names {2} outside its declaration                                    | no block of {1} names {2} outside its declaration                                           |
+| Picture.rel  | a scenario of {1} names {2}                                                         | no scenario of {1} names {2}                                                                |
+| Expose.rel   | [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2} |
+| Unchallenged | no other formula can contradict the formula of {1}                                  | another formula can contradict the formula of {1}                                           |
+| loneOn       | the formula of {1} is [lone](#term-lone-formula) on {2}                             | the formula of {1} is not lone on {2}                                                       |
+
+</details>
 
 ### @term world
 
@@ -385,20 +447,60 @@ loneOn: the formula of {1} is [lone](#term-lone-formula) on {2} | the formula of
 
 A thing is an element of a signature, which the analyzer names after the signature and a number, such as `Claim$0`. A trace has a step for each moment, and ends by looping back to one of its steps, which makes it go on for ever.
 
+### @term reading-table
+
+> A reading table is a table in the own text of a unit whose headers are `reading`, `holds` and `does not hold`. Each row gives the key of a reading, its words when the key holds, and its words when it does not.
+
+| grammar |                |
+| ------- | -------------- |
+| type    | noun           |
+| plural  | reading tables |
+
+```md
+| reading   | holds                         | does not hold                     |
+| --------- | ----------------------------- | --------------------------------- |
+| Installed | the project has installed {1} | the project has not installed {1} |
+```
+
+A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading.
+
+### @term noun-table
+
+> A noun table is a table in the own text of a unit whose headers are `signature` and `noun`. Each row gives a signature and its noun.
+
+| grammar |             |
+| ------- | ----------- |
+| type    | noun        |
+| plural  | noun tables |
+
+```md
+| signature | noun               |
+| --------- | ------------------ |
+| Installed | installed plugin |
+| Missing   | missing plugin   |
+```
+
+A row says what a `noun` line says with the noun in brackets, `noun Installed: [installed plugin]`: the noun links to the term that holds the row. A signature named after the term that declares it needs no row: its noun is the term.
+
 ### @term intent
 
-> The intent of a unit with a formula is the prose between its statement and its first fenced block. In it, the author says what the unit is for.
+> The intent of a unit with a formula is the prose between its statement and its first fenced block, fold, *reading table* or *noun table*. In it, the author says what the unit is for.
 
 The intent measures the formula. When the generated statement says something the intent does not mean, the formula slipped, or the intent did. A "Derives from:" line and a "Site:" line come right after the statement, so they come before the intent. The intent ends early at a generated region, such as the statement of a scenario.
+
+<details>
+<summary>Alloy</summary>
 
 ```alloy vocabulary
 sig Intended, Aimless in Unit {}
 ```
 
-```readings
-Intended: {1} has an [intent] | {1} has no [intent]
-Aimless: [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent]
-```
+| reading  | holds                                                                      | does not hold                                                                      |
+| -------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Intended | {1} has an [intent]                                                        | {1} has no [intent]                                                                |
+| Aimless  | [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent] |
+
+</details>
 
 ## @axiom a-statement-says-what-its-logic-says
 
@@ -416,9 +518,14 @@ A reader of the canon learns what a unit claims from its statement. If a person 
 
 The words of the statements are the words of the logic. A reading of a word that nothing declares, or a word declared out of place, would let a statement say what the logic does not.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical and u not in Current) implies u in Reported
 ```
+
+</details>
 
 <!-- statement-scenario-1-axiom-a-statement-says-what-its-logic-says:begin — generated by `canon generate`; edits are overwritten -->
 > It must be possible that:
@@ -433,9 +540,14 @@ all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical 
 > - [checker](../canon/CANON.md#term-checker) does not report the statement of the unit
 <!-- statement-scenario-1-axiom-a-statement-says-what-its-logic-says:end -->
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy scenario
 some u: Unit, d: Document | d in Worded and d->u in Hold.units and u in Logical and u in Current and u not in Reported
 ```
+
+</details>
 
 #### @spec a-document-that-keeps-no-readings-is-left-as-it-is
 
@@ -451,9 +563,14 @@ some u: Unit, d: Document | d in Worded and d->u in Hold.units and u in Logical 
 
 Readings are what let the checker put a formula into English. A document that keeps none gives it no words, so generate writes no statement in it and check reports none. Whatever a person wrote there stays as it is.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies (u not in Rewritten and u not in Reported)
 ```
+
+</details>
 
 #### @spec a-document-that-does-not-name-the-plugin-is-left-as-it-is
 
@@ -472,9 +589,14 @@ This follows because the statements are the work of one plugin, and a document t
 
 A unit that holds a formula but has no statement leaves its reader with nothing but the logic. When the checker can say the formula in words, it can close that gap, so the missing statement is unwritten.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Logical and u not in Stated and u not in Unsayable) implies u in Unwritten
 ```
+
+</details>
 
 #### @spec a-generated-statement-that-differs-from-its-formula-is-stale
 
@@ -488,9 +610,14 @@ all u: Unit | (u in Logical and u not in Stated and u not in Unsayable) implies 
 
 The markers of a generated region promise that the text between them says what the formula says. When the two differ, after an edit to the text or a change to the formula, the promise fails and the statement is stale. The checker judges this only for a formula it can say in words, since otherwise it has nothing to compare.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Logical and u in Generated and u in Differs and u not in Unsayable) implies u in Stale
 ```
+
+</details>
 
 #### @spec a-generated-statement-that-its-formula-would-say-again-is-current
 
@@ -509,9 +636,14 @@ all u: Unit | (u in Logical and u in Generated and u in Differs and u not in Uns
 
 A generated statement is current while it still says what its formula says, so the checker has nothing to fix. This applies to a formula the checker can say in words, and to words that read back to that formula alone. A unit that holds no formula has nothing to match, so its statement is never current.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | ((u in Logical and u in Generated and u not in Differs and u not in Unsayable and u not in Misread) implies u in Current) and (u not in Logical implies u not in Current)
 ```
+
+</details>
 
 #### @spec a-statement-that-does-not-read-back-to-its-formula-is-not-current
 
@@ -521,9 +653,14 @@ all u: Unit | ((u in Logical and u in Generated and u not in Differs and u not i
 
 A statement is only of use if a reader takes it the one way its formula means. The verbalizer reads each statement back by the rules a reader holds. Words that read two ways, or back to something else, could mislead a reader. So the statement is not current, and check reports it. The usual cause is two readings that say the same words, and the fix is new words for one of them.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Misread implies u not in Current
 ```
+
+</details>
 
 #### @spec a-statement-that-a-person-wrote-is-handwritten
 
@@ -537,9 +674,14 @@ all u: Unit | u in Misread implies u not in Current
 
 A statement outside the generated markers is a person's own words. It may say more or less than the formula, and only that person can vouch that the two agree. So the checker treats it as handwritten, as long as the readings can say the formula.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Logical and u in Stated and u not in Generated and u not in Unsayable) implies u in Handwritten
 ```
+
+</details>
 
 #### @spec a-formula-that-the-readings-cannot-say-is-unsayable
 
@@ -551,9 +693,14 @@ all u: Unit | (u in Logical and u in Stated and u not in Generated and u not in 
 
 The checker says only what the readings let it say; anything more would be words it made up. So it cannot say a formula that uses a word with no reading. Nor can it say the formula of a unit that holds more than one, since a statement says one formula.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Wordless or u in Twofold) implies u in Unsayable
 ```
+
+</details>
 
 ##### @spec a-formula-with-a-word-that-has-no-reading-is-unsayable
 
@@ -563,9 +710,14 @@ all u: Unit | (u in Wordless or u in Twofold) implies u in Unsayable
 
 Each word of a formula needs a reading to become English. A formula with even one word that lacks a reading has a gap the checker cannot fill, so the checker cannot say it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Wordless implies u in Unsayable
 ```
+
+</details>
 
 ##### @spec a-unit-with-two-formulas-is-unsayable
 
@@ -575,9 +727,14 @@ all u: Unit | u in Wordless implies u in Unsayable
 
 A statement says one formula. In a unit that holds two or more, the checker cannot tell which one the statement should say. So it cannot say the unit's formula.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Twofold implies u in Unsayable
 ```
+
+</details>
 
 ##### @spec the-report-of-an-unsayable-formula-says-why
 
@@ -587,9 +744,14 @@ all u: Unit | u in Twofold implies u in Unsayable
 
 An author can mend only what the checker names. So whenever the checker cannot say a formula, it says why, such as the word that lacks a reading.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Unsayable implies u in Explained
 ```
+
+</details>
 
 #### @spec a-fault-of-the-verbalizer-fails-the-run-and-is-not-explained-as-unsayable
 
@@ -600,16 +762,21 @@ all u: Unit | u in Unsayable implies u in Explained
 >
 >   the run does not exit with code 0 when all of these hold:
 >   - the run asks for command_1
->   - command_1 is the [command](#term-alloy-plugin) `generate` or is the command `check`
+>   - command_1 is the command `generate` or is the command `check`
 >   - the verbalizer fails on the formula of the unit with a fault of its own
 <!-- statement-spec-a-fault-of-the-verbalizer-fails-the-run-and-is-not-explained-as-unsayable:end -->
 
 When the verbalizer itself breaks on a formula, that is a bug in naturalloy, not a formula without words. Calling it unsayable would send the author to fix a formula that is fine, and hide the bug. So the checker never passes a fault off as unsayable, and generate or check fails. The verbalizer has had such bugs, so a run has to be ready to meet one.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 (all u: Unit | u in Faulted implies u not in Explained)
 and (all r: Run, c: Command, u: Unit | (r->c in Ask.rel and (c in GenerateCommand or c in CheckCommand) and u in Faulted) implies r not in Exits0)
 ```
+
+</details>
 
 A fault is a mistake of the verbalizer, and the verbalizer has had them, so a run must be able to meet one.
 
@@ -619,9 +786,14 @@ A fault is a mistake of the verbalizer, and the verbalizer has had them, so a ru
 > There is a [unit](../canon/CANON.md#term-unit) such that the verbalizer fails on the formula of the unit with a fault of its own.
 <!-- statement-scenario-1-spec-a-fault-of-the-verbalizer-fails-the-run-and-is-not-explained-as-unsayable:end -->
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy scenario
 some u: Unit | u in Faulted
 ```
+
+</details>
 
 #### @spec generate-writes-what-is-not-current-and-nothing-else
 
@@ -635,9 +807,14 @@ some u: Unit | u in Faulted
 
 Generate writes exactly the statements that need it: the unwritten ones and the stale ones. Missing or out of date, those are the checker's to fix, and it leaves every other statement alone.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Rewritten implies (u in Unwritten or u in Stale)) and ((u in Unwritten or u in Stale) implies u in Rewritten)
 ```
+
+</details>
 
 ##### @spec generate-writes-the-statement-of-an-unwritten-unit-between-markers
 
@@ -653,9 +830,14 @@ This follows because the markers tell the checker that the region is its own, an
 
 A stale statement sits in the checker's own region but no longer says what the formula says. Generate writes it again, so the region matches the formula once more.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Stale implies u in Rewritten
 ```
+
+</details>
 
 ##### @spec generate-writes-a-statement-as-a-quote-that-markdown-reads-as-paragraphs-and-lists
 
@@ -677,9 +859,14 @@ This follows because the checker reads a term mark as the term whose form it spe
 
 Writing a current statement again changes nothing. Generate skips it, so a second run leaves the document just as the first run left it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Current implies u not in Rewritten
 ```
+
+</details>
 
 ##### @spec generate-never-overwrites-a-handwritten-statement
 
@@ -689,9 +876,14 @@ all u: Unit | u in Current implies u not in Rewritten
 
 A person's words are not the checker's to replace, even when they drift from the formula. Generate never writes over a handwritten statement. A person who wants the generated text deletes their own.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Handwritten implies u not in Rewritten
 ```
+
+</details>
 
 ##### @spec generate-leaves-an-unsayable-unit-as-it-is
 
@@ -701,9 +893,14 @@ all u: Unit | u in Handwritten implies u not in Rewritten
 
 When the checker cannot say a formula, it has no statement to write. A half statement would be worse than none, so generate leaves the unit untouched.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Unsayable implies u not in Rewritten
 ```
+
+</details>
 
 #### @spec check-reports-a-statement-that-is-not-current
 
@@ -719,9 +916,14 @@ all u: Unit | u in Unsayable implies u not in Rewritten
 
 In a document that keeps readings, check looks at each unit that holds a formula and reports its statement unless it is current. A statement that is not current may say something its formula does not, and a reader would take it on trust.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical and u not in Current) implies u in Reported
 ```
+
+</details>
 
 #### @spec check-does-not-report-a-current-statement
 
@@ -731,9 +933,14 @@ all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical 
 
 A current statement says what its formula says, so check has nothing to report about it. A report that cries wolf soon goes unread.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Current implies u not in Reported
 ```
+
+</details>
 
 #### @spec a-report-of-a-statement-fails-check
 
@@ -745,9 +952,14 @@ all u: Unit | u in Current implies u not in Reported
 
 A reported statement means the canon may be out of date, and a check that passes would hide that. So a run of check that reports a statement never exits with code 0, the code for success.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Reported) implies r not in Exits0
 ```
+
+</details>
 
 #### @spec check-reports-a-statement-whose-region-names-no-unit
 
@@ -771,9 +983,14 @@ This follows because generate writes a region only by the name of what it says, 
 
 The *intent* is the measure of a formula. A reader holds the generated statement against it to see whether the formula says what its author meant. A unit with a formula and no intent leaves the reader nothing to hold the statement against. So in a document that keeps readings, check reports such a unit.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical and u not in Intended) implies u in Aimless
 ```
+
+</details>
 
 An author can forget the intent, so a check must be able to meet a unit without one.
 
@@ -789,9 +1006,14 @@ An author can forget the intent, so a check must be able to meet a unit without 
 > - the unit has no *intent*
 <!-- statement-scenario-1-spec-check-reports-a-unit-with-a-formula-and-no-intent:end -->
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy scenario
 some d: Document, u: Unit | d in Worded and d->u in Hold.units and u in Logical and u not in Intended
 ```
+
+</details>
 
 #### @spec check-does-not-report-a-unit-with-an-intent
 
@@ -801,9 +1023,14 @@ some d: Document, u: Unit | d in Worded and d->u in Hold.units and u in Logical 
 
 An intent is what check asks of a unit with a formula. A unit that has one gives check nothing to report, whatever the intent says, since only a person can judge the words.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Intended implies u not in Aimless
 ```
+
+</details>
 
 #### @spec a-document-that-keeps-no-readings-has-no-missing-intent-reported
 
@@ -815,9 +1042,14 @@ all u: Unit | u in Intended implies u not in Aimless
 
 A document that keeps no readings has no generated statements, and a person writes each statement there. That statement is the author's own words, so check asks no intent of its units.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies u not in Aimless
 ```
+
+</details>
 
 #### @spec a-report-of-a-missing-intent-fails-check
 
@@ -829,9 +1061,14 @@ all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies u no
 
 A unit with a formula and no intent is a gap in the canon, and a check that passed would hide it. So a run of check that reports one never exits with code 0.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Aimless) implies r not in Exits0
 ```
+
+</details>
 
 #### @spec generate-fails-on-a-handwritten-statement-and-says-so
 
@@ -843,9 +1080,14 @@ all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Aimless) implie
 
 Generate cannot write a handwritten statement, so it cannot finish its job. It reports the statement and the run fails, so the author learns which statement it left alone.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: GenerateCommand, u: Unit | (r->c in Ask.rel and u in Handwritten) implies (u in Reported and r not in Exits0)
 ```
+
+</details>
 
 #### @spec generate-fails-on-an-unsayable-formula-and-says-why
 
@@ -857,9 +1099,14 @@ all r: Run, c: GenerateCommand, u: Unit | (r->c in Ask.rel and u in Handwritten)
 
 Generate cannot write a statement for a formula it cannot say either. It says why, so the author knows what to mend, and the run fails instead of passing quietly.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: GenerateCommand, u: Unit | (r->c in Ask.rel and u in Unsayable) implies (u in Explained and r not in Exits0)
 ```
+
+</details>
 
 #### @spec the-prose-check-does-not-read-a-generated-statement
 
@@ -877,9 +1124,14 @@ This follows because the words of a generated statement are the words of the rea
 
 A reading gives English to a word of the logic, so the word has to exist there first. When a reading says a word that no unit declares, it speaks about nothing, and that word is undeclared.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all w: Word | ((some u: Unit | u->w in Voice.rel) and (no u: Unit | u->w in Introduce.rel)) implies w in Undeclared
 ```
+
+</details>
 
 #### @spec a-word-declared-outside-a-term-is-misplaced
 
@@ -891,9 +1143,14 @@ all w: Word | ((some u: Unit | u->w in Voice.rel) and (no u: Unit | u->w in Intr
 
 A reader looks up a word in the term that names it, with its reading beside it. A word declared in any other kind of unit is not where the reader will look, so it is misplaced.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Word | (u->w in Introduce.rel and u not in Term) implies w in Misplaced
 ```
+
+</details>
 
 #### @spec a-reading-apart-from-the-declaration-it-says-is-apart
 
@@ -908,9 +1165,14 @@ all u: Unit, w: Word | (u->w in Introduce.rel and u not in Term) implies w in Mi
 
 A reading and its declaration belong together, so a reader finds both in one unit. When a unit declares a word but a reading in another unit says it, the word is apart.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Word | (u->w in Voice.rel and (some v: Unit | v->w in Introduce.rel) and u->w not in Introduce.rel) implies w in Apart
 ```
+
+</details>
 
 #### @spec a-declared-word-that-no-claim-uses-is-unused
 
@@ -924,9 +1186,14 @@ all u: Unit, w: Word | (u->w in Voice.rel and (some v: Unit | v->w in Introduce.
 
 A word is declared so that claims, definitions and facts can use it. A declared word that none of them uses adds nothing to the model, and no statement will ever say it, so it is unused.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all w: Word | ((some u: Unit | u->w in Introduce.rel) and (no u: Unit | u->w in Rely.rel)) implies w in Unused
 ```
+
+</details>
 
 #### @spec a-word-that-a-fact-a-parent-signature-or-a-predicate-names-is-used
 
@@ -996,9 +1263,14 @@ This follows because a declaration makes the field and says nothing of it, so no
 
 A word that its term both declares and gives a reading, and that some unit uses, is exactly where a reader expects it. Its reading sits beside its declaration, and the logic leans on it. So the checker has nothing to say about it: it reports no fault for that word.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Term, w: Word | (u->w in Introduce.rel and u->w in Voice.rel and (some v: Unit | v->w in Rely.rel)) implies (w not in Undeclared and w not in Misplaced and w not in Apart and w not in Unused and w not in Flagged)
 ```
+
+</details>
 
 #### @spec a-document-that-keeps-no-readings-has-no-word-reported
 
@@ -1017,9 +1289,14 @@ all u: Term, w: Word | (u->w in Introduce.rel and u->w in Voice.rel and (some v:
 
 Only a document that keeps readings asks for its words to be checked. So a word declared in a document without readings is never undeclared, misplaced, apart or unused, and the checker never reports it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit, w: Word | (d not in Worded and d->u in Hold.units and u->w in Introduce.rel) implies (w not in Undeclared and w not in Misplaced and w not in Apart and w not in Unused and w not in Flagged)
 ```
+
+</details>
 
 #### @spec a-signature-a-field-and-a-predicate-are-declared-words
 
@@ -1049,9 +1326,14 @@ This follows because an author writes a field both ways, and a set that holds th
 
 A word out of order lets a statement drift from its logic, so it must not pass. A run of `check` never exits with code 0 while the checker reports any word.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: CheckCommand, w: Word | (r->c in Ask.rel and w in Flagged) implies r not in Exits0
 ```
+
+</details>
 
 #### @spec check-reports-nothing-about-a-word-that-is-in-order
 
@@ -1067,9 +1349,14 @@ all r: Run, c: CheckCommand, w: Word | (r->c in Ask.rel and w in Flagged) implie
 
 The checker reports a word only for a fault: undeclared, misplaced, apart or unused. A word in order gets no report, since a report that cries wolf soon goes unread.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all w: Word | (w not in Undeclared and w not in Misplaced and w not in Apart and w not in Unused) implies w not in Flagged
 ```
+
+</details>
 
 #### @spec check-reports-a-word-that-is-not-in-order
 
@@ -1085,9 +1372,14 @@ all w: Word | (w not in Undeclared and w not in Misplaced and w not in Apart and
 
 A statement speaks through the words its readings give, so a faulty word lets it say what the logic does not. So the checker reports every word that is undeclared, misplaced, apart or unused.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all w: Word | (w in Undeclared or w in Misplaced or w in Apart or w in Unused) implies w in Flagged
 ```
+
+</details>
 
 #### @spec a-scenario-gets-a-statement-that-says-it-must-be-possible
 
@@ -1145,7 +1437,7 @@ This follows because a reader who meets the word follows it to what it means, an
 > when all of these hold:
 > - the project lists document_1 among the documents it checks
 > - the project does not list document_2 among the documents it checks
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_2 [holds](../canon/CANON.md#term-hold) the unit
 >
 > then [checker](../canon/CANON.md#term-checker) does not write the *statement* of the unit when it generates.
@@ -1153,9 +1445,14 @@ This follows because a reader who meets the word follows it to what it means, an
 
 A document the project does not check belongs to someone else, who generates its statements where it lives. So even when it is context for a checked document, the checker writes no statement for any unit it holds.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, e: Document, u: Unit | (d in Checked and e not in Checked and d->e in Context.rel and e->u in Hold.units) implies u not in Rewritten
 ```
+
+</details>
 
 #### @spec a-word-declared-in-an-extended-document-is-declared
 
@@ -1163,7 +1460,7 @@ all d: Document, e: Document, u: Unit | (d in Checked and e not in Checked and d
 > For every [document_1](../canon/CANON.md#term-document), every document_2, every [unit_1](../canon/CANON.md#term-unit), every unit_2 and every *word*:
 >
 > the word is said by no reading or is declared when all of these hold:
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_1 [holds](../canon/CANON.md#term-hold) unit_1
 > - a reading in unit_1 says the word
 > - document_2 holds unit_2
@@ -1172,9 +1469,38 @@ all d: Document, e: Document, u: Unit | (d in Checked and e not in Checked and d
 
 The checker reads a document together with its context: the documents it extends, and the ones those extend in turn. So a declaration anywhere in the context covers a word that a reading in the document says, and that word does not count as undeclared.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel and d->u in Hold.units and u->w in Voice.rel and e->v in Hold.units and v->w in Introduce.rel) implies w not in Undeclared
 ```
+
+</details>
+
+### @spec a-row-of-a-reading-table-is-a-reading
+
+> The checker reads each row of a *reading table* as the reading of its key. Its `holds` cell is the positive side, and its `does not hold` cell the negative side.
+
+This follows because the checker says a statement with the readings of its words, wherever the document writes them.
+
+### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
+
+> The checker reads each row of a *noun table* as the noun of its signature. The noun links to the term of the unit that holds the row. Its article, as in `an hour`, is no part of the link.
+
+This follows because the noun of a signature names its things in a statement, wherever the document writes it. A signature is declared in the term that defines it, so its noun links there.
+
+### @spec check-reports-a-linked-word-that-no-form-of-its-term-spells
+
+> When a reading links a word to a term that has no [form](../canon/CANON.md#term-form) the word spells, `check` reports the word as `undefined`. A word in brackets links to the term of the unit that holds the reading, or to the term its link names.
+
+This follows because a generated statement writes the word as a link to that term. A reader who follows the link looks for what the word means. A term that has no form the word spells does not say it. Link the word the term defines: `{1} [sits] in {2}` links `sits`, a form of the term `sit`. A noun needs no such check: its signature is declared in the term that defines it, and the noun links there.
+
+### @spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun
+
+> A signature with no noun takes one from the term that declares it, when its name spells the stem of that term. Its noun is then the words of the stem, linked to the term. A capital after a lowercase letter starts a word, so `TermMark` spells `term-mark`.
+
+This follows because such a noun says nothing the declaration does not: the term names the signature, and its things are what the term defines. A signature named otherwise has no noun until a noun table gives it one.
 
 ## @axiom the-claims-of-a-canon-never-contradict-each-other
 
@@ -1192,9 +1518,14 @@ Every claim of a canon says how the project is, and the claims are about one pro
 
 The same goes for a situation that the canon says must be possible and that one of its claims rules out. So the checker asks the analyzer two things. Can the claims hold together? Can each scenario happen? It names the units that a repair has to touch.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 (all u: Unit | u in Contradicting implies u in Named) and (all c: Scenario | c in Impossible implies c in Raised)
 ```
+
+</details>
 
 <!-- statement-scenario-1-axiom-the-claims-of-a-canon-never-contradict-each-other:begin — generated by `canon generate`; edits are overwritten -->
 > It must be possible that:
@@ -1208,9 +1539,14 @@ The same goes for a situation that the canon says must be possible and that one 
 > - checker names unit_1 in its report of scenario_1
 <!-- statement-scenario-1-axiom-the-claims-of-a-canon-never-contradict-each-other:end -->
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy scenario
 some c: Scenario, u: Unit | c in Impossible and c in Raised and u->c in Frees.rel and c->u in Blame.rel
 ```
+
+</details>
 
 #### @spec a-formula-with-no-keyword-is-a-claim-to-hold
 
@@ -1220,9 +1556,14 @@ some c: Scenario, u: Unit | c in Impossible and c in Raised and u->c in Frees.re
 
 A formula with no keyword in front is a plain claim: the author says it holds. So the analyzer holds it alongside the other claims. Only then can it find a contradiction among them.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in BareFormula implies u in Held
 ```
+
+</details>
 
 #### @spec a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim
 
@@ -1256,9 +1597,14 @@ This follows because a scenario is possible only if it happens in a world where 
 
 The author first wants to know whether the canon holds together as a whole. So the first searches keep every unit in. Searches that leave a unit out cost much more, and they wait until a scenario turns out impossible.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all s: Search | s in First implies s not in Trial
 ```
+
+</details>
 
 #### @spec a-trial-is-made-only-for-a-scenario-that-cannot-happen
 
@@ -1274,9 +1620,14 @@ all s: Search | s in First implies s not in Trial
 
 A trial leaves one unit out to find what rules a scenario out. A scenario that can happen has nothing to repair, so a trial only ever serves one that cannot. That makes every trial come after the first search has answered.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all s: Search, c: Scenario | (s in Trial and s->c in Pose.scenario) implies (c in Impossible and s in Afterwards)
 ```
+
+</details>
 
 #### @spec a-trial-leaves-out-one-held-unit-and-keeps-the-rest
 
@@ -1296,9 +1647,14 @@ all s: Search, c: Scenario | (s in Trial and s->c in Pose.scenario) implies (c i
 
 To find the unit a repair has to touch, the checker asks again, leaving out one held unit at a time. Each trial drops exactly one and keeps the rest. When the scenario becomes possible, that one unit is the one standing in its way.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all s: Search | s in Trial implies (one u: Unit | s->u in Leave.rel and u in Held and s->u not in Pose.units and (all v: Unit | (v in Held and v != u) implies s->v in Pose.units))
 ```
+
+</details>
 
 #### @spec a-trial-is-made-for-each-held-unit-of-a-scenario-that-cannot-happen
 
@@ -1315,9 +1671,14 @@ all s: Search | s in Trial implies (one u: Unit | s->u in Leave.rel and u in Hel
 
 When a scenario cannot happen, only a search can tell which held unit rules it out. So unless the author names units to try, every held unit gets a trial that leaves it out.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario, u: Unit | (c in Impossible and u in Held and (no v: Unit | c->v in Probe.rel)) implies (some s: Search | s in Trial and s->c in Pose.scenario and s->u in Leave.rel)
 ```
+
+</details>
 
 #### @spec a-trial-leaves-out-only-the-units-the-author-asks-about
 
@@ -1333,9 +1694,14 @@ all c: Scenario, u: Unit | (c in Impossible and u in Held and (no v: Unit | c->v
 
 An author who already knows which units may keep a scenario out can name them. The trials for that scenario then leave out only those units, so the checker spends no search on the others.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all s: Search, c: Scenario, u: Unit | (s in Trial and s->c in Pose.scenario and s->u in Leave.rel and (some v: Unit | c->v in Probe.rel)) implies c->u in Probe.rel
 ```
+
+</details>
 
 #### @spec each-unit-the-author-asks-about-gets-a-trial
 
@@ -1352,9 +1718,14 @@ all s: Search, c: Scenario, u: Unit | (s in Trial and s->c in Pose.scenario and 
 
 Naming suspects narrows the search without skipping any of them. So when a scenario cannot happen, each held unit the author names gets a trial that leaves it out.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario, u: Unit | (c in Impossible and u in Held and c->u in Probe.rel) implies (some s: Search | s in Trial and s->c in Pose.scenario and s->u in Leave.rel)
 ```
+
+</details>
 
 #### @spec a-scenario-that-cannot-happen-while-every-unit-holds-is-reported
 
@@ -1366,9 +1737,14 @@ all c: Scenario, u: Unit | (c in Impossible and u in Held and c->u in Probe.rel)
 
 A scenario shows something the canon must allow. When it cannot happen while every held unit holds, the canon rules out what it says is possible. The checker always reports it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario | c in Impossible implies c in Raised
 ```
+
+</details>
 
 #### @spec a-scenario-that-can-happen-is-not-reported
 
@@ -1380,9 +1756,14 @@ all c: Scenario | c in Impossible implies c in Raised
 
 A scenario that can happen shows the canon working as meant. The checker never reports it, because nobody reads a report that cries wolf.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario | c in Possible implies c not in Raised
 ```
+
+</details>
 
 #### @spec the-report-of-a-scenario-names-each-unit-whose-removal-lets-it-happen
 
@@ -1396,9 +1777,14 @@ all c: Scenario | c in Possible implies c not in Raised
 
 The report of a scenario points the author at what to change. If leaving out a unit lets the scenario happen, that unit stands in its way, and the report names it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario, u: Unit | (c in Raised and u->c in Frees.rel) implies c->u in Blame.rel
 ```
+
+</details>
 
 #### @spec the-report-of-a-scenario-names-no-other-unit
 
@@ -1410,9 +1796,14 @@ all c: Scenario, u: Unit | (c in Raised and u->c in Frees.rel) implies c->u in B
 
 The report of a scenario names a unit only if leaving it out lets the scenario happen. Any other unit does not stand in the scenario's way, and naming it would send the author to the wrong place.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all c: Scenario, u: Unit | c->u in Blame.rel implies u->c in Frees.rel
 ```
+
+</details>
 
 #### @spec units-that-cannot-all-hold-are-named
 
@@ -1424,9 +1815,14 @@ all c: Scenario, u: Unit | c->u in Blame.rel implies u->c in Frees.rel
 
 When held units cannot all hold together, the author has to find them. So the checker names each of them in its report of a contradiction.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | u in Contradicting implies u in Named
 ```
+
+</details>
 
 #### @spec the-report-of-a-contradiction-names-all-the-units-of-the-group
 
@@ -1440,9 +1836,14 @@ all u: Unit | u in Contradicting implies u in Named
 
 The analyzer knows only that a group of units cannot hold together, not which of them is wrong. So the report of a contradiction names every unit of the group, and the author decides which to change.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, v: Unit | (u in Contradicting and u->v in Together.rel) implies v in Named
 ```
+
+</details>
 
 #### @spec units-that-share-a-word-are-asked-about-together
 
@@ -1454,9 +1855,14 @@ all u: Unit, v: Unit | (u in Contradicting and u->v in Together.rel) implies v i
 
 Units that talk about the same thing may contradict each other. So two units that share a word go to the analyzer together, in one group.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, v: Unit | u->v in Share.rel implies u->v in Together.rel
 ```
+
+</details>
 
 #### @spec units-that-share-no-word-are-asked-about-apart
 
@@ -1468,9 +1874,14 @@ all u: Unit, v: Unit | u->v in Share.rel implies u->v in Together.rel
 
 Units about unrelated things cannot contradict each other. So the analyzer gets two units together only when a chain of shared words links them. Asking about unrelated units apart gives the same answer in less time.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, v: Unit | u->v in Together.rel implies u->v in Chain.rel
 ```
+
+</details>
 
 #### @spec a-unit-in-a-group-with-no-claim-and-no-scenario-is-not-asked-about
 
@@ -1497,9 +1908,14 @@ This follows because the analyzer refuses a scope for a signature it does not kn
 
 A canon that holds together has nothing to fix. So a run of `alloy:logic` exits with code 0 when the checker reports no impossible scenario and no held units contradict each other.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: LogicCommand | (r->c in Ask.rel and (no x: Scenario | x in Raised) and (no u: Unit | u in Contradicting)) implies r in Exits0
 ```
+
+</details>
 
 #### @spec a-reported-scenario-or-contradiction-fails-logic
 
@@ -1515,9 +1931,14 @@ all r: Run, c: LogicCommand | (r->c in Ask.rel and (no x: Scenario | x in Raised
 
 A canon that contradicts itself must not pass. So a run of `alloy:logic` never exits with code 0 once the checker reports an impossible scenario, or any held units contradict each other.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: LogicCommand | (r->c in Ask.rel and ((some x: Scenario | x in Raised) or (some u: Unit | u in Contradicting))) implies r not in Exits0
 ```
+
+</details>
 
 #### @spec logic-stops-when-the-analyzer-cannot-run
 
@@ -1532,16 +1953,21 @@ This follows because a check that did not run found nothing, and the author must
 >
 > the analyzer is asked to hold the formula of the unit when all of these hold:
 > - the project lists document_1 among the documents it checks
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_2 [holds](../canon/CANON.md#term-hold) the unit
 > - the unit holds a formula with no keyword
 <!-- statement-spec-the-claims-of-an-extended-document-join-the-model:end -->
 
 A contradiction between two claims matters even when they live in different documents. So when the project checks a document, the analyzer is also asked to hold the plain formulas of its context. The context is every document it extends, and the ones those extend in turn.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, e: Document, u: Unit | (d in Checked and d->e in Context.rel and e->u in Hold.units and u in BareFormula) implies u in Held
 ```
+
+</details>
 
 #### @spec a-group-with-no-block-of-a-checked-document-is-not-asked-about
 
@@ -1553,7 +1979,7 @@ This follows because the extended document is checked where it lives. Asking aga
 
 <!-- statement-axiom-a-formula-can-be-held-against-the-other-formulas:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - [checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a signature when all of these hold:
+> - [checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a *signature* when all of these hold:
 >   - the unit holds a formula
 >   - the unit is not a [term](../canon/CANON.md#term-term)
 >   - no other formula can contradict the formula of the unit
@@ -1566,14 +1992,19 @@ A reader takes a unit with a formula as checked. The analyzer holds its formula 
 
 So the checker reports a formula that no other formula can contradict, and only such a formula. It finds one by the signatures it is *lone* on. The author can tie the signature to the rest of the model, with a definition, a fact or a scenario that names it. Or the author can take the formula away and write the statement of the unit by hand, so that the unit no longer looks checked. Then its test guards it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 (all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (some w: Signature | u->w in Expose.rel)) and (all u: Unit, w: Word | u->w in Expose.rel implies u in Unchallenged)
 ```
 
+</details>
+
 <!-- statement-scenario-1-axiom-a-formula-can-be-held-against-the-other-formulas:begin — generated by `canon generate`; edits are overwritten -->
 > It must be possible that:
 >
-> For some [unit](../canon/CANON.md#term-unit) and some signature:
+> For some [unit](../canon/CANON.md#term-unit) and some *signature*:
 >
 > all of these hold:
 > - the unit holds a formula
@@ -1581,14 +2012,19 @@ So the checker reports a formula that no other formula can contradict, and only 
 > - [checker](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the signature
 <!-- statement-scenario-1-axiom-a-formula-can-be-held-against-the-other-formulas:end -->
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy scenario
 some u: Unit, w: Signature | u in Logical and u->w in Rely.rel and u->w not in Expose.rel
 ```
 
+</details>
+
 #### @spec a-formula-that-no-other-formula-can-contradict-is-reported
 
 <!-- statement-spec-a-formula-that-no-other-formula-can-contradict-is-reported:begin — generated by `canon generate`; edits are overwritten -->
-> [Checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a signature when all of these hold:
+> [Checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a *signature* when all of these hold:
 > - the unit holds a formula
 > - the unit is not a [term](../canon/CANON.md#term-term)
 > - no other formula can contradict the formula of the unit
@@ -1596,14 +2032,19 @@ some u: Unit, w: Signature | u in Logical and u->w in Rely.rel and u->w not in E
 
 A formula that no other formula can contradict looks checked but never meets a test. The checker reports it as lone on some signature, so it cannot pass for checked. Terms claim nothing, so this never applies to them.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (some w: Signature | u->w in Expose.rel)
 ```
 
+</details>
+
 ##### @spec a-formula-that-is-lone-on-a-signature-is-reported
 
 <!-- statement-spec-a-formula-that-is-lone-on-a-signature-is-reported:begin — generated by `canon generate`; edits are overwritten -->
-> For every [unit](../canon/CANON.md#term-unit) and every signature:
+> For every [unit](../canon/CANON.md#term-unit) and every *signature*:
 >
 > [checker](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the signature when all of these hold:
 > - the unit holds a formula
@@ -1613,9 +2054,14 @@ all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (so
 
 Some formulas use a signature that no scenario names, and that no other unit's blocks name outside its declaration. Nothing in the model can test such a formula there. The checker reports the formula as lone on each such signature, so the author knows what to tie in. Terms never get this report.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Signature | (u in Logical and u not in Term and loneOn[u, w]) implies u->w in Expose.rel
 ```
+
+</details>
 
 ##### @exception a-signature-that-something-names-without-constraining-it-keeps-a-formula-from-being-reported
 
@@ -1635,9 +2081,14 @@ The check sees that the signature is named. Whether the name constrains it is a 
 
 A lone report tells the author that nothing can contradict the formula. The checker makes it only when that is true, because nobody reads a report that cries wolf.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Word | u->w in Expose.rel implies u in Unchallenged
 ```
+
+</details>
 
 ##### @spec a-formula-is-reported-only-on-a-signature-it-is-lone-on
 
@@ -1655,9 +2106,14 @@ all u: Unit, w: Word | u->w in Expose.rel implies u in Unchallenged
 
 The checker spots a formula that nothing can contradict through a signature it is lone on. So a lone report always names such a signature, and only a unit with a formula gets one. A term never does: it defines words and claims nothing to contradict.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Word | u->w in Expose.rel implies (u in Logical and u not in Term and w in Signature and loneOn[u, w])
 ```
+
+</details>
 
 ###### @spec a-signature-that-another-unit-names-keeps-a-formula-from-being-reported
 
@@ -1671,9 +2127,14 @@ all u: Unit, w: Word | u->w in Expose.rel implies (u in Logical and u not in Ter
 
 A unit that names a signature in its blocks constrains it, and can contradict any formula that uses it. Once another unit names a signature that way, the checker never reports a formula as lone on it. A mention in the declaration alone does not count.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, v: Unit, w: Word | (v != u and v->w in Utter.rel) implies u->w not in Expose.rel
 ```
+
+</details>
 
 ###### @spec a-signature-that-a-scenario-names-keeps-a-formula-from-being-reported
 
@@ -1685,9 +2146,14 @@ all u: Unit, v: Unit, w: Word | (v != u and v->w in Utter.rel) implies u->w not 
 
 A scenario tests every formula on the signatures it names: if a formula rules the scenario out, the checker reports that it cannot happen. So the checker never reports a formula as lone on a signature that any scenario names, even one in the formula's own unit.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, v: Unit, w: Word | v->w in Picture.rel implies u->w not in Expose.rel
 ```
+
+</details>
 
 ###### @spec a-signature-that-an-extended-document-names-keeps-a-formula-from-being-reported
 
@@ -1695,7 +2161,7 @@ all u: Unit, v: Unit, w: Word | v->w in Picture.rel implies u->w not in Expose.r
 > For every [document_1](../canon/CANON.md#term-document), every document_2, every [unit_1](../canon/CANON.md#term-unit), every unit_2 and every *word*:
 >
 > [checker](../canon/CANON.md#term-checker) does not report the formula of unit_1 as lone on the word when all of these hold:
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_1 [holds](../canon/CANON.md#term-hold) unit_1
 > - document_2 holds unit_2
 > - a block of unit_2 names the word outside its declaration
@@ -1703,9 +2169,14 @@ all u: Unit, v: Unit, w: Word | v->w in Picture.rel implies u->w not in Expose.r
 
 The claims of a document's context join the model and can contradict the document's own formulas. So once a block in the context names a signature outside its declaration, the checker reports no formula of the document as lone on it.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel and d->u in Hold.units and e->v in Hold.units and v->w in Utter.rel) implies u->w not in Expose.rel
 ```
+
+</details>
 
 ###### @spec a-formula-is-not-reported-on-a-field-or-a-predicate
 
@@ -1717,9 +2188,14 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 
 The checker reports a formula as lone only on a signature, never on a field or a predicate. A predicate needs no report, because its body ties it to other words. Fields wait for now: the check knows a field only by its name, and two signatures can share one.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Unit, w: Word | w not in Signature implies u->w not in Expose.rel
 ```
+
+</details>
 
 ###### @spec a-term-is-not-reported-as-lone
 
@@ -1731,9 +2207,14 @@ all u: Unit, w: Word | w not in Signature implies u->w not in Expose.rel
 
 A term gives a word its meaning and claims nothing. So the checker never reports the formula of a term as lone, whatever it uses.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all u: Term, w: Word | u->w not in Expose.rel
 ```
+
+</details>
 
 ###### @spec a-document-that-keeps-no-readings-has-no-formula-reported-as-lone
 
@@ -1745,9 +2226,14 @@ all u: Term, w: Word | u->w not in Expose.rel
 
 The lone check belongs to the check of words, which reads only documents that keep readings. So the checker never reports a formula as lone in a document without readings.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all d: Document, u: Unit, w: Word | (d not in Worded and d->u in Hold.units) implies u->w not in Expose.rel
 ```
+
+</details>
 
 ##### @bug a-signature-that-its-declaration-constrains-is-reported
 
@@ -1775,9 +2261,14 @@ A formula such as `some Told and no Misquoted` is lone on `Told`, and a formula 
 
 A formula that looks checked but is not must not pass. So a run of `check` never exits with code 0 while the checker reports any formula as lone.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 all r: Run, c: CheckCommand, u: Unit, w: Word | (r->c in Ask.rel and u->w in Expose.rel) implies r not in Exits0
 ```
+
+</details>
 
 ## @axiom check-runs-wherever-node-runs
 
@@ -1975,7 +2466,7 @@ This follows because `show` heads a unit the same way. A reader can then search 
 
 ##### @spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
 
-> `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block or generated region of the unit.
+> `alloy:intent` prints the *intent* of a unit as the document writes it. The intent ends before the first fenced block, fold, reading table, noun table or generated region of the unit.
 
 This follows because the intent is the author's own prose, and the reader measures the formula against those exact words.
 
@@ -2046,6 +2537,12 @@ This follows because a write that went ahead in part would leave a document that
 > `alloy:intent --write` refuses text that holds a line that opens a fenced block.
 
 This follows because the intent ends at the first fenced block. A fence in the text would end it early, and could add a formula to the unit.
+
+###### @spec a-write-of-text-with-a-fold-is-refused
+
+> `alloy:intent --write` refuses text that holds a line that opens a [fold](../canon/CANON.md#term-fold), or the header of a *reading table* or a *noun table*.
+
+This follows because the intent ends at the first fold or table, as it does at the first fenced block. One in the text would end it early.
 
 ###### @spec a-write-of-text-with-a-heading-is-refused
 
@@ -2130,6 +2627,12 @@ This follows because the command cannot tell which reading the author means. A r
 > When the new words do not part at one bar into two sides that both hold words, `alloy:readings --write` says so and changes nothing. The run exits with code 2.
 
 This follows because a reading has a positive side and a negative side. A reading that lost one could not say a formula that needs it.
+
+### @spec generate-aligns-the-columns-of-each-reading-table-and-noun-table
+
+> `generate` pads the cells of each *reading table* and each *noun table* to the width of their column. The dashes under the headers get the same width. It changes no cell but by its spaces.
+
+This follows because the writer of a reading changes its words, and lining up the columns by hand is handling the document by its text. A table out of line still says what it said, so check reports nothing for it.
 
 ## @fact only-solving-a-model-decides-whether-a-formula-constrains-a-signature
 

@@ -1,13 +1,15 @@
 /**
  * `canon alloy:readings`: the readings of the documents, listed and reworded
- * by their keys. A reading is a line `<key>: <positive> | <negative>` of a
- * `readings` block; a `noun` line names a signature, and is no reading.
+ * by their keys. A reading is a row of a reading table, or a line
+ * `<key>: <positive> | <negative>` of a `readings` fence; a noun names a
+ * signature, and is no reading.
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { readUnits } from '@bigmistqke/canon/units';
 import * as statements from './statements.ts';
+import { tablesIn } from './tables.ts';
 import type { Context } from './statements.ts';
 
 /** One reading, where it is and what it says. */
@@ -20,6 +22,8 @@ export interface Reading {
   key: string;
   positive: string;
   negative: string | undefined;
+  /** Whether it is a row of a reading table, rather than a line of a fence. */
+  row: boolean;
 }
 
 /** A line of readings that is a reading: its key, and its words after the colon. */
@@ -27,11 +31,12 @@ const READING = /^(\s*)([\w.'/]+)(\s*:\s*)(.+?)\s*$/;
 
 /** Every reading of the documents, in document order. */
 export function readingsIn(documents: string[], root: string): Reading[] {
-  const found: Reading[] = [];
+  const all: Reading[] = [];
   for (const doc of documents) {
     const file = resolve(root, doc);
     if (!existsSync(file)) continue;
     const src = readFileSync(file, 'utf8');
+    const found: Reading[] = [];
     for (const block of readBlocks(src, readUnits(src)).filter(b => b.lang === 'readings')) {
       const first = src.slice(0, block.at).split('\n').length;
       block.body.split('\n').forEach((text, i) => {
@@ -40,11 +45,19 @@ export function readingsIn(documents: string[], root: string): Reading[] {
         const m = READING.exec(text);
         if (m === null) return;
         const [positive, negative] = (m[4] as string).split('|').map(part => part.trim());
-        found.push({ doc, file, line: first + i, unit: block.unit, key: m[2] as string, positive: positive as string, negative });
+        found.push({ doc, file, line: first + i, unit: block.unit, key: m[2] as string, positive: positive as string, negative, row: false });
       });
     }
+    for (const table of tablesIn(src).filter(t => t.kind === 'reading')) {
+      for (const { line, cells } of table.rows) {
+        const [key = '', positive = '', negative = ''] = cells;
+        if (key === '') continue;
+        found.push({ doc, file, line: line + 1, unit: table.unit, key, positive, negative: negative === '' ? undefined : negative, row: true });
+      }
+    }
+    all.push(...found.sort((a, b) => a.line - b.line));
   }
-  return found;
+  return all;
 }
 
 const say = (r: Reading): string => `${r.doc}:${r.line}  ${r.unit}  ${r.key}: ${r.positive}${r.negative === undefined ? '' : ` | ${r.negative}`}`;
@@ -78,8 +91,12 @@ export function rewordReading(documents: string[], root: string, args: string[],
   if (matching.length > 1) return refuse(`${matching.length} readings have the key "${key}", so it cannot say which one to reword:\n${matching.map(r => `  ${say(r)}`).join('\n')}`);
   const reading = matching[0] as Reading;
   const lines = readFileSync(reading.file, 'utf8').split('\n');
-  const m = READING.exec(lines[reading.line - 1] as string) as RegExpExecArray;
-  lines[reading.line - 1] = `${m[1]}${m[2]}${m[3]}${sides[0]} | ${sides[1]}`;
+  if (reading.row) {
+    lines[reading.line - 1] = `| ${reading.key} | ${sides[0]} | ${sides[1]} |`;
+  } else {
+    const m = READING.exec(lines[reading.line - 1] as string) as RegExpExecArray;
+    lines[reading.line - 1] = `${m[1]}${m[2]}${m[3]}${sides[0]} | ${sides[1]}`;
+  }
   const next = lines.join('\n');
   writeFileSync(reading.file, next);
   console.log(say({ ...reading, positive: sides[0] as string, negative: sides[1] }));
