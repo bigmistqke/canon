@@ -4,9 +4,10 @@
  * and CANON_JAVA when `java` is older.
  */
 import { spawnSync } from 'node:child_process';
-import { chmodSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { chmodSync, existsSync, mkdtempSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { fakeAnalyzer } from '@bigmistqke/run-alloy/testing';
 import { afterEach, describe, expect, it } from 'vitest';
 import { CLI, install, named } from './cli.ts';
 
@@ -169,7 +170,8 @@ describe.skipIf(!process.env.CANON_ALLOY_JAR)('the logic command with --show', (
     // A Java that runs the analyzer and then takes away the text of every instance it wrote.
     writeFileSync(java, `#!/bin/sh\n"${process.env.CANON_JAVA ?? 'java'}" "$@"\ncode=$?\nfor a in "$@"; do case "$a" in */out) rm -f "$a"/*-solution-0.txt;; esac; done\nexit $code\n`);
     chmodSync(java, 0o755);
-    const { out, code } = logic(RIPE, true, ['--show', 'scenario-1-axiom-a-pear-is-sweet'], { CANON_JAVA: java });
+    // No kept answer: one that holds the world would be given without this Java.
+    const { out, code } = logic(RIPE, true, ['--show', 'scenario-1-axiom-a-pear-is-sweet'], { CANON_JAVA: java, CANON_ALLOY_CACHE: '0' });
     expect(out).toContain('CANON.md: 2 units, 1 scenario');
     expect(out).toContain('the world of scenario-1-axiom-a-pear-is-sweet: the analyzer wrote none');
     expect(code).toBe(0);
@@ -198,11 +200,27 @@ describe.skipIf(!process.env.CANON_ALLOY_JAR)('the logic command with --show', (
 
 describe('the logic command without the analyzer', () => {
   /**
-   * @canon spec-logic-stops-when-the-analyzer-cannot-run
+   * @canon spec-logic-stops-when-the-analyzer-does-not-start
    */
   it('stops with code 2 and says that the analyzer did not run', () => {
     const { err, code } = logic(doc(), false);
     expect(err).toContain('the Alloy analyzer did not run');
     expect(code).toBe(2);
+  });
+});
+
+describe('the logic command with an analyzer that leaves a search unsolved', () => {
+  /**
+   * @canon spec-logic-stops-when-the-analyzer-leaves-a-search-unsolved
+   */
+  it('stops with code 2, says what the analyzer printed, and keeps nothing', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'canon-unsolved-'));
+    DIRS.push(dir);
+    const analyzer = fakeAnalyzer(join(dir, 'bin'), { unsolved: true, exit: 1 });
+    const cache = join(dir, 'cache');
+    const { err, code } = logic(doc(), true, [], { CANON_JAVA: analyzer.java, CANON_ALLOY_JAR: analyzer.jar, CANON_ALLOY_CACHE_DIR: cache, CANON_ALLOY_CACHE: '1' });
+    expect(err).toContain('the Alloy analyzer did not run');
+    expect(code).toBe(2);
+    expect(existsSync(cache) ? readdirSync(cache) : []).toEqual([]);
   });
 });

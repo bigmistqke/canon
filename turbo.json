@@ -22,6 +22,12 @@
       "env": [
         "CANON_ALLOY_JAR",
         "CANON_JAVA"
+      ],
+      "passThroughEnv": [
+        "CANON_ALLOY_CACHE_DIR",
+        "CANON_ALLOY_CACHE",
+        "CANON_ALLOY_JOBS",
+        "CANON_ALLOY_HEAP"
       ]
     },
     "@bigmistqke/canon#test": {
@@ -32,6 +38,12 @@
       "env": [
         "CANON_ALLOY_JAR",
         "CANON_JAVA"
+      ],
+      "passThroughEnv": [
+        "CANON_ALLOY_CACHE_DIR",
+        "CANON_ALLOY_CACHE",
+        "CANON_ALLOY_JOBS",
+        "CANON_ALLOY_HEAP"
       ]
     },
     "@bigmistqke/canon-plugin-alloy#test": {
@@ -48,6 +60,12 @@
         "$TURBO_DEFAULT$",
         "$TURBO_ROOT$/packages/canon/CANON.md",
         "$TURBO_ROOT$/packages/naturalloy/CANON.md"
+      ],
+      "passThroughEnv": [
+        "CANON_ALLOY_CACHE_DIR",
+        "CANON_ALLOY_CACHE",
+        "CANON_ALLOY_JOBS",
+        "CANON_ALLOY_HEAP"
       ]
     },
     "@bigmistqke/parse-alloy#test": {
@@ -61,6 +79,12 @@
       "env": [
         "CANON_ALLOY_JAR",
         "CANON_JAVA"
+      ],
+      "passThroughEnv": [
+        "CANON_ALLOY_CACHE_DIR",
+        "CANON_ALLOY_CACHE",
+        "CANON_ALLOY_JOBS",
+        "CANON_ALLOY_HEAP"
       ]
     }
   }

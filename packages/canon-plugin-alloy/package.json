@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "@bigmistqke/naturalloy": "workspace:*",
-    "@bigmistqke/parse-alloy": "workspace:*"
+    "@bigmistqke/parse-alloy": "workspace:*",
+    "@bigmistqke/run-alloy": "workspace:*"
   },
   "peerDependencies": {
     "@bigmistqke/canon": "^0.6.0"

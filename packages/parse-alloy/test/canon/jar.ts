@@ -3,16 +3,20 @@
  * jar, and the analyzer run on a model. The tests that use them need the jar:
  * set CANON_ALLOY_JAR, and CANON_JAVA when `java` is older than 17.
  */
-import { spawn } from 'node:child_process';
-import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
-import { availableParallelism, tmpdir } from 'node:os';
+import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { inflateRawSync } from 'node:zlib';
+import { analyzerOf, ask, cacheFolder, failed, sweep } from '@bigmistqke/run-alloy';
 
-export const JAR = process.env.CANON_ALLOY_JAR;
-const JAVA = process.env.CANON_JAVA ?? 'java';
-/** How many analyzers run at once: `CANON_ALLOY_JOBS`, or half the processors, which leaves room for the other suites of the workspace. */
-const JOBS = Number(process.env.CANON_ALLOY_JOBS) || Math.max(1, Math.floor(availableParallelism() / 2));
+const ANALYZER = analyzerOf();
+export const JAR = ANALYZER?.jar;
+
+/** The analyzer's options: check every command, and print each verdict. */
+const ARGS = ['exec', '-f', '-c', '*'];
+
+/** The folder of kept answers: the one CANON_ALLOY_CACHE_DIR names, or else `.cache/canon-alloy` of this package. */
+const FOLDER = cacheFolder({ fallback: join(dirname(fileURLToPath(import.meta.url)), '../../.cache/canon-alloy') });
 
 /** The `.als` files of a zip, by their path in it, read from its central directory. */
 export function modelsOf(jar: string): Map<string, string> {
@@ -42,42 +46,19 @@ export function modelsOf(jar: string): Map<string, string> {
 }
 
 /**
- * Run the analyzer on each of a set of modules, written into one folder with
- * the paths they had in the jar, so that an `open` of a module beside them finds
- * it. The output of each, `JOBS` at a time.
+ * Run the analyzer on each of a set of modules, each beside the models of the
+ * jar at the paths they had in it, so that an `open` of a module beside it finds
+ * it; the output of each. run-alloy runs as many at once as the machine holds,
+ * and keeps each output for the next run.
  */
 export async function runAll(models: Map<string, string>, modules: { path: string; source: string }[]): Promise<Map<string, string>> {
-  const dir = mkdtempSync(join(tmpdir(), 'parse-alloy-'));
-  try {
-    for (const [path, source] of models) writeFile(join(dir, path), source);
-    for (const { path, source } of modules) writeFile(join(dir, path), source);
-    const results = new Map<string, string>();
-    const queue = [...modules];
-    const worker = async (): Promise<void> => {
-      for (let next = queue.shift(); next !== undefined; next = queue.shift()) {
-        const { path } = next;
-        results.set(path, await run(join(dir, path), dir));
-      }
-    };
-    await Promise.all(Array.from({ length: JOBS }, worker));
-    return results;
-  } finally {
-    rmSync(dir, { recursive: true, force: true });
-  }
-}
-
-function writeFile(path: string, source: string): void {
-  mkdirSync(dirname(path), { recursive: true });
-  writeFileSync(path, source);
-}
-
-/** The analyzer on one file. It runs in `dir`, where it leaves a receipt of each run, which goes with the folder. */
-function run(file: string, dir: string): Promise<string> {
-  return new Promise(resolve => {
-    const child = spawn(JAVA, ['-jar', JAR as string, 'exec', '-f', '-c', '*', file], { cwd: dir });
-    let out = '';
-    child.stdout.on('data', chunk => (out += chunk));
-    child.stderr.on('data', chunk => (out += chunk));
-    child.on('close', () => resolve(out));
-  });
+  const beside = Object.fromEntries(models);
+  const outputs = await Promise.all(
+    modules.map(async ({ path, source }) => {
+      const result = await ask(ANALYZER!, { text: source, path, beside }, ARGS, ran => ran.output, { folder: FOLDER, form: 'parse-alloy output' });
+      return [path, failed(result) ? result.error : result] as const;
+    })
+  );
+  if (FOLDER !== undefined) sweep(FOLDER);
+  return new Map(outputs);
 }

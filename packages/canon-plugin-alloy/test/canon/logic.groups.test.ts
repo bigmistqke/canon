@@ -2,6 +2,7 @@
  * Units that share no word are asked about apart.
  */
 import { afterEach, describe, expect, it } from 'vitest';
+import { CACHE } from '../../src/alloy.support.ts';
 import { alloyProgram, checkAlloy, groups } from '../../src/alloy.ts';
 
 /** The tag of an axiom, spelled apart so the checker does not read this file's templates as citations. */
@@ -88,7 +89,7 @@ describe.skipIf(!process.env.CANON_ALLOY_JAR)('the check of groups', () => {
    * @canon spec-units-that-share-no-word-are-asked-about-apart
    */
   it('asks about the groups apart, with the sizes of only the signatures each declares', { timeout: 600_000 }, async () => {
-    expect(await checkAlloy(doc())).toMatchObject({ ok: true, units: expect.arrayContaining(['axiom-an-apple-is-ripe', 'axiom-a-pear-is-sweet']) });
+    expect(await checkAlloy(doc(), { cache: CACHE })).toMatchObject({ ok: true, units: expect.arrayContaining(['axiom-an-apple-is-ripe', 'axiom-a-pear-is-sweet']) });
   });
 
   /**
@@ -98,7 +99,7 @@ describe.skipIf(!process.env.CANON_ALLOY_JAR)('the check of groups', () => {
    */
   it('names the units of the group that cannot hold, and no unit of the other', { timeout: 600_000 }, async () => {
     const contra = doc('\n## @spec an-apple-is-unripe\n\n```alloy\nall a: Apple | a not in Ripe\n```\n\n```alloy scenario\nsome Apple\n```\n');
-    const result = await checkAlloy(contra);
+    const result = await checkAlloy(contra, { cache: CACHE });
     expect(result).toMatchObject({ ok: false });
     expect('failures' in result && result.failures.map(f => f.conflict.sort())).toEqual([['axiom-an-apple-is-ripe', 'spec-an-apple-is-unripe']]);
   });
@@ -109,7 +110,7 @@ describe.skipIf(!process.env.CANON_ALLOY_JAR)('the check of groups', () => {
    * @canon spec-units-that-share-no-word-are-asked-about-apart
    */
   it('names every unit of the group that contradicts itself, and no unit of the other', { timeout: 600_000 }, async () => {
-    const result = await checkAlloy(doc('\n## @spec an-apple-is-unripe\n\n```alloy\nsome a: Apple | a not in Ripe\n```\n'));
+    const result = await checkAlloy(doc('\n## @spec an-apple-is-unripe\n\n```alloy\nsome a: Apple | a not in Ripe\n```\n'), { cache: CACHE });
     expect(result).toMatchObject({ ok: false, failures: [{ scenario: 'consistent' }] });
     expect('failures' in result && result.failures.map(f => f.conflict.sort())).toEqual([['axiom-an-apple-is-ripe', 'spec-an-apple-is-unripe']]);
   });

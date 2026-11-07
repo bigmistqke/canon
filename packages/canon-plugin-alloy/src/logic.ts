@@ -5,6 +5,7 @@
  */
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, relative, resolve } from 'node:path';
+import { cacheFolder } from '@bigmistqke/run-alloy';
 import { alloyProgram, checkAlloy, predicateName, type AlloyOptions } from './alloy.ts';
 import { contextOf } from '@bigmistqke/canon/extends';
 import { checkIntents, printIntents, readStdin, writeIntent } from './intent.ts';
@@ -184,9 +185,9 @@ export function checkDocumentWords(documents: string[], root: string): number {
   return code;
 }
 
-/** The `logic` field of the scope: where the Alloy analyzer is. Paths are relative to the project root. */
+/** The `logic` field of the scope: where the Alloy analyzer is, and the folder that keeps its answers. Paths are relative to the project root. */
 interface LogicConfig {
-  alloy?: { jar?: string; java?: string };
+  alloy?: { jar?: string; java?: string; cache?: string };
 }
 
 export const plugin: Plugin = {
@@ -212,7 +213,9 @@ export const plugin: Plugin = {
         root,
         {
           jar: alloy?.jar === undefined ? undefined : resolve(root, alloy.jar),
-          java: alloy?.java === undefined ? undefined : resolve(root, alloy.java)
+          java: alloy?.java === undefined ? undefined : resolve(root, alloy.java),
+          // [Where the answers are kept](../CANON.md#spec-logic-keeps-its-answers-where-its-project-says).
+          cache: cacheFolder({ set: alloy?.cache === undefined ? undefined : resolve(root, alloy.cache), fallback: resolve(root, '.cache/canon-alloy') })
         },
         (options.show as string[] | undefined) ?? []
       );

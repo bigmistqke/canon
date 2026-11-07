@@ -4,12 +4,11 @@
  * one question — can all the units hold at once, within the bounds — and, when
  * they cannot, which units a repair has to touch.
  */
-import { spawn } from 'node:child_process';
-import { existsSync, mkdtempSync, readFileSync, writeFileSync, rmSync } from 'node:fs';
-import { availableParallelism, tmpdir } from 'node:os';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { readUnits } from '@bigmistqke/canon/units';
+import { ask, sweep, type Ran } from '@bigmistqke/run-alloy';
 import { declaredIn, PARAGRAPHS, strip } from './words.ts';
 
 export interface AlloyOptions {
@@ -29,6 +28,8 @@ export interface AlloyOptions {
   context?: string[];
   /** The names of the scenario predicates whose world to keep, for the scenarios that can happen. */
   show?: string[];
+  /** The folder that keeps the analyzer's answers from one run for the next, as run-alloy's `cacheFolder` gives it; none is kept or read without it. */
+  cache?: string;
 }
 
 /** Which runs a program holds: the units together and each scenario with them, the units left out one by one, or both. */
@@ -195,53 +196,42 @@ type Solved = { found: Map<string, boolean>; traces: Map<string, string> };
 /** The name of a run: `run <name> { … }`. */
 const runName = (command: string): string => /^run\s+(\w+)/.exec(command)?.[1] ?? '';
 
-/**
- * Run the analyzer over a model and one of its runs, and say whether the run
- * found an instance; with `keep`, the analyzer's text of the instance it found.
- */
-function solveOne(model: string, command: string, java: string, jar: string, keep = false): Promise<Solved | { error: string }> {
-  return new Promise(resolve => {
-    const dir = mkdtempSync(join(tmpdir(), 'canon-alloy-'));
-    const done = (result: Solved | { error: string }): void => {
-      rmSync(dir, { recursive: true, force: true });
-      resolve(result);
-    };
-    const file = join(dir, 'model.als');
-    writeFileSync(file, `${model}\n${command}\n`);
-    // One collector thread for each process: several processes run at once, and a collector with a thread for every core makes them wait for each other.
-    const child = spawn(java, ['-XX:+UseSerialGC', '-jar', jar, 'exec', '-f', '-o', join(dir, 'out'), '-t', 'text', file]);
-    let log = '';
-    child.stdout.on('data', chunk => (log += chunk));
-    child.stderr.on('data', chunk => (log += chunk));
-    child.on('error', error => done({ error: error.message }));
-    child.on('close', () => {
-      try {
-        const found = solved(readFileSync(join(dir, 'out', 'receipt.json'), 'utf8'));
-        const traces = new Map<string, string>();
-        const name = runName(command);
-        // The text of an instance holds what the receipt leaves out: the signatures declared with `in`, and the step the trace loops back to.
-        const trace = join(dir, 'out', `${name}-solution-0.txt`);
-        if (keep && found.get(name) && existsSync(trace)) traces.set(name, readFileSync(trace, 'utf8'));
-        done({ found, traces });
-      } catch {
-        done({ error: log.trim() || 'the Alloy analyzer wrote no receipt' });
-      }
-    });
-  });
+/** The options of the analyzer's `exec`, besides the folder it writes to and the file it reads. */
+const EXEC_OPTIONS = ['exec', '-f', '-t', 'text'];
+
+/** An answer as it is kept: whether each run found an instance, and the text of each instance that was kept. */
+interface Kept {
+  found: Record<string, boolean>;
+  traces: Record<string, string>;
 }
 
-/** Run the tasks, no more than `limit` at a time, and give their results in order. */
-async function pool<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]> {
-  const results: T[] = new Array(tasks.length);
-  let next = 0;
-  const worker = async (): Promise<void> => {
-    while (next < tasks.length) {
-      const i = next++;
-      results[i] = await (tasks[i] as () => Promise<T>)();
-    }
+/** Where the analyzer is, and the folder that keeps its answers, if any. */
+interface Analyzer {
+  java: string;
+  jar: string;
+  cache?: string;
+}
+
+/**
+ * Answer one run of a model through run-alloy, which gives the answer kept for
+ * it, or else the analyzer's, which it then keeps. With `keep`, the answer holds
+ * the analyzer's text of the instance it found.
+ *
+ * @canon spec-logic-asks-each-search-through-run-alloy
+ */
+async function solveOne(model: string, command: string, { java, jar, cache }: Analyzer, keep = false): Promise<Solved | { error: string }> {
+  const name = runName(command);
+  const read = ({ out, output }: Ran): Kept | { error: string } => {
+    const found = Object.fromEntries(solved(readFileSync(join(out, 'receipt.json'), 'utf8')));
+    // The analyzer leaves out a run it could not solve: that is no answer, and not a run with no instance.
+    if (!(name in found)) return { error: output.trim() || `the Alloy analyzer did not solve ${name}` }; // [Why it stops](../CANON.md#spec-logic-stops-when-the-analyzer-leaves-a-search-unsolved)
+    // The text of an instance holds what the receipt leaves out: the signatures declared with `in`, and the step the trace loops back to.
+    const trace = join(out, `${name}-solution-0.txt`);
+    return { found, traces: keep && found[name] && existsSync(trace) ? { [name]: readFileSync(trace, 'utf8') } : {} };
   };
-  await Promise.all(Array.from({ length: Math.min(limit, tasks.length) }, worker));
-  return results;
+  const answer = await ask({ java, jar }, { text: `${model}\n${command}\n` }, EXEC_OPTIONS, read, { folder: cache, form: keep ? 'receipt and instance' : 'receipt' });
+  if ('error' in answer) return answer;
+  return { found: new Map(Object.entries(answer.found)), traces: new Map(Object.entries(answer.traces)) };
 }
 
 /**
@@ -249,10 +239,11 @@ async function pool<T>(tasks: (() => Promise<T>)[], limit: number): Promise<T[]>
  * process of its own; whether each run of each program found an instance, or
  * the first error. The runs named in `keep` keep the text of their instance.
  */
-async function solveAll(programs: Program[], java: string, jar: string, keep: Set<string> = new Set()): Promise<{ found: Map<string, boolean>[]; traces: Map<string, string>[] } | { error: string }> {
-  const tasks = programs.flatMap((p, i) => p.commands.map(command => () => solveOne(p.model, command, java, jar, keep.has(runName(command))).then(result => ({ i, result }))));
-  // As many processes as there are processors, unless `CANON_ALLOY_JOBS` says fewer: a test runner that asks about several documents at once should not start them all.
-  const answers = await pool(tasks, Number(process.env.CANON_ALLOY_JOBS) || availableParallelism());
+async function solveAll(programs: Program[], analyzer: Analyzer, keep: Set<string> = new Set()): Promise<{ found: Map<string, boolean>[]; traces: Map<string, string>[] } | { error: string }> {
+  // run-alloy starts no more processes at once than the machine holds.
+  const answers = await Promise.all(
+    programs.flatMap((p, i) => p.commands.map(command => solveOne(p.model, command, analyzer, keep.has(runName(command))).then(result => ({ i, result }))))
+  );
   const found: Map<string, boolean>[] = programs.map(() => new Map());
   const traces: Map<string, string>[] = programs.map(() => new Map());
   for (const { i, result } of answers) {
@@ -272,9 +263,19 @@ async function solveAll(programs: Program[], java: string, jar: string, keep: Se
  * that cannot happen. Each run is made by a process of its own, several at a time.
  */
 export async function checkAlloy(src: string, options: AlloyOptions = {}): Promise<AlloyResult> {
+  try {
+    return await check(src, options);
+  } finally {
+    // Whether the analyzer answered or not: [why](../CANON.md#spec-logic-sweeps-the-kept-answers-after-each-run).
+    if (options.cache !== undefined) sweep(options.cache);
+  }
+}
+
+async function check(src: string, options: AlloyOptions): Promise<AlloyResult> {
   const java = options.java ?? process.env.CANON_JAVA ?? 'java';
   const jar = options.jar ?? process.env.CANON_ALLOY_JAR;
   if (!jar) return { ok: false, error: 'no Alloy jar: pass `jar`, or set CANON_ALLOY_JAR' };
+  const analyzer: Analyzer = { java, jar, cache: options.cache };
   const context = options.context ?? [];
   const bounds = boundsOf([...alloyBlocks(src), ...context.flatMap(alloyBlocks)]);
   const document = blocksOf(src, context);
@@ -283,7 +284,7 @@ export async function checkAlloy(src: string, options: AlloyOptions = {}): Promi
   // Only the document's own scenarios are shown: one of a document it extends is shown where that document is checked.
   const ownNames = new Set([...document.named].filter(([block]) => document.own.has(block)).map(([, name]) => name));
   const shown = new Set((options.show ?? []).filter(name => ownNames.has(name)));
-  const first = await solveAll(asked, java, jar, new Set([...shown].map(name => `${name}_with_all`)));
+  const first = await solveAll(asked, analyzer, new Set([...shown].map(name => `${name}_with_all`)));
   if ('error' in first) return { ok: false, error: first.error };
   const worlds: World[] = asked.flatMap((a, index) =>
     a.scenarios
@@ -307,8 +308,7 @@ export async function checkAlloy(src: string, options: AlloyOptions = {}): Promi
     blamed.map(({ index, cannot }) =>
       build((parts[index] as (typeof parts)[number]).group, (parts[index] as (typeof parts)[number]).scope, 'blame', { scenarios: cannot.map(c => c.name), leave: options.leave }, document.named)
     ),
-    java,
-    jar
+    analyzer
   );
   if ('error' in second) return { ok: false, error: second.error };
   blamed.forEach(({ index, cannot }, k) => {

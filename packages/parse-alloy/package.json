@@ -26,6 +26,7 @@
     "prepublishOnly": "pnpm test && pnpm build"
   },
   "devDependencies": {
+    "@bigmistqke/run-alloy": "workspace:*",
     "@bigmistqke/canon": "workspace:*",
     "@bigmistqke/canon-plugin-retext": "workspace:*",
     "@types/node": "^22.0.0",

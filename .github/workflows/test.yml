@@ -31,10 +31,10 @@ jobs:
       - run: node scripts/graph.ts --check
       - name: Check the canons
         run: |
-          for p in canon naturalloy parse-alloy canon-plugin-alloy canon-plugin-pele; do
+          for p in canon naturalloy parse-alloy run-alloy canon-plugin-alloy canon-plugin-pele; do
             (cd "packages/$p" && node ../canon/src/cli.ts check --offline)
           done
-          for p in naturalloy parse-alloy canon-plugin-alloy canon-plugin-pele; do
+          for p in naturalloy parse-alloy run-alloy canon-plugin-alloy canon-plugin-pele; do
             (cd "packages/$p" && node ../canon/src/cli.ts retext:lint CANON.md)
           done
 
@@ -44,9 +44,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        package: [canon, canon-plugin-retext, canon-plugin-alloy, canon-plugin-pele, naturalloy, parse-alloy]
+        package: [canon, canon-plugin-retext, canon-plugin-alloy, canon-plugin-pele, naturalloy, parse-alloy, run-alloy]
     env:
       CANON_ALLOY_JAR: ${{ github.workspace }}/../alloy.jar
+      # One folder for the analyzer's answers, of every package that runs it through run-alloy: the plugin's
+      # `alloy:logic`, its tests in temporary projects, and the tests of naturalloy and parse-alloy. It sits inside the
+      # workspace, as actions/cache takes no path with `..` in it; git ignores `.cache/`.
+      CANON_ALLOY_CACHE_DIR: ${{ github.workspace }}/.cache/alloy-answers
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -64,6 +68,20 @@ jobs:
         run: |
           curl -fsSL -o "$CANON_ALLOY_JAR" https://github.com/AlloyTools/org.alloytools.alloy/releases/download/v6.2.0/org.alloytools.alloy.dist.jar
           echo "6b8c1cb5bc93bedfc7c61435c4e1ab6e688a242dc702a394628d9a9801edb78d  $CANON_ALLOY_JAR" | sha256sum -c -
+
+      # The analyzer's answers that earlier runs kept. The key is new on each run, so each run saves what it kept; a
+      # run restores the latest save of its package, or else of any package, since an answer is the same whoever asks.
+      # run-alloy removes an answer that no run used for 30 days, so the save stays the size of what recent runs asked.
+      # Only the suites that ask the real analyzer keep answers: the other packages neither restore nor save them.
+      - name: Restore the analyzer's kept answers
+        if: contains(fromJSON('["canon-plugin-alloy", "naturalloy", "parse-alloy"]'), matrix.package)
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/.cache/alloy-answers
+          key: alloy-answers-${{ matrix.package }}-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            alloy-answers-${{ matrix.package }}-
+            alloy-answers-
 
       - run: pnpm install --frozen-lockfile
       - run: pnpm build

@@ -29,6 +29,7 @@
     "@bigmistqke/parse-alloy": "workspace:*"
   },
   "devDependencies": {
+    "@bigmistqke/run-alloy": "workspace:*",
     "@types/node": "^22.0.0",
     "typescript": "^5.8.3",
     "vitest": "^3.1.3"

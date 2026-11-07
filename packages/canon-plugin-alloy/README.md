@@ -56,7 +56,9 @@ The statement is the plugin's to write: `generate` never overwrites one that a p
 
 A unit can hold fenced blocks next to its statement. `canon alloy:logic` hands the `alloy` blocks of the documents to the [Alloy analyzer](https://github.com/AlloyTools/org.alloytools.alloy) and asks whether each scenario can happen while every unit holds. When one cannot, it names the units a repair has to touch.
 
-The claims of the documents a document extends join its model, so a claim of the document that contradicts one of theirs is found, and the report names both. A group of units that holds no block of the checked document is left to the document that holds it. The analyzer is started once for each run, as many at a time as the machine has processors; `CANON_ALLOY_JOBS` sets another number.
+The claims of the documents a document extends join its model, so a claim of the document that contradicts one of theirs is found, and the report names both. A group of units that holds no block of the checked document is left to the document that holds it. The analyzer is started once for each run, through [`@bigmistqke/run-alloy`](../run-alloy/README.md), as many at a time as the machine holds: no more than it has processors, and no more than half of its memory holds at a heap of one gigabyte each. `CANON_ALLOY_HEAP` sets another heap, such as `2g`, and `CANON_ALLOY_JOBS` another number.
+
+Each answer of the analyzer is kept in `.cache/canon-alloy` under the root of the project, by a hash of the program it was given, the content of the jar, the options of the analyzer and the major version of Java. A later run that asks the same reuses the answer without starting the analyzer. An error is never kept. The setting `logic: {alloy: {cache: <folder>}}` keeps the answers in another folder. Without it, `CANON_ALLOY_CACHE_DIR` names a folder that every project and every caller of run-alloy can share. `CANON_ALLOY_CACHE=0` turns the cache off.
 
 ````md
 ```alloy vocabulary   the signatures, relations and events the units share
