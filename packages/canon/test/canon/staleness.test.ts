@@ -211,6 +211,14 @@ describe('a unit nothing uses', () => {
   it('reports an orphaning for a fact nothing uses', async () => {
     expect((await check(canon(`${LEAF}\n## @fact the-platform-is-one-way\n\n> The platform is one way.\n`), tagged('spec-a-leaf-says-one-thing')))['dead']).toBe(1);
   });
+
+  /**
+   * @canon spec-a-unit-is-used
+   */
+  it('reports no orphaning for a term that only a term mark names', async () => {
+    const marked = canon(`${LEAF}\nA bug can have an *outdated tracking*.\n\n## @term outdated-tracking\n\n> An outdated tracking is a finding.\n`);
+    expect((await check(marked, tagged('spec-a-leaf-says-one-thing')))['dead']).toBeUndefined();
+  });
 });
 
 describe('a heading', () => {

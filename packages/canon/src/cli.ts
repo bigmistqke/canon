@@ -269,6 +269,26 @@ const OVERFULL_HEADING = /^#{1,6}[ \t]+@[a-z]+[ \t]+\S+[ \t]+\S.*$/gm;
 /** A `<tr>`/`<td>` unit in an HTML table the document kept. */
 const TABLE_UNIT = /<t([rd])\b[^>]*\bid="([^"]*)"[^>]*>/g;
 
+/** Text between two single asterisks, `*words*`: not touching a third asterisk, and with no space just inside either one. */
+const TERM_MARK = /(?<![*\\\w])\*(?![*\s])([^*\n]+?)(?<![\s\\])\*(?![*\w])/g;
+
+/**
+ * The term marks of a document: their words, where they start, and the href of
+ * the link whose whole text they are. Frontmatter, fences, the index and code
+ * spans hold no term mark.
+ */
+function termMarks(src: string): Array<{ words: string; at: number; href?: string }> {
+  const prose = maskFences(src).replace(/(`+)[^\n]*?\1/g, m => ' '.repeat(m.length));
+  const marks: Array<{ words: string; at: number; href?: string }> = [];
+  for (const m of prose.matchAll(TERM_MARK)) {
+    const at = m.index ?? 0;
+    const end = at + m[0].length;
+    const link = prose[at - 1] === '[' ? /^\]\(([^)\s]+)\)/.exec(prose.slice(end)) : null;
+    marks.push({ words: (m[1] as string).trim(), at, href: link?.[1] });
+  }
+  return marks;
+}
+
 function scanMarkdown(src: string): { withId: Element[]; anchors: Anchor[] } {
   const md = maskFences(src);
   const withId: Element[] = [];
@@ -1130,6 +1150,23 @@ function analyse(write: boolean): Analysis {
           if (!list.some(l => l.target === to)) list.push({ target: to, derives });
           links.set(from, list);
         }
+      }
+    }
+
+    // A term mark names the term of its own document whose stem its words spell,
+    // or, as the text of a link, the target of the link.
+    if (rel.endsWith('.md')) {
+      const ownIds = new Set(readUnits(docSource).map(u => u.id));
+      for (const mark of termMarks(docSource)) {
+        const where = `${rel}:${docLineAt(mark.at)}`;
+        if (mark.href !== undefined) {
+          const frag = mark.href.split('#')[1] ?? '';
+          if (!frag.startsWith('term-')) findings.rot.push(`${where} — term mark "*${mark.words}*" links to ${mark.href}, which is no term`);
+          continue;
+        }
+        const id = `term-${mark.words.toLowerCase().split(/\s+/).join('-')}`;
+        if (ownIds.has(id)) citedTargets.add(`${rel}#${id}`);
+        else findings.rot.push(`${where} — term mark "*${mark.words}*" names no term: ${rel} declares no ${id}`);
       }
     }
   }

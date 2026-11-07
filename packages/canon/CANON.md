@@ -55,7 +55,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term unpinning`](#term-unpinning) — An unpinning is a finding for a plain test that checks a bug.
 - [`@term unexplained-failure`](#term-unexplained-failure) — An unexplained failure is a finding for an expected failure that checks no bug and no exception.
 - [`@term untesting`](#term-untesting) — An untesting is a finding for a leaf spec, an exception or a bug that no test checks.
-- [`@term rotting`](#term-rotting) — A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, and for a pointer that names no target.
+- [`@term rotting`](#term-rotting) — A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, for a pointer that names no target, and for a term mark that names no term.
 - [`@term uncitation`](#term-uncitation) — An uncitation is a finding for a test in a declared suite that carries no tag.
 - [`@term misaiming`](#term-misaiming) — A misaiming is a finding for a test in a declared suite that checks a unit that is no claim.
 - [`@term overreach`](#term-overreach) — An overreach is a finding for a test that checks a claim another claim refines.
@@ -80,7 +80,14 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term target`](#term-target) — A target is a unit, a section or a file.
 - [`@term section`](#term-section) — A section is an element with an id that names no unit.
 - [`@term file`](#term-file) — A file is a file of the project.
-- [`@term used`](#term-used) — For every [unit_1](#term-unit): unit_1 is used exactly when another unit [cites](#term-cite) unit_1, a [pointer](#term-pointer) [names](#term-name) unit_1 or a [tag](#term-tag) names unit_1.
+- [`@term used`](#term-used) —
+  > For every [unit_1](#term-unit):
+  >
+  > unit_1 is used exactly when at least one of these holds:
+  > - another unit [cites](#term-cite) unit_1
+  > - a [pointer](#term-pointer) [names](#term-name) unit_1
+  > - a [term mark](#term-term-mark) names unit_1
+  > - a [tag](#term-tag) names unit_1
 - [`@term stem`](#term-stem) — A stem is the part of the heading of a unit after its kind: words of lowercase letters and digits, joined by single hyphens.
 - [`@term trailer`](#term-trailer) — A trailer is a word that follows the id in the heading of a unit.
 - [`@term repeat`](#term-repeat) — A unit repeats what spells the id of the unit in a heading of another unit.
@@ -92,6 +99,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term site`](#term-site) — A site is a symbol in a source, as the site line of a claim writes it.
 - [`@term source`](#term-source) — A source is a module in the sources that the canon field of the project names.
 - [`@term code-span`](#term-code-span) — A code span is text between backticks in a document.
+- [`@term term-mark`](#term-term-mark) — A term mark is text between two single asterisks in the prose of a document, on its own or as the text of a link: `*tracker*`, `[*checker*](../canon/CANON.md#term-checker)`.
 - [`@term comment`](#term-comment) — A comment is a comment in a source.
 - [`@term tag`](#term-tag) — A tag is a line of the documentation comment of a test.
 - [`@term carry`](#term-carry) — A test carries each tag in the documentation comment of the test.
@@ -235,6 +243,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     > - when a [tag](#term-tag) [names](#term-name) no [unit](#term-unit), checker reports a finding for the tag
     > - when a [test](#term-test) is [adrift](#term-adrift), checker reports a finding for the test
     > - when a [pointer](#term-pointer) names no [target](#term-target), checker reports a finding for the pointer
+    > - when a [term mark](#term-term-mark) names no [term](#term-term), checker reports a finding for the term mark
     > - for every unit_1:
     >
     >   when unit_1 is not [used](#term-used) and is not a [conflict](#term-conflict), checker reports a finding for unit_1
@@ -260,6 +269,12 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
       - [`@spec a-test-checks-only-leaves`](#spec-a-test-checks-only-leaves) — When a [test](#term-test) [checks](#term-check) a [claim](#term-claim) that is [refined](#term-refined), [checker](#term-checker) reports an [overreach](#term-overreach) for the test.
     - [`@spec a-pointer-names-a-target`](#spec-a-pointer-names-a-target) — When a [pointer](#term-pointer) [names](#term-name) no [target](#term-target), [checker](#term-checker) reports a [rotting](#term-rotting) for the pointer.
       - [`@bug a-file-pointer-is-not-checked`](#bug-a-file-pointer-is-not-checked) — When a file pointer names no target, checker reports no rotting for the file pointer.
+    - [`@spec a-term-mark-names-a-term`](#spec-a-term-mark-names-a-term) — When a [term mark](#term-term-mark) [names](#term-name) no [term](#term-term), [checker](#term-checker) reports a [rotting](#term-rotting) for the term mark.
+    - [`@spec a-term-mark-names-the-term-its-words-or-its-link-lead-to`](#spec-a-term-mark-names-the-term-its-words-or-its-link-lead-to) — A term mark names one term: the term of its own document that its words spell, or the term its link names.
+      - [`@spec a-term-mark-names-the-term-whose-stem-its-words-spell`](#spec-a-term-mark-names-the-term-whose-stem-its-words-spell) — A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
+      - [`@spec a-term-mark-names-its-term-whatever-its-case`](#spec-a-term-mark-names-its-term-whatever-its-case) — A term mark names the same term in capitals or not: `*Checker*` names `term-checker`.
+      - [`@spec a-term-mark-in-a-link-names-the-target-of-the-link`](#spec-a-term-mark-in-a-link-names-the-target-of-the-link) — A term mark that is the text of a link names the term that the link names, whatever its words spell: `[*names*](#term-name)` names `term-name`.
+      - [`@spec a-term-mark-names-no-term-of-another-document`](#spec-a-term-mark-names-no-term-of-another-document) — A term mark outside a link names no term of another document, not even of a document that its own document extends.
     - [`@spec a-unit-is-declared-once`](#spec-a-unit-is-declared-once) — For every [unit_1](#term-unit): when unit_1 [repeats](#term-repeat) a unit, [checker](#term-checker) reports a [rotting](#term-rotting) for unit_1.
       - [`@bug a-unit-repeated-in-one-document-is-not-reported`](#bug-a-unit-repeated-in-one-document-is-not-reported) — When a document holds a unit, and the document holds another unit that the unit repeats, checker reports no rotting for the unit.
     - [`@spec a-unit-is-used`](#spec-a-unit-is-used) —
@@ -327,6 +342,10 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
       - [`@spec a-thread-that-names-no-issue-is-not-untracked`](#spec-a-thread-that-names-no-issue-is-not-untracked) — For every [thread](#term-thread): [checker](#term-checker) reports no [untracking](#term-untracking) for the thread.
       - [`@spec a-thread-that-names-an-issue-is-not-held-to-the-tracker`](#spec-a-thread-that-names-an-issue-is-not-held-to-the-tracker) — For every [thread](#term-thread): [checker](#term-checker) reports no [mistracking](#term-mistracking) for the thread and checker reports no [outdated tracking](#term-outdated-tracking) for the thread.
     - [`@spec a-thread-nothing-uses-is-not-orphaned`](#spec-a-thread-nothing-uses-is-not-orphaned) — For every [thread](#term-thread): [checker](#term-checker) reports no [orphaning](#term-orphaning) for the thread.
+    - [`@spec only-single-asterisks-make-a-term-mark`](#spec-only-single-asterisks-make-a-term-mark) — The checker reads a term mark only between two single asterisks in prose, and reports no rotting for other emphasis or for asterisks in code.
+      - [`@spec text-between-underscores-is-no-term-mark`](#spec-text-between-underscores-is-no-term-mark) — Text between underscores, `_words_`, is no term mark.
+      - [`@spec text-between-double-asterisks-is-no-term-mark`](#spec-text-between-double-asterisks-is-no-term-mark) — Text between double asterisks, `**words**`, is no term mark.
+      - [`@spec asterisks-in-code-make-no-term-mark`](#spec-asterisks-in-code-make-no-term-mark) — Asterisks in a code span or a fenced block make no term mark.
     - [`@spec only-a-call-that-declares-a-test-is-a-test`](#spec-only-a-call-that-declares-a-test-is-a-test) — The checker reads a call as a test only when a [runner](#term-runner) of the project declares a test with it.
       - [`@spec a-member-no-runner-names-is-no-test`](#spec-a-member-no-runner-names-is-no-test) — A call through a member that no runner of the project names, such as `test.beforeEach(fn)` or `test.extend({})`, is no test.
       - [`@spec a-call-with-no-body-is-no-test`](#spec-a-call-with-no-body-is-no-test) — A call with no function after its first argument, such as `test.todo('name')` or `test.skip(condition, 'reason')`, is no test.
@@ -1076,7 +1095,7 @@ Untesting: [checker](#term-checker) reports an [untesting] for {1} | [checker](#
 
 ### @term rotting
 
-> A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, and for a pointer that names no target.
+> A rotting is a finding for a tag that names no unit, names a file as well as a unit, or names an id that two documents declare, for a pointer that names no target, and for a term mark that names no term.
 
 The checker prints `rot`.
 
@@ -1360,15 +1379,20 @@ File: {1} is a [file] | {1} is not a [file]
 <!-- statement-term-used:begin — generated by `canon generate`; edits are overwritten -->
 > For every [unit_1](#term-unit):
 >
-> unit_1 is used exactly when another unit [cites](#term-cite) unit_1, a [pointer](#term-pointer) [names](#term-name) unit_1 or a [tag](#term-tag) names unit_1.
+> unit_1 is used exactly when at least one of these holds:
+> - another unit [cites](#term-cite) unit_1
+> - a [pointer](#term-pointer) [names](#term-name) unit_1
+> - a [term mark](#term-term-mark) names unit_1
+> - a [tag](#term-tag) names unit_1
 <!-- statement-term-used:end -->
 
-A unit is in use while something else leans on it. That can be a child nested in it, a unit that derives from it, or a pointer or tag that names it. Citing itself does not count, since a unit cannot keep itself alive. This matters because a unit nothing uses can stop being true without anyone noticing.
+A unit is in use while something else leans on it. That can be a child nested in it, a unit that derives from it, or a pointer, term mark or tag that names it. Citing itself does not count, since a unit cannot keep itself alive. This matters because a unit nothing uses can stop being true without anyone noticing.
 
 ```alloy
 pred used[u: Unit] {
   (some v: Unit | v != u and cites[v, u])
   or (some p: Pointer | p->u in Name.pointer)
+  or (some m: TermMark | m->u in Name.mark)
   or (some g: Tag | g->u in Name.tag)
 }
 ```
@@ -1515,6 +1539,21 @@ Source: {1} is a [source] | {1} is not a [source]
 
 A code span shows its text as it stands. Link syntax inside one renders as text, so it is no [pointer](#term-pointer).
 
+### @term term-mark
+
+> A term mark is text between two single asterisks in the prose of a document, on its own or as the text of a link: `*tracker*`, `[*checker*](../canon/CANON.md#term-checker)`.
+
+A term mark says that its words are a word of the project's language, and it costs two asterisks. A link says the same, but costs a pointer for each use. So the newer parts of a canon stop writing links, and their words go unmarked. Text between underscores is no term mark, so the variables of a statement, `unit_1`, stay plain. Neither is text between double asterisks, or text in a code span or a fenced block.
+
+```alloy vocabulary
+sig TermMark extends Thing {}
+```
+
+```readings
+noun TermMark: [term mark]
+TermMark: {1} is a [term mark] | {1} is not a [term mark]
+```
+
 ### @term comment
 
 > A comment is a comment in a source.
@@ -1628,7 +1667,7 @@ Closed: [tracker] has closed {1} | [tracker] has not closed {1}
 
 A bug or a conflict names an issue on its "Issue:" line. A conflict names the units it sets against each other on its "Between:" line. A tag names the unit whose id it holds.
 
-A pointer names the target its path and fragment lead to. A claim names the site on its "Site:" line. A comment names each site whose symbol it holds. A code span names each unit whose id the link syntax inside it holds.
+A pointer names the target its path and fragment lead to. A [term mark](#term-term-mark) names the term its words or its link lead to. A claim names the site on its "Site:" line. A comment names each site whose symbol it holds. A code span names each unit whose id the link syntax inside it holds.
 
 ```alloy vocabulary
 one sig Name {
@@ -1636,6 +1675,7 @@ one sig Name {
   between: Conflict -> Unit,
   tag: Tag -> Unit,
   pointer: Pointer -> Target,
+  mark: TermMark -> Term,
   site: Claim -> Site
 }
 ```
@@ -1645,6 +1685,7 @@ Name.issue: {1} [names] {2} | {1} does not [name] {2}
 Name.between: {1} [names] {2} | {1} does not [name] {2}
 Name.tag: {1} [names] {2} | {1} does not [name] {2}
 Name.pointer: {1} [names] {2} | {1} does not [name] {2}
+Name.mark: {1} [names] {2} | {1} does not [name] {2}
 Name.site: {1} [names] {2} | {1} does not [name] {2}
 ```
 
@@ -2596,6 +2637,7 @@ A checker can act as an advisor, whose findings are hints the author weighs. It 
 > - when a [tag](#term-tag) [names](#term-name) no [unit](#term-unit), checker reports a finding for the tag
 > - when a [test](#term-test) is [adrift](#term-adrift), checker reports a finding for the test
 > - when a [pointer](#term-pointer) names no [target](#term-target), checker reports a finding for the pointer
+> - when a [term mark](#term-term-mark) names no [term](#term-term), checker reports a finding for the term mark
 > - for every unit_1:
 >
 >   when unit_1 is not [used](#term-used) and is not a [conflict](#term-conflict), checker reports a finding for unit_1
@@ -2616,13 +2658,14 @@ Documentation goes out of date because nothing checks it. A canon goes out of da
 
 A project with no [runner](#term-runner) has no tests, and holds its canon to itself alone: it owes no test.
 
-So too every [pointer](#term-pointer), [index](#term-index) and [site](#term-site) leads where it says, and every id names one unit.
+So too every [pointer](#term-pointer), [term mark](#term-term-mark), [index](#term-index) and [site](#term-site) leads where it says, and every id names one unit.
 
 ```alloy
 (all c: Claim | (some Runner and unguarded[c]) implies c in Finding)
 and (all g: Tag | (no u: Unit | g->u in Name.tag) implies g in Finding)
 and (all t: Test | adrift[t] implies t in Finding)
 and (all p: Pointer | (no x: Target | p->x in Name.pointer) implies p in Finding)
+and (all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Finding)
 and (all u: Unit | (not used[u] and u not in Conflict) implies u in Finding)
 and (all u: Unit | (some t: Trailer | t->u in Follow.rel) implies u in Finding)
 and (all d: Document | ((some u: Unit | d->u in Hold.units) and (no i: Index | d->i in Hold.indexes)) implies d in Finding)
@@ -2752,6 +2795,40 @@ all p: Pointer | (no x: Target | p->x in Name.pointer) implies p in Rotting
 The check of a pointer reads only a [fragment pointer](#term-fragment-pointer). A [file pointer](#term-file-pointer) to a file that no longer exists passes.
 
 Issue: #3
+
+#### @spec a-term-mark-names-a-term
+
+<!-- statement-spec-a-term-mark-names-a-term:begin — generated by `canon generate`; edits are overwritten -->
+> When a [term mark](#term-term-mark) [names](#term-name) no [term](#term-term), [checker](#term-checker) reports a [rotting](#term-rotting) for the term mark.
+<!-- statement-spec-a-term-mark-names-a-term:end -->
+
+A term mark says that its words are a word of the canon, defined by a term. When no term goes by those words, the mark leads the reader to no definition. Usually the author misspelled the word, or someone renamed or removed the term. The checker reports a rotting for it, as it does for a pointer that names no target.
+
+```alloy
+all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
+```
+
+#### @spec a-term-mark-names-the-term-its-words-or-its-link-lead-to
+
+> A term mark names one term: the term of its own document that its words spell, or the term its link names.
+
+This follows because a term mark leads where it says, as a pointer does, and it leads by the cheapest means that stays exact. The words of a mark name a term of the document the reader is in. A term of another document is one link away.
+
+##### @spec a-term-mark-names-the-term-whose-stem-its-words-spell
+
+> A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
+
+##### @spec a-term-mark-names-its-term-whatever-its-case
+
+> A term mark names the same term in capitals or not: `*Checker*` names `term-checker`.
+
+##### @spec a-term-mark-in-a-link-names-the-target-of-the-link
+
+> A term mark that is the text of a link names the term that the link names, whatever its words spell: `[*names*](#term-name)` names `term-name`.
+
+##### @spec a-term-mark-names-no-term-of-another-document
+
+> A term mark outside a link names no term of another document, not even of a document that its own document extends.
 
 #### @spec a-unit-is-declared-once
 
@@ -3224,6 +3301,24 @@ A [thread](#term-thread) may ask about a unit that the canon does not hold yet, 
 ```alloy
 all t: Thread | t not in Orphaning
 ```
+
+#### @spec only-single-asterisks-make-a-term-mark
+
+> The checker reads a term mark only between two single asterisks in prose, and reports no rotting for other emphasis or for asterisks in code.
+
+This follows because a *term mark* that the author did not write would make the checker report a rotting for words that break no rule. The variables of a statement use underscores, and code shows asterisks as they stand.
+
+##### @spec text-between-underscores-is-no-term-mark
+
+> Text between underscores, `_words_`, is no term mark.
+
+##### @spec text-between-double-asterisks-is-no-term-mark
+
+> Text between double asterisks, `**words**`, is no term mark.
+
+##### @spec asterisks-in-code-make-no-term-mark
+
+> Asterisks in a code span or a fenced block make no term mark.
 
 #### @spec only-a-call-that-declares-a-test-is-a-test
 

@@ -148,3 +148,31 @@ describe('a project with no runner', () => {
     expect((await check(canon(BUG), ''))['untested']).toBe(2);
   });
 });
+
+describe('emphasis that is no term mark', () => {
+  const TEST = tagged('spec-a-leaf-says-one-thing');
+  /** The leaf with a sentence after it, in a document that declares no term. */
+  const emphasised = (sentence: string): string => canon(`${LEAF}\n${sentence}\n`);
+
+  /**
+   * @canon spec-text-between-underscores-is-no-term-mark
+   */
+  it('reports no rotting for text between underscores', async () => {
+    expect((await check(emphasised('For every _unit_ and every unit_1, it holds.'), TEST))['rot']).toBeUndefined();
+  });
+
+  /**
+   * @canon spec-text-between-double-asterisks-is-no-term-mark
+   */
+  it('reports no rotting for text between double asterisks', async () => {
+    expect((await check(emphasised('This **never** holds.'), TEST))['rot']).toBeUndefined();
+  });
+
+  /**
+   * @canon spec-asterisks-in-code-make-no-term-mark
+   */
+  it('reports no rotting for asterisks in a code span or a fenced block', async () => {
+    const code = 'Write `*tracker*` to mark it.\n\n```ts\nconst glob = "*any*";\n```';
+    expect((await check(emphasised(code), TEST))['rot']).toBeUndefined();
+  });
+});
