@@ -11,7 +11,7 @@
  */
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions';
-import { readUnits, type Unit } from '@bigmistqke/canon/units';
+import { maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
 import { PARAGRAPHS } from './words.ts';
 import { AlloyParseError } from '@bigmistqke/parse-alloy';
 import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
@@ -28,7 +28,7 @@ export const isGenerated = (src: string, unit: string): boolean => regionAt(src,
  * statement that a person wrote, which is never overwritten; `unsayable` is a
  * predicate the words cannot say, with the reason.
  */
-export type StatementKind = 'current' | 'stale' | 'missing' | 'handwritten' | 'unsayable' | 'misread';
+export type StatementKind = 'current' | 'stale' | 'missing' | 'handwritten' | 'unsayable' | 'misread' | 'orphaned';
 
 export interface StatementState {
   unit: string;
@@ -160,6 +160,12 @@ export function states(src: string, context: Context[] = []): StatementState[] {
     const at = regionAt(src, region, endMarker(region));
     if (at === undefined) found.push({ unit: key, kind: 'missing', quote: words });
     else found.push(read(key, src.slice(at.body, at.to) === `\n${words}\n` ? 'current' : 'stale', words, body, readings));
+  }
+  // A region that names no unit and no scenario of the document is one that generate will never write again.
+  const named = new Set([...units.map(u => u.id), ...scenarios(src, blocks).map(s => s.key)]);
+  for (const m of maskFences(src).matchAll(/<!-- statement-([a-z0-9-]+):begin\b/g)) {
+    const name = m[1] as string;
+    if (!named.has(name)) found.push({ unit: name, kind: 'orphaned' });
   }
   return found;
 }

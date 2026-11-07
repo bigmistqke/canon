@@ -105,6 +105,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
     > - the statement of the unit is not current
   - [`@spec check-does-not-report-a-current-statement`](#spec-check-does-not-report-a-current-statement) — When the *statement* of a [unit](../canon/CANON.md#term-unit) is current, [checker](../canon/CANON.md#term-checker) does not report the statement of the unit.
   - [`@spec a-report-of-a-statement-fails-check`](#spec-a-report-of-a-statement-fails-check) — For every [run](../canon/CANON.md#term-run), every [check command](#term-alloy-plugin) and every [unit](../canon/CANON.md#term-unit): when the run asks for the check command and [checker](../canon/CANON.md#term-checker) reports the *statement* of the unit, the run does not exit with code 0.
+  - [`@spec check-reports-a-statement-whose-region-names-no-unit`](#spec-check-reports-a-statement-whose-region-names-no-unit) — Check reports a generated *statement* whose region names no unit and no scenario of its document.
   - [`@spec check-reports-a-unit-with-a-formula-and-no-intent`](#spec-check-reports-a-unit-with-a-formula-and-no-intent) —
     > For every [document](../canon/CANON.md#term-document) and every [unit](../canon/CANON.md#term-unit):
     >
@@ -998,6 +999,12 @@ A reported statement means the canon may be out of date, and a check that passes
 ```alloy
 all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Reported) implies r not in Exits0
 ```
+
+#### @spec check-reports-a-statement-whose-region-names-no-unit
+
+> Check reports a generated *statement* whose region names no unit and no scenario of its document.
+
+This follows because generate writes a region only by the name of what it says, so it never writes such a region again. The statement keeps the words it had when its unit went by that name. A reader takes it for the statement of the unit it sits in. A rename that left its old region behind is the usual cause. Deleting the region clears the report.
 
 #### @spec check-reports-a-unit-with-a-formula-and-no-intent
 

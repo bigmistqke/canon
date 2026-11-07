@@ -124,7 +124,8 @@ export function review(documents: string[], root: string, units: string[]): numb
 const WHAT: Record<string, string> = {
   stale: 'the statement is not what the predicate says; run `canon generate`',
   missing: 'the statement is not written; run `canon generate`',
-  handwritten: 'has a statement of its own; delete it to let it be said from its predicate'
+  handwritten: 'has a statement of its own; delete it to let it be said from its predicate',
+  orphaned: 'a generated statement whose region names no unit or scenario of the document; delete the region'
 };
 
 /** Write the statements of each document that keeps readings; the exit code: 0, or 1 when a statement cannot be written. */
