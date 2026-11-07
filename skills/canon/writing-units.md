@@ -226,11 +226,11 @@ The camera has no pitch and no bearing, so a tile is seen close to head-on. Mipm
 
 ## 13. Units with logic
 
-A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can state its units as formulas. The plugin writes each statement from its formula, and it asks the Alloy analyzer whether the claims can all hold. [The plugin's README](https://github.com/bigmistqke/skills/blob/main/packages/canon-plugin-alloy/README.md) has the full grammar.
+A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can state its units as formulas. The plugin writes each statement from its formula, and it asks the Alloy analyzer whether the claims can all hold. [The plugin's README](https://github.com/bigmistqke/canon/blob/main/packages/canon-plugin-alloy/README.md) has the full grammar.
 
 1. Write the formula of a unit in an `alloy` block in its body. Declare the sets and relations that units share in an `alloy vocabulary` block, in the term that names them.
 2. Write a situation that the units must allow in an `alloy scenario` block. A scenario is a claim that something is possible, and `canon alloy:logic` reports one that cannot happen.
-3. Give the words of the vocabulary in a `readings` block, in the term that declares them. A line gives the positive and the negative reading, with `{1}` and `{2}` for the variables: `Ran: {1} has run | {1} has not run`. A `noun` line gives the noun of a signature: `noun Owner: owner`. A word in brackets links to a term: `noun Unit: [unit]`.
+3. Give the words of the vocabulary in a reading table, in the term that declares them. Its headers are `reading`, `holds` and `does not hold`, and a row gives a key and its two sides, with `{1}` and `{2}` for the variables: `| Ran | {1} has run | {1} has not run |`. A noun table, with the headers `signature` and `noun`, gives the noun of a signature: `| Owner | owner |`. A signature named after the term that declares it needs no row, since its noun is the term. A noun links to the term that holds its row. A word in brackets in a reading links to a term, `{1} [sits] in {2}`, and must spell a form of it. `canon generate` lines up the columns.
 4. Do not write the statement of a unit with a formula. Run `pnpm canon generate`, and it writes the statement between two markers under the heading. `canon check` reports a statement that a person wrote, or one that is stale.
 5. Under the generated statement, write the unit's intent: one paragraph in your own words. It says what the unit is for and why it follows from its parent. Explain the idea as you would to a colleague, so that the conditions of the formula follow from it. Do not restate the formula clause by clause. It replaces the "This follows because" sentence ([section 3](#3-derivation)).
 
@@ -241,6 +241,7 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 9. Write a formula only where the model can hold it against the others. A formula that uses a signature no other unit and no scenario names is lone, and `canon check` reports it (`lone`). No other formula can contradict it, so it looks checked and is not. Tie the signature to the model with a definition, a fact or a scenario that is true of it. Otherwise drop the formula and write the statement by hand, and let the test guard the unit.
 10. Keep `pnpm canon alloy:logic` clean. A finding names the units that cannot all hold. Treat it as a contradiction in the canon: [section 11](#11-conflicts) says what to do while the owner has not ruled.
 11. `canon alloy:logic` needs Java 17 or later and the jar of the Alloy analyzer. Give their paths as `logic: {alloy: {jar: …, java: …}}` in the frontmatter of the entry document, or as `CANON_ALLOY_JAR` and `CANON_JAVA`.
+12. Fold the `alloy` blocks and the tables of readings and nouns of a unit in a `<details>` element with the summary `Alloy`, so that the prose of the unit reads on its own. Leave a blank line after `<summary>` and before `</details>`, or GitHub does not render the blocks inside. The checker and the plugin read a block or a table in a fold as any other, and the intent ends where the fold opens.
 
 ````md
 ### @spec a-started-node-is-done-eventually
@@ -250,7 +251,12 @@ A document that lists the Alloy plugin, `@bigmistqke/canon-plugin-alloy`, can st
 
 Starting a node is a promise to finish it. The work may take any number of moments, but a node never stays started forever.
 
+<details>
+<summary>Alloy</summary>
+
 ```alloy
 always all n: Node | n in Started implies eventually n in Done
 ```
+
+</details>
 ````

@@ -49,8 +49,8 @@ describe('a hidden bug', () => {
   /**
    * @canon spec-a-bug-names-an-issue
    */
-  it('reports an untracking for a bug that names no issue', () => {
-    expect(check(canon(BUG()), PIN, TRACKER)['untracked-bug']).toBe(1);
+  it('reports an untracking for a bug that names no issue', async () => {
+    expect((await check(canon(BUG()), PIN, TRACKER))['untracked-bug']).toBe(1);
   });
 
   /**
@@ -70,8 +70,8 @@ describe('a hidden bug', () => {
   /**
    * @canon spec-a-bug-is-tested
    */
-  it('reports an untesting for a bug no test checks', () => {
-    expect(check(canon(BUG('#1')), tagged('spec-a-leaf-says-one-thing'))['untested']).toBe(1);
+  it('reports an untesting for a bug no test checks', async () => {
+    expect((await check(canon(BUG('#1')), tagged('spec-a-leaf-says-one-thing')))['untested']).toBe(1);
   });
 });
 
@@ -79,8 +79,8 @@ describe('a hidden conflict', () => {
   /**
    * @canon spec-a-conflict-names-an-issue
    */
-  it('reports an untracking for a conflict that names no issue', () => {
-    expect(check(canon(CONFLICT(BOTH)), LEAVES, TRACKER)['untracked-conflict']).toBe(1);
+  it('reports an untracking for a conflict that names no issue', async () => {
+    expect((await check(canon(CONFLICT(BOTH)), LEAVES, TRACKER))['untracked-conflict']).toBe(1);
   });
 
   /**
@@ -100,8 +100,8 @@ describe('a hidden conflict', () => {
   /**
    * @canon spec-a-conflict-names-two-units
    */
-  it('reports an unpairing for a conflict that names one unit', () => {
-    expect(check(canon(CONFLICT(BOTH.slice(0, 1), '#1')), LEAVES)['lone-conflict']).toBe(1);
+  it('reports an unpairing for a conflict that names one unit', async () => {
+    expect((await check(canon(CONFLICT(BOTH.slice(0, 1), '#1')), LEAVES))['lone-conflict']).toBe(1);
   });
 });
 
@@ -109,14 +109,14 @@ describe('a misleading test', () => {
   /**
    * @canon spec-an-expected-failure-checks-a-bug-or-an-exception
    */
-  it('reports an unexplained failure for an expected failure that checks a spec', () => {
-    expect(check(canon(LEAF), tagged('spec-a-leaf-says-one-thing', 'it.fails'))['fails-without-bug']).toBe(1);
+  it('reports an unexplained failure for an expected failure that checks a spec', async () => {
+    expect((await check(canon(LEAF), tagged('spec-a-leaf-says-one-thing', 'it.fails')))['fails-without-bug']).toBe(1);
   });
 
   /**
    * @canon spec-a-plain-test-does-not-check-a-bug
    */
-  it('reports an unpinning for a plain test that checks a bug', () => {
-    expect(check(canon(BUG('#1')), tagged('bug-the-leaf-breaks'))['unpinned-bug']).toBe(1);
+  it('reports an unpinning for a plain test that checks a bug', async () => {
+    expect((await check(canon(BUG('#1')), tagged('bug-the-leaf-breaks')))['unpinned-bug']).toBe(1);
   });
 });

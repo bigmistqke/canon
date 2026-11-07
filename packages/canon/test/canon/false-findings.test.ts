@@ -54,39 +54,39 @@ describe('a tested claim', () => {
   /**
    * @canon spec-a-claim-a-declared-test-checks-is-not-untested
    */
-  it('reports no untesting for a leaf a declared test checks', () => {
-    expect(check(canon(LEAF), tagged('spec-a-leaf-says-one-thing'))['untested']).toBeUndefined();
+  it('reports no untesting for a leaf a declared test checks', async () => {
+    expect((await check(canon(LEAF), tagged('spec-a-leaf-says-one-thing')))['untested']).toBeUndefined();
   });
 
   /**
    * @canon spec-a-claim-an-undeclared-test-checks-is-not-untested
    */
-  it('reports no untesting for a leaf a test in an undeclared suite checks', () => {
+  it('reports no untesting for a leaf a test in an undeclared suite checks', async () => {
     const files = { 'test/other/a.test.ts': tagged('spec-a-leaf-says-one-thing') };
-    expect(check(canon(LEAF), '', { files })['untested']).toBeUndefined();
+    expect((await check(canon(LEAF), '', { files }))['untested']).toBeUndefined();
   });
 
   /**
    * @canon spec-a-claim-an-undeclared-test-checks-is-not-untested
    */
-  it('reports no untesting for a leaf a test that a module of the sources builds checks', () => {
+  it('reports no untesting for a leaf a test that a module of the sources builds checks', async () => {
     const files = { 'test/matrix.ts': MATRIX };
-    expect(check(canon(LEAF), '', { files })['untested']).toBeUndefined();
+    expect((await check(canon(LEAF), '', { files }))['untested']).toBeUndefined();
   });
 
   /**
    * @canon spec-a-claim-an-undeclared-test-checks-is-not-untested
    */
-  it('reports no untesting for a leaf a test that a module builds checks, when the title of the test is no literal', () => {
+  it('reports no untesting for a leaf a test that a module builds checks, when the title of the test is no literal', async () => {
     const files = { 'test/matrix.ts': MATRIX.replace('`checks ${name}`', 'name') };
-    expect(check(canon(LEAF), '', { files })['untested']).toBeUndefined();
+    expect((await check(canon(LEAF), '', { files }))['untested']).toBeUndefined();
   });
 
   /**
    * @canon spec-a-spec-whose-bug-a-test-checks-is-not-untested
    */
-  it('reports no untesting for a spec whose bug a test checks', () => {
-    expect(check(canon(BUG), tagged('bug-the-leaf-breaks', 'it.fails'))['untested']).toBeUndefined();
+  it('reports no untesting for a spec whose bug a test checks', async () => {
+    expect((await check(canon(BUG), tagged('bug-the-leaf-breaks', 'it.fails')))['untested']).toBeUndefined();
   });
 });
 
@@ -94,9 +94,9 @@ describe('a project with no tracker', () => {
   /**
    * @canon spec-a-project-with-no-tracker-reports-no-untracking
    */
-  it('reports no untracking for a bug or a conflict that names no issue', () => {
+  it('reports no untracking for a bug or a conflict that names no issue', async () => {
     const tests = tagged('bug-the-leaf-breaks', 'it.fails') + tagged('spec-a-leaf-says-another-thing');
-    const found = check(canon(UNTRACKED), tests);
+    const found = await check(canon(UNTRACKED), tests);
     expect(found['untracked-bug']).toBeUndefined();
     expect(found['untracked-conflict']).toBeUndefined();
   });
@@ -115,8 +115,8 @@ describe('a thread', () => {
   /**
    * @canon spec-a-thread-that-names-no-issue-is-not-untracked
    */
-  it('reports no untracking for a thread that names no issue in a project with a tracker', () => {
-    const found = check(canon(THREAD()), '', { settings: { tracker: { kind: 'github', repo: 'acme/app' } } });
+  it('reports no untracking for a thread that names no issue in a project with a tracker', async () => {
+    const found = await check(canon(THREAD()), '', { settings: { tracker: { kind: 'github', repo: 'acme/app' } } });
     expect(Object.keys(found).filter(key => key.startsWith('untracked'))).toEqual([]);
   });
 
@@ -133,8 +133,8 @@ describe('a thread', () => {
   /**
    * @canon spec-a-thread-nothing-uses-is-not-orphaned
    */
-  it('reports no orphaning for a thread that nothing links to', () => {
-    const found = check(canon(`${LEAF}${THREAD()}`), tagged('spec-a-leaf-says-one-thing'));
+  it('reports no orphaning for a thread that nothing links to', async () => {
+    const found = await check(canon(`${LEAF}${THREAD()}`), tagged('spec-a-leaf-says-one-thing'));
     expect(found['dead']).toBeUndefined();
   });
 });
@@ -143,8 +143,36 @@ describe('a project with no runner', () => {
   /**
    * @canon spec-a-project-with-no-runner-reports-no-untesting
    */
-  it('reports no untesting for a leaf or a bug that no test checks', () => {
-    expect(check(canon(BUG), '', { settings: { runners: [] } })['untested']).toBeUndefined();
-    expect(check(canon(BUG), '')['untested']).toBe(2);
+  it('reports no untesting for a leaf or a bug that no test checks', async () => {
+    expect((await check(canon(BUG), '', { settings: { runners: [] } }))['untested']).toBeUndefined();
+    expect((await check(canon(BUG), ''))['untested']).toBe(2);
+  });
+});
+
+describe('emphasis that is no term mark', () => {
+  const TEST = tagged('spec-a-leaf-says-one-thing');
+  /** The leaf with a sentence after it, in a document that declares no term. */
+  const emphasised = (sentence: string): string => canon(`${LEAF}\n${sentence}\n`);
+
+  /**
+   * @canon spec-text-between-underscores-is-no-term-mark
+   */
+  it('reports no rotting for text between underscores', async () => {
+    expect((await check(emphasised('For every _unit_ and every unit_1, it holds.'), TEST))['rot']).toBeUndefined();
+  });
+
+  /**
+   * @canon spec-text-between-double-asterisks-is-no-term-mark
+   */
+  it('reports no rotting for text between double asterisks', async () => {
+    expect((await check(emphasised('This **never** holds.'), TEST))['rot']).toBeUndefined();
+  });
+
+  /**
+   * @canon spec-asterisks-in-code-make-no-term-mark
+   */
+  it('reports no rotting for asterisks in a code span or a fenced block', async () => {
+    const code = 'Write `*tracker*` to mark it.\n\n```ts\nconst glob = "*any*";\n```';
+    expect((await check(emphasised(code), TEST))['rot']).toBeUndefined();
   });
 });

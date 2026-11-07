@@ -24,7 +24,7 @@ import { configKeysOf, CORE_COMMANDS, documentsFor, findCommands, findNamed, typ
 import { beginMarker, replaceRegion } from './regions.ts';
 import { contextOf } from './extends.ts';
 import { hasSettings, readFrontmatter } from './frontmatter.ts';
-import { maskFences, readUnits } from './units.ts';
+import { alignGrammarTables, grammarOf, maskFences, readUnits } from './units.ts';
 import { parseSource, testsOf, type Exports, type Syntax, type TestBlock } from './tests.ts';
 import { MARKER, marksOf, runnersOf, type Runner } from './runners.ts';
 
@@ -269,6 +269,32 @@ const OVERFULL_HEADING = /^#{1,6}[ \t]+@[a-z]+[ \t]+\S+[ \t]+\S.*$/gm;
 /** A `<tr>`/`<td>` unit in an HTML table the document kept. */
 const TABLE_UNIT = /<t([rd])\b[^>]*\bid="([^"]*)"[^>]*>/g;
 
+/** The words of the stem of a term: its stem with a space for each hyphen, `outdated tracking` for `term-outdated-tracking`. */
+const stemWords = (id: string): string => id.slice(id.indexOf('-') + 1).replace(/-/g, ' ');
+
+/** The spelling of the words of a term mark or a form, as the checker compares it: in lowercase, with single spaces. */
+const spelling = (words: string): string => words.trim().toLowerCase().split(/\s+/).join(' ');
+
+/** Text between two single asterisks, `*words*`: not touching a third asterisk, and with no space just inside either one. */
+const TERM_MARK = /(?<![*\\\w])\*(?![*\s])([^*\n]+?)(?<![\s\\])\*(?![*\w])/g;
+
+/**
+ * The term marks of a document: their words, where they start, and the href of
+ * the link whose whole text they are. Frontmatter, fences, the index and code
+ * spans hold no term mark.
+ */
+function termMarks(src: string): Array<{ words: string; at: number; href?: string }> {
+  const prose = maskFences(src).replace(/(`+)[^\n]*?\1/g, m => ' '.repeat(m.length));
+  const marks: Array<{ words: string; at: number; href?: string }> = [];
+  for (const m of prose.matchAll(TERM_MARK)) {
+    const at = m.index ?? 0;
+    const end = at + m[0].length;
+    const link = prose[at - 1] === '[' ? /^\]\(([^)\s]+)\)/.exec(prose.slice(end)) : null;
+    marks.push({ words: (m[1] as string).trim(), at, href: link?.[1] });
+  }
+  return marks;
+}
+
 function scanMarkdown(src: string): { withId: Element[]; anchors: Anchor[] } {
   const md = maskFences(src);
   const withId: Element[] = [];
@@ -327,14 +353,8 @@ function tocOf(src: string): string {
     for (let p = u.parent; p; p = byId.get(p)?.parent) n++;
     return n;
   };
-  const rows = units.map(u => {
-    const indent = '  '.repeat(depth(u));
-    const entry = `${indent}- [\`${u.label}\`](#${u.id})`;
-    if (!u.statement) return entry;
-    if (!u.statement.includes('\n')) return `${entry} — ${u.statement}`;
-    // A statement with a list keeps its lines under the entry, so the indentation still says where each part ends.
-    return [`${entry} —`, ...u.statement.split('\n').map(line => `${indent}  >${line === '' ? '' : ` ${line}`}`)].join('\n');
-  });
+  // A line for each unit, by its kind and stem: the statements are for show and tree to print.
+  const rows = units.map(u => `${'  '.repeat(depth(u))}- [\`${u.label}\`](#${u.id})`);
   return rows.join('\n');
 }
 
@@ -1132,6 +1152,65 @@ function analyse(write: boolean): Analysis {
         }
       }
     }
+
+    // A term mark names the term of its own document whose stem its words spell,
+    // or, as the text of a link, the target of the link.
+    if (rel.endsWith('.md')) {
+      const terms = readUnits(docSource).filter(u => u.kind === 'term');
+      const termIds = terms.map(u => u.id);
+      // The spellings that each term's grammar table gives, besides the words of its stem.
+      const given = new Map<string, string[]>();
+      for (const t of terms) {
+        const own = spelling(stemWords(t.id));
+        const forms = [...new Set((t.grammar?.forms ?? []).map(f => spelling(f.spelling)))].filter(f => f !== own);
+        given.set(t.id, forms);
+        if (t.grammar === undefined) continue;
+        if (t.grammar.type === undefined) findings.rot.push(`${rel}#${t.id} — its grammar table has no row "type"`);
+        for (const unknown of t.grammar.unknown)
+          findings.rot.push(`${rel}#${t.id} — its grammar table names "${unknown}", which is no type or no role of "${t.grammar.type}"`);
+        for (const repeated of new Set(t.grammar.repeated))
+          findings.rot.push(`${rel}#${t.id} — its grammar table names "${repeated}" in more than one row`);
+      }
+      // Each spelling, with the terms whose stem it spells and the terms a plugin gives it for.
+      const byStem = new Map(termIds.map(id => [spelling(stemWords(id)), id]));
+      const byForm = new Map<string, string[]>();
+      for (const id of termIds) for (const form of given.get(id) ?? []) byForm.set(form, [...(byForm.get(form) ?? []), id]);
+
+      // A form that another term goes by too leaves a mark that spells it unable to say which term it names.
+      for (const [form, ids] of byForm) {
+        const stem = byStem.get(form);
+        if (stem !== undefined) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')} and the stem of ${stem}, so a term mark cannot say which term it names`);
+        else if (ids.length > 1) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')}, so a term mark cannot say which term it names`);
+      }
+
+      for (const mark of termMarks(docSource)) {
+        const where = `${rel}:${docLineAt(mark.at)}`;
+        if (mark.href !== undefined) {
+          const frag = mark.href.split('#')[1] ?? '';
+          if (!frag.startsWith('term-')) findings.rot.push(`${where} — term mark "*${mark.words}*" links to ${mark.href}, which is no term`);
+          continue;
+        }
+        const words = spelling(mark.words);
+        const named = byStem.get(words) ?? (byForm.get(words)?.length === 1 ? byForm.get(words)?.[0] : undefined);
+        if (named !== undefined) citedTargets.add(`${rel}#${named}`);
+        else if ((byForm.get(words)?.length ?? 0) > 1) findings.rot.push(`${where} — term mark "*${mark.words}*" spells a form of ${byForm.get(words)?.join(' and ')}, so it names neither`);
+        else findings.rot.push(`${where} — term mark "*${mark.words}*" names no term: ${rel} declares no term with that form`);
+      }
+    }
+  }
+
+  // generate lines up the columns of each grammar table; check reports nothing for one out of line.
+  if (write) {
+    for (const rel of DOCS) {
+      if (!rel.endsWith('.md')) continue;
+      const file = join(ROOT, rel);
+      if (!existsSync(file)) continue;
+      const src = readFileSync(file, 'utf8');
+      const next = alignGrammarTables(src);
+      if (next === src) continue;
+      writeFileSync(file, next);
+      written.push(rel);
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -1152,7 +1231,7 @@ function analyse(write: boolean): Analysis {
     if (next === src) continue;
     if (write) {
       writeFileSync(file, next);
-      written.push(rel);
+      if (!written.includes(rel)) written.push(rel);
     } else {
       findings['stale-toc'].push(
         `${rel}: out of date — run \`${COMMAND} generate\``
@@ -2205,9 +2284,16 @@ interface Parts {
   body: boolean;
 }
 
+/** A line of a statement as it reads: each link and each term mark as its words, and each code span as written. */
+const asWords = (line: string): string =>
+  line
+    .split(/(`+[^`]*`+)/)
+    .map((part, i) => (i % 2 === 1 ? part : part.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(TERM_MARK, (_, words: string) => words)))
+    .join('');
+
 /**
  * A unit's own text split at its statement: the statement as it reads, its
- * lines without the quote marks and each link as its words, and the body
+ * lines without the quote marks and each link and term mark as its words, and the body
  * after it as written. Generated regions' markers say nothing of the unit.
  */
 function partsOf(own: string): { statement?: string; body?: string } {
@@ -2217,7 +2303,7 @@ function partsOf(own: string): { statement?: string; body?: string } {
   let after = 0;
   if (first !== -1) {
     for (after = first; after < lines.length && lines[after]!.startsWith('>'); after++) {
-      quote.push(lines[after]!.replace(/^>[ \t]?/, '').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').trimEnd());
+      quote.push(asWords(lines[after]!.replace(/^>[ \t]?/, '')).trimEnd());
     }
   }
   while (quote.at(-1) === '') quote.pop();
@@ -2323,7 +2409,8 @@ function show(names: string[], parts?: Parts, ids = false): void {
       listed('Derives from:', derivesFrom.map(u => unitLine(u, '', 2))),
       listed('Sitting in it:', within.map(u => unitLine(u, tally(u), 2))),
       listed('Deriving from it:', derivers.map(u => unitLine(u, '', 2))),
-      listed('Tested by:', (testsAt.get(key) ?? []).map(test => `${test.where}  ${test.title}`))
+      listed('Tested by:', (testsAt.get(key) ?? []).map(test => `${test.where}  ${test.title}`)),
+      ...(unit.kind === 'term-' ? [listed('Forms:', [stemWords(unit.id), ...(grammarOf(unit.own ?? '')?.forms ?? []).map(f => spelling(f.spelling)).filter(f => f !== spelling(stemWords(unit.id)))])] : [])
     );
     printed.push(out.join('\n'));
   }

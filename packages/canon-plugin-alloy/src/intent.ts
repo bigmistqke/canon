@@ -1,7 +1,7 @@
 /**
  * `canon alloy:intent`: the intent of a unit with a formula, read and written
  * by its unit. The intent is the author's prose between the statement of the
- * unit and its first fenced block; a "Derives from:" or "Site:" line after the
+ * unit and its first fenced block, fold, reading table or noun table; a "Derives from:" or "Site:" line after the
  * statement comes before it, and a generated region ends it, as the statement
  * of a scenario does.
  */
@@ -10,6 +10,7 @@ import { resolve } from 'node:path';
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { readUnits, type Unit } from '@bigmistqke/canon/units';
 import { regionName } from './statements.ts';
+import { kindOf, readingBlocks } from './tables.ts';
 
 /** Where the intent of a unit is, as lines of the document: `from` up to, not including, `to`; the two are equal when it has none. */
 export interface Place {
@@ -23,6 +24,8 @@ export interface Place {
 }
 
 const FENCE = /^ {0,3}(```|~~~)/;
+/** The line that opens a fold, a `<details>` element, which ends the intent as a fence does. */
+const FOLD = /^ {0,3}<details[\s>]/i;
 const HEADING = /^ {0,3}#{1,6}(\s|$)/;
 const COMMENT = /^\s*<!--/;
 const QUOTE = /^ {0,3}>/;
@@ -58,7 +61,8 @@ export function placeOf(src: string, unit: Unit): Place {
     else break;
   }
   const from = at;
-  while (at < end && !FENCE.test(lines[at] as string) && !COMMENT.test(lines[at] as string)) at++;
+  const ends = (line: string): boolean => FENCE.test(line) || FOLD.test(line) || kindOf(line) !== undefined || COMMENT.test(line);
+  while (at < end && !ends(lines[at] as string)) at++;
   let to = at;
   while (to > from && (lines[to - 1] as string).trim() === '') to--;
   return { unit, line, from, to, lines };
@@ -72,6 +76,8 @@ export function refusalOf(text: string): string | undefined {
   if (text.trim() === '') return 'the text is empty, and a unit with a formula owes an intent';
   for (const line of text.split('\n')) {
     if (FENCE.test(line)) return `the text holds a fenced block, which would end the intent: ${line.trim()}`;
+    if (FOLD.test(line)) return `the text holds a fold, which would end the intent: ${line.trim()}`;
+    if (kindOf(line) !== undefined) return `the text holds the header of a ${kindOf(line)} table, which would end the intent: ${line.trim()}`;
     if (HEADING.test(line)) return `the text holds a heading, which would end the unit: ${line.trim()}`;
     if (QUOTE.test(line)) return `the text holds a quote, which the checker reads as a statement: ${line.trim()}`;
     if (STRUCTURE.test(line)) return `the text holds a line the checker reads as a derivation or a site: ${line.trim()}`;
@@ -208,7 +214,7 @@ export function checkIntents(documents: string[], root: string, contextOf: (file
     const file = resolve(root, doc);
     if (!existsSync(file)) continue;
     const src = readFileSync(file, 'utf8');
-    if (![src, ...contextOf(file)].some(text => readBlocks(text).some(b => b.lang === 'readings'))) continue;
+    if (![src, ...contextOf(file)].some(text => readingBlocks(text).length > 0)) continue;
     const units = readUnits(src);
     for (const unit of units) {
       if (!holdsFormula(src, unit, units) || textOf(placeOf(src, unit)).trim() !== '') continue;

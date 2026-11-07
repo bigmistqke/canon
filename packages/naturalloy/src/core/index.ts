@@ -3,7 +3,7 @@
  * printer lays it out. With no passes, the words are the literal reading, `-O0`.
  */
 import { parseModule } from '@bigmistqke/parse-alloy';
-import { paramsOf, type Readings, Refusal, unqualified, withDifferences } from '../readings.ts';
+import { paramsOf, type Readings, Refusal, unqualified, withDifferences, type Marked } from '../readings.ts';
 import type { Sentence } from './ir.ts';
 import { read } from './formula.ts';
 import { Lower } from './lower.ts';
@@ -18,6 +18,8 @@ export interface Options {
   layout?: 'text' | 'markdown';
   /** The href of the place the words are for, which they never link to. */
   self?: string;
+  /** Which words may name the target of their link as a term mark instead. */
+  marked?: Marked;
   passes?: readonly Pass[];
   /** The names of passes left out. */
   off?: ReadonlySet<string>;
@@ -60,7 +62,7 @@ export function say(source: string, readings: Readings, options: Options = {}): 
 
 /** The IR as words. */
 export function print(s: Sentence, readings: Readings, options: Options = {}, printing: PrintOptions = { dropLoneNumbers: false, aNounForEvery: false }): string {
-  return finish(new Printer(readings).statement(s), options.layout ?? 'text', options.self, printing);
+  return finish(new Printer(readings).statement(s), options.layout ?? 'text', options.self, printing, options.marked);
 }
 
 /** A definition, `pred name[params] { body }` or `fun name[params]: T { e }`, as the IR. */
@@ -98,15 +100,16 @@ export const isDefinition = (source: string): boolean => /^\s*(?:private\s+)?(?:
 
 /**
  * The words for the formula in `source`, with every pass, as lines of text or as markdown with links. `self` is the
- * href of the place the words are for, which they never link to. Throws a Refusal that names what cannot be said.
+ * href of the place the words are for, which they never link to, and `marked` says which words may be a term mark
+ * instead of a link. Throws a Refusal that names what cannot be said.
  */
-export function verbalize(source: string, readings: Readings, layout: 'text' | 'markdown' = 'text', self?: string): string {
-  return say(source, readings, { layout, self, passes: PASSES });
+export function verbalize(source: string, readings: Readings, layout: 'text' | 'markdown' = 'text', self?: string, marked?: Marked): string {
+  return say(source, readings, { layout, self, marked, passes: PASSES });
 }
 
 /** The words for a definition, `pred name[params] { body }`: what it names, exactly when its body holds. */
-export function verbalizeDefinition(source: string, readings: Readings, layout: 'text' | 'markdown' = 'text', self?: string): string {
-  return sayDefinition(source, readings, { layout, self, passes: PASSES });
+export function verbalizeDefinition(source: string, readings: Readings, layout: 'text' | 'markdown' = 'text', self?: string, marked?: Marked): string {
+  return sayDefinition(source, readings, { layout, self, marked, passes: PASSES });
 }
 
 /** A formula or a definition, said with every pass and read back by the reading rules. */

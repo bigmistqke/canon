@@ -1,9 +1,9 @@
 /**
  * The statements of a document's units, said from their predicates. A document
- * that keeps a table of readings in a `readings` block has the statement of
- * each unit with an Alloy predicate written between two markers, from that
- * predicate, so the statement cannot say anything the predicate does not.
- * A document without a `readings` block is left as it is.
+ * that keeps readings, in a reading table, a noun table or a `readings` fence,
+ * has the statement of each unit with an Alloy predicate written between two
+ * markers, from that predicate, so the statement cannot say anything the
+ * predicate does not. A document that keeps none is left as it is.
  *
  * `states` says what each statement is, `write` makes the stale and missing
  * ones current, and neither touches a statement a person wrote: the person
@@ -11,8 +11,9 @@
  */
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions';
-import { readUnits } from '@bigmistqke/canon/units';
-import { PARAGRAPHS } from './words.ts';
+import { maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
+import { declaredIn, PARAGRAPHS } from './words.ts';
+import { readingBlocks } from './tables.ts';
 import { AlloyParseError } from '@bigmistqke/parse-alloy';
 import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
 
@@ -28,7 +29,7 @@ export const isGenerated = (src: string, unit: string): boolean => regionAt(src,
  * statement that a person wrote, which is never overwritten; `unsayable` is a
  * predicate the words cannot say, with the reason.
  */
-export type StatementKind = 'current' | 'stale' | 'missing' | 'handwritten' | 'unsayable' | 'misread';
+export type StatementKind = 'current' | 'stale' | 'missing' | 'handwritten' | 'unsayable' | 'misread' | 'orphaned';
 
 export interface StatementState {
   unit: string;
@@ -52,15 +53,18 @@ export interface Context {
  * more its readings count, and the document's own count most.
  */
 export function readingsOf(src: string, context: Context[] = []): Readings | undefined {
-  const own = readBlocks(src);
-  const documents = [...[...context].reverse().map(c => ({ path: c.path, blocks: readBlocks(c.src) })), { path: undefined, blocks: own }];
-  if (!documents.some(d => d.blocks.some(b => b.lang === 'readings'))) return undefined;
+  const read = (path: string | undefined, text: string) => {
+    const units = readUnits(text);
+    return { path, units, blocks: readBlocks(text, units), readings: readingBlocks(text, units) };
+  };
+  const documents = [...[...context].reverse().map(c => read(c.path, c.src)), read(undefined, src)];
+  if (!documents.some(d => d.readings.length > 0)) return undefined;
   // The predicates a document defines, in its vocabulary and in the units that define them: the blocks that are Alloy paragraphs, and not bare formulas.
   const model = documents.flatMap(d => d.blocks).filter(b => b.lang === 'alloy' && (b.role === 'vocabulary' || (b.role === 'unit' && PARAGRAPHS.test(b.body))));
   // Each block is read for the unit that holds it, so that a word in brackets links to the term that says it.
   const merged = parseReadings('');
-  for (const { path, blocks } of documents) {
-    for (const block of blocks.filter(b => b.lang === 'readings')) {
+  for (const { path, readings } of documents) {
+    for (const block of readings) {
       const part = parseReadings(block.body, `${path ?? ''}#${block.unit}`, path);
       for (const [key, value] of part.nouns) merged.nouns.set(key, value);
       for (const [key, value] of part.nounTargets) merged.nounTargets.set(key, value);
@@ -68,8 +72,25 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
       for (const [key, value] of part.atoms) merged.atoms.set(key, value);
     }
   }
+  // A signature with no noun, declared in a term whose stem its name spells, has the term as its noun.
+  for (const { path, units, blocks } of documents) {
+    const stems = new Map(units.filter(u => u.kind === 'term').map(u => [u.id, u.stem.replace(/-/g, ' ')]));
+    for (const block of blocks) {
+      const stem = stems.get(block.unit);
+      if (stem === undefined || block.lang !== 'alloy' || block.role === 'bounds' || block.role === 'scenario') continue;
+      for (const word of declaredIn(block.body)) {
+        if (word.kind !== 'signature' || merged.nouns.has(word.name) || spelled(word.name) !== stem) continue;
+        // In brackets, as a noun table writes a noun that names its term, so that it links.
+        merged.nouns.set(word.name, `[${stem}]`);
+        merged.nounTargets.set(word.name, `${path ?? ''}#${block.unit}`);
+      }
+    }
+  }
   return withDefinitions(merged, model.map(b => b.body).join('\n'));
 }
+
+/** The words a name spells, each capital starting one: `TermMark` spells "term mark". */
+const spelled = (name: string): string => name.replace(/([a-z0-9])([A-Z])/g, '$1 $2').toLowerCase();
 
 const quote = (words: string): string =>
   words
@@ -94,6 +115,22 @@ function read(unit: string, kind: 'current' | 'stale', quote: string, formula: s
   return { unit, kind: 'misread', message, quote };
 }
 
+/**
+ * Which words a statement writes as a term mark: a word whose link leads to a
+ * term of the document itself, `#term-…`, and that spells a form of that term,
+ * the words of its stem or a spelling of its grammar table. A link to another
+ * document needs its path, so it stays a link.
+ */
+function markedBy(units: Unit[]): (target: string, word: string) => boolean {
+  const spelling = (words: string): string => words.trim().toLowerCase().split(/\s+/).join(' ');
+  const forms = new Map<string, Set<string>>();
+  for (const unit of units) {
+    if (unit.kind !== 'term') continue;
+    forms.set(`#${unit.id}`, new Set([spelling(unit.stem.replace(/-/g, ' ')), ...(unit.grammar?.forms ?? []).map(f => spelling(f.spelling))]));
+  }
+  return (target, word) => forms.get(target)?.has(spelling(word)) === true;
+}
+
 /** What each statement of a document is, in document order; empty for a document with no readings. */
 export function states(src: string, context: Context[] = []): StatementState[] {
   let readings: Readings | undefined;
@@ -106,6 +143,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
   if (readings === undefined) return [];
   const units = readUnits(src);
   const blocks = readBlocks(src, units);
+  const marked = markedBy(units);
   const found: StatementState[] = [];
   for (const unit of units) {
     const predicates = blocks.filter(b => b.unit === unit.id && b.lang === 'alloy' && b.role === 'unit');
@@ -118,7 +156,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
     let body = '';
     try {
       ({ body } = predicates[0] as { body: string });
-      words = quote(isDefinition(body) ? verbalizeDefinition(body, readings, 'markdown', `#${unit.id}`) : verbalize(body, readings, 'markdown', `#${unit.id}`));
+      words = quote(isDefinition(body) ? verbalizeDefinition(body, readings, 'markdown', `#${unit.id}`, marked) : verbalize(body, readings, 'markdown', `#${unit.id}`, marked));
     } catch (error) {
       // A refusal says why the unit has no statement; anything else is a fault of naturalloy, and is not hidden as one.
       if (!isRefusal(error)) throw error;
@@ -133,7 +171,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
   for (const { key, unit, body } of scenarios(src, blocks)) {
     let words: string;
     try {
-      words = quote(`It must be possible that:\n\n${verbalize(body, readings, 'markdown', `#${unit}`)}`);
+      words = quote(`It must be possible that:\n\n${verbalize(body, readings, 'markdown', `#${unit}`, marked)}`);
     } catch (error) {
       if (!isRefusal(error)) throw error;
       found.push({ unit: key, kind: 'unsayable', message: error.message });
@@ -143,6 +181,12 @@ export function states(src: string, context: Context[] = []): StatementState[] {
     const at = regionAt(src, region, endMarker(region));
     if (at === undefined) found.push({ unit: key, kind: 'missing', quote: words });
     else found.push(read(key, src.slice(at.body, at.to) === `\n${words}\n` ? 'current' : 'stale', words, body, readings));
+  }
+  // A region that names no unit and no scenario of the document is one that generate will never write again.
+  const named = new Set([...units.map(u => u.id), ...scenarios(src, blocks).map(s => s.key)]);
+  for (const m of maskFences(src).matchAll(/<!-- statement-([a-z0-9-]+):begin\b/g)) {
+    const name = m[1] as string;
+    if (!named.has(name)) found.push({ unit: name, kind: 'orphaned' });
   }
   return found;
 }

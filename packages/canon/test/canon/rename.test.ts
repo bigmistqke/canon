@@ -48,7 +48,7 @@ const TESTS = tagged('spec-a-leaf') + tagged('spec-a-leaf-and-more');
 const EXTRA = { files: FILES, documents: ['OTHER.md'], settings: { references: ['docs'] } };
 
 /** The project of the canon above. */
-const project = (): string => scratch(DOCUMENT, TESTS, EXTRA);
+const project = async (): Promise<string> => await scratch(DOCUMENT, TESTS, EXTRA);
 
 const read = (dir: string, path: string): string => readFileSync(join(dir, path), 'utf8');
 
@@ -63,9 +63,9 @@ function files(dir: string, at = dir, out: Record<string, string> = {}): Record<
 }
 
 /** The project after `rename spec-a-leaf a-single-leaf`. */
-function renamed(): string {
-  const dir = project();
-  expect(run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf').status).toBe(0);
+async function renamed(): Promise<string> {
+  const dir = await project();
+  expect((await run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf')).status).toBe(0);
   return dir;
 }
 
@@ -73,8 +73,8 @@ describe('rename', () => {
   /**
    * @canon spec-rename-gives-a-unit-a-new-stem-and-keeps-its-kind
    */
-  it('writes the heading with the kind of the unit and the new stem', () => {
-    const text = read(renamed(), 'CANON.md');
+  it('writes the heading with the kind of the unit and the new stem', async () => {
+    const text = read(await renamed(), 'CANON.md');
     expect(text).toContain('\n### @spec a-single-leaf\n');
     expect(text).not.toContain('\n### @spec a-leaf\n');
   });
@@ -82,17 +82,17 @@ describe('rename', () => {
   /**
    * @canon spec-rename-gives-a-unit-a-new-stem-and-keeps-its-kind
    */
-  it('keeps the kind when the new stem starts with another kind', () => {
-    const dir = project();
-    expect(run(dir, 'rename', 'spec-a-leaf', 'axiom-like-leaf').status).toBe(0);
+  it('keeps the kind when the new stem starts with another kind', async () => {
+    const dir = await project();
+    expect((await run(dir, 'rename', 'spec-a-leaf', 'axiom-like-leaf')).status).toBe(0);
     expect(read(dir, 'CANON.md')).toContain('\n### @spec axiom-like-leaf\n');
   });
 
   /**
    * @canon spec-rename-moves-a-pointer-in-the-document-that-holds-the-unit
    */
-  it('moves a pointer in the document that holds the unit', () => {
-    const text = read(renamed(), 'CANON.md');
+  it('moves a pointer in the document that holds the unit', async () => {
+    const text = read(await renamed(), 'CANON.md');
     expect(text).toContain('Derives from: [`spec-a-single-leaf`](#spec-a-single-leaf)');
     expect(text).not.toContain('](#spec-a-leaf)');
   });
@@ -100,8 +100,8 @@ describe('rename', () => {
   /**
    * @canon spec-rename-moves-a-pointer-from-another-document
    */
-  it('moves a pointer from another document and from a reference', () => {
-    const dir = renamed();
+  it('moves a pointer from another document and from a reference', async () => {
+    const dir = await renamed();
     expect(read(dir, 'OTHER.md')).toContain('[the leaf](CANON.md#spec-a-single-leaf)');
     expect(read(dir, 'docs/guide.md')).toContain('](../CANON.md#spec-a-single-leaf)');
   });
@@ -109,8 +109,8 @@ describe('rename', () => {
   /**
    * @canon spec-rename-moves-a-tag-to-the-new-id
    */
-  it('moves a tag in a suite and in a reference', () => {
-    const dir = renamed();
+  it('moves a tag in a suite and in a reference', async () => {
+    const dir = await renamed();
     expect(read(dir, 'test/canon/a.test.ts')).toContain(`${TAG} spec-a-single-leaf\n`);
     expect(read(dir, 'test/canon/a.test.ts')).not.toContain(`${TAG} spec-a-leaf\n`);
     expect(read(dir, 'docs/guide.md')).toContain(`${TAG} spec-a-single-leaf in its comment`);
@@ -119,20 +119,20 @@ describe('rename', () => {
   /**
    * @canon spec-rename-moves-a-tag-to-the-new-id
    */
-  it('moves an axiom tag that names an axiom by its stem', () => {
-    const dir = scratch(canon(''), `/**\n * @axiom a-program-means-one-thing\n */\nit('means one thing', () => {});\n`);
-    expect(run(dir, 'rename', 'axiom-a-program-means-one-thing', 'a-program-says-one-thing').status).toBe(0);
+  it('moves an axiom tag that names an axiom by its stem', async () => {
+    const dir = await scratch(canon(''), `/**\n * @axiom a-program-means-one-thing\n */\nit('means one thing', () => {});\n`);
+    expect((await run(dir, 'rename', 'axiom-a-program-means-one-thing', 'a-program-says-one-thing')).status).toBe(0);
     expect(read(dir, 'test/canon/a.test.ts')).toContain('@axiom a-program-says-one-thing\n');
   });
 
   /**
    * @canon spec-rename-moves-a-link-in-a-comment
    */
-  it('moves a link in a comment of a source that leads to the document, and leaves one into another document', () => {
+  it('moves a link in a comment of a source that leads to the document, and leaves one into another document', async () => {
     const doc = ['CANON', 'md'].join('.');
     const source = `/**\n * Says [one thing](../../${doc}#spec-a-leaf), unlike [the notes](../../notes/NOTES.md#spec-a-leaf).\n */\nexport function say(): void {}\nexport const text = '[one thing](../../${doc}#spec-a-leaf)';\n`;
-    const dir = scratch(DOCUMENT, TESTS, { ...EXTRA, files: { ...FILES, 'test/helpers/say.ts': source } });
-    expect(run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf').status).toBe(0);
+    const dir = await scratch(DOCUMENT, TESTS, { ...EXTRA, files: { ...FILES, 'test/helpers/say.ts': source } });
+    expect((await run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf')).status).toBe(0);
     const text = read(dir, 'test/helpers/say.ts');
     expect(text).toContain(`[one thing](../../${doc}#spec-a-single-leaf), unlike [the notes](../../notes/NOTES.md#spec-a-leaf)`);
     expect(text).toContain(`'[one thing](../../${doc}#spec-a-leaf)'`);
@@ -141,8 +141,8 @@ describe('rename', () => {
   /**
    * @canon spec-rename-moves-a-code-span-that-spells-the-old-id
    */
-  it('moves a code span whose whole text is the old id', () => {
-    const dir = renamed();
+  it('moves a code span whose whole text is the old id', async () => {
+    const dir = await renamed();
     expect(read(dir, 'CANON.md')).toContain('[`spec-a-single-leaf`]');
     expect(read(dir, 'docs/guide.md')).toContain('Read [`spec-a-single-leaf`]');
   });
@@ -150,8 +150,8 @@ describe('rename', () => {
   /**
    * @canon spec-rename-moves-a-generated-region-named-after-the-unit
    */
-  it('moves the markers of a region named after the unit', () => {
-    const text = read(renamed(), 'CANON.md');
+  it('moves the markers of a region named after the unit', async () => {
+    const text = read(await renamed(), 'CANON.md');
     expect(text).toContain('<!-- statement-spec-a-single-leaf:begin');
     expect(text).toContain('<!-- statement-spec-a-single-leaf:end -->');
     expect(text).not.toContain('statement-spec-a-leaf:');
@@ -160,15 +160,15 @@ describe('rename', () => {
   /**
    * @canon spec-rename-leaves-a-pointer-into-another-document-alone
    */
-  it('leaves a pointer into a document that does not hold the unit', () => {
-    expect(read(renamed(), 'CANON.md')).toContain('](notes/NOTES.md#spec-a-leaf)');
+  it('leaves a pointer into a document that does not hold the unit', async () => {
+    expect(read(await renamed(), 'CANON.md')).toContain('](notes/NOTES.md#spec-a-leaf)');
   });
 
   /**
    * @canon spec-rename-leaves-a-longer-id-alone
    */
-  it('leaves an id that starts with the old id', () => {
-    const dir = renamed();
+  it('leaves an id that starts with the old id', async () => {
+    const dir = await renamed();
     expect(read(dir, 'CANON.md')).toContain('\n### @spec a-leaf-and-more\n');
     expect(read(dir, 'test/canon/a.test.ts')).toContain(`${TAG} spec-a-leaf-and-more\n`);
   });
@@ -176,27 +176,27 @@ describe('rename', () => {
   /**
    * @canon spec-rename-leaves-a-tag-in-a-string-alone
    */
-  it('leaves a tag in a string', () => {
-    expect(read(renamed(), 'test/example.ts')).toBe(FILES['test/example.ts']);
+  it('leaves a tag in a string', async () => {
+    expect(read(await renamed(), 'test/example.ts')).toBe(FILES['test/example.ts']);
   });
 
   /**
    * @canon spec-rename-rewrites-the-index
    */
-  it('rewrites the index of the document', () => {
-    const text = read(renamed(), 'CANON.md');
-    expect(text).toContain('- [`@spec a-single-leaf`](#spec-a-single-leaf) — A leaf says one thing.');
+  it('rewrites the index of the document', async () => {
+    const text = read(await renamed(), 'CANON.md');
+    expect(text).toContain('  - [`@spec a-single-leaf`](#spec-a-single-leaf)\n');
     expect(text).not.toContain('(#spec-a-leaf)');
   });
 
   /**
    * @canon spec-a-rename-in-a-clean-project-leaves-it-clean
    */
-  it('leaves a clean project clean', () => {
-    const dir = project();
-    expect(run(dir, 'check', '--offline').stdout).toMatch(/\nclean\n$/);
-    expect(run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf').status).toBe(0);
-    const after = run(dir, 'check', '--offline');
+  it('leaves a clean project clean', async () => {
+    const dir = await project();
+    expect((await run(dir, 'check', '--offline')).stdout).toMatch(/\nclean\n$/);
+    expect((await run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf')).status).toBe(0);
+    const after = await run(dir, 'check', '--offline');
     expect(after.stdout).toMatch(/\nclean\n$/);
     expect(after.status).toBe(0);
   });
@@ -204,9 +204,9 @@ describe('rename', () => {
 
 describe('a rename that cannot hold', () => {
   /** Run a rename that must be refused: it exits with code 2, says why, and changes no file. */
-  function refused(dir: string, ...args: string[]): string {
+  async function refused(dir: string, ...args: string[]): Promise<string> {
     const before = files(dir);
-    const { status, stderr } = run(dir, 'rename', ...args);
+    const { status, stderr } = await run(dir, 'rename', ...args);
     expect(status).toBe(2);
     expect(files(dir)).toEqual(before);
     return stderr;
@@ -215,49 +215,49 @@ describe('a rename that cannot hold', () => {
   /**
    * @canon spec-a-rename-of-an-id-that-the-project-does-not-declare-is-refused
    */
-  it('refuses an id that no document declares', () => {
-    expect(refused(project(), 'spec-a-tree', 'a-forest')).toContain('spec-a-tree');
+  it('refuses an id that no document declares', async () => {
+    expect(await refused(await project(), 'spec-a-tree', 'a-forest')).toContain('spec-a-tree');
   });
 
   /**
    * @canon spec-a-rename-of-an-id-that-the-project-does-not-declare-is-refused
    */
-  it('refuses an id that only an extended document declares', () => {
+  it('refuses an id that only an extended document declares', async () => {
     const base = canon('\n### @spec a-base-leaf\n\n> A base leaf.\n');
     const document = `---\nextends: ["base/CANON.md"]\n---\n${DOCUMENT}`;
-    const dir = scratch(document, TESTS, { ...EXTRA, files: { ...FILES, 'base/CANON.md': base } });
-    expect(refused(dir, 'spec-a-base-leaf', 'a-leaf-of-mine')).toContain('base/CANON.md');
+    const dir = await scratch(document, TESTS, { ...EXTRA, files: { ...FILES, 'base/CANON.md': base } });
+    expect(await refused(dir, 'spec-a-base-leaf', 'a-leaf-of-mine')).toContain('base/CANON.md');
   });
 
   /**
    * @canon spec-a-rename-to-an-id-that-a-unit-holds-is-refused
    */
-  it('refuses a stem whose id a unit of the project holds', () => {
-    expect(refused(project(), 'spec-a-leaf', 'a-leaf-and-more')).toContain('spec-a-leaf-and-more');
+  it('refuses a stem whose id a unit of the project holds', async () => {
+    expect(await refused(await project(), 'spec-a-leaf', 'a-leaf-and-more')).toContain('spec-a-leaf-and-more');
   });
 
   /**
    * @canon spec-a-rename-to-an-id-that-a-unit-holds-is-refused
    */
-  it('refuses the stem the unit already has', () => {
-    expect(refused(project(), 'spec-a-leaf', 'a-leaf')).toContain('spec-a-leaf');
+  it('refuses the stem the unit already has', async () => {
+    expect(await refused(await project(), 'spec-a-leaf', 'a-leaf')).toContain('spec-a-leaf');
   });
 
   /**
    * @canon spec-a-rename-to-an-id-that-a-unit-holds-is-refused
    */
-  it('refuses a stem whose id an extended document holds', () => {
+  it('refuses a stem whose id an extended document holds', async () => {
     const base = canon('\n### @spec a-base-leaf\n\n> A base leaf.\n');
     const document = `---\nextends: ["base/CANON.md"]\n---\n${DOCUMENT}`;
-    const dir = scratch(document, TESTS, { ...EXTRA, files: { ...FILES, 'base/CANON.md': base } });
-    expect(refused(dir, 'spec-a-leaf', 'a-base-leaf')).toContain('base/CANON.md');
+    const dir = await scratch(document, TESTS, { ...EXTRA, files: { ...FILES, 'base/CANON.md': base } });
+    expect(await refused(dir, 'spec-a-leaf', 'a-base-leaf')).toContain('base/CANON.md');
   });
 
   /**
    * @canon spec-a-rename-to-a-stem-that-is-not-a-stem-is-refused
    */
-  it.each(['A-Leaf', 'a--leaf', 'a leaf', '-a-leaf', 'a-leaf-', 'a_leaf', ''])('refuses %j as a stem', stem => {
-    expect(refused(project(), 'spec-a-leaf', stem)).toContain('stem');
+  it.each(['A-Leaf', 'a--leaf', 'a leaf', '-a-leaf', 'a-leaf-', 'a_leaf', ''])('refuses %j as a stem', async stem => {
+    expect(await refused(await project(), 'spec-a-leaf', stem)).toContain('stem');
   });
 });
 
@@ -265,9 +265,9 @@ describe('a dry run of rename', () => {
   /**
    * @canon spec-a-dry-run-lists-each-line-it-would-change
    */
-  it('prints the file and number of each line it would change, as it is and as it would be', () => {
-    const dir = project();
-    const { status, stdout } = run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf', '--dry-run');
+  it('prints the file and number of each line it would change, as it is and as it would be', async () => {
+    const dir = await project();
+    const { status, stdout } = await run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf', '--dry-run');
     expect(status).toBe(0);
     const heading = read(dir, 'CANON.md').split('\n').indexOf('### @spec a-leaf') + 1;
     expect(stdout).toContain(`CANON.md:${heading}\n  - ### @spec a-leaf\n  + ### @spec a-single-leaf\n`);
@@ -281,10 +281,10 @@ describe('a dry run of rename', () => {
   /**
    * @canon spec-a-dry-run-changes-no-file
    */
-  it('changes no file', () => {
-    const dir = project();
+  it('changes no file', async () => {
+    const dir = await project();
     const before = files(dir);
-    expect(run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf', '--dry-run').status).toBe(0);
+    expect((await run(dir, 'rename', 'spec-a-leaf', 'a-single-leaf', '--dry-run')).status).toBe(0);
     expect(files(dir)).toEqual(before);
   });
 });

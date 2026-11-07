@@ -13,6 +13,8 @@ import { checkMaps, reviewMaps } from './map.ts';
 import { listReadings, rewordReading } from './readings.ts';
 import type { Plugin } from '@bigmistqke/canon/plugin';
 import * as statements from './statements.ts';
+import { alignTables } from './tables.ts';
+import { checkDefinedWords } from './defined.ts';
 import type { Context } from './statements.ts';
 import type { Readings } from '@bigmistqke/naturalloy';
 import { checkLoneFormulas, checkWords } from './words.ts';
@@ -125,7 +127,8 @@ export function review(documents: string[], root: string, units: string[]): numb
 const WHAT: Record<string, string> = {
   stale: 'the statement is not what the predicate says; run `canon generate`',
   missing: 'the statement is not written; run `canon generate`',
-  handwritten: 'has a statement of its own; delete it to let it be said from its predicate'
+  handwritten: 'has a statement of its own; delete it to let it be said from its predicate',
+  orphaned: 'a generated statement whose region names no unit or scenario of the document; delete the region'
 };
 
 /** Write the statements of each document that keeps readings; the exit code: 0, or 1 when a statement cannot be written. */
@@ -141,7 +144,9 @@ export function generateStatements(documents: string[], root: string): number {
       if (state.kind === 'unsayable' || state.kind === 'handwritten') code = 1;
       if (state.kind === 'handwritten') console.log(`${doc}: ${state.unit}: handwritten: ${WHAT.handwritten}`);
     }
-    const { src: next, written } = statements.write(src, context);
+    const { src: stated, written } = statements.write(src, context);
+    // The reading tables and noun tables are lined up, which changes no word of them.
+    const next = alignTables(stated);
     if (next === src) continue;
     writeFileSync(file, next);
     for (const unit of written) console.log(`wrote the statement of ${unit} in ${doc}`);
@@ -172,7 +177,7 @@ export function checkDocumentWords(documents: string[], root: string): number {
     if (!existsSync(file)) continue;
     const src = readFileSync(file, 'utf8');
     const context = contextFor(file, root).map(c => c.src);
-    for (const finding of [...checkWords(src, context), ...checkLoneFormulas(src, context)]) {
+    for (const finding of [...checkWords(src, context), ...checkDefinedWords(src, file), ...checkLoneFormulas(src, context)]) {
       code = 1;
       console.log(`${doc}: ${finding.unit}: ${finding.kind}: ${finding.message}`);
     }

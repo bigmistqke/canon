@@ -9,6 +9,7 @@
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { parseModule } from '@bigmistqke/parse-alloy';
 import { readUnits } from '@bigmistqke/canon/units';
+import { readingBlocks } from './tables.ts';
 
 export type WordKind = 'signature' | 'field' | 'predicate';
 
@@ -20,7 +21,7 @@ export interface Word {
   unit: string;
 }
 
-export type WordFindingKind = 'undeclared' | 'misplaced' | 'apart' | 'unused';
+export type WordFindingKind = 'undeclared' | 'misplaced' | 'apart' | 'unused' | 'undefined';
 
 export interface WordFinding {
   unit: string;
@@ -90,8 +91,7 @@ function fieldOf(words: Word[], key: string): Word[] {
 /** The key of a reading line, `Sit.rel`, `Throwing'` or `cites`, and each noun, with the unit that holds it. */
 function readingKeys(src: string): { key: string; unit: string; noun: boolean }[] {
   const keys: { key: string; unit: string; noun: boolean }[] = [];
-  for (const block of readBlocks(src, readUnits(src))) {
-    if (block.lang !== 'readings') continue;
+  for (const block of readingBlocks(src)) {
     for (const raw of block.body.split('\n')) {
       const line = raw.trim();
       if (line === '' || line.startsWith('#')) continue;

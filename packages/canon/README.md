@@ -1,6 +1,6 @@
 # @bigmistqke/canon
 
-The checker for a project's canon: the derivation links between `CANON.md`, the tests that cite it and the code it names. The protocol it serves is the [`canon` skill](https://github.com/bigmistqke/skills/tree/main/skills/canon).
+The checker for a project's canon: the derivation links between `CANON.md`, the tests that cite it and the code it names. The protocol it serves is the [`canon` skill](https://github.com/bigmistqke/canon/tree/main/skills/canon).
 
 ```bash
 pnpm add -D @bigmistqke/canon

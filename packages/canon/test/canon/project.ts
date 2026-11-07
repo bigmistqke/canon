@@ -4,7 +4,7 @@
  * has entries comes back with its count. `checkTracked` runs it with a GitHub
  * tracker: a stub server on a local port that holds the issues it is given.
  */
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { createServer } from 'node:http';
 import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -44,8 +44,34 @@ export interface Extra {
   generate?: boolean;
 }
 
+/** What a process did: its exit code, and what it printed. */
+export interface Done {
+  status: number | null;
+  stdout: string;
+  stderr: string;
+}
+
+/**
+ * Run `command` with `args` and wait for it to close, with `input` on its
+ * standard input. It runs beside the test rather than in its place, so the
+ * worker that runs the test can go on telling vitest how it does.
+ */
+export function spawned(command: string, args: string[], options: { cwd: string; input?: string; env?: NodeJS.ProcessEnv }): Promise<Done> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd: options.cwd, env: options.env ?? process.env });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8').on('data', (chunk: string) => (stdout += chunk));
+    child.stderr.setEncoding('utf8').on('data', (chunk: string) => (stderr += chunk));
+    child.on('error', reject);
+    child.on('close', (status) => resolve({ status, stdout, stderr }));
+    child.stdin.on('error', () => {});
+    child.stdin.end(options.input ?? '');
+  });
+}
+
 /** A project of the document and the test file, with a tracker if one is given. */
-function project(document: string, tests: string, tracker?: Record<string, unknown>, extra: Extra = {}): string {
+async function project(document: string, tests: string, tracker?: Record<string, unknown>, extra: Extra = {}): Promise<string> {
   const dir = mkdtempSync(join(tmpdir(), 'canon-of-canon-'));
   DIRS.push(dir);
   mkdirSync(join(dir, 'test', 'canon'), { recursive: true });
@@ -56,25 +82,23 @@ function project(document: string, tests: string, tracker?: Record<string, unkno
     mkdirSync(dirname(join(dir, path)), { recursive: true });
     writeFileSync(join(dir, path), text);
   }
-  if (extra.generate !== false) spawnSync(process.execPath, [CLI, 'generate'], { cwd: dir });
+  if (extra.generate !== false) await spawned(process.execPath, [CLI, 'generate'], { cwd: dir });
   return dir;
 }
 
 /** A project of the document, the test file and what else it holds, left for a command to change; its directory. */
-export function scratch(document: string, tests = '', extra: Extra = {}): string {
+export function scratch(document: string, tests = '', extra: Extra = {}): Promise<string> {
   return project(document, tests, undefined, extra);
 }
 
 /** Run the checker with `args` in the project at `dir`: its exit code, and what it printed. */
-export function run(dir: string, ...args: string[]): { status: number | null; stdout: string; stderr: string } {
-  const { status, stdout, stderr } = spawnSync(process.execPath, [CLI, ...args], { cwd: dir, encoding: 'utf8', env: { ...process.env, NO_COLOR: '1' } });
-  return { status, stdout, stderr };
+export function run(dir: string, ...args: string[]): Promise<Done> {
+  return spawned(process.execPath, [CLI, ...args], { cwd: dir, env: { ...process.env, NO_COLOR: '1' } });
 }
 
 /** Run the checker with `args` in the project at `dir`, with `input` on its standard input: its exit code, and what it printed. */
-export function piped(dir: string, input: string, ...args: string[]): { status: number | null; stdout: string; stderr: string } {
-  const { status, stdout, stderr } = spawnSync(process.execPath, [CLI, ...args], { cwd: dir, encoding: 'utf8', input, env: { ...process.env, NO_COLOR: '1' } });
-  return { status, stdout, stderr };
+export function piped(dir: string, input: string, ...args: string[]): Promise<Done> {
+  return spawned(process.execPath, [CLI, ...args], { cwd: dir, input, env: { ...process.env, NO_COLOR: '1' } });
 }
 
 /**
@@ -84,18 +108,17 @@ export function piped(dir: string, input: string, ...args: string[]): { status: 
  * it printed. Node makes the pipe it writes to non-blocking, which a reader of
  * standard input has to bear.
  */
-export function pipedSlowly(dir: string, input: string, ...args: string[]): { status: number | null; stdout: string; stderr: string } {
+export function pipedSlowly(dir: string, input: string, ...args: string[]): Promise<Done> {
   const quote = (word: string): string => `'${word.replace(/'/g, `'\\''`)}'`;
   // Node opens its standard output, and makes the pipe non-blocking, when the script first touches it.
   const writer = `const out = process.stdout; setTimeout(() => out.write(${JSON.stringify(input)}), 1500)`;
   const script = `${quote(process.execPath)} -e ${quote(writer)} | ${[process.execPath, CLI, ...args].map(quote).join(' ')}`;
-  const { status, stdout, stderr } = spawnSync('sh', ['-c', script], { cwd: dir, encoding: 'utf8', env: { ...process.env, NO_COLOR: '1' } });
-  return { status, stdout, stderr };
+  return spawned('sh', ['-c', script], { cwd: dir, env: { ...process.env, NO_COLOR: '1' } });
 }
 
 /** The document as `generate` leaves it, in a project of it alone. */
-export function generated(document: string): string {
-  return readFileSync(join(project(document, ''), 'CANON.md'), 'utf8');
+export async function generated(document: string): Promise<string> {
+  return readFileSync(join(await project(document, ''), 'CANON.md'), 'utf8');
 }
 
 /** Each finding the output of `check` lists with any entries, and its count. */
@@ -109,9 +132,9 @@ function counts(out: string): Record<string, number> {
 }
 
 /** Run `check` over a project of the document, the test file and what else it holds, without a tracker. */
-export function check(document: string, tests = '', extra: Extra = {}): Record<string, number> {
-  const run = spawnSync(process.execPath, [CLI, 'check', '--offline'], { cwd: project(document, tests, undefined, extra), encoding: 'utf8' });
-  return counts(run.stdout);
+export async function check(document: string, tests = '', extra: Extra = {}): Promise<Record<string, number>> {
+  const done = await spawned(process.execPath, [CLI, 'check', '--offline'], { cwd: await project(document, tests, undefined, extra) });
+  return counts(done.stdout);
 }
 
 /** Run `check` over a project whose GitHub tracker holds `issues`, each number with its state. */
@@ -125,7 +148,7 @@ export async function checkTracked(document: string, tests: string, issues: Reco
   await new Promise<void>((resolve) => server.listen(0, '127.0.0.1', resolve));
   try {
     const host = `http://127.0.0.1:${(server.address() as { port: number }).port}`;
-    const dir = project(document, tests, { kind: 'github', repo: 'acme/app', host });
+    const dir = await project(document, tests, { kind: 'github', repo: 'acme/app', host });
     const child = spawn(process.execPath, [CLI, 'check'], { cwd: dir, env: { ...process.env, GITHUB_TOKEN: 'token' } });
     let out = '';
     child.stdout.on('data', (chunk) => (out += chunk));

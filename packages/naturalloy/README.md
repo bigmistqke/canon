@@ -53,7 +53,7 @@ A time phrase at the start of a sentence covers the whole sentence. Where it cov
 
 The analyzer keeps integers in a fixed bit width and wraps a number that leaves it. So a comparison of integers opens with "in integers that wrap around at the analyzer's bit width". A count, a sum or a division gets a name, `number_1`. The words after "where" say what it is: "the number of values of owner_1 such that c is on owner_1". A division says how it rounds and what dividing by zero gives.
 
-Whatever cannot be said without loss is refused with the reason, never skipped: a name with no reading, a reading that leaves out a variable the formula gives, a comparison of sides that Alloy does not compare, a construct with no words. Among those constructs are a variable of several things, an arrow with a multiplicity and a shift. Two sets compared are said member by member. [Issue #29](https://github.com/bigmistqke/skills/issues/29) lists, production by production of Alloy's grammar, what is said and what is not yet.
+Whatever cannot be said without loss is refused with the reason, never skipped: a name with no reading, a reading that leaves out a variable the formula gives, a comparison of sides that Alloy does not compare, a construct with no words. Among those constructs are a variable of several things, an arrow with a multiplicity and a shift. Two sets compared are said member by member. [Issue #29](https://github.com/bigmistqke/canon/issues/29) lists, production by production of Alloy's grammar, what is said and what is not yet.
 
 ## Links
 

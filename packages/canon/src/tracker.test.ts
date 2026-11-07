@@ -6,7 +6,7 @@
  * This file tests the checker's own tooling, not a project's canon, so it lives
  * outside any declared suite directory and carries no `@canon` tag.
  */
-import { spawn, spawnSync } from 'node:child_process';
+import { spawn } from 'node:child_process';
 import { createServer, type IncomingMessage, type Server } from 'node:http';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
@@ -14,6 +14,20 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { issueRefs, trackerProblems } from './tracker.ts';
+
+/** Run `command` with `args` beside the test and wait for it to close: its exit code, and what it printed. */
+function spawned(command: string, args: string[], options: { cwd: string; env?: NodeJS.ProcessEnv }): Promise<{ status: number | null; stdout: string; stderr: string }> {
+  return new Promise((resolve, reject) => {
+    const child = spawn(command, args, { cwd: options.cwd, env: options.env ?? process.env });
+    let stdout = '';
+    let stderr = '';
+    child.stdout.setEncoding('utf8').on('data', (chunk: string) => (stdout += chunk));
+    child.stderr.setEncoding('utf8').on('data', (chunk: string) => (stderr += chunk));
+    child.on('error', reject);
+    child.on('close', status => resolve({ status, stdout, stderr }));
+    child.stdin.end();
+  });
+}
 
 const CLI = join(dirname(fileURLToPath(import.meta.url)), 'cli.ts');
 
@@ -95,7 +109,7 @@ async function check(
   writeFileSync(join(dir, 'CANON.md'), CANON(issues));
   writeFileSync(join(dir, 'test', 'canon', 'a.test.ts'), TEST(issues.length));
   const env = { ...process.env, GITHUB_TOKEN: '', GITLAB_TOKEN: '', ...options.env };
-  spawnSync(process.execPath, [CLI, 'generate'], { cwd: dir, env });
+  await spawned(process.execPath, [CLI, 'generate'], { cwd: dir, env });
   const child = spawn(process.execPath, [CLI, 'check', ...(options.args ?? [])], { cwd: dir, env });
   let out = '';
   child.stdout.on('data', (chunk) => (out += chunk));
