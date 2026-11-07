@@ -185,7 +185,7 @@ describe('rename', () => {
    */
   it('rewrites the index of the document', async () => {
     const text = read(await renamed(), 'CANON.md');
-    expect(text).toContain('- [`@spec a-single-leaf`](#spec-a-single-leaf) — A leaf says one thing.');
+    expect(text).toContain('  - [`@spec a-single-leaf`](#spec-a-single-leaf)\n');
     expect(text).not.toContain('(#spec-a-leaf)');
   });
 

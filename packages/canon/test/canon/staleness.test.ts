@@ -249,13 +249,13 @@ describe('an index', () => {
   });
 
   /**
-   * @canon spec-a-statement-with-a-list-keeps-its-lines
+   * @canon spec-the-index-lists-each-unit-by-its-kind-and-stem-alone
    */
-  it('shows a statement with a list under its entry, with its lines', async () => {
+  it('lists each unit by a link to its kind and stem, under the unit it sits in, with no statement', async () => {
     const SPEC = ['@', 'spec'].join('');
     const listed = await generated(canon(`\n#### ${SPEC} a-rule\n\n> when these hold:\n> - a holds\n> - b holds\n>\n> then c holds.\n`));
-    expect(listed).toContain('  - [`@spec a-rule`](#spec-a-rule) —\n    > when these hold:\n    > - a holds\n    > - b holds\n    >\n    > then c holds.');
-    expect(listed).toContain('- [`@axiom a-program-means-one-thing`](#axiom-a-program-means-one-thing) — A program means one thing.');
+    const index = /<!-- toc:begin[^\n]*\n([^]*?)<!-- toc:end -->/.exec(listed)?.[1];
+    expect(index).toBe('- [`@axiom a-program-means-one-thing`](#axiom-a-program-means-one-thing)\n  - [`@spec a-rule`](#spec-a-rule)\n');
   });
 });
 

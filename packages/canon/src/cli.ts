@@ -353,14 +353,8 @@ function tocOf(src: string): string {
     for (let p = u.parent; p; p = byId.get(p)?.parent) n++;
     return n;
   };
-  const rows = units.map(u => {
-    const indent = '  '.repeat(depth(u));
-    const entry = `${indent}- [\`${u.label}\`](#${u.id})`;
-    if (!u.statement) return entry;
-    if (!u.statement.includes('\n')) return `${entry} — ${u.statement}`;
-    // A statement with a list keeps its lines under the entry, so the indentation still says where each part ends.
-    return [`${entry} —`, ...u.statement.split('\n').map(line => `${indent}  >${line === '' ? '' : ` ${line}`}`)].join('\n');
-  });
+  // A line for each unit, by its kind and stem: the statements are for show and tree to print.
+  const rows = units.map(u => `${'  '.repeat(depth(u))}- [\`${u.label}\`](#${u.id})`);
   return rows.join('\n');
 }
 
