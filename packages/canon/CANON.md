@@ -550,7 +550,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec show-reads-an-id-as-the-heading-or-the-tree-writes-it`](#spec-show-reads-an-id-as-the-heading-or-the-tree-writes-it) — `show` reads a unit as its id, as its kind and stem after an `@`, or in words as the tree writes it.
     - [`@spec show-of-a-name-that-names-no-unit-fails-the-run`](#spec-show-of-a-name-that-names-no-unit-fails-the-run) — When a name on the command line of `show` names no unit, the checker says so, and the run exits with code 2.
   - [`@spec show-with-a-part-prints-only-that-part-of-each-unit`](#spec-show-with-a-part-prints-only-that-part-of-each-unit) — When the command line of `show` names parts of a unit, `show` prints where each unit starts and the id of the unit. Below that, it prints only the parts named: the statement, or the body.
-    - [`@spec show-with-statement-prints-the-statement-as-it-reads`](#spec-show-with-statement-prints-the-statement-as-it-reads) — `show --statement` prints the statement of a unit without the marks of its quote, and each link as its words.
+    - [`@spec show-with-statement-prints-the-statement-as-it-reads`](#spec-show-with-statement-prints-the-statement-as-it-reads) — `show --statement` prints the statement of a unit without the marks of its quote, and each link and each *term mark* as its words.
     - [`@spec show-with-body-prints-the-own-text-after-the-statement`](#spec-show-with-body-prints-the-own-text-after-the-statement) — `show --body` prints the *own text* of a unit after its statement, as the document writes it.
     - [`@spec show-of-a-part-a-unit-lacks-says-none`](#spec-show-of-a-part-a-unit-lacks-says-none) — When a unit has no part of those named, `show` prints `none` under its id.
   - [`@spec find-lists-the-units-whose-text-holds-every-word-it-is-given`](#spec-find-lists-the-units-whose-text-holds-every-word-it-is-given) — `find` prints a line for each unit whose id or own text holds every word on its command line. The line holds the document and the line where the unit starts, its id and its statement. A filter on the command line changes which units it lists.
@@ -4496,9 +4496,9 @@ This follows because a reader who wants one part of a unit would otherwise cut i
 
 #### @spec show-with-statement-prints-the-statement-as-it-reads
 
-> `show --statement` prints the statement of a unit without the marks of its quote, and each link as its words.
+> `show --statement` prints the statement of a unit without the marks of its quote, and each link and each *term mark* as its words.
 
-This follows because a reader asks for the statement to read what the unit claims. The marks of the quote and the targets of the links are for the document, and stand between the reader and the words.
+This follows because a reader asks for the statement to read what the unit claims. The marks of the quote, the targets of the links and the asterisks of the term marks are for the document. They stand between the reader and the words. Asterisks in a code span are the code's own, and stay.
 
 #### @spec show-with-body-prints-the-own-text-after-the-statement
 

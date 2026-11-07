@@ -211,6 +211,24 @@ target: browser
   });
 
   /**
+   * @canon spec-show-with-statement-prints-the-statement-as-it-reads
+   */
+  it('prints each term mark as its words, and keeps the asterisks of a code span', async () => {
+    const document = canon(`
+### @spec a-marked-claim
+
+> A *target* is where the claim holds, written \`*target*\` in a document.
+
+## @term target
+
+> A target is where a program runs.
+`);
+    const { stdout, status } = await run(await scratch(document, ''), 'show', 'spec-a-marked-claim', '--statement');
+    expect(status).toBe(0);
+    expect(stdout).toContain('\nA target is where the claim holds, written `*target*` in a document.\n');
+  });
+
+  /**
    * @canon spec-show-with-body-prints-the-own-text-after-the-statement
    */
   it('prints the own text after the statement, as written, and no unit around it', async () => {

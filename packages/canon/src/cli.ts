@@ -2272,9 +2272,16 @@ interface Parts {
   body: boolean;
 }
 
+/** A line of a statement as it reads: each link and each term mark as its words, and each code span as written. */
+const asWords = (line: string): string =>
+  line
+    .split(/(`+[^`]*`+)/)
+    .map((part, i) => (i % 2 === 1 ? part : part.replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').replace(TERM_MARK, (_, words: string) => words)))
+    .join('');
+
 /**
  * A unit's own text split at its statement: the statement as it reads, its
- * lines without the quote marks and each link as its words, and the body
+ * lines without the quote marks and each link and term mark as its words, and the body
  * after it as written. Generated regions' markers say nothing of the unit.
  */
 function partsOf(own: string): { statement?: string; body?: string } {
@@ -2284,7 +2291,7 @@ function partsOf(own: string): { statement?: string; body?: string } {
   let after = 0;
   if (first !== -1) {
     for (after = first; after < lines.length && lines[after]!.startsWith('>'); after++) {
-      quote.push(lines[after]!.replace(/^>[ \t]?/, '').replace(/\[([^\]]*)\]\([^)]*\)/g, '$1').trimEnd());
+      quote.push(asWords(lines[after]!.replace(/^>[ \t]?/, '')).trimEnd());
     }
   }
   while (quote.at(-1) === '') quote.pop();
