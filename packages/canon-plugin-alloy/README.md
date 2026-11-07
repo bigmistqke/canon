@@ -33,10 +33,10 @@ A reading table has the headers `reading`, `holds` and `does not hold`, and a no
 ```md
 | signature | noun               |
 | --------- | ------------------ |
-| Installed | [installed plugin] |
+| Installed | installed plugin |
 ```
 
-A signature named after the term that declares it needs no noun row: `sig Owner`, declared in the term `owner`, has the noun `[owner]`, which links to that term. `canon generate` lines up the columns of each table. A `readings` fence holds the same lines naturalloy reads, `Ran: {1} has run | {1} has not run` and `noun Owner: owner`, and the plugin reads it too.
+A noun links to the term that holds its row. A signature named after the term that declares it needs no noun row: `sig Owner`, declared in the term `owner`, has the noun `owner`. `canon check` reports a word that a reading links to a term with no form that spells it (`undefined`). `canon generate` lines up the columns of each table. A `readings` fence holds the same lines naturalloy reads, `Ran: {1} has run | {1} has not run` and `noun Owner: owner`, and the plugin reads it too.
 
 The words come from [naturalloy](../naturalloy), which says a formula only in words that translate it without loss and refuses one it cannot say that way. Its README says how a formula reads.
 

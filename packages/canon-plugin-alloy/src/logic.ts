@@ -13,6 +13,7 @@ import { listReadings, rewordReading } from './readings.ts';
 import type { Plugin } from '@bigmistqke/canon/plugin';
 import * as statements from './statements.ts';
 import { alignTables } from './tables.ts';
+import { checkDefinedWords } from './defined.ts';
 import type { Context } from './statements.ts';
 import type { Readings } from '@bigmistqke/naturalloy';
 import { checkLoneFormulas, checkWords } from './words.ts';
@@ -175,7 +176,7 @@ export function checkDocumentWords(documents: string[], root: string): number {
     if (!existsSync(file)) continue;
     const src = readFileSync(file, 'utf8');
     const context = contextFor(file, root).map(c => c.src);
-    for (const finding of [...checkWords(src, context), ...checkLoneFormulas(src, context)]) {
+    for (const finding of [...checkWords(src, context), ...checkDefinedWords(src, file), ...checkLoneFormulas(src, context)]) {
       code = 1;
       console.log(`${doc}: ${finding.unit}: ${finding.kind}: ${finding.message}`);
     }

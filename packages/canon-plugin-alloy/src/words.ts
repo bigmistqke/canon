@@ -21,7 +21,7 @@ export interface Word {
   unit: string;
 }
 
-export type WordFindingKind = 'undeclared' | 'misplaced' | 'apart' | 'unused';
+export type WordFindingKind = 'undeclared' | 'misplaced' | 'apart' | 'unused' | 'undefined';
 
 export interface WordFinding {
   unit: string;

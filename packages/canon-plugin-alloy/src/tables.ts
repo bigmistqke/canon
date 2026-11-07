@@ -61,10 +61,17 @@ export function tablesIn(src: string, units: Unit[] = readUnits(src)): Table[] {
   return tables;
 }
 
+/** A noun as a noun table means it: with no word in brackets, all of it but its article links to the term that holds the row. */
+const linked = (noun: string): string => {
+  if (noun.includes('[') || noun === '') return noun;
+  const m = /^(an?\s+)?(.+)$/.exec(noun) as RegExpExecArray;
+  return `${m[1] ?? ''}[${m[2]}]`;
+};
+
 /** The `readings` line a row says. */
 export function lineOf(kind: TableKind, cells: string[]): string {
   const [key = '', first = '', second = ''] = cells;
-  if (kind === 'noun') return `noun ${key}: ${first}`;
+  if (kind === 'noun') return `noun ${key}: ${linked(first)}`;
   return second === '' ? `${key}: ${first}` : `${key}: ${first} | ${second}`;
 }
 

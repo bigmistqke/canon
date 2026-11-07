@@ -14,6 +14,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
 - [`@term alloy-plugin`](#term-alloy-plugin)
 - [`@term generated-statement`](#term-generated-statement)
 - [`@term word`](#term-word)
+- [`@term signature`](#term-signature)
 - [`@term scenario`](#term-scenario)
 - [`@term search`](#term-search)
 - [`@term group`](#term-group)
@@ -86,6 +87,7 @@ How the Alloy plugin of the canon checker behaves now, and why. It is the canon 
   - [`@spec a-word-declared-in-an-extended-document-is-declared`](#spec-a-word-declared-in-an-extended-document-is-declared)
   - [`@spec a-row-of-a-reading-table-is-a-reading`](#spec-a-row-of-a-reading-table-is-a-reading)
   - [`@spec a-row-of-a-noun-table-gives-the-noun-of-its-signature`](#spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature)
+  - [`@spec check-reports-a-linked-word-that-no-form-of-its-term-spells`](#spec-check-reports-a-linked-word-that-no-form-of-its-term-spells)
   - [`@spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun`](#spec-a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun)
 - [`@axiom the-claims-of-a-canon-never-contradict-each-other`](#axiom-the-claims-of-a-canon-never-contradict-each-other)
   - [`@spec a-formula-with-no-keyword-is-a-claim-to-hold`](#spec-a-formula-with-no-keyword-is-a-claim-to-hold)
@@ -206,17 +208,17 @@ A document asks for it in its frontmatter. The commands `generate`, `check` and 
 one sig GenerateCommand, CheckCommand, LogicCommand in Command {}
 ```
 
-| signature       | noun               |
-| --------------- | ------------------ |
-| GenerateCommand | [generate command] |
-| CheckCommand    | [check command]    |
-| LogicCommand    | [logic command]    |
+| signature       | noun             |
+| --------------- | ---------------- |
+| GenerateCommand | generate command |
+| CheckCommand    | check command    |
+| LogicCommand    | logic command    |
 
-| reading         | holds                              | does not hold                          |
-| --------------- | ---------------------------------- | -------------------------------------- |
-| LogicCommand    | {1} is the [command] `alloy:logic` | {1} is not the [command] `alloy:logic` |
-| GenerateCommand | {1} is the [command] `generate`    | {1} is not the [command] `generate`    |
-| CheckCommand    | {1} is the [command] `check`       | {1} is not the [command] `check`       |
+| reading         | holds                                                              | does not hold                                                          |
+| --------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| LogicCommand    | {1} is the [command](../canon/CANON.md#term-command) `alloy:logic` | {1} is not the [command](../canon/CANON.md#term-command) `alloy:logic` |
+| GenerateCommand | {1} is the [command](../canon/CANON.md#term-command) `generate`    | {1} is not the [command](../canon/CANON.md#term-command) `generate`    |
+| CheckCommand    | {1} is the [command](../canon/CANON.md#term-command) `check`       | {1} is not the [command](../canon/CANON.md#term-command) `check`       |
 
 </details>
 
@@ -273,20 +275,15 @@ A reading says a word in the language of the project. The words of a document ar
 
 ```alloy vocabulary
 sig Word {}
-sig Signature, Field, Predicate, Undeclared, Misplaced, Apart, Unused, Flagged in Word {}
+sig Field, Predicate, Undeclared, Misplaced, Apart, Unused, Flagged in Word {}
 fact word_kinds { Word = Signature + Field + Predicate }
 one sig Introduce { rel: Unit -> Word }
 one sig Voice { rel: Unit -> Word }
 one sig Rely { rel: Unit -> Word }
 ```
 
-| signature | noun      |
-| --------- | --------- |
-| Signature | signature |
-
 | reading       | holds                                                            | does not hold                                                            |
 | ------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Signature     | {1} is a signature                                               | {1} is not a signature                                                   |
 | Field         | {1} is a field of a signature                                    | {1} is not a field of a signature                                        |
 | Predicate     | {1} is a predicate                                               | {1} is not a predicate                                                   |
 | Undeclared    | {1} is said by a reading and declared by nothing                 | {1} is said by no reading or is declared                                 |
@@ -297,6 +294,26 @@ one sig Rely { rel: Unit -> Word }
 | Introduce.rel | {1} declares {2}                                                 | {1} does not declare {2}                                                 |
 | Voice.rel     | a reading in {1} says {2}                                        | no reading in {1} says {2}                                               |
 | Rely.rel      | a claim, a definition or a fact of {1} uses {2}                  | no claim, definition or fact of {1} uses {2}                             |
+
+</details>
+
+
+### @term signature
+
+> A signature is a set of things that a model declares with `sig`, such as `sig Unit {}`.
+
+A signature declared `in` another is a part of that other, and one that `extends` another is a part apart from its siblings. A noun names the things of a signature in a statement.
+
+<details>
+<summary>Alloy</summary>
+
+```alloy vocabulary
+sig Signature in Word {}
+```
+
+| reading   | holds              | does not hold          |
+| --------- | ------------------ | ---------------------- |
+| Signature | {1} is a signature | {1} is not a signature |
 
 </details>
 
@@ -459,11 +476,11 @@ A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, 
 ```md
 | signature | noun               |
 | --------- | ------------------ |
-| Installed | [installed plugin] |
-| Missing   | [missing plugin]   |
+| Installed | installed plugin |
+| Missing   | missing plugin   |
 ```
 
-A row says what a `noun` line says, `noun Installed: [installed plugin]`. A signature named after the term that declares it needs no row: its noun is the term.
+A row says what a `noun` line says with the noun in brackets, `noun Installed: [installed plugin]`: the noun links to the term that holds the row. A signature named after the term that declares it needs no row: its noun is the term.
 
 ### @term intent
 
@@ -745,7 +762,7 @@ all u: Unit | u in Unsayable implies u in Explained
 >
 >   the run does not exit with code 0 when all of these hold:
 >   - the run asks for command_1
->   - command_1 is the [command](#term-alloy-plugin) `generate` or is the command `check`
+>   - command_1 is the command `generate` or is the command `check`
 >   - the verbalizer fails on the formula of the unit with a fault of its own
 <!-- statement-spec-a-fault-of-the-verbalizer-fails-the-run-and-is-not-explained-as-unsayable:end -->
 
@@ -1420,7 +1437,7 @@ This follows because a reader who meets the word follows it to what it means, an
 > when all of these hold:
 > - the project lists document_1 among the documents it checks
 > - the project does not list document_2 among the documents it checks
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_2 [holds](../canon/CANON.md#term-hold) the unit
 >
 > then [checker](../canon/CANON.md#term-checker) does not write the *statement* of the unit when it generates.
@@ -1443,7 +1460,7 @@ all d: Document, e: Document, u: Unit | (d in Checked and e not in Checked and d
 > For every [document_1](../canon/CANON.md#term-document), every document_2, every [unit_1](../canon/CANON.md#term-unit), every unit_2 and every *word*:
 >
 > the word is said by no reading or is declared when all of these hold:
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_1 [holds](../canon/CANON.md#term-hold) unit_1
 > - a reading in unit_1 says the word
 > - document_2 holds unit_2
@@ -1469,9 +1486,15 @@ This follows because a statement is said with the readings of its words, whereve
 
 ### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
 
-> The checker reads each row of a *noun table* as the noun of its signature.
+> The checker reads each row of a *noun table* as the noun of its signature, linked to the term of the unit that holds the row. The article of a noun, `an hour`, is no part of the link.
 
-This follows because the noun of a signature names its things in a statement, wherever the document writes it.
+This follows because the noun of a signature names its things in a statement, wherever the document writes it. A signature is declared in the term that defines it, so its noun links there.
+
+### @spec check-reports-a-linked-word-that-no-form-of-its-term-spells
+
+> When a reading links a word to a term that has no [form](../canon/CANON.md#term-form) the word spells, `check` reports the word as `undefined`. A word in brackets links to the term of the unit that holds the reading, or to the term its link names.
+
+This follows because a generated statement writes the word as a link to that term, and the reader who follows it looks for what the word means. A term that has no form the word spells does not say it. Link the word the term defines: `{1} [sits] in {2}` links `sits`, a form of the term `sit`. A noun needs no such check: its signature is declared in the term that defines it, and the noun links there.
 
 ### @spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun
 
@@ -1930,7 +1953,7 @@ This follows because a check that did not run found nothing, and the author must
 >
 > the analyzer is asked to hold the formula of the unit when all of these hold:
 > - the project lists document_1 among the documents it checks
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_2 [holds](../canon/CANON.md#term-hold) the unit
 > - the unit holds a formula with no keyword
 <!-- statement-spec-the-claims-of-an-extended-document-join-the-model:end -->
@@ -1956,7 +1979,7 @@ This follows because the extended document is checked where it lives. Asking aga
 
 <!-- statement-axiom-a-formula-can-be-held-against-the-other-formulas:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - [checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a signature when all of these hold:
+> - [checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a *signature* when all of these hold:
 >   - the unit holds a formula
 >   - the unit is not a [term](../canon/CANON.md#term-term)
 >   - no other formula can contradict the formula of the unit
@@ -1981,7 +2004,7 @@ So the checker reports a formula that no other formula can contradict, and only 
 <!-- statement-scenario-1-axiom-a-formula-can-be-held-against-the-other-formulas:begin — generated by `canon generate`; edits are overwritten -->
 > It must be possible that:
 >
-> For some [unit](../canon/CANON.md#term-unit) and some signature:
+> For some [unit](../canon/CANON.md#term-unit) and some *signature*:
 >
 > all of these hold:
 > - the unit holds a formula
@@ -2001,7 +2024,7 @@ some u: Unit, w: Signature | u in Logical and u->w in Rely.rel and u->w not in E
 #### @spec a-formula-that-no-other-formula-can-contradict-is-reported
 
 <!-- statement-spec-a-formula-that-no-other-formula-can-contradict-is-reported:begin — generated by `canon generate`; edits are overwritten -->
-> [Checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a signature when all of these hold:
+> [Checker](../canon/CANON.md#term-checker) reports the formula of a [unit](../canon/CANON.md#term-unit) as lone on a *signature* when all of these hold:
 > - the unit holds a formula
 > - the unit is not a [term](../canon/CANON.md#term-term)
 > - no other formula can contradict the formula of the unit
@@ -2021,7 +2044,7 @@ all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (so
 ##### @spec a-formula-that-is-lone-on-a-signature-is-reported
 
 <!-- statement-spec-a-formula-that-is-lone-on-a-signature-is-reported:begin — generated by `canon generate`; edits are overwritten -->
-> For every [unit](../canon/CANON.md#term-unit) and every signature:
+> For every [unit](../canon/CANON.md#term-unit) and every *signature*:
 >
 > [checker](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the signature when all of these hold:
 > - the unit holds a formula
@@ -2138,7 +2161,7 @@ all u: Unit, v: Unit, w: Word | v->w in Picture.rel implies u->w not in Expose.r
 > For every [document_1](../canon/CANON.md#term-document), every document_2, every [unit_1](../canon/CANON.md#term-unit), every unit_2 and every *word*:
 >
 > [checker](../canon/CANON.md#term-checker) does not report the formula of unit_1 as lone on the word when all of these hold:
-> - document_2 is [context](../canon/CANON.md#term-extension) for document_1
+> - document_2 is [context](../canon/CANON.md#term-context) for document_1
 > - document_1 [holds](../canon/CANON.md#term-hold) unit_1
 > - document_2 holds unit_2
 > - a block of unit_2 names the word outside its declaration

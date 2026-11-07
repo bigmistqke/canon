@@ -3,6 +3,7 @@
  * takes from the term that declares it.
  */
 import { describe, expect, it } from 'vitest';
+import { checkDefinedWords } from '../../src/defined.ts';
 import { states, write } from '../../src/statements.ts';
 
 /** The tag of an axiom, spelled apart so the checker does not read this file's templates as citations. */
@@ -62,10 +63,10 @@ describe('a noun table', () => {
   /**
    * @canon spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature
    */
-  it('gives its signature the noun of its row', () => {
+  it('gives its signature the noun of its row, linked to the term that holds the row', () => {
     const statement = statementOf(doc(`| signature | noun |\n|---|---|\n| Node | vertex |\n\n${READING_TABLE}`));
-    expect(statement).toContain('vertex');
-    expect(statement).not.toContain('node');
+    expect(statement).toContain('[vertex](#term-node)');
+    expect(statement).not.toMatch(/\bnode\b(?!\))/);
   });
 });
 
@@ -93,5 +94,37 @@ describe('a signature named after the term that declares it', () => {
    */
   it('keeps the noun that a noun table gives', () => {
     expect(statementOf(doc(`| signature | noun |\n|---|---|\n| Node | [vertex] |\n\n${READING_TABLE}`))).toContain('vertex');
+  });
+});
+
+describe('a word that a reading links', () => {
+  const reading = (row: string): string => doc(`| reading | holds | does not hold |\n|---|---|---|\n${row}`);
+
+  /**
+   * @canon spec-check-reports-a-linked-word-that-no-form-of-its-term-spells
+   */
+  it('is reported when no form of the term it links to spells it', () => {
+    const found = checkDefinedWords(reading('| Done | {1} is a [finished thing] | {1} is not a [finished thing] |'));
+    expect(found.map(f => [f.unit, f.kind])).toEqual([
+      ['term-node', 'undefined'],
+      ['term-node', 'undefined']
+    ]);
+    expect(found[0]?.message).toContain('"finished thing" links to #term-node');
+  });
+
+  /**
+   * @canon spec-check-reports-a-linked-word-that-no-form-of-its-term-spells
+   */
+  it('is not reported when it spells a form of its term, or of the term its link names', () => {
+    expect(checkDefinedWords(reading('| Done | {1} is a [node] that is done | {1} is a [node] that is not done |'))).toEqual([]);
+    const linked = `${reading('| Done | {1} is a [root](#axiom-a-root) | {1} is no [node] |')}`;
+    expect(checkDefinedWords(linked).map(f => f.message)).toEqual(['"root" links to #axiom-a-root, which is no term']);
+  });
+
+  /**
+   * @canon spec-check-reports-a-linked-word-that-no-form-of-its-term-spells
+   */
+  it('does not look at a noun', () => {
+    expect(checkDefinedWords(doc(`| signature | noun |\n|---|---|\n| Node | [vertex] |\n\n${READING_TABLE}`))).toEqual([]);
   });
 });
