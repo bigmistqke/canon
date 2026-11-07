@@ -589,8 +589,10 @@ some f: Quantifier | f in VariableWithCondition and f in NothingToAttach
 > - the quantifier does not have several conditions, one of which begins with a time phrase
 <!-- statement-term-fit:end -->
 
-Word: verb
-- third person: fits
+| grammar      |      |
+| ------------ | ---- |
+| type         | verb |
+| third person | fits |
 
 A noun phrase such as `c is on no owner` is the shortest way to say a quantifier. In five cases that short form misleads, and the *verbalizer* says the quantifier in full. A reading that says the variable twice would need two phrases for one thing. A phrase with nothing named beside it, as in `a cleanup has run`, reads as a rule about every cleanup. A condition about something else would read as more about the variable.
 
@@ -608,15 +610,19 @@ fits: {1} [fits] a noun phrase | {1} does not [fit] a noun phrase
 
 > A predicate call is a formula that names a predicate and gives its arguments.
 
-Word: noun
-- also: call
+| grammar |      |
+| ------- | ---- |
+| type    | noun |
+| also    | call |
 
 ### @term definition-passage
 
 > A definition is a predicate with a body that the verbalizer says as what its name means exactly when the body holds.
 
-Word: noun
-- also: definition
+| grammar |            |
+| ------- | ---------- |
+| type    | noun       |
+| also    | definition |
 
 ```alloy vocabulary
 sig Definition {}
@@ -688,8 +694,10 @@ some f: Definition | f in OrInsideKind and f in NoKindFirst
 > - an option of one kind that holds a comma
 <!-- statement-term-by-kind:end -->
 
-Word: adjective
-- also: kind by kind
+| grammar |              |
+| ------- | ------------ |
+| type    | adjective    |
+| also    | kind by kind |
 
 A definition by cases reads best as one noun phrase per kind, as in `a spec that cites no axiom and cites no spec`. That shape is safe only when each alternative turns into `a <kind> that …` without changing what it says. The phrase opens with the kind, so each alternative must open with its kind. It describes the subject, so each alternative must speak of the subject, not of another unit.
 
@@ -713,8 +721,10 @@ byKind: {1} can be said [kind by kind] | {1} cannot be said [kind by kind]
 
 > A series is a run of clauses, or a rule of two sides. The verbalizer says it as a sentence, as bullets or on one line.
 
-Word: noun
-- also: list
+| grammar |      |
+| ------- | ---- |
+| type    | noun |
+| also    | list |
 
 A list becomes a sentence only if eight things hold:
 

@@ -464,8 +464,10 @@ CheckCommand: {1} is the [command] `check` | {1} is not the [command] `check`
 
 > A generated statement is the statement of a unit that holds a formula, said from that formula between the markers of a generated region.
 
-Word: noun
-- also: statement
+| grammar |           |
+| ------- | --------- |
+| type    | noun      |
+| also    | statement |
 
 A person may write the statement instead, and the checker never overwrites it. A document keeps readings when it holds a table of them: only then does the checker say statements.
 
@@ -607,8 +609,10 @@ Together.rel: the analyzer is asked about {1} together with {2} | the analyzer i
 
 > A formula is lone on a signature when it uses the signature, no other unit names the signature, and no scenario names it.
 
-Word: adjective
-- also: lone
+| grammar |           |
+| ------- | --------- |
+| type    | adjective |
+| also    | lone      |
 
 A unit names a signature when one of its blocks writes the name outside the declaration of that signature. A claim, a definition, a fact, the type of a field and the parent of another signature all name it. A unit of a document that the document extends names it too.
 

@@ -241,8 +241,8 @@ Done: {1} is [finished] | {1} is not [finished]
   /**
    * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
    */
-  it('is a term mark when it spells a form that the word list of the term holds', () => {
-    const listed = TERMS.replace('> A node is done when it has finished.\n', '> A node is done when it has finished.\n\nWord: adjective\n- also: finished\n');
+  it('is a term mark when it spells a form that the grammar table of the term holds', () => {
+    const listed = TERMS.replace('> A node is done when it has finished.\n', '> A node is done when it has finished.\n\n| grammar | |\n|---|---|\n| type | adjective |\n| also | finished |\n');
     const statement = write(listed).src.split('\n').filter(l => l.startsWith('>')).join('\n');
     expect(statement).toContain('*finished*');
   });

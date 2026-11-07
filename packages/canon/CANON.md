@@ -61,7 +61,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
   > - a pointer that names no target
   > - a term mark that names no term
   > - a form of a term that spells the stem or a form of another term of its document
-  > - a word list that names a part of speech or a role that the checker does not know
+  > - a grammar table that names a type or a role that the checker does not know, names a role in two rows, or has no row `type`
 - [`@term uncitation`](#term-uncitation) — An uncitation is a finding for a test in a declared suite that carries no tag.
 - [`@term misaiming`](#term-misaiming) — A misaiming is a finding for a test in a declared suite that checks a unit that is no claim.
 - [`@term overreach`](#term-overreach) — An overreach is a finding for a test that checks a claim another claim refines.
@@ -106,8 +106,8 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term source`](#term-source) — A source is a module in the sources that the canon field of the project names.
 - [`@term code-span`](#term-code-span) — A code span is text between backticks in a document.
 - [`@term term-mark`](#term-term-mark) — A term mark is text between two single asterisks in the prose of a document, on its own or as the text of a link: `*tracker*`, `[*checker*](../canon/CANON.md#term-checker)`.
-- [`@term form`](#term-form) — A form of a term is a spelling that names the term: its stem as words, or a spelling its word list holds.
-- [`@term word-list`](#term-word-list) — A word list is a line `Word:` in the own text of a term, with the items of the list right under it. The line names the part of speech of the term, and each item gives a role and a spelling.
+- [`@term form`](#term-form) — A form of a term is a spelling that names the term: its stem as words, or a spelling its grammar table holds.
+- [`@term grammar-table`](#term-grammar-table) — A grammar table is a table in the own text of a term whose first header is `grammar` and whose second header is empty. Its row `type` names the part of speech of the term, and each other row gives a role and the spellings of that role, separated by commas.
 - [`@term comment`](#term-comment) — A comment is a comment in a source.
 - [`@term tag`](#term-tag) — A tag is a line of the documentation comment of a test.
 - [`@term carry`](#term-carry) — A test carries each tag in the documentation comment of the test.
@@ -279,14 +279,14 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec a-pointer-names-a-target`](#spec-a-pointer-names-a-target) — When a *pointer* *names* no *target*, *checker* reports a *rotting* for the pointer.
       - [`@bug a-file-pointer-is-not-checked`](#bug-a-file-pointer-is-not-checked) — When a file pointer names no target, checker reports no rotting for the file pointer.
     - [`@spec a-term-mark-names-a-term`](#spec-a-term-mark-names-a-term) — When a *term mark* *names* no *term*, *checker* reports a *rotting* for the term mark.
-    - [`@spec a-word-list-names-a-part-of-speech-and-its-roles`](#spec-a-word-list-names-a-part-of-speech-and-its-roles) — When a word list names a part of speech or a role the checker does not know, it reports a rotting. The roles of a part of speech are those its *word list* term gives.
+    - [`@spec a-grammar-table-names-a-type-and-its-roles`](#spec-a-grammar-table-names-a-type-and-its-roles) — When a grammar table names a type or a role the checker does not know, names a role in two rows, or has no row `type`, the checker reports a rotting. The roles of a type are those its *grammar table* term gives.
     - [`@spec a-form-names-one-term`](#spec-a-form-names-one-term) — When a form of a term spells the stem or a form of another term, the checker reports a rotting for the form.
     - [`@spec a-term-mark-names-the-term-its-words-or-its-link-lead-to`](#spec-a-term-mark-names-the-term-its-words-or-its-link-lead-to) — A term mark names one term: the term of its own document that its words spell, or the term its link names.
       - [`@spec a-term-mark-names-the-term-whose-form-its-words-spell`](#spec-a-term-mark-names-the-term-whose-form-its-words-spell) — A term mark outside a link names the term of its document that has a *form* its words spell.
         - [`@spec a-term-mark-names-the-term-whose-stem-its-words-spell`](#spec-a-term-mark-names-the-term-whose-stem-its-words-spell) — A term mark outside a link names the term of its document whose stem its words spell, in lowercase and joined by hyphens: `*outdated tracking*` names `term-outdated-tracking`.
-        - [`@spec a-term-mark-names-the-term-whose-listed-form-its-words-spell`](#spec-a-term-mark-names-the-term-whose-listed-form-its-words-spell) — A term mark outside a link names the term whose word list gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its word list holds `- plural: outdated trackings`.
-        - [`@spec each-spelling-of-a-word-list-is-a-form-of-its-term`](#spec-each-spelling-of-a-word-list-is-a-form-of-its-term) — Each spelling in the word list of a term, whatever its role, is a form of the term.
-        - [`@spec a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form`](#spec-a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form) — A term with no word list has one form: the words of its stem.
+        - [`@spec a-term-mark-names-the-term-whose-listed-form-its-words-spell`](#spec-a-term-mark-names-the-term-whose-listed-form-its-words-spell) — A term mark outside a link names the term whose grammar table gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its grammar table holds `| plural | outdated trackings |`.
+        - [`@spec each-spelling-of-a-grammar-table-is-a-form-of-its-term`](#spec-each-spelling-of-a-grammar-table-is-a-form-of-its-term) — Each spelling in the grammar table of a term, whatever its role, is a form of the term.
+        - [`@spec a-term-with-no-grammar-table-has-the-words-of-its-stem-as-its-only-form`](#spec-a-term-with-no-grammar-table-has-the-words-of-its-stem-as-its-only-form) — A term with no grammar table has one form: the words of its stem.
         - [`@spec a-stem-wins-over-a-form-of-another-term`](#spec-a-stem-wins-over-a-form-of-another-term) — A term mark whose words spell the stem of one term and a form of another names the term of the stem.
         - [`@spec a-form-that-two-terms-share-names-neither`](#spec-a-form-that-two-terms-share-names-neither) — A term mark whose words spell a form of two terms, and the stem of neither, names no term.
       - [`@spec a-term-mark-names-its-term-whatever-its-case`](#spec-a-term-mark-names-its-term-whatever-its-case) — A term mark names the same term in capitals or not: `*Checker*` names `term-checker`.
@@ -549,6 +549,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec show-of-a-term-lists-its-forms`](#spec-show-of-a-term-lists-its-forms) — `show` lists each *form* of a term under "Forms:", the words of its stem first.
     - [`@spec show-reads-an-id-as-the-heading-or-the-tree-writes-it`](#spec-show-reads-an-id-as-the-heading-or-the-tree-writes-it) — `show` reads a unit as its id, as its kind and stem after an `@`, or in words as the tree writes it.
     - [`@spec show-of-a-name-that-names-no-unit-fails-the-run`](#spec-show-of-a-name-that-names-no-unit-fails-the-run) — When a name on the command line of `show` names no unit, the checker says so, and the run exits with code 2.
+  - [`@spec generate-aligns-the-columns-of-each-grammar-table`](#spec-generate-aligns-the-columns-of-each-grammar-table) — `generate` pads the cells of each *grammar table* so that the cells of a column are as wide as its widest cell, and the dashes under its headers as wide too. It changes no cell but by its spaces.
   - [`@spec show-with-a-part-prints-only-that-part-of-each-unit`](#spec-show-with-a-part-prints-only-that-part-of-each-unit) — When the command line of `show` names parts of a unit, `show` prints where each unit starts and the id of the unit. Below that, it prints only the parts named: the statement, or the body.
     - [`@spec show-with-statement-prints-the-statement-as-it-reads`](#spec-show-with-statement-prints-the-statement-as-it-reads) — `show --statement` prints the statement of a unit without the marks of its quote, and each link and each *term mark* as its words.
     - [`@spec show-with-body-prints-the-own-text-after-the-statement`](#spec-show-with-body-prints-the-own-text-after-the-statement) — `show --body` prints the *own text* of a unit after its statement, as the document writes it.
@@ -688,8 +689,10 @@ some c: Conflict, i: Issue, u, v: Unit | u != v and c->i in Name.issue and i in 
 
 > A unit is an axiom, a fact, a spec, an exception, a bug, a conflict, a thread or a term.
 
-Word: noun
-- plural: units
+| grammar |       |
+| ------- | ----- |
+| type    | noun  |
+| plural  | units |
 
 One entry of a canon: a heading with a kind and a stem, and a statement under it. A unit is an *axiom*, a *fact*, a *spec*, an *exception*, a *bug*, a *conflict*, a *thread* or a *term*.
 
@@ -820,8 +823,10 @@ The statement of a unit is the blockquote that opens its own text, whole.
 
 > A unit sits in the unit whose heading holds its own heading.
 
-Word: verb
-- third person: sits
+| grammar      |      |
+| ------------ | ---- |
+| type         | verb |
+| third person | sits |
 
 A unit sitting in another is nested there.
 
@@ -837,8 +842,10 @@ Sit.rel: {1} [sits in] {2} | {1} does not [sit in] {2}
 
 > A unit derives from each unit a link on its "Derives from:" line names.
 
-Word: verb
-- third person: derives
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | derives |
 
 That line comes right after the unit's statement.
 
@@ -864,9 +871,11 @@ A link elsewhere than the "Derives from:" line is a reference: it cites nothing.
 > unit_1 cites unit_2 exactly when unit_1 [sits in](#term-sit) unit_2 or [derives from](#term-derive) unit_2.
 <!-- statement-term-cite:end -->
 
-Word: verb
-- third person: cites
-- gerund: citing
+| grammar      |        |
+| ------------ | ------ |
+| type         | verb   |
+| third person | cites  |
+| gerund       | citing |
 
 A unit cites what it follows from, and it has two ways to say so. It *sits* in that unit by nesting under it, or *derives* from it on its "Derives from:" line. A *link* in the body does neither, so it cites nothing.
 
@@ -986,8 +995,10 @@ miscited: {1} is [miscited] | {1} is not [miscited]
 
 > A unit depends on a unit when the unit cites the unit. A unit depends on a unit when the unit cites a unit that depends on the unit.
 
-Word: verb
-- third person: depends
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | depends |
 
 A unit depends on each unit it follows from: what it cites, what those cite, and so on up. A unit can depend on itself: it follows from itself when it cites itself, or when what it cites leads back to it.
 
@@ -1137,7 +1148,7 @@ Untesting: [checker](#term-checker) reports an [untesting] for {1} | [checker](#
 > - a pointer that names no target
 > - a term mark that names no term
 > - a form of a term that spells the stem or a form of another term of its document
-> - a word list that names a part of speech or a role that the checker does not know
+> - a grammar table that names a type or a role that the checker does not know, names a role in two rows, or has no row `type`
 
 The checker prints `rot`.
 
@@ -1340,8 +1351,10 @@ Test: {1} is a [test] | {1} is not a [test]
 
 > Project declares each test in each file of the directory of suites that the canon field of the project names: a suite, or a helper module that a suite runs.
 
-Word: verb
-- third person: declares
+| grammar      |          |
+| ------------ | -------- |
+| type         | verb     |
+| third person | declares |
 
 A test in a declared suite owes a tag, and so does a test that a helper module beside the suites makes. A test elsewhere in the sources may carry one, and the checker reads it.
 
@@ -1431,8 +1444,10 @@ File: {1} is a [file] | {1} is not a [file]
 > - a *tag* names unit_1
 <!-- statement-term-used:end -->
 
-Word: adjective
-- also: uses
+| grammar |           |
+| ------- | --------- |
+| type    | adjective |
+| also    | uses      |
 
 A unit is in use while something else leans on it. That can be a child nested in it, a unit that derives from it, or a pointer, term mark or tag that names it. Citing itself does not count, since a unit cannot keep itself alive. This matters because a unit nothing uses can stop being true without anyone noticing.
 
@@ -1474,8 +1489,10 @@ Trailer: {1} is a [trailer] | {1} is not a [trailer]
 
 > A unit repeats what spells the id of the unit in a heading of another unit.
 
-Word: verb
-- third person: repeats
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | repeats |
 
 When two units have one id, a pointer or a tag that names it cannot say which it means. One of the two goes unread.
 
@@ -1492,8 +1509,10 @@ Repeat.rel: {1} [repeats] {2} | {1} does not [repeat] {2}
 
 > A trailer follows the unit whose heading holds the trailer.
 
-Word: verb
-- third person: follows
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | follows |
 
 ```alloy vocabulary
 one sig Follow { rel: Trailer -> Unit }
@@ -1535,8 +1554,10 @@ Index: {1} is an [index] | {1} is not an [index]
 
 > A document holds each unit and each index in the document. A source holds each symbol that its code declares.
 
-Word: verb
-- third person: holds
+| grammar      |       |
+| ------------ | ----- |
+| type         | verb  |
+| third person | holds |
 
 ```alloy vocabulary
 one sig Hold { units: Document -> Unit, indexes: Document -> Index, symbols: Source -> Site }
@@ -1552,8 +1573,10 @@ Hold.symbols: {1} [holds] {2} | {1} does not [hold] {2}
 
 > An index matches the document that generate writes the index for.
 
-Word: verb
-- third person: matches
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | matches |
 
 An index matches its document when it is what `generate` writes for the document now: a line for each unit, with its statement.
 
@@ -1616,20 +1639,24 @@ TermMark: {1} is a [term mark] | {1} is not a [term mark]
 
 ### @term form
 
-> A form of a term is a spelling that names the term: its stem as words, or a spelling its word list holds.
+> A form of a term is a spelling that names the term: its stem as words, or a spelling its grammar table holds.
 
-The words of a stem are the stem with a space for each hyphen: the stem `outdated-tracking` has the words `outdated tracking`. Its *word list* can give `outdated trackings` as another form.
+The words of a stem are the stem with a space for each hyphen: the stem `outdated-tracking` has the words `outdated tracking`. Its *grammar table* can give `outdated trackings` as another form.
 
-### @term word-list
+### @term grammar-table
 
-> A word list is a line `Word:` in the own text of a term, with the items of the list right under it. The line names the part of speech of the term, and each item gives a role and a spelling.
+> A grammar table is a table in the own text of a term whose first header is `grammar` and whose second header is empty. Its row `type` names the part of speech of the term, and each other row gives a role and the spellings of that role, separated by commas.
 
 ```md
-Word: noun
-- plural: outdated trackings
+| grammar |                    |
+| ------- | ------------------ |
+| type    | noun               |
+| plural  | outdated trackings |
 ```
 
-The parts of speech are `noun`, `verb`, `adjective` and `name`. A noun has the role `plural`. A verb has the roles `third person`, `past`, `participle` and `gerund`. An adjective and a name have none, because English does not inflect them. Each part of speech has the role `also`, for a spelling that is no inflection of the stem: `also: ambiguous` on the term `ambiguity`.
+The types are `noun`, `verb`, `adjective` and `name`. A noun has the role `plural`. A verb has the roles `third person`, `past`, `participle` and `gerund`. An adjective and a name have none, because English does not inflect them. Each type has the role `also`, for a spelling that is no inflection of the stem: `| also | ambiguous, unambiguous |` on the term `ambiguity`.
+
+A header names what its column holds, so the type of the term is a row and not a header. The checker inflects no word itself: a spelling names the term only when the grammar table holds it.
 
 ### @term comment
 
@@ -1639,8 +1666,10 @@ The parts of speech are `noun`, `verb`, `adjective` and `name`. A noun has the r
 
 > A tag is a line of the documentation comment of a test.
 
-Word: noun
-- plural: tags
+| grammar |      |
+| ------- | ---- |
+| type    | noun |
+| plural  | tags |
 
 A `@canon` line, or an `@axiom` line. The checker reads the tags of every test in the sources, declared or not.
 
@@ -1657,8 +1686,10 @@ Tag: {1} is a [tag] | {1} is not a [tag]
 
 > A test carries each tag in the documentation comment of the test.
 
-Word: verb
-- third person: carries
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | carries |
 
 ```alloy vocabulary
 one sig Carry { rel: Test -> Tag }
@@ -1702,8 +1733,10 @@ ExpectedFailure: {1} is an [expected failure] | {1} is not an [expected failure]
 > the test checks the unit exactly when the test *carries* a *tag* that *names* the unit.
 <!-- statement-term-check:end -->
 
-Word: verb
-- third person: checks
+| grammar      |        |
+| ------------ | ------ |
+| type         | verb   |
+| third person | checks |
 
 A test's tags are how it points at what it holds the code to: it checks the units they name. Checking is not *citing*, though. Only a unit cites, because citing says what a claim follows from, and a test is not a unit.
 
@@ -1719,8 +1752,10 @@ checks: {1} [checks] {2} | {1} does not [check] {2}
 
 > An issue is an entry of the tracker of the project.
 
-Word: noun
-- plural: issues
+| grammar |        |
+| ------- | ------ |
+| type    | noun   |
+| plural  | issues |
 
 ```alloy vocabulary
 sig Issue {}
@@ -1754,8 +1789,10 @@ Closed: [tracker] has closed {1} | [tracker] has not closed {1}
 
 > A bug names each issue that the issue line of the bug names.
 
-Word: verb
-- third person: names
+| grammar      |       |
+| ------------ | ----- |
+| type         | verb  |
+| third person | names |
 
 A bug or a conflict names an issue on its "Issue:" line. A conflict names the units it sets against each other on its "Between:" line. A tag names the unit whose id it holds.
 
@@ -1878,8 +1915,10 @@ misleading: {1} is [misleading] | {1} is not [misleading]
 
 > A plugin is a package that adds commands to the checker, and that a document asks for by the name of the package.
 
-Word: noun
-- plural: plugins
+| grammar |         |
+| ------- | ------- |
+| type    | noun    |
+| plural  | plugins |
 
 A plugin is a package the project has installed. The checker fetches nothing, so a plugin that is not installed is missing: a name that stands for no package.
 
@@ -1972,8 +2011,10 @@ Spell.rel: {1} spells {2} | {1} does not spell {2}
 > the frontmatter lists the plugin exactly when the frontmatter holds an *entry* that spells the plugin.
 <!-- statement-term-list:end -->
 
-Word: verb
-- third person: lists
+| grammar      |       |
+| ------------ | ----- |
+| type         | verb  |
+| third person | lists |
 
 A frontmatter lists a plugin when one of its entries spells the plugin's name. One entry is enough, wherever it stands among the others.
 
@@ -2027,8 +2068,10 @@ Looping: {1} has the [flaw] of an extension that leads back to its own document 
 
 > A document extends another when its frontmatter lists the path of the other. The other is then context for it: the checker reads its units and its words, and checks it where it lives.
 
-Word: noun
-- also: extends
+| grammar |         |
+| ------- | ------- |
+| type    | noun    |
+| also    | extends |
 
 A path starts from the folder of the document that lists it. A document is context for the documents that extend it, and for the documents that those extend.
 
@@ -2086,8 +2129,10 @@ A runner marker is a line `@runner` in the JSDoc of a declaration in a suite or 
 
 > A run enters the closest document named CANON.md, in the folder it runs in or a folder above it, whose frontmatter holds a setting.
 
-Word: verb
-- third person: enters
+| grammar      |        |
+| ------------ | ------ |
+| type         | verb   |
+| third person | enters |
 
 ### @term apply
 
@@ -2097,8 +2142,10 @@ Word: verb
 > the plugin applies to the document exactly when the document starts with a [listing frontmatter](#term-frontmatter) that *lists* the plugin.
 <!-- statement-term-apply:end -->
 
-Word: verb
-- third person: applies
+| grammar      |         |
+| ------------ | ------- |
+| type         | verb    |
+| third person | applies |
 
 Plugins are opt-in, one document at a time. A document opts in through the frontmatter it starts with: a plugin applies when the plugins key there *lists* it. A frontmatter without a plugins key asks for no plugin.
 
@@ -2158,8 +2205,10 @@ Over.rel: [checker](#term-checker) runs {1} over {2} | [checker](#term-checker) 
 > - the plugin *applies* to a *document*
 <!-- statement-term-call:end -->
 
-Word: verb
-- third person: calls
+| grammar      |       |
+| ------------ | ----- |
+| type         | verb  |
+| third person | calls |
 
 A run calls a plugin only when the plugin has work to do. The run asks for a command the plugin adds, or for its *bare name* when that name is not *ambiguous*. Some document also asks for the plugin in its frontmatter. A plugin that no document lists stays silent, even when someone asks for its command.
 
@@ -2189,8 +2238,10 @@ calls: {1} [calls] {2} | {1} does not [call] {2}
 >   the installed plugin applies to the document, adds command_2 and command_1 is the *bare name* of command_2.
 <!-- statement-term-availability:end -->
 
-Word: noun
-- also: available
+| grammar |           |
+| ------- | --------- |
+| type    | noun      |
+| also    | available |
 
 A command is available when something can carry it out. The checker's own commands always are. A plugin's command is available only when the project has installed the plugin and some document lists it. Its bare name is then available too, since a run can ask for the command by it.
 
@@ -2241,8 +2292,10 @@ Shorten.rel: {1} is the [bare name] of {2} | {1} is not the [bare name] of {2}
 >   installed_plugin_2 applies to document_2 and adds command_3.
 <!-- statement-term-ambiguity:end -->
 
-Word: noun
-- also: ambiguous
+| grammar |           |
+| ------- | --------- |
+| type    | noun      |
+| also    | ambiguous |
 
 A bare name is ambiguous when it is the bare name of two commands that plugins add. It then cannot say which of the two a run asks for. The two commands must be available, so a plugin that no document lists makes no name ambiguous.
 
@@ -2930,11 +2983,11 @@ A term mark says that its words are a word of the canon, defined by a term. When
 all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
 ```
 
-#### @spec a-word-list-names-a-part-of-speech-and-its-roles
+#### @spec a-grammar-table-names-a-type-and-its-roles
 
-> When a word list names a part of speech or a role the checker does not know, it reports a rotting. The roles of a part of speech are those its *word list* term gives.
+> When a grammar table names a type or a role the checker does not know, names a role in two rows, or has no row `type`, the checker reports a rotting. The roles of a type are those its *grammar table* term gives.
 
-This follows because a word list the checker cannot read leaves the forms of its term unknown. A typo such as `plral:` would drop a form without a word.
+This follows because a grammar table the checker cannot read leaves the forms of its term unknown. A typo such as `plral` would drop a form without a word. Of two rows of one role, neither says on its own which spellings the role has.
 
 #### @spec a-form-names-one-term
 
@@ -2960,15 +3013,15 @@ This follows because each form of a term is a spelling the author may write for 
 
 ###### @spec a-term-mark-names-the-term-whose-listed-form-its-words-spell
 
-> A term mark outside a link names the term whose word list gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its word list holds `- plural: outdated trackings`.
+> A term mark outside a link names the term whose grammar table gives the spelling its words make: `*outdated trackings*` names `term-outdated-tracking` when its grammar table holds `| plural | outdated trackings |`.
 
-###### @spec each-spelling-of-a-word-list-is-a-form-of-its-term
+###### @spec each-spelling-of-a-grammar-table-is-a-form-of-its-term
 
-> Each spelling in the word list of a term, whatever its role, is a form of the term.
+> Each spelling in the grammar table of a term, whatever its role, is a form of the term.
 
-###### @spec a-term-with-no-word-list-has-the-words-of-its-stem-as-its-only-form
+###### @spec a-term-with-no-grammar-table-has-the-words-of-its-stem-as-its-only-form
 
-> A term with no word list has one form: the words of its stem.
+> A term with no grammar table has one form: the words of its stem.
 
 ###### @spec a-stem-wins-over-a-form-of-another-term
 
@@ -4371,7 +4424,7 @@ all d, e: Document | d->e in Bare.rel implies ((e in Finding implies d in Findin
 
 > Generate leaves the frontmatter of a document as it was.
 
-This follows because the block is the author's, and `generate` writes the regions it owns and nothing else.
+This follows because the block is the author's, and `generate` writes the regions it owns and the spacing of grammar tables, and nothing else.
 
 
 #### @spec a-runner-marker-the-checker-cannot-read-stops-the-run
@@ -4479,6 +4532,12 @@ This follows because a reader copies the name of a unit from where it saw the na
 > When a name on the command line of `show` names no unit, the checker says so, and the run exits with code 2.
 
 This follows because a reader who asked for a unit must not take silence for an empty unit.
+
+### @spec generate-aligns-the-columns-of-each-grammar-table
+
+> `generate` pads the cells of each *grammar table* so that the cells of a column are as wide as its widest cell, and the dashes under its headers as wide too. It changes no cell but by its spaces.
+
+This follows because the writer of a grammar table changes its cells, and lining up its columns by hand is handling the document by its text. A grammar table out of line is no finding: it says what it said, and `check` reports nothing for it.
 
 ### @spec show-with-a-part-prints-only-that-part-of-each-unit
 

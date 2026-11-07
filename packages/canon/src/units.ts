@@ -41,7 +41,7 @@ const ANY_HEADING = /^(#{1,6})[ \t]+/gm;
  */
 const SITE = /^Site: (.+)$/m;
 
-/** The roles that each part of speech of a word list allows; `also` is allowed for each. */
+/** The roles that each type of a grammar table allows; `also` is allowed for each. */
 export const ROLES: Readonly<Record<string, readonly string[]>> = {
   noun: ['plural'],
   verb: ['third person', 'past', 'participle', 'gerund'],
@@ -49,36 +49,103 @@ export const ROLES: Readonly<Record<string, readonly string[]>> = {
   name: []
 };
 
-/** A term's word list: its part of speech, the spelling of each role it lists, and what in it the checker cannot read. */
-export interface Word {
-  part: string;
+/** A term's grammar table: its type, the spellings of each role it lists, and what in it the checker cannot read. */
+export interface Grammar {
+  /** The part of speech its row `type` names, as written; undefined when it has no such row. */
+  type?: string;
   forms: Array<{ role: string; spelling: string }>;
-  /** Each part of speech or role the list names that the checker does not know, as written. */
+  /** Each type or role the table names that the checker does not know, as written. */
   unknown: string[];
+  /** Each type or role the table names in more than one row. */
+  repeated: string[];
+}
+
+/** The cells of a table row, trimmed: `| a | b |` gives `['a', 'b']`. */
+const cellsOf = (line: string): string[] =>
+  line.trim().replace(/^\|/, '').replace(/\|$/, '').split('|').map(cell => cell.trim());
+
+const GRAMMAR_HEADER = /^[ \t]*\|[ \t]*grammar[ \t]*\|[ \t]*\|[ \t]*$/;
+const SEPARATOR = /^[ \t]*\|?[ \t]*:?-+:?[ \t]*\|[ \t]*:?-+:?[ \t]*\|?[ \t]*$/;
+
+/**
+ * Where the grammar table of a text lies, by line: the header `| grammar | |`,
+ * the line of dashes under it, and each row after them that starts with a pipe.
+ */
+function grammarLines(lines: string[]): { at: number; end: number } | undefined {
+  const at = lines.findIndex((line, i) => GRAMMAR_HEADER.test(line) && SEPARATOR.test(lines[i + 1] ?? ''));
+  if (at === -1) return undefined;
+  let end = at + 2;
+  while (end < lines.length && /^[ \t]*\|/.test(lines[end] as string)) end++;
+  return { at, end };
 }
 
 /**
- * The word list in a unit's own text: a line `Word: <part of speech>`, and
- * the items `- <role>: <spelling>` right under it. Undefined when the own text
- * has no such line.
+ * The grammar table in a unit's own text: a table whose headers are `grammar`
+ * and nothing, with a row `type` and a row for each role, whose spellings
+ * are separated by commas. Undefined when the own text has no such table.
  */
-export function wordOf(own: string): Word | undefined {
+export function grammarOf(own: string): Grammar | undefined {
   const lines = own.split('\n');
-  const at = lines.findIndex(line => /^Word:[ \t]/.test(line));
-  if (at === -1) return undefined;
-  const part = (lines[at] as string).slice('Word:'.length).trim();
-  const word: Word = { part, forms: [], unknown: [] };
-  const roles = ROLES[part];
-  if (roles === undefined) word.unknown.push(part);
-  for (const line of lines.slice(at + 1)) {
-    const item = /^[-*+][ \t]+([^:]+):[ \t]*(.*)$/.exec(line);
-    if (!item) break;
-    const role = (item[1] as string).trim();
-    const spelling = (item[2] as string).trim();
-    if (role !== 'also' && !(roles ?? []).includes(role)) word.unknown.push(role);
-    else if (spelling !== '') word.forms.push({ role, spelling });
+  const table = grammarLines(lines);
+  if (!table) return undefined;
+  const rows = lines.slice(table.at + 2, table.end).map(cellsOf);
+  const grammar: Grammar = { forms: [], unknown: [], repeated: [] };
+  const seen = new Set<string>();
+  for (const [key = '', value = ''] of rows) {
+    if (seen.has(key)) grammar.repeated.push(key);
+    seen.add(key);
+    if (key === 'type' && grammar.type === undefined) grammar.type = value;
   }
-  return word;
+  const roles = grammar.type === undefined ? undefined : ROLES[grammar.type];
+  if (grammar.type !== undefined && roles === undefined) grammar.unknown.push(grammar.type);
+  const done = new Set<string>();
+  for (const [key = '', value = ''] of rows) {
+    if (key === 'type' || done.has(key)) continue;
+    done.add(key);
+    // A role is unknown only to a type the checker knows; a table with no type or an unknown one has its one rotting already.
+    if (key !== 'also' && roles !== undefined && !roles.includes(key)) grammar.unknown.push(key);
+    else for (const spelling of value.split(',').map(s => s.trim()).filter(s => s !== '')) grammar.forms.push({ role: key, spelling });
+  }
+  return grammar;
+}
+
+/**
+ * The document with the cells of each grammar table padded, so that every
+ * cell of a column is as wide as its widest cell, and the dashes under the
+ * headers as wide too, with at least three. A table inside a fenced block or
+ * the index is left as it is.
+ */
+export function alignGrammarTables(src: string): string {
+  const md = maskFences(src);
+  const lines = src.split('\n');
+  const masked = md.split('\n');
+  // Each table starts on a line of a term's own text, so the line of every term heading bounds the search.
+  const starts = new Map<number, number>();
+  let line = 0;
+  let offset = 0;
+  const lineAt = (at: number): number => {
+    for (; offset + (masked[line] as string).length + 1 <= at; line++) offset += (masked[line] as string).length + 1;
+    return line;
+  };
+  for (const unit of readUnits(src)) {
+    if (unit.kind !== 'term') continue;
+    const first = lineAt(unit.start) + 1;
+    starts.set(first, first + unit.own.split('\n').length);
+  }
+  for (const [first, last] of starts) {
+    const table = grammarLines(masked.slice(first, last));
+    if (!table) continue;
+    const at = first + table.at;
+    const end = first + table.end;
+    const rows = lines.slice(at, end).map(cellsOf);
+    rows.splice(1, 1);
+    const width = [0, 1].map(col => Math.max(3, ...rows.map(row => (row[col] ?? '').length)));
+    const print = (row: string[]): string => `| ${(row[0] ?? '').padEnd(width[0] as number)} | ${(row[1] ?? '').padEnd(width[1] as number)} |`;
+    const out = rows.map(print);
+    out.splice(1, 0, `| ${'-'.repeat(width[0] as number)} | ${'-'.repeat(width[1] as number)} |`);
+    lines.splice(at, end - at, ...out);
+  }
+  return lines.join('\n');
 }
 
 export interface Unit {
@@ -103,8 +170,8 @@ export interface Unit {
   own: string;
   /** The place in the code its "Site:" line names. */
   site?: string;
-  /** A term's word list, from its "Word:" line. */
-  word?: Word;
+  /** A term's grammar table. */
+  grammar?: Grammar;
 }
 
 /** The statement a unit's own text opens with: its first blockquote, joined. */
@@ -154,7 +221,7 @@ export function readUnits(src: string): Unit[] {
     unit.own = body.split(/^#{1,6}[ \t]/m)[0];
     unit.statement = statementOf(unit.own);
     unit.site = SITE.exec(unit.own)?.[1]?.trim();
-    if (unit.kind === 'term') unit.word = wordOf(unit.own);
+    if (unit.kind === 'term') unit.grammar = grammarOf(unit.own);
   }
   return units;
 }

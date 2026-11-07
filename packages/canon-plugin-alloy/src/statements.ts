@@ -97,7 +97,7 @@ function read(unit: string, kind: 'current' | 'stale', quote: string, formula: s
 /**
  * Which words a statement writes as a term mark: a word whose link leads to a
  * term of the document itself, `#term-…`, and that spells a form of that term,
- * the words of its stem or a spelling of its word list. A link to another
+ * the words of its stem or a spelling of its grammar table. A link to another
  * document needs its path, so it stays a link.
  */
 function markedBy(units: Unit[]): (target: string, word: string) => boolean {
@@ -105,7 +105,7 @@ function markedBy(units: Unit[]): (target: string, word: string) => boolean {
   const forms = new Map<string, Set<string>>();
   for (const unit of units) {
     if (unit.kind !== 'term') continue;
-    forms.set(`#${unit.id}`, new Set([spelling(unit.stem.replace(/-/g, ' ')), ...(unit.word?.forms ?? []).map(f => spelling(f.spelling))]));
+    forms.set(`#${unit.id}`, new Set([spelling(unit.stem.replace(/-/g, ' ')), ...(unit.grammar?.forms ?? []).map(f => spelling(f.spelling))]));
   }
   return (target, word) => forms.get(target)?.has(spelling(word)) === true;
 }
