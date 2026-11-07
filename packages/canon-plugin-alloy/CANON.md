@@ -4,7 +4,7 @@ extends: ["../canon/CANON.md", "../naturalloy/CANON.md"]
 suites: test/canon
 sources: [test]
 command: node ../canon/src/cli.ts
-tracker: {kind: github, repo: bigmistqke/skills}
+tracker: {kind: github, repo: bigmistqke/canon}
 ---
 # Canon: the Alloy plugin
 

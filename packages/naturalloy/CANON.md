@@ -3,7 +3,7 @@ plugins: ["@bigmistqke/canon-plugin-retext", "@bigmistqke/canon-plugin-alloy"]
 suites: test/canon
 sources: [test]
 command: node ../canon/src/cli.ts
-tracker: {kind: github, repo: bigmistqke/skills}
+tracker: {kind: github, repo: bigmistqke/canon}
 ---
 # Canon: naturalloy
 

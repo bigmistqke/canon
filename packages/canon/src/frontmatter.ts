@@ -13,7 +13,7 @@
  *     ---
  *     suites: test/canon
  *     sources: [src, test]
- *     tracker: {kind: github, repo: bigmistqke/skills}
+ *     tracker: {kind: github, repo: bigmistqke/canon}
  *     ---
  *
  * This reads a small part of YAML and nothing else, so the core needs no YAML
