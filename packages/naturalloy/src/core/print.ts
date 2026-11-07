@@ -6,7 +6,7 @@
  * The printer names the variables: each by the noun of its type and the next number free for that noun, in the order
  * a reader meets them. The items of a list that stand on their own may each use the same names.
  */
-import { type Readings, LINK, mark, Refusal, resolveLinks, unbracketed } from '../readings.ts';
+import { type Readings, LINK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
 import type { Clause, Num, Sentence, Term, Var } from './ir.ts';
 import type { PrintOptions } from './pass.ts';
 
@@ -554,7 +554,7 @@ function withoutEvery(doc: Doc, lone: ReadonlySet<string>): Doc {
 }
 
 /** A doc as text: laid out, with a capital where the sentence starts with its own words and a period where it ends. */
-export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | undefined, options: PrintOptions = { dropLoneNumbers: false, aNounForEvery: false }): string {
+export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | undefined, options: PrintOptions = { dropLoneNumbers: false, aNounForEvery: false }, marked?: Marked): string {
   const said = (d: Doc): string => {
     const raw = layout === 'markdown' ? markdownLines(d) : lines(d);
     const out = unmarked(resolveLinks(raw.join('\n'), layout === 'markdown', self)).split('\n');
@@ -563,14 +563,15 @@ export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | und
     if (!/(:|^\s*- .*)$/.test(out[last] as string)) out[last] = `${out[last]}.`;
     return out.join('\n').replaceAll(VARIABLE, '');
   };
+  const marking = (text: string): string => (marked === undefined || layout !== 'markdown' ? text : markTerms(text, marked));
   let text = said(doc);
-  if (!options.dropLoneNumbers) return text;
+  if (!options.dropLoneNumbers) return marking(text);
   // Whether a variable is named the noun alone shows only in the whole of the words, so they are said again without the "for every" it can leave out.
   if (options.aNounForEvery) {
     const without = withoutEvery(doc, new Set(lone(text).keys()));
     if (without !== doc) text = said(without);
   }
-  return unnumbered(text);
+  return marking(unnumbered(text));
 }
 
 /**

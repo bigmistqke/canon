@@ -159,6 +159,70 @@ describe('the states of the statements', () => {
   });
 });
 
+describe('a word that names a term', () => {
+  /** A document whose terms hold the readings: `node` says its stem, and `done` says "finished", which spells no form of it. */
+  const TERMS = `# Canon
+
+## ${AXIOM} a-root
+
+> A root.
+
+\`\`\`alloy vocabulary
+sig Node {}
+var sig Started, Done in Node {}
+fact started { always Done in Started }
+\`\`\`
+
+\`\`\`readings
+Started: {1} has started | {1} has not started
+\`\`\`
+
+### @spec a-leaf
+
+A node that starts ends up done.
+
+\`\`\`alloy
+always all n: Node | n in Started implies eventually n in Done
+\`\`\`
+
+## @term node
+
+> A node is a thing that runs.
+
+\`\`\`readings
+noun Node: [node]
+\`\`\`
+
+## @term done
+
+> A node is done when it has finished.
+
+\`\`\`readings
+Done: {1} is [finished] | {1} is not [finished]
+\`\`\`
+`;
+
+  /**
+   * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
+   */
+  it('is a term mark when it spells a form of a term of the document, and a link when it does not', () => {
+    const { src } = write(TERMS);
+    const statement = src.split('\n').filter(l => l.startsWith('>')).join('\n');
+    expect(statement).toContain('*node*');
+    expect(statement).not.toContain('[node](#term-node)');
+    expect(statement).toContain('[finished](#term-done)');
+  });
+
+  /**
+   * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
+   */
+  it('is a term mark when it spells a form that the word list of the term holds', () => {
+    const listed = TERMS.replace('> A node is done when it has finished.\n', '> A node is done when it has finished.\n\nWord: adjective\n- also: finished\n');
+    const statement = write(listed).src.split('\n').filter(l => l.startsWith('>')).join('\n');
+    expect(statement).toContain('*finished*');
+  });
+});
+
 describe('the statements of scenarios', () => {
   /** The document with a scenario in its leaf; the scenario says `formula`. */
   const scened = (formula = 'some n: Node | n in Started'): string => `${doc()}\n\`\`\`alloy scenario\n${formula}\n\`\`\`\n`;

@@ -11,7 +11,7 @@
  */
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions';
-import { readUnits } from '@bigmistqke/canon/units';
+import { readUnits, type Unit } from '@bigmistqke/canon/units';
 import { PARAGRAPHS } from './words.ts';
 import { AlloyParseError } from '@bigmistqke/parse-alloy';
 import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
@@ -94,6 +94,22 @@ function read(unit: string, kind: 'current' | 'stale', quote: string, formula: s
   return { unit, kind: 'misread', message, quote };
 }
 
+/**
+ * Which words a statement writes as a term mark: a word whose link leads to a
+ * term of the document itself, `#term-…`, and that spells a form of that term,
+ * the words of its stem or a spelling of its word list. A link to another
+ * document needs its path, so it stays a link.
+ */
+function markedBy(units: Unit[]): (target: string, word: string) => boolean {
+  const spelling = (words: string): string => words.trim().toLowerCase().split(/\s+/).join(' ');
+  const forms = new Map<string, Set<string>>();
+  for (const unit of units) {
+    if (unit.kind !== 'term') continue;
+    forms.set(`#${unit.id}`, new Set([spelling(unit.stem.replace(/-/g, ' ')), ...(unit.word?.forms ?? []).map(f => spelling(f.spelling))]));
+  }
+  return (target, word) => forms.get(target)?.has(spelling(word)) === true;
+}
+
 /** What each statement of a document is, in document order; empty for a document with no readings. */
 export function states(src: string, context: Context[] = []): StatementState[] {
   let readings: Readings | undefined;
@@ -106,6 +122,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
   if (readings === undefined) return [];
   const units = readUnits(src);
   const blocks = readBlocks(src, units);
+  const marked = markedBy(units);
   const found: StatementState[] = [];
   for (const unit of units) {
     const predicates = blocks.filter(b => b.unit === unit.id && b.lang === 'alloy' && b.role === 'unit');
@@ -118,7 +135,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
     let body = '';
     try {
       ({ body } = predicates[0] as { body: string });
-      words = quote(isDefinition(body) ? verbalizeDefinition(body, readings, 'markdown', `#${unit.id}`) : verbalize(body, readings, 'markdown', `#${unit.id}`));
+      words = quote(isDefinition(body) ? verbalizeDefinition(body, readings, 'markdown', `#${unit.id}`, marked) : verbalize(body, readings, 'markdown', `#${unit.id}`, marked));
     } catch (error) {
       // A refusal says why the unit has no statement; anything else is a fault of naturalloy, and is not hidden as one.
       if (!isRefusal(error)) throw error;
@@ -133,7 +150,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
   for (const { key, unit, body } of scenarios(src, blocks)) {
     let words: string;
     try {
-      words = quote(`It must be possible that:\n\n${verbalize(body, readings, 'markdown', `#${unit}`)}`);
+      words = quote(`It must be possible that:\n\n${verbalize(body, readings, 'markdown', `#${unit}`, marked)}`);
     } catch (error) {
       if (!isRefusal(error)) throw error;
       found.push({ unit: key, kind: 'unsayable', message: error.message });
