@@ -483,7 +483,7 @@ some c: Conflict, i: Issue, u, v: Unit | u != v and c->i in Name.issue and i in 
 
 ### @term unit
 
-> A unit is an axiom, a fact, a spec, an exception, a bug, a conflict, a thread or a term.
+> A unit is an [*axiom*](#term-axiom), a [*fact*](#term-fact), a [*spec*](#term-spec), an [*exception*](#term-exception), a [*bug*](#term-bug), a [*conflict*](#term-conflict), a [*thread*](#term-thread) or a [*term*](#term-term).
 
 One entry of a canon: a heading with a kind and a stem, and a statement under it. A unit is an [*axiom*](#term-axiom), a [*fact*](#term-fact), a [*spec*](#term-spec), an [*exception*](#term-exception), a [*bug*](#term-bug), a [*conflict*](#term-conflict), a [*thread*](#term-thread) or a [*term*](#term-term).
 
@@ -512,7 +512,7 @@ abstract sig Unit extends Thing {}
 
 ### @term axiom
 
-> An axiom is a unit that states a value: how the project wants the world of the people using it to be.
+> An axiom is a [*unit*](#term-unit) that states a value: how the [*project*](#term-project) wants the world of the people using it to be.
 
 <details>
 <summary>Alloy</summary>
@@ -529,7 +529,7 @@ sig Axiom extends Unit {}
 
 ### @term fact
 
-> A fact is a unit that states how the platform under the project is, whatever the project does.
+> A fact is a [*unit*](#term-unit) that states how the platform under the [*project*](#term-project) is, whatever the project does.
 
 <details>
 <summary>Alloy</summary>
@@ -546,7 +546,7 @@ sig Fact extends Unit {}
 
 ### @term spec
 
-> A spec is a unit that states what the system does, so that a test could contradict it.
+> A spec is a [*unit*](#term-unit) that states what the system does, so that a [*test*](#term-test) could contradict it.
 
 <details>
 <summary>Alloy</summary>
@@ -563,7 +563,7 @@ sig Spec extends Claim {}
 
 ### @term exception
 
-> An exception is a unit that states where a fact keeps a spec from holding fully.
+> An exception is a [*unit*](#term-unit) that states where a [*fact*](#term-fact) keeps a [*spec*](#term-spec) from holding fully.
 
 <details>
 <summary>Alloy</summary>
@@ -580,7 +580,7 @@ sig Exception extends Claim {}
 
 ### @term bug
 
-> A bug is a unit that states where the code breaks the spec it sits in.
+> A bug is a [*unit*](#term-unit) that states where the code breaks the [*spec*](#term-spec) it [*sits*](#term-sit) in.
 
 <details>
 <summary>Alloy</summary>
@@ -597,7 +597,7 @@ sig Bug extends Claim {}
 
 ### @term conflict
 
-> A conflict is a unit that states where units of the canon cannot all hold, until the owner of the design rules which one does.
+> A conflict is a unit that states where [*units*](#term-unit) of the canon cannot all hold, until the owner of the design rules which one does.
 
 <details>
 <summary>Alloy</summary>
@@ -614,7 +614,7 @@ sig Conflict extends Unit {}
 
 ### @term thread
 
-> A thread is a unit that states a question the canon does not decide yet, which the owner of the design has left open.
+> A thread is a [*unit*](#term-unit) that states a question the canon does not decide yet, which the owner of the design has left open.
 
 The question may be a choice between two designs that both work, or a decision that waits on a condition. A thread is not a [*conflict*](#term-conflict). A conflict is the canon saying two things at once, and a thread is the canon not yet saying anything. It is not a [*bug*](#term-bug) either, because it makes no claim that the code could break.
 
@@ -635,7 +635,7 @@ sig Thread extends Unit {}
 
 ### @term term
 
-> A term is a unit that states a word of the project's language: what the thing it names is.
+> A term is a [*unit*](#term-unit) that states a word of the [*project*](#term-project)'s language: what the thing it names is.
 
 <details>
 <summary>Alloy</summary>
@@ -652,13 +652,13 @@ sig Term extends Unit {}
 
 ### @term statement
 
-> A statement is the quote under the heading of a unit that says in words what the unit claims.
+> A statement is the quote under the [*heading*](#term-heading) of a [*unit*](#term-unit) that says in words what the unit claims.
 
 The statement of a unit is the blockquote that opens its own text, whole.
 
 ### @term sit
 
-> A unit sits in the unit whose heading holds its own heading.
+> A [*unit*](#term-unit) sits in the unit whose [*heading*](#term-heading) holds its own heading.
 
 A unit sitting in another is nested there.
 
@@ -687,7 +687,7 @@ one sig Sit { rel: Unit -> Unit }
 
 ### @term derive
 
-> A unit derives from each unit a link on its "Derives from:" line names.
+> A [*unit*](#term-unit) derives from each unit a link on its "Derives from:" line names.
 
 That line comes right after the unit's statement.
 
@@ -716,7 +716,7 @@ one sig Derive { rel: Unit -> Unit }
 
 ### @term link
 
-> A unit links to each unit a link in its body names.
+> A [*unit*](#term-unit) links to each unit a link in its body names.
 
 A link elsewhere than the "Derives from:" line is a reference: it cites nothing.
 
@@ -755,7 +755,7 @@ pred cites[u, v: Unit] { u->v in Sit.rel or u->v in Derive.rel }
 
 ### @term thing
 
-> A thing is what the checker can report a finding for: a unit, a test, a tag, a pointer, a term mark or a document.
+> A thing is what the [*checker*](#term-checker) can report a [*finding*](#term-finding) for: a [*unit*](#term-unit), a [*test*](#term-test), a [*tag*](#term-tag), a [*pointer*](#term-pointer), a [*term mark*](#term-term-mark) or a [*document*](#term-document).
 
 <details>
 <summary>Alloy</summary>
@@ -768,7 +768,7 @@ abstract sig Thing {}
 
 ### @term finding
 
-> A finding is a freelancing, a misnesting, an untracking, a mistracking, an outdated tracking, an unpairing, an unpinning, an unexplained failure, an untesting, a rotting, an uncitation, a misaiming, an overreach, an orphaning, a misanchoring, a misindexing, a mislocation or a cycle.
+> A finding is a [*freelancing*](#term-freelancing), a [*misnesting*](#term-misnesting), an [*untracking*](#term-untracking), a [*mistracking*](#term-mistracking), an [*outdated tracking*](#term-outdated-tracking), an [*unpairing*](#term-unpairing), an [*unpinning*](#term-unpinning), an [*unexplained failure*](#term-unexplained-failure), an [*untesting*](#term-untesting), a [*rotting*](#term-rotting), an [*uncitation*](#term-uncitation), a [*misaiming*](#term-misaiming), an [*overreach*](#term-overreach), an [*orphaning*](#term-orphaning), a [*misanchoring*](#term-misanchoring), a [*misindexing*](#term-misindexing), a [*mislocation*](#term-mislocation) or a [*cycle*](#term-cycle).
 
 What `check` reports on a unit, a test or a link. The canon gives each finding a noun of its own, and its term says what the [*checker*](#term-checker) prints for it.
 
@@ -788,7 +788,7 @@ fact finding_kinds { Finding = Freelancing + Misnesting + Untracking + Mistracki
 
 ### @term freelancing
 
-> A freelancing is a finding for a unit that makes a claim and cites nothing it derives from.
+> A freelancing is a [*finding*](#term-finding) for a [*unit*](#term-unit) that makes a [*claim*](#term-claim) and [*cites*](#term-cite) nothing it [*derives*](#term-derive) from.
 
 The checker prints `freelancing`.
 
@@ -807,7 +807,7 @@ sig Freelancing in Finding {}
 
 ### @term misnesting
 
-> A misnesting is a finding for a unit that cites a kind of unit it may not cite.
+> A misnesting is a [*finding*](#term-finding) for a [*unit*](#term-unit) that [*cites*](#term-cite) a kind of unit it may not cite.
 
 The checker prints `misnested`.
 
@@ -894,7 +894,7 @@ pred miscited[u: Unit] {
 
 ### @term depend
 
-> A unit depends on a unit when the unit cites the unit. A unit depends on a unit when the unit cites a unit that depends on the unit.
+> A [*unit*](#term-unit) depends on a unit when the unit [*cites*](#term-cite) the unit. A unit depends on a unit when the unit cites a unit that depends on the unit.
 
 A unit depends on each unit it follows from: what it cites, what those cite, and so on up. A unit can depend on itself: it follows from itself when it cites itself, or when what it cites leads back to it.
 
@@ -946,7 +946,7 @@ pred circular[u: Unit] { some v: Unit | cites[u, v] and v->u in Depend.rel }
 
 ### @term cycle
 
-> A cycle is a finding for a unit that depends on itself.
+> A cycle is a [*finding*](#term-finding) for a [*unit*](#term-unit) that [*depends*](#term-depend) on itself.
 
 The checker prints `cycle`, once for each loop, with every unit in it.
 
@@ -965,7 +965,7 @@ sig Cycle in Finding {}
 
 ### @term untracking
 
-> An untracking is a finding for a bug or a conflict that names no issue.
+> An untracking is a [*finding*](#term-finding) for a [*bug*](#term-bug) or a [*conflict*](#term-conflict) that [*names*](#term-name) no [*issue*](#term-issue).
 
 The checker prints `untracked-bug` or `untracked-conflict`.
 
@@ -984,7 +984,7 @@ sig Untracking in Finding {}
 
 ### @term mistracking
 
-> A mistracking is a finding for a bug or a conflict that names an issue the tracker does not know, or one that is a pull request.
+> A mistracking is a [*finding*](#term-finding) for a [*bug*](#term-bug) or a [*conflict*](#term-conflict) that [*names*](#term-name) an [*issue*](#term-issue) the [*tracker*](#term-tracker) does not know, or one that is a pull request.
 
 The checker prints `missing-issue`.
 
@@ -1003,7 +1003,7 @@ sig Mistracking in Finding {}
 
 ### @term outdated-tracking
 
-> An outdated tracking is a finding for a bug or a conflict that names an issue the tracker has closed.
+> An outdated tracking is a [*finding*](#term-finding) for a [*bug*](#term-bug) or a [*conflict*](#term-conflict) that [*names*](#term-name) an [*issue*](#term-issue) the [*tracker*](#term-tracker) has closed.
 
 The checker prints `closed-issue`.
 
@@ -1022,7 +1022,7 @@ sig OutdatedTracking in Finding {}
 
 ### @term unpairing
 
-> An unpairing is a finding for a conflict that sets fewer than two units against each other.
+> An unpairing is a [*finding*](#term-finding) for a [*conflict*](#term-conflict) that sets fewer than two [*units*](#term-unit) against each other.
 
 The checker prints `lone-conflict`.
 
@@ -1041,7 +1041,7 @@ sig Unpairing in Finding {}
 
 ### @term unpinning
 
-> An unpinning is a finding for a plain test that checks a bug.
+> An unpinning is a [*finding*](#term-finding) for a [*plain test*](#term-plain-test) that [*checks*](#term-check) a [*bug*](#term-bug).
 
 The checker prints `unpinned-bug`.
 
@@ -1060,7 +1060,7 @@ sig Unpinning in Finding {}
 
 ### @term unexplained-failure
 
-> An unexplained failure is a finding for an expected failure that checks no bug and no exception.
+> An unexplained failure is a [*finding*](#term-finding) for an [*expected failure*](#term-expected-failure) that checks no [*bug*](#term-bug) and no [*exception*](#term-exception).
 
 The checker prints `fails-without-bug`.
 
@@ -1079,7 +1079,7 @@ sig UnexplainedFailure in Finding {}
 
 ### @term untesting
 
-> An untesting is a finding for a leaf spec, an exception or a bug that no test checks.
+> An untesting is a [*finding*](#term-finding) for a leaf [*spec*](#term-spec), an [*exception*](#term-exception) or a [*bug*](#term-bug) that no [*test*](#term-test) [*checks*](#term-check).
 
 The checker prints `untested`.
 
@@ -1098,11 +1098,11 @@ sig Untesting in Finding {}
 
 ### @term rotting
 
-> A rotting is a finding for one of these:
-> - a tag that names no unit, names a file as well as a unit, or names an id that two documents declare
-> - a pointer that names no target
-> - a term mark that names no term, or whose words spell no form of its term
-> - a grammar table that names a type or a role that the checker does not know, names a role in two rows, or has no row `type`
+> A rotting is a [*finding*](#term-finding) for one of these:
+> - a [*tag*](#term-tag) that names no [*unit*](#term-unit), names a [*file*](#term-file) as well as a unit, or names an id that two documents declare
+> - a [*pointer*](#term-pointer) that names no [*target*](#term-target)
+> - a [*term mark*](#term-term-mark) that names no [*term*](#term-term), or whose words spell no [*form*](#term-form) of its term
+> - a [*grammar table*](#term-grammar-table) that names a type or a role that the [*checker*](#term-checker) does not know, names a role in two rows, or has no row `type`
 
 The checker prints `rot`.
 
@@ -1121,7 +1121,7 @@ sig Rotting in Finding {}
 
 ### @term uncitation
 
-> An uncitation is a finding for a test in a declared suite that carries no tag.
+> An uncitation is a [*finding*](#term-finding) for a [*test*](#term-test) in a declared suite that [*carries*](#term-carry) no [*tag*](#term-tag).
 
 The checker prints `uncited`.
 
@@ -1140,7 +1140,7 @@ sig Uncitation in Finding {}
 
 ### @term misaiming
 
-> A misaiming is a finding for a test in a declared suite that checks a unit that is no claim.
+> A misaiming is a [*finding*](#term-finding) for a [*test*](#term-test) in a declared suite that checks a [*unit*](#term-unit) that is no [*claim*](#term-claim).
 
 The checker prints `missing-spec`.
 
@@ -1159,7 +1159,7 @@ sig Misaiming in Finding {}
 
 ### @term overreach
 
-> An overreach is a finding for a test that checks a claim another claim refines.
+> An overreach is a [*finding*](#term-finding) for a [*test*](#term-test) that [*checks*](#term-check) a [*claim*](#term-claim) another claim refines.
 
 The checker prints `parent-cited`.
 
@@ -1178,7 +1178,7 @@ sig Overreach in Finding {}
 
 ### @term orphaning
 
-> An orphaning is a finding for a unit that nothing uses.
+> An orphaning is a [*finding*](#term-finding) for a [*unit*](#term-unit) that nothing [*uses*](#term-used).
 
 The checker prints `dead`.
 
@@ -1197,7 +1197,7 @@ sig Orphaning in Finding {}
 
 ### @term misanchoring
 
-> A misanchoring is a finding for a unit whose heading holds a word after its id, so the anchor the page renders is not the id a pointer names.
+> A misanchoring is a [*finding*](#term-finding) for a [*unit*](#term-unit) whose [*heading*](#term-heading) holds a word after its id, so the anchor the page renders is not the id a [*pointer*](#term-pointer) [*names*](#term-name).
 
 The checker prints `unreachable`.
 
@@ -1216,7 +1216,7 @@ sig Misanchoring in Finding {}
 
 ### @term misindexing
 
-> A misindexing is a finding for a document with no index, or with an index that does not match it.
+> A misindexing is a [*finding*](#term-finding) for a [*document*](#term-document) with no [*index*](#term-index), or with an index that does not [*match*](#term-match) it.
 
 The checker prints `stale-toc`.
 
@@ -1235,7 +1235,7 @@ sig Misindexing in Finding {}
 
 ### @term mislocation
 
-> A mislocation is a finding for a claim that names a site no source holds.
+> A mislocation is a [*finding*](#term-finding) for a [*claim*](#term-claim) that names a [*site*](#term-site) no [*source*](#term-source) [*holds*](#term-hold).
 
 The checker prints `stale-site`.
 
@@ -1254,7 +1254,7 @@ sig Mislocation in Finding {}
 
 ### @term claim
 
-> A claim is a spec, an exception or a bug.
+> A claim is a [*spec*](#term-spec), an [*exception*](#term-exception) or a [*bug*](#term-bug).
 
 A unit that a test can contradict.
 
@@ -1343,7 +1343,7 @@ pred adrift[t: Test] {
 
 ### @term test
 
-> A test is a plain test or an expected failure.
+> A test is a plain test or an [*expected failure*](#term-expected-failure).
 
 A test of the project, in any file the checker reads: a suite the canon names, or a source.
 
@@ -1362,7 +1362,7 @@ abstract sig Test extends Thing {}
 
 #### @term plain-test
 
-> A plain test is a test that passes when what it checks holds.
+> A plain test is a [*test*](#term-test) that passes when what it [*checks*](#term-check) holds.
 
 <details>
 <summary>Alloy</summary>
@@ -1379,7 +1379,7 @@ sig PlainTest extends Test {}
 
 #### @term expected-failure
 
-> An expected failure is a test that is marked to fail, with a modifier that a [*runner*](#term-runner) marks a failure with, such as `it.fails`: it fails until the defect it checks is fixed.
+> An expected failure is a [*test*](#term-test) that is marked to fail, with a modifier that a [*runner*](#term-runner) marks a failure with, such as `it.fails`: it fails until the defect it [*checks*](#term-check) is fixed.
 
 <details>
 <summary>Alloy</summary>
@@ -1400,7 +1400,7 @@ sig ExpectedFailure extends Test {}
 
 ### @term declare
 
-> Project declares each test in each file of the directory of suites that the canon field of the project names: a suite, or a helper module that a suite runs.
+> [*Project*](#term-project) declares each [*test*](#term-test) in each [*file*](#term-file) of the directory of suites that the canon field of the project names: a suite, or a helper module that a suite runs.
 
 A test in a declared suite owes a tag, and so does a test that a helper module beside the suites makes. A test elsewhere in the sources may carry one, and the checker reads it.
 
@@ -1429,7 +1429,7 @@ sig Declared in Test {}
 
 ### @term pointer
 
-> A pointer is a file pointer or a fragment pointer.
+> A pointer is a [*file*](#term-file) pointer or a fragment pointer.
 
 A relative link in a document, outside its index. A link to the web is no pointer.
 
@@ -1448,15 +1448,15 @@ abstract sig Pointer extends Thing {}
 
 #### @term file-pointer
 
-> A file pointer is a pointer with no fragment: it names a [*file*](#term-file).
+> A file pointer is a [*pointer*](#term-pointer) with no fragment: it names a [*file*](#term-file).
 
 #### @term fragment-pointer
 
-> A fragment pointer is a pointer with a fragment, after a `#`: it names the unit or the [*section*](#term-section) whose id the fragment holds, in the file its path names.
+> A fragment pointer is a [*pointer*](#term-pointer) with a fragment, after a `#`: it names the [*unit*](#term-unit) or the [*section*](#term-section) whose id the fragment holds, in the [*file*](#term-file) its path names.
 
 ### @term target
 
-> A target is a unit, a section or a file.
+> A target is a [*unit*](#term-unit), a [*section*](#term-section) or a [*file*](#term-file).
 
 What a pointer can name.
 
@@ -1476,7 +1476,7 @@ fact target_kinds { Target = Unit + Section + File }
 
 ### @term section
 
-> A section is an element with an id that names no unit.
+> A section is an element with an id that names no [*unit*](#term-unit).
 
 A heading of a document that is no unit, or any other element with an id.
 
@@ -1495,7 +1495,7 @@ sig Section {}
 
 ### @term file
 
-> A file is a file of the project.
+> A file is a file of the [*project*](#term-project).
 
 <details>
 <summary>Alloy</summary>
@@ -1553,13 +1553,13 @@ pred used[u: Unit] {
 
 ### @term stem
 
-> A stem is the part of the heading of a unit after its kind: words of lowercase letters and digits, joined by single hyphens.
+> A stem is the part of the [*heading*](#term-heading) of a [*unit*](#term-unit) after its kind: words of lowercase letters and digits, joined by single hyphens.
 
 The id of a unit is its kind and its stem, joined by a hyphen: the heading `### @spec a-leaf` declares `spec-a-leaf`. The author writes the stem by hand, so it says what the unit claims.
 
 ### @term trailer
 
-> A trailer is a word that follows the id in the heading of a unit.
+> A trailer is a word that [*follows*](#term-follow) the id in the [*heading*](#term-heading) of a [*unit*](#term-unit).
 
 A unit's heading is its kind and its id, and nothing after: `### @spec a-leaf`. A trailer [*follows*](#term-follow) the unit whose heading holds it.
 
@@ -1578,7 +1578,7 @@ sig Trailer {}
 
 ### @term repeat
 
-> A unit repeats what spells the id of the unit in a heading of another unit.
+> A [*unit*](#term-unit) repeats what spells the id of the unit in a [*heading*](#term-heading) of another unit.
 
 When two units have one id, a pointer or a tag that names it cannot say which it means. One of the two goes unread.
 
@@ -1608,7 +1608,7 @@ fact repeats_another { no iden & Repeat.rel }
 
 ### @term follow
 
-> A trailer follows the unit whose heading holds the trailer.
+> A [*trailer*](#term-trailer) follows the [*unit*](#term-unit) whose [*heading*](#term-heading) holds the trailer.
 
 <details>
 <summary>Grammar</summary>
@@ -1635,7 +1635,7 @@ one sig Follow { rel: Trailer -> Unit }
 
 ### @term document
 
-> A document is a file that the canon field of the project names.
+> A document is a [*file*](#term-file) that the canon field of the [*project*](#term-project) names.
 
 <details>
 <summary>Alloy</summary>
@@ -1652,7 +1652,7 @@ sig Document extends Thing {}
 
 #### @term given-document
 
-> A given document is a document that the command line of a run names.
+> A given document is a [*document*](#term-document) that the command line of a [*run*](#term-run) names.
 
 <details>
 <summary>Alloy</summary>
@@ -1669,7 +1669,7 @@ sig Given in Document {}
 
 ### @term index
 
-> An index is the generated table of contents of a document.
+> An index is the generated table of contents of a [*document*](#term-document).
 
 The region between the `toc:begin` and `toc:end` markers, which `generate` writes: a link to each unit, indented under the unit it sits in.
 
@@ -1688,7 +1688,7 @@ sig Index {}
 
 ### @term hold
 
-> A document holds each unit and each index in the document. A source holds each symbol that its code declares.
+> A [*document*](#term-document) holds each [*unit*](#term-unit) and each [*index*](#term-index) in the document. A [*source*](#term-source) holds each symbol that its code declares.
 
 <details>
 <summary>Grammar</summary>
@@ -1717,7 +1717,7 @@ one sig Hold { units: Document -> Unit, indexes: Document -> Index, symbols: Sou
 
 ### @term match
 
-> An index matches the document that generate writes the index for.
+> An [*index*](#term-index) matches the [*document*](#term-document) that generate writes the index for.
 
 An index matches its document when it is what `generate` writes for the document now: a line for each unit, by its kind and stem.
 
@@ -1746,7 +1746,7 @@ one sig Match { rel: Index -> Document }
 
 ### @term site
 
-> A site is a symbol in a source, as the site line of a claim writes it.
+> A site is a symbol in a [*source*](#term-source), as the site line of a [*claim*](#term-claim) writes it.
 
 A claim that answers for one place in the code names it on a line of its own: `` Site: `queue.ts:drain` ``.
 
@@ -1765,7 +1765,7 @@ sig Site {}
 
 ### @term source
 
-> A source is a module in the sources that the canon field of the project names.
+> A source is a module in the sources that the canon field of the [*project*](#term-project) names.
 
 <details>
 <summary>Alloy</summary>
@@ -1782,13 +1782,13 @@ sig Source {}
 
 ### @term code-span
 
-> A code span is text between backticks in a document.
+> A code span is text between backticks in a [*document*](#term-document).
 
 A code span shows its text as it stands. Link syntax inside one renders as text, so it is no [*pointer*](#term-pointer).
 
 ### @term term-mark
 
-> A term mark is a link to a term whose text sits between two single asterisks: `[*tracker*](#term-tracker)`, `[*checker*](../canon/CANON.md#term-checker)`.
+> A term mark is a link to a [*term*](#term-term) whose text [*sits*](#term-sit) between two single asterisks: `[*tracker*](#term-tracker)`, `[*checker*](../canon/CANON.md#term-checker)`.
 
 A term mark says that its words are a word of the project's language, and it lets the reader click through to the term that defines it. The asterisks set the word apart in the rendered page, and they tell a link to a term from a link to anything else. Text between single asterisks outside a link is ordinary emphasis. Neither is text between double asterisks or underscores a term mark, nor text in a code span or a fenced block.
 
@@ -1807,13 +1807,13 @@ sig TermMark extends Thing {}
 
 ### @term form
 
-> A form of a term is a spelling that names the term: its stem as words, or a spelling its grammar table holds.
+> A form of a [*term*](#term-term) is a spelling that names the term: its [*stem*](#term-stem) as words, or a spelling its [*grammar table*](#term-grammar-table) holds.
 
 The words of a stem are the stem with a space for each hyphen: the stem `outdated-tracking` has the words `outdated tracking`. Its [*grammar table*](#term-grammar-table) can give `outdated trackings` as another form.
 
 ### @term grammar-table
 
-> A grammar table is a table in the own text of a term whose first header is `grammar` and whose second header is empty. Its row `type` names the part of speech of the term, and each other row gives a role and the spellings of that role, separated by commas.
+> A grammar table is a table in the [*own text*](#term-own-text) of a [*term*](#term-term) whose first header is `grammar` and whose second header is empty. Its row `type` names the part of speech of the term, and each other row gives a role and the spellings of that role, separated by commas.
 
 ```md
 <details>
@@ -1833,11 +1833,11 @@ A header names what its column holds, so the type of the term is a row and not a
 
 ### @term comment
 
-> A comment is a comment in a source.
+> A comment is a comment in a [*source*](#term-source).
 
 ### @term tag
 
-> A tag is a line of the documentation comment of a test.
+> A tag is a line of the documentation [*comment*](#term-comment) of a [*test*](#term-test).
 
 A `@canon` line, or an `@axiom` line. The checker reads the tags of every test in the sources, declared or not.
 
@@ -1866,7 +1866,7 @@ sig Tag extends Thing {}
 
 ### @term carry
 
-> A test carries each tag in the documentation comment of the test.
+> A [*test*](#term-test) carries each [*tag*](#term-tag) in the documentation [*comment*](#term-comment) of the test.
 
 <details>
 <summary>Grammar</summary>
@@ -1925,7 +1925,7 @@ pred checks[t: Test, u: Unit] { some g: Tag | t->g in Carry.rel and g->u in Name
 
 ### @term issue
 
-> An issue is an entry of the tracker of the project.
+> An issue is an entry of the [*tracker*](#term-tracker) of the [*project*](#term-project).
 
 <details>
 <summary>Grammar</summary>
@@ -1952,7 +1952,7 @@ sig Issue {}
 
 ### @term tracker
 
-> Tracker is the issue tracker the scope of the project names.
+> Tracker is the [*issue*](#term-issue) tracker the scope of the [*project*](#term-project) names.
 
 The [*issues*](#term-issue) a bug or a conflict names are the tracker's. The setting `tracker` names it. A project that sets no `tracker` has none, and so has no issues: a line such as `Issue: #12` in such a project names nothing.
 
@@ -1975,7 +1975,7 @@ fact issues_are_the_trackers { no Tracker implies no Issue }
 
 ### @term name
 
-> A bug names each issue that the issue line of the bug names.
+> A [*bug*](#term-bug) names each [*issue*](#term-issue) that the issue line of the bug names.
 
 A bug or a conflict names an issue on its "Issue:" line. A conflict names the units it sets against each other on its "Between:" line. A tag names the unit whose id it holds.
 
@@ -2130,7 +2130,7 @@ pred misleading[t: Test] {
 
 ### @term plugin
 
-> A plugin is a package that adds commands to the checker, and that a document asks for by the name of the package.
+> A plugin is a package that adds commands to the [*checker*](#term-checker), and that a [*document*](#term-document) asks for by the name of the package.
 
 A plugin is a package the project has installed. The checker fetches nothing, so a plugin that is not installed is missing: a name that stands for no package.
 
@@ -2161,7 +2161,7 @@ fact plugin_kinds { Plugin = Installed + Missing and no Installed & Missing }
 
 #### @term installed-plugin
 
-> An installed plugin is a plugin whose package the project has.
+> An installed plugin is a [*plugin*](#term-plugin) whose package the [*project*](#term-project) has.
 
 <details>
 <summary>Alloy</summary>
@@ -2178,7 +2178,7 @@ sig Installed in Plugin {}
 
 #### @term missing-plugin
 
-> A missing plugin is a plugin whose package the project lacks.
+> A missing plugin is a [*plugin*](#term-plugin) whose package the [*project*](#term-project) lacks.
 
 <details>
 <summary>Alloy</summary>
@@ -2195,7 +2195,7 @@ sig Missing in Plugin {}
 
 ### @term command
 
-> A command is a word after `canon` on the command line, and asks the checker for one job.
+> A command is a word after `canon` on the command line, and asks the [*checker*](#term-checker) for one job.
 
 A command is the checker's own, or a [*plugin*](#term-plugin) adds it. The checker has seven commands of its own: `check`, `generate`, `show`, `find`, `tree`, `rename` and `log`. A plugin can add to `check` and `generate`, and it can add commands of its own, such as `alloy:logic`.
 
@@ -2219,7 +2219,7 @@ one sig Add { rel: Plugin -> Command }
 
 ### @term frontmatter
 
-> A frontmatter is the block between two lines of three dashes at the top of a document, which names the plugins the document asks for.
+> A frontmatter is the block between two lines of three dashes at the top of a [*document*](#term-document), which names the [*plugins*](#term-plugin) the document asks for.
 
 A [*document*](#term-document) that starts with a heading has none, and neither has one whose block comes later.
 
@@ -2249,7 +2249,7 @@ one sig Bare { rel: Document -> Document }
 
 #### @term listing-frontmatter
 
-> A listing frontmatter is a frontmatter that has a plugins key.
+> A listing frontmatter is a [*frontmatter*](#term-frontmatter) that has a [*plugins*](#term-plugin) key.
 
 <details>
 <summary>Alloy</summary>
@@ -2266,7 +2266,7 @@ sig Listing in Frontmatter {}
 
 #### @term refused-frontmatter
 
-> A refused frontmatter is a frontmatter that the checker cannot read.
+> A refused frontmatter is a [*frontmatter*](#term-frontmatter) that the [*checker*](#term-checker) cannot read.
 
 <details>
 <summary>Alloy</summary>
@@ -2283,7 +2283,7 @@ sig Refused in Frontmatter {}
 
 #### @term misquoted-frontmatter
 
-> A misquoted frontmatter is a frontmatter with an entry that starts with an at sign outside quotes.
+> A misquoted frontmatter is a [*frontmatter*](#term-frontmatter) with an [*entry*](#term-entry) that starts with an at sign outside quotes.
 
 <details>
 <summary>Alloy</summary>
@@ -2300,7 +2300,7 @@ sig Misquoted in Frontmatter {}
 
 #### @term foreign-frontmatter
 
-> A foreign frontmatter is a frontmatter with a key that neither the checker nor a plugin it lists defines.
+> A foreign frontmatter is a [*frontmatter*](#term-frontmatter) with a key that neither the [*checker*](#term-checker) nor a [*plugin*](#term-plugin) it lists defines.
 
 <details>
 <summary>Alloy</summary>
@@ -2317,7 +2317,7 @@ sig Foreign in Frontmatter {}
 
 #### @term unclosed-frontmatter
 
-> An unclosed frontmatter is a frontmatter with a list that is not closed.
+> An unclosed frontmatter is a [*frontmatter*](#term-frontmatter) with a list that is not closed.
 
 <details>
 <summary>Alloy</summary>
@@ -2334,7 +2334,7 @@ sig Unclosed in Frontmatter {}
 
 #### @term unterminated-frontmatter
 
-> An unterminated frontmatter is a frontmatter with a string that is not closed.
+> An unterminated frontmatter is a [*frontmatter*](#term-frontmatter) with a string that is not closed.
 
 <details>
 <summary>Alloy</summary>
@@ -2351,7 +2351,7 @@ sig Unterminated in Frontmatter {}
 
 #### @term doubled-frontmatter
 
-> A doubled frontmatter is a frontmatter with a key that appears twice.
+> A doubled frontmatter is a [*frontmatter*](#term-frontmatter) with a key that appears twice.
 
 <details>
 <summary>Alloy</summary>
@@ -2368,7 +2368,7 @@ sig Doubled in Frontmatter {}
 
 #### @term dangling-frontmatter
 
-> A dangling frontmatter is a frontmatter with a path that names no document.
+> A dangling frontmatter is a [*frontmatter*](#term-frontmatter) with a path that names no [*document*](#term-document).
 
 <details>
 <summary>Alloy</summary>
@@ -2385,7 +2385,7 @@ sig Dangling in Frontmatter {}
 
 #### @term looping-frontmatter
 
-> A looping frontmatter is a frontmatter with an extension that leads back to its own document.
+> A looping frontmatter is a [*frontmatter*](#term-frontmatter) with an [*extension*](#term-extension) that leads back to its own [*document*](#term-document).
 
 <details>
 <summary>Alloy</summary>
@@ -2402,7 +2402,7 @@ sig Looping in Frontmatter {}
 
 #### @term stray-frontmatter
 
-> A stray frontmatter is a frontmatter with a setting in a document that is not the entry document.
+> A stray frontmatter is a [*frontmatter*](#term-frontmatter) with a [*setting*](#term-setting) in a [*document*](#term-document) that is not the entry document.
 
 <details>
 <summary>Alloy</summary>
@@ -2419,7 +2419,7 @@ sig Stray in Frontmatter {}
 
 ### @term entry
 
-> An entry is one string of the list of plugins in a frontmatter.
+> An entry is one string of the list of [*plugins*](#term-plugin) in a [*frontmatter*](#term-frontmatter).
 
 An entry is plain or in quotes, and a comma ends it unless the comma is in quotes.
 
@@ -2473,7 +2473,7 @@ pred lists[f: Frontmatter, p: Plugin] { some e: Entry | f->e in Item.rel and e->
 
 ### @term flaw
 
-> A flaw is a mistake that makes a frontmatter unreadable.
+> A flaw is a mistake that makes a [*frontmatter*](#term-frontmatter) unreadable.
 
 Eight flaws make a frontmatter unreadable:
 
@@ -2490,7 +2490,7 @@ The checker reads a small part of YAML and refuses the rest, so that a mistake c
 
 ### @term extension
 
-> A document extends another when its frontmatter lists the path of the other. The other is then context for it: the checker reads its units and its words, and checks it where it lives.
+> A [*document*](#term-document) extends another when its [*frontmatter*](#term-frontmatter) [*lists*](#term-list) the path of the other. The other is then [*context*](#term-context) for it: the [*checker*](#term-checker) reads its [*units*](#term-unit) and its words, and checks it where it lives.
 
 A path starts from the folder of the document that lists it. A document is context for the documents that extend it, and for the documents that those extend.
 
@@ -2519,7 +2519,7 @@ one sig Extend { rel: Document -> Document }
 
 ### @term context
 
-> A document is context for each document that extends it, and for each document that those extend.
+> A [*document*](#term-document) is context for each document that [*extends*](#term-extension) it, and for each document that those extend.
 
 The checker reads the units and the words of a document's context, and checks each of them where it lives.
 
@@ -2539,13 +2539,13 @@ fact context_is_another { no iden & Context.rel }
 
 ### @term setting
 
-> A setting is a key of a frontmatter that sets how the checker runs over a project, with its value.
+> A setting is a key of a [*frontmatter*](#term-frontmatter) that sets how the [*checker*](#term-checker) runs over a [*project*](#term-project), with its value.
 
 The checker has seven settings of its own: `documents`, `suites`, `sources`, `references`, `command`, `tracker` and `runners`. A plugin may define one more, under the key its configuration names. A value is a string, a list, or a map of keys and values. A setting that names a path names it from the folder of the document that holds it.
 
 ### @term runner
 
-> A runner is what the checker reads tests through: Vitest, Jest, Playwright, Node's test runner, a library that `runners` describes, or the runner markers.
+> A runner is what the [*checker*](#term-checker) reads tests through: Vitest, Jest, Playwright, Node's test runner, a library that `runners` describes, or the runner markers.
 
 The setting `runners` lists the runners of a project, such as `runners: ["@runner", vitest, playwright]`. A name picks a preset: `vitest`, `jest`, `playwright` or `node`. The entry `"@runner"` picks the runner markers. It needs quotes, because a plain value cannot start with an at sign.
 
@@ -2573,7 +2573,7 @@ A runner marker is a line `@runner` in the JSDoc of a declaration in a suite or 
 
 ### @term enter
 
-> A run enters the closest document named CANON.md, in the folder it runs in or a folder above it, whose frontmatter holds a setting.
+> A [*run*](#term-run) enters the closest [*document*](#term-document) named CANON.md, in the folder it runs in or a folder above it, whose [*frontmatter*](#term-frontmatter) holds a [*setting*](#term-setting).
 
 <details>
 <summary>Grammar</summary>
@@ -2619,7 +2619,7 @@ pred applies[p: Plugin, d: Document] { some f: Listing | d->f in Head.rel and li
 
 ### @term run
 
-> A run is one call of the checker on the command line, with a command and the documents it names.
+> A run is one call of the [*checker*](#term-checker) on the [*command*](#term-command) line, with a command and the documents it names.
 
 A run asks for one [*command*](#term-command), and gets a code from each [*plugin*](#term-plugin) it calls. Code 0 means nothing is wrong, 1 a finding, and 2 a check that could not run. The run exits with exactly one of these codes.
 
@@ -2736,7 +2736,7 @@ pred available[c: Command] {
 
 ### @term bare-name
 
-> The bare name of a command that a plugin adds is the part of its name after the colon.
+> The bare name of a [*command*](#term-command) that a [*plugin*](#term-plugin) adds is the part of its name after the colon.
 
 A plugin adds each command of its own under a prefix: the name of its package, without its scope and without `canon-plugin-`. The command `alloy:logic` of `@bigmistqke/canon-plugin-alloy` has the bare name `logic`.
 
@@ -2800,25 +2800,25 @@ pred ambiguous[c: Command] {
 
 ### @term heading
 
-> A heading is a line of a document that starts with hashes and opens a part of it.
+> A heading is a line of a [*document*](#term-document) that starts with hashes and opens a part of it.
 
 A heading that gives a kind and a stem, such as `@spec a-leaf`, declares a unit. A heading that does not is a [*section*](#term-section). A heading inside a fenced block, or inside the index of the document, is no heading at all.
 
 ### @term extent
 
-> The extent of a unit is the part of the document from its heading up to the next heading of its level or above.
+> The extent of a [*unit*](#term-unit) is the part of the [*document*](#term-document) from its [*heading*](#term-heading) up to the next heading of its level or above.
 
 A plain heading ends the extent of the units above it, because it is a heading of its own level or above.
 
 ### @term own-text
 
-> The own text of a unit is the text between its heading and its first nested heading.
+> The own text of a [*unit*](#term-unit) is the text between its [*heading*](#term-heading) and its first nested heading.
 
 The checker takes the statement, the site line and the blocks of a unit from its own text. A unit nested in another keeps what it writes.
 
 ### @term fold
 
-> A fold is a `<details>` element in a document: the reader sees its `<summary>`, and opens it to see the rest.
+> A fold is a `<details>` element in a [*document*](#term-document): the reader sees its `<summary>`, and opens it to see the rest.
 
 ````md
 <details>
@@ -2868,7 +2868,7 @@ one sig Blocks { rel: Unit -> Fence }
 
 ## @fact vitest-declares-a-test-with-it-or-test
 
-> Vitest 3 declares a test with a call of `it` or `test`, with any of the modifiers `concurrent`, `sequential`, `only`, `skip`, `todo`, `each`, `for`, `skipIf` and `runIf` between, and marks an expected failure with `fails`. It refuses a test declared inside the body of another test.
+> Vitest 3 declares a [*test*](#term-test) with a call of `it` or `test`, with any of the modifiers `concurrent`, `sequential`, `only`, `skip`, `todo`, `each`, `for`, `skipIf` and `runIf` between, and marks an [*expected failure*](#term-expected-failure) with `fails`. It refuses a test declared inside the body of another test.
 
 The type `ChainableTestAPI` of `@vitest/runner` 3.2 lists the modifiers. `chunk-hooks.js` of the same package throws "Calling the test function inside another test function is not allowed". Its other members, such as `extend` and `scoped`, declare no test.
 
@@ -2876,7 +2876,7 @@ A module imports `it` and `test` from `vitest`. Vitest provides them as globals 
 
 ## @fact jest-declares-a-test-with-it-or-test
 
-> Jest 30 declares a test with a call of `it`, `test`, `fit`, `xit` or `xtest`, with any of the modifiers `only`, `skip`, `todo`, `each` and `concurrent` between, and marks an expected failure with `failing`. It refuses a test declared inside the body of another test.
+> Jest 30 declares a [*test*](#term-test) with a call of `it`, `test`, `fit`, `xit` or `xtest`, with any of the modifiers `only`, `skip`, `todo`, `each` and `concurrent` between, and marks an [*expected failure*](#term-expected-failure) with `failing`. It refuses a test declared inside the body of another test.
 
 The interface `TestFrameworkGlobals` of `@jest/types` 30.5 lists the calls, and `It`, `ItBase` and `ItConcurrent` list the modifiers. `jest-circus` throws "Tests cannot be nested".
 
@@ -2884,7 +2884,7 @@ Jest provides its calls as globals, since its option `injectGlobals` defaults to
 
 ## @fact playwright-declares-a-test-with-test
 
-> Playwright 1.64 declares a test with a call of `test`, with any of the modifiers `only`, `skip` and `fixme` between, and marks an expected failure with `fail`. A call of `test.skip`, `test.fixme` or `test.fail` with no body after its first argument declares no test: it marks the tests around it. Playwright refuses a test declared after its file has loaded, so a test inside the body of another test.
+> Playwright 1.64 declares a [*test*](#term-test) with a call of `test`, with any of the modifiers `only`, `skip` and `fixme` between, and marks an [*expected failure*](#term-expected-failure) with `fail`. A call of `test.skip`, `test.fixme` or `test.fail` with no body after its first argument declares no test: it marks the tests around it. Playwright refuses a test declared after its [*file*](#term-file) has loaded, so a test inside the body of another test.
 
 The interface `TestType` in `types/test.d.ts` of `playwright` 1.64 lists the members. Its other members, such as `describe`, `step`, `use`, `extend` and the hooks, declare no test. `_currentSuite` in `lib/common/index.js` throws when no file is loading.
 
@@ -2892,13 +2892,13 @@ A module imports `test` from `@playwright/test`, or from `playwright/test`, whic
 
 ## @fact node-declares-a-test-with-it-or-test
 
-> Node's test runner declares a test with a call of `it` or `test` from `node:test`, with any of the modifiers `only`, `skip` and `todo` between. It has no modifier that marks an expected failure.
+> Node's test [*runner*](#term-runner) declares a test with a call of `it` or `test` from `node:test`, with any of the modifiers `only`, `skip` and `todo` between. It has no modifier that marks an [*expected failure*](#term-expected-failure).
 
 The file `test.d.ts` of `@types/node` 26 declares these in the module `node:test`, the only name it has, and exports `test as it`. It exports `test` as the module itself, by `export = test`, so a default import of `node:test` is `test`. Node provides no globals.
 
 ## @fact a-runner-takes-the-body-of-a-test-after-its-title
 
-> Vitest, Jest, Playwright and Node's test runner take the body of a test as a function after its title.
+> Vitest, Jest, Playwright and Node's test [*runner*](#term-runner) take the body of a test as a function after its title.
 
 The body can follow an options object, as in Vitest's `test(name, options, fn)`. A call with no function after its first argument runs no code of its own, such as `test.todo('name')` or Playwright's `test.skip(condition, 'reason')`.
 
@@ -3020,7 +3020,7 @@ all b: Bug | (no s: Spec | cites[b, s]) implies b in Freelancing
 
 ##### @bug a-link-in-the-body-counts-as-a-citation
 
-> When a spec links to an axiom, and the spec cites no axiom, and the spec cites no spec, checker reports no freelancing for the spec.
+> When a [*spec*](#term-spec) links to an [*axiom*](#term-axiom), and the spec [*cites*](#term-cite) no axiom, and the spec cites no spec, [*checker*](#term-checker) reports no [*freelancing*](#term-freelancing) for the spec.
 
 The owes-check counts every link in a unit's body. A spec that only mentions an axiom in a sentence passes. `cli.ts` says so where it reports a misnesting.
 
@@ -3186,7 +3186,7 @@ all t: Term | (some u: Unit | cites[t, u] and u not in Term) implies t in Misnes
 
 ##### @bug a-derives-from-line-is-not-checked-for-its-kind
 
-> When a fact derives from a unit, and the fact sits in no unit, checker reports no misnesting for the fact.
+> When a [*fact*](#term-fact) [*derives*](#term-derive) from a [*unit*](#term-unit), and the fact [*sits*](#term-sit) in no unit, [*checker*](#term-checker) reports no [*misnesting*](#term-misnesting) for the fact.
 
 The check for a misnesting reads only where a unit sits. A "Derives from:" line that names a kind the unit may not cite passes.
 
@@ -3454,7 +3454,7 @@ all t: PlainTest | (some b: Bug | checks[t, b]) implies t in Unpinning
 
 ## @axiom the-check-can-be-taken-at-its-word
 
-> The author can act on what the checker reports: a clean check means the canon holds, and a finding means it does not.
+> The author can act on what the [*checker*](#term-checker) reports: a clean check means the canon holds, and a [*finding*](#term-finding) means it does not.
 
 A checker can act as an advisor, whose findings are hints the author weighs. It can also act as a judge, whose verdict the author acts on. The canon takes the judge. The canon stays current only because the check fails when it does not. An author who has to check the checker learns to ignore it, and then nothing keeps the canon current.
 
@@ -3541,31 +3541,31 @@ all g: Tag | (no u: Unit | g->u in Name.tag) implies g in Rotting
 
 #### @spec a-tag-in-any-comment-names-a-unit
 
-> When a `@canon` tag in any comment of a suite or a source names no unit, the checker reports a [*rotting*](#term-rotting) for it.
+> When a `@canon` [*tag*](#term-tag) in any [*comment*](#term-comment) of a suite or a [*source*](#term-source) names no [*unit*](#term-unit), the [*checker*](#term-checker) reports a [*rotting*](#term-rotting) for it.
 
 This follows because such a tag points at a unit, as a [*tag*](#term-tag) of a test does. A unit that is renamed or removed leaves it pointing at nothing.
 
 #### @spec a-tag-outside-a-test-tests-nothing
 
-> A `@canon` tag in a comment that is not the documentation comment of a test makes no unit [*tested*](#term-tested).
+> A `@canon` [*tag*](#term-tag) in a [*comment*](#term-comment) that is not the documentation comment of a [*test*](#term-test) makes no [*unit*](#term-unit) [*tested*](#term-tested).
 
 This follows because only a test can fail when a claim stops holding. A comment that names a spec checks nothing, so the spec still owes a test.
 
 #### @spec a-link-in-any-comment-names-a-target
 
-> When a link with a fragment, in a comment of a source, names no [*target*](#term-target), the checker reports a [*rotting*](#term-rotting) for it.
+> When a link with a fragment, in a [*comment*](#term-comment) of a [*source*](#term-source), names no [*target*](#term-target), the [*checker*](#term-checker) reports a [*rotting*](#term-rotting) for it.
 
 This follows because source code may point a reader at the unit that holds the reason for a line. It does so with a `@canon` tag, or with a Markdown link the editor can follow. A rename or a removal leaves such a link leading nowhere, as it leaves a [*pointer*](#term-pointer) in a document. The path of the link leads from the file that holds the comment.
 
 #### @spec a-bare-mention-of-a-document-is-a-rotting
 
-> When a comment of a source spells a canon document and a fragment outside a link and a tag, the checker reports a [*rotting*](#term-rotting).
+> When a [*comment*](#term-comment) of a [*source*](#term-source) spells a canon [*document*](#term-document) and a fragment outside a link and a [*tag*](#term-tag), the [*checker*](#term-checker) reports a [*rotting*](#term-rotting).
 
 This follows because a mention such as `CANON.md#spec-x` is neither form a source cites with. The checker reports it even when its unit lives. Its path reads as one from the root, while a link leads from the file that holds it. So a rename cannot tell which text to move, and the mention would go stale silently. The finding asks for a `@canon` tag or a link.
 
 #### @spec a-comment-makes-no-unit-used
 
-> A link in a comment of a source makes no unit [*used*](#term-used), and neither does a `@canon` tag outside the comment of a test.
+> A link in a [*comment*](#term-comment) of a [*source*](#term-source) makes no [*unit*](#term-unit) [*used*](#term-used), and neither does a `@canon` [*tag*](#term-tag) outside the comment of a [*test*](#term-test).
 
 This follows because a unit that nothing in the canon leans on can stop being true unnoticed, and a comment checks nothing. A reference from the code helps the reader find the reason for a line. It keeps no unit alive, just as it makes no unit tested.
 
@@ -3656,7 +3656,7 @@ all p: Pointer | (no x: Target | p->x in Name.pointer) implies p in Rotting
 
 ##### @bug a-file-pointer-is-not-checked
 
-> When a file pointer names no target, checker reports no rotting for the file pointer.
+> When a [*file pointer*](#term-file-pointer) [*names*](#term-name) no [*target*](#term-target), [*checker*](#term-checker) reports no [*rotting*](#term-rotting) for the [*file*](#term-file) [*pointer*](#term-pointer).
 
 The check of a pointer reads only a [*fragment pointer*](#term-fragment-pointer). A [*file pointer*](#term-file-pointer) to a file that no longer exists passes.
 
@@ -3681,45 +3681,45 @@ all m: TermMark | (no t: Term | m->t in Name.mark) implies m in Rotting
 
 #### @spec a-grammar-table-in-a-fold-is-the-grammar-table-of-its-term
 
-> A [*grammar table*](#term-grammar-table) inside a [*fold*](#term-fold) in the own text of a term is the grammar table of the term, as it would be outside the fold.
+> A [*grammar table*](#term-grammar-table) inside a [*fold*](#term-fold) in the [*own text*](#term-own-text) of a [*term*](#term-term) is the grammar table of the term, as it would be outside the fold.
 
 This follows because a fold changes what the reader sees, not what the term holds.
 
 #### @spec a-grammar-table-names-a-type-and-its-roles
 
-> When a grammar table names a type or a role the checker does not know, names a role in two rows, or has no row `type`, the checker reports a rotting. The roles of a type are those its [*grammar table*](#term-grammar-table) term gives.
+> When a grammar table names a type or a role the [*checker*](#term-checker) does not know, names a role in two rows, or has no row `type`, the checker reports a [*rotting*](#term-rotting). The roles of a type are those its [*grammar table*](#term-grammar-table) [*term*](#term-term) gives.
 
 This follows because a grammar table the checker cannot read leaves the forms of its term unknown. A typo such as `plral` would drop a form without a word. Of two rows of one role, neither says on its own which spellings the role has.
 
 #### @spec a-term-mark-names-the-term-its-link-names
 
-> A term mark names the term its link names, in its own document or in another: `[*names*](#term-name)` names `term-name`.
+> A [*term mark*](#term-term-mark) names the [*term*](#term-term) its link names, in its own [*document*](#term-document) or in another: `[*names*](#term-name)` names `term-name`.
 
 This follows because a term mark is a link, and leads where its link says. The reader clicks through to the term, and the checker reads the target it would land on.
 
 ##### @spec a-term-mark-names-a-term-of-another-document-through-its-link
 
-> A term mark whose link names a term of another document names that term, and its words spell a form of it there.
+> A [*term mark*](#term-term-mark) whose link [*names*](#term-name) a [*term*](#term-term) of another [*document*](#term-document) names that term, and its words spell a [*form*](#term-form) of it there.
 
 This follows because the link says the document, so the checker reads the forms where the term is.
 
 ##### @spec a-term-mark-spells-a-form-of-its-term
 
-> When the words of a term mark spell no [*form*](#term-form) of the term its link names, the checker reports a rotting for the mark.
+> When the words of a [*term mark*](#term-term-mark) spell no [*form*](#term-form) of the [*term*](#term-term) its link [*names*](#term-name), the [*checker*](#term-checker) reports a [*rotting*](#term-rotting) for the mark.
 
 This follows because a term mark says that its words are the term it links to. Words that are no spelling of the term would send the reader to a definition of something else.
 
 ###### @spec each-spelling-of-a-grammar-table-is-a-form-of-its-term
 
-> Each spelling in the grammar table of a term, whatever its role, is a form of the term.
+> Each spelling in the [*grammar table*](#term-grammar-table) of a [*term*](#term-term), whatever its role, is a [*form*](#term-form) of the term.
 
 ###### @spec a-term-with-no-grammar-table-has-the-words-of-its-stem-as-its-only-form
 
-> A term with no grammar table has one form: the words of its stem.
+> A [*term*](#term-term) with no [*grammar table*](#term-grammar-table) has one [*form*](#term-form): the words of its [*stem*](#term-stem).
 
 ###### @spec a-term-mark-names-its-term-whatever-its-case
 
-> The words of a term mark spell a form of its term in capitals or not: `[*Checker*](#term-checker)` spells a form of `term-checker`.
+> The words of a [*term mark*](#term-term-mark) spell a [*form*](#term-form) of its [*term*](#term-term) in capitals or not: `[*Checker*](#term-checker)` spells a form of `term-checker`.
 
 #### @spec a-unit-is-declared-once
 
@@ -3761,7 +3761,7 @@ all u: Unit | (not used[u] and u not in Conflict and u not in Thread) implies u 
 
 ##### @bug a-link-in-a-code-span-uses-a-unit
 
-> When a unit is not used, and a code span names the unit, checker reports no orphaning for the unit.
+> When a [*unit*](#term-unit) is not [*used*](#term-used), and a [*code span*](#term-code-span) names the unit, [*checker*](#term-checker) reports no [*orphaning*](#term-orphaning) for the unit.
 
 The check reads link syntax inside a [*code span*](#term-code-span) as a pointer. A unit that only a code span names passes as used. Link syntax in a code span that leads nowhere is reported as a rotting.
 
@@ -3837,7 +3837,7 @@ all c: Claim | (some s: Site | c->s in Name.site and (no r: Source | r->s in Hol
 
 ##### @bug a-site-named-in-a-comment-is-held
 
-> When a claim names a site that no source holds, and a comment names the site, checker reports no mislocation for the claim.
+> When a [*claim*](#term-claim) names a [*site*](#term-site) that no [*source*](#term-source) [*holds*](#term-hold), and a [*comment*](#term-comment) names the site, [*checker*](#term-checker) reports no [*mislocation*](#term-mislocation) for the claim.
 
 The check of a site reads the whole text of the source. A symbol that the code no longer declares passes while a [*comment*](#term-comment) still holds its name. A comment that says what the symbol was renamed to is enough.
 
@@ -3845,61 +3845,61 @@ Issue: #4
 
 #### @spec a-heading-with-a-kind-and-a-stem-declares-a-unit
 
-> A [*heading*](#term-heading) that gives a kind and a stem declares a [*unit*](#term-unit), unless it lies inside a fenced block or inside the index.
+> A [*heading*](#term-heading) that gives a kind and a [*stem*](#term-stem) declares a [*unit*](#term-unit), unless it lies inside a fenced block or inside the [*index*](#term-index).
 
 This follows because the id of a unit is its kind and its stem, and the heading is the one place that gives both.
 
 #### @spec a-heading-in-a-fenced-block-declares-no-unit
 
-> A heading inside a fenced block declares no unit.
+> A [*heading*](#term-heading) inside a fenced block declares no [*unit*](#term-unit).
 
 This follows because a fenced block shows an example, and an example must not become a unit that a test can cite.
 
 #### @spec a-heading-in-the-index-declares-no-unit
 
-> A heading inside the index declares no unit.
+> A [*heading*](#term-heading) inside the [*index*](#term-index) declares no [*unit*](#term-unit).
 
 This follows because the index lists every unit already. Reading it as units would give each id two units.
 
 #### @spec a-unit-sits-in-the-closest-unit-whose-extent-holds-its-heading
 
-> A unit sits in the closest unit whose extent holds its heading.
+> A [*unit*](#term-unit) [*sits*](#term-sit) in the closest unit whose [*extent*](#term-extent) holds its [*heading*](#term-heading).
 
 This follows because nesting is the citation of the unit above, and the unit above is the closest one that reaches the heading.
 
 #### @spec a-plain-heading-that-ends-the-extent-of-a-unit-keeps-later-units-out-of-it
 
-> A unit that comes after a plain heading that ends the [*extent*](#term-extent) of another unit does not sit in that unit.
+> A [*unit*](#term-unit) that comes after a plain [*heading*](#term-heading) that ends the [*extent*](#term-extent) of another unit does not [*sit*](#term-sit) in that unit.
 
 This follows because a plain heading starts a part of the document that is about something else. A unit below it does not derive from a unit above it.
 
 #### @spec a-unit-owns-only-the-text-before-its-first-nested-heading
 
-> Text that the own text of a unit holds is no part of the text of a unit nested in it.
+> Text that the [*own text*](#term-own-text) of a [*unit*](#term-unit) holds is no part of the text of a unit nested in it.
 
 This follows because what a nested unit writes is its own claim. The unit above does not make it.
 
 #### @spec a-site-line-in-the-own-text-names-the-site-of-its-unit
 
-> A unit names each [*site*](#term-site) that a site line in its [*own text*](#term-own-text) names.
+> A [*unit*](#term-unit) names each [*site*](#term-site) that a site line in its [*own text*](#term-own-text) names.
 
 This follows because a claim that answers for one place in the code names that place on a line of its own.
 
 #### @spec a-site-line-of-a-nested-unit-names-no-site-of-the-unit-above
 
-> A site line in a nested unit names no site of the unit above, unless the own text of that unit has the same line.
+> A [*site*](#term-site) line in a nested [*unit*](#term-unit) names no site of the unit above, unless the [*own text*](#term-own-text) of that unit has the same line.
 
 This follows because the nested unit is the one that answers for that place.
 
 #### @spec an-extends-key-lists-the-documents-a-document-extends
 
-> A document extends each document that a path in the extends key of its frontmatter leads to.
+> A [*document*](#term-document) [*extends*](#term-extension) each document that a path in the extends key of its [*frontmatter*](#term-frontmatter) leads to.
 
 This follows because a pointer into another document leads where it says only if the checker knows which documents the author means. The author says so in the document.
 
 #### @spec a-path-is-read-from-the-folder-of-the-document-that-lists-it
 
-> The checker reads a path that a frontmatter lists from the folder of the document that lists it.
+> The [*checker*](#term-checker) reads a path that a [*frontmatter*](#term-frontmatter) [*lists*](#term-list) from the folder of the [*document*](#term-document) that lists it.
 
 This follows because a link in a document leads from where the document is, and a path in its frontmatter means the same.
 
@@ -3945,37 +3945,37 @@ some d, e, g: Document | d != g and d->e in Extend.rel and e->g in Extend.rel an
 
 #### @spec a-unit-of-an-extended-document-is-not-reported-for-the-document-that-extends-it
 
-> The checker reports no finding for a unit of an extended document that the project does not check.
+> The [*checker*](#term-checker) reports no [*finding*](#term-finding) for a [*unit*](#term-unit) of an extended [*document*](#term-document) that the [*project*](#term-project) does not check.
 
 This follows because the extended document is checked where it lives. A second report of the same unit would only make noise.
 
 #### @spec an-id-that-an-extended-document-declares-too-is-repeated
 
-> A unit repeats a unit of a document that is context for its own document when the two have the same id.
+> A [*unit*](#term-unit) [*repeats*](#term-repeat) a unit of a [*document*](#term-document) that is [*context*](#term-context) for its own document when the two have the same id.
 
 This follows because a pointer or a tag cannot say which of two units with one id it means. The checker reads an extended document together with the document that extends it.
 
 #### @spec the-statement-of-a-unit-is-the-blockquote-that-opens-its-own-text
 
-> A unit whose own text opens with a blockquote has that blockquote as its statement.
+> A [*unit*](#term-unit) whose [*own text*](#term-own-text) opens with a blockquote has that blockquote as its [*statement*](#term-statement).
 
 This follows because a reader looks for the claim of a unit right under its heading. The quote under the heading is what the unit says.
 
 #### @spec every-line-of-the-blockquote-is-part-of-the-statement
 
-> The [*statement*](#term-statement) of a unit holds every line of its blockquote, joined by a space unless the blockquote holds a list.
+> The [*statement*](#term-statement) of a [*unit*](#term-unit) holds every line of its blockquote, joined by a space unless the blockquote holds a list.
 
 This follows because a claim that runs over several lines is still one claim, and a reader would miss what the first line leaves out.
 
 #### @spec a-line-break-is-no-part-of-a-statement
 
-> A backslash that ends a line of a blockquote, a line break in Markdown, is no part of the [*statement*](#term-statement) of the unit.
+> A backslash that ends a line of a blockquote, a line break in Markdown, is no part of the [*statement*](#term-statement) of the [*unit*](#term-unit).
 
 This follows because the backslash says where the page breaks the line, and not what the unit claims. A reader of the statement on the command line sees the words alone.
 
 #### @spec a-statement-with-a-list-keeps-its-lines
 
-> A statement whose blockquote holds a list keeps the lines of the blockquote.
+> A [*statement*](#term-statement) whose blockquote holds a list keeps the lines of the blockquote.
 
 This follows because the indentation of a list says where each item ends, and what follows the list. Joined on one line, "when these hold: - a - b then c" could read with "then c" as part of "b". The tree shows the first line of such a statement, with an ellipsis.
 
@@ -3999,7 +3999,7 @@ all f: Fence, u: Unit | (f in Languaged and f->u in Within.rel) implies u->f in 
 
 #### @spec a-fenced-block-in-a-fold-belongs-to-its-unit-as-any-other
 
-> A fenced block inside a [*fold*](#term-fold) in the own text of a unit is a block of the unit, as it would be outside the fold.
+> A fenced block inside a [*fold*](#term-fold) in the [*own text*](#term-own-text) of a [*unit*](#term-unit) is a block of the unit, as it would be outside the fold.
 
 This follows because a fold changes what the reader sees, not what the unit holds.
 
@@ -4090,13 +4090,13 @@ all f: Fence | (f in Languaged and f in NoSecondWord) implies f in UnitBlock
 
 #### @spec the-body-of-a-block-is-the-lines-between-its-fences
 
-> The checker reads the body of a fence that names a language as the lines between its fences.
+> The [*checker*](#term-checker) reads the body of a [*fence*](#term-fence) that names a language as the lines between its fences.
 
 This follows because the fences belong to the Markdown and not to the logic, and the analyzer would refuse them.
 
 #### @spec the-offset-of-a-block-is-where-its-body-starts-in-the-document
 
-> The checker says where the body of a fence that names a language starts in the document.
+> The [*checker*](#term-checker) says where the body of a [*fence*](#term-fence) that names a language starts in the [*document*](#term-document).
 
 This follows because a tool that rewrites a block needs to know where its body sits.
 
@@ -4123,7 +4123,7 @@ all f: Fence, u: Unit | f->u in Within.rel implies (no v: Unit | v != u and v->f
 
 ### @axiom a-finding-is-never-false
 
-> The checker reports a finding only for what breaks the canon.
+> The [*checker*](#term-checker) reports a [*finding*](#term-finding) only for what breaks the canon.
 
 This narrows taking the check at its word to a finding: each finding names something the canon, the tests or the code must change. A false finding asks for a change that nothing needs. The author then bends working code to suit the checker, or writes a tag that says nothing. Either way the project gets worse to quiet the check.
 
@@ -4312,31 +4312,31 @@ all t: Thread | t not in Orphaning
 
 #### @spec only-single-asterisks-make-a-term-mark
 
-> The checker reads a term mark only as the text of a link between two single asterisks in prose, and reports no rotting for other emphasis or for asterisks in code.
+> The [*checker*](#term-checker) reads a [*term mark*](#term-term-mark) only as the text of a link between two single asterisks in prose, and reports no [*rotting*](#term-rotting) for other emphasis or for asterisks in code.
 
 This follows because a [*term mark*](#term-term-mark) that the author did not write would make the checker report a rotting for words that break no rule. The variables of a statement use underscores, and code shows asterisks as they stand.
 
 ##### @spec single-asterisks-outside-a-link-are-emphasis
 
-> Text between single asterisks that is not the text of a link, `*words*`, is emphasis and no term mark.
+> Text between single asterisks that is not the text of a link, `*words*`, is emphasis and no [*term mark*](#term-term-mark).
 
 This follows because the link is what makes the words lead to a term. Emphasis that leads nowhere says nothing the checker can hold to a term.
 
 ##### @spec text-between-underscores-is-no-term-mark
 
-> Text between underscores, `_words_`, is no term mark.
+> Text between underscores, `_words_`, is no [*term mark*](#term-term-mark).
 
 ##### @spec text-between-double-asterisks-is-no-term-mark
 
-> Text between double asterisks, `**words**`, is no term mark.
+> Text between double asterisks, `**words**`, is no [*term mark*](#term-term-mark).
 
 ##### @spec asterisks-in-code-make-no-term-mark
 
-> Asterisks in a code span or a fenced block make no term mark.
+> Asterisks in a [*code span*](#term-code-span) or a fenced block make no [*term mark*](#term-term-mark).
 
 #### @spec only-a-call-that-declares-a-test-is-a-test
 
-> The checker reads a call as a test only when a [*runner*](#term-runner) of the project declares a test with it.
+> The [*checker*](#term-checker) reads a call as a [*test*](#term-test) only when a [*runner*](#term-runner) of the [*project*](#term-project) declares a test with it.
 
 Derives from: [`fact-vitest-declares-a-test-with-it-or-test`](#fact-vitest-declares-a-test-with-it-or-test), [`fact-jest-declares-a-test-with-it-or-test`](#fact-jest-declares-a-test-with-it-or-test), [`fact-playwright-declares-a-test-with-test`](#fact-playwright-declares-a-test-with-test), [`fact-node-declares-a-test-with-it-or-test`](#fact-node-declares-a-test-with-it-or-test), [`fact-a-runner-takes-the-body-of-a-test-after-its-title`](#fact-a-runner-takes-the-body-of-a-test-after-its-title)
 
@@ -4344,37 +4344,37 @@ This follows because a finding about a test that is none is false. A hook, a fix
 
 ##### @spec a-member-no-runner-names-is-no-test
 
-> A call through a member that no runner of the project names, such as `test.beforeEach(fn)` or `test.extend({})`, is no test.
+> A call through a member that no [*runner*](#term-runner) of the [*project*](#term-project) names, such as `test.beforeEach(fn)` or `test.extend({})`, is no [*test*](#term-test).
 
 This follows because the runners declare a test only through the modifiers they name.
 
 ##### @spec a-call-with-no-body-is-no-test
 
-> A call with no function after its first argument, such as `test.todo('name')` or `test.skip(condition, 'reason')`, is no test.
+> A call with no function after its first argument, such as `test.todo('name')` or `test.skip(condition, 'reason')`, is no [*test*](#term-test).
 
 This follows because such a call runs no code, so it checks nothing.
 
 ##### @spec a-call-inside-a-test-is-no-test
 
-> A call inside the body of a test is no test.
+> A call inside the body of a [*test*](#term-test) is no test.
 
 This follows because the runners refuse a test declared there, so a call there that looks like one is something else, such as Playwright's `test.fail(condition)`.
 
 ##### @spec a-name-the-module-declares-is-no-runner
 
-> A call whose name refers to a declaration of its own module that no runner marker marks, such as `const it = values[Symbol.iterator]()`, is no test.
+> A call whose name refers to a declaration of its own module that no [*runner*](#term-runner) marker marks, such as `const it = values[Symbol.iterator]()`, is no [*test*](#term-test).
 
 This follows because the name then holds the module's own value, not a runner's function. The checker follows a name to its declaration in the scope of the call. A declaration in another block of the module does not count.
 
 ##### @spec a-name-imported-from-no-runner-is-no-runner
 
-> A call whose name is imported from neither a package of a runner nor a module that exports a marked declaration is no test.
+> A call whose name is imported from neither a package of a [*runner*](#term-runner) nor a module that exports a marked declaration is no [*test*](#term-test).
 
 This follows because a name imported from elsewhere holds another library's function, such as a `check` that validates input.
 
 ##### @spec a-name-imported-from-a-runner-leads-to-its-call
 
-> A name imported from a runner's package leads to its call by name, as the default export, or through the namespace. Examples are `test` after `import test from 'node:test'`, and `nt.it` after `import * as nt from 'node:test'`.
+> A name imported from a [*runner*](#term-runner)'s package leads to its call by name, as the default export, or through the namespace. Examples are `test` after `import test from 'node:test'`, and `nt.it` after `import * as nt from 'node:test'`.
 
 Derives from: [`fact-playwright-declares-a-test-with-test`](#fact-playwright-declares-a-test-with-test), [`fact-node-declares-a-test-with-it-or-test`](#fact-node-declares-a-test-with-it-or-test)
 
@@ -4382,43 +4382,43 @@ This follows because each form of import binds the same function of the runner. 
 
 ##### @spec a-global-name-is-a-runner-only-where-a-runner-provides-globals
 
-> A call whose name no module declares or imports is a test only when a runner of the project provides that call as a global.
+> A call whose name no module declares or imports is a [*test*](#term-test) only when a [*runner*](#term-runner) of the [*project*](#term-project) provides that call as a global.
 
 This follows because Playwright and Node's test runner give no globals. A global `test` in a project of theirs is no runner's call.
 
 ##### @spec a-call-takes-the-modifiers-of-its-own-runner
 
-> A call reads its modifiers by the runner its name leads to, such as Playwright's `fail` only on Playwright's `test`.
+> A call reads its modifiers by the [*runner*](#term-runner) its name leads to, such as Playwright's `fail` only on Playwright's `test`.
 
 This follows because each runner declares a test only through its own modifiers. A call of a marked declaration takes the modifiers of every runner of the project.
 
 ##### @spec a-runner-set-in-the-settings-replaces-the-presets
 
-> When the setting `runners` lists runners, the checker reads a call as a test only when one of those runners declares a test with it.
+> When the [*setting*](#term-setting) `runners` lists runners, the [*checker*](#term-checker) reads a call as a [*test*](#term-test) only when one of those runners declares a test with it.
 
 This follows because a project that names its runners says which calls its tests are. A modifier of a runner the project does not use, such as Playwright's `fail` in a project of Vitest, then declares no test.
 
 ##### @spec an-empty-list-of-runners-reads-no-test
 
-> When the setting `runners` is an empty list, the checker reads no call as a test.
+> When the [*setting*](#term-setting) `runners` is an empty list, the [*checker*](#term-checker) reads no call as a [*test*](#term-test).
 
 This follows because the list names every runner of the project, and an empty one names none. Such a project has chosen to hold its canon to itself, and a call of `it` in it checks nothing the canon knows of.
 
 ##### @spec a-runner-written-as-a-map-adds-its-calls
 
-> A runner that the setting `runners` writes as a map declares a test with the calls, modifiers and failure modifiers the map lists. Its calls come from the packages under `from`, or are globals when it sets `globals`.
+> A [*runner*](#term-runner) that the [*setting*](#term-setting) `runners` writes as a map declares a [*test*](#term-test) with the calls, modifiers and failure modifiers the map lists. Its calls come from the packages under `from`, or are globals when it sets `globals`.
 
 This follows because a runner with no preset still declares its tests through calls, and the map names them.
 
 ##### @spec a-failure-modifier-of-a-runner-marks-an-expected-failure
 
-> A test whose call holds a failure modifier of a runner of the project is an [*expected failure*](#term-expected-failure).
+> A [*test*](#term-test) whose call holds a failure modifier of a [*runner*](#term-runner) of the [*project*](#term-project) is an [*expected failure*](#term-expected-failure).
 
 This follows because each runner marks an expected failure with a modifier of its own, such as `fails` in Vitest and `failing` in Jest.
 
 ##### @spec a-call-of-a-marked-function-is-a-test
 
-> A call whose name leads to a declaration that a runner marker marks is a test, by the rules for a call of a runner. The name leads there in the scope of the call, through an import of a relative path, or through a re-export.
+> A call whose name leads to a declaration that a [*runner*](#term-runner) marker marks is a [*test*](#term-test), by the rules for a call of a runner. The name leads there in the scope of the call, through an import of a relative path, or through a re-export.
 
 This follows because a helper that wraps a runner's call declares a test each time it is called. Its call site is where the test is, and where its tag says what it checks.
 
@@ -4430,19 +4430,19 @@ This follows because the checker resolves a path only by the files beside it. A 
 
 ##### @spec a-marker-in-an-example-is-no-marker
 
-> A line `@runner` in an `@example` section or a fenced block of a JSDoc marks nothing.
+> A line `@runner` in an `@example` [*section*](#term-section) or a fenced block of a JSDoc marks nothing.
 
 This follows because such a line shows code to a reader, and the declaration under the JSDoc is not its subject.
 
 ##### @spec a-call-of-a-function-marked-fails-is-an-expected-failure
 
-> A test made by a call of a function that the marker `@runner fails` marks is an [*expected failure*](#term-expected-failure).
+> A [*test*](#term-test) made by a call of a function that the marker `@runner fails` marks is an [*expected failure*](#term-expected-failure).
 
 This follows because such a helper wraps a failure modifier, such as `it.fails`, and the checker cannot see which modifier a helper uses.
 
 ##### @spec a-call-inside-a-marked-function-is-no-test
 
-> A call inside the body of a function that a runner marker marks is no test.
+> A call inside the body of a function that a [*runner*](#term-runner) marker marks is no [*test*](#term-test).
 
 This follows because the test is declared where the function is called. The call in its body runs once for each of those tests, so it is none of its own.
 
@@ -4683,13 +4683,13 @@ all r: Run, p: Plugin, d: Given | calls[r, p] implies p->d in Over.rel
 
 #### @spec a-frontmatter-lists-what-is-written-in-it
 
-> A frontmatter holds an entry only when it has a plugins key and writes the entry between its brackets or after a dash.
+> A [*frontmatter*](#term-frontmatter) holds an [*entry*](#term-entry) only when it has a [*plugins*](#term-plugin) key and writes the entry between its brackets or after a dash.
 
 This follows because a document asks for what it writes: the plugins its list names are the strings written there, and no others.
 
 ##### @spec an-inline-list-holds-the-entries-between-its-brackets
 
-> A list written between brackets holds each entry between its brackets.
+> A list written between brackets holds each [*entry*](#term-entry) between its brackets.
 
 This follows because an entry between the brackets, quoted or plain, is part of the list.
 
@@ -4701,7 +4701,7 @@ This follows because a list written as lines holds the entry after each dash.
 
 ##### @spec a-comma-inside-quotes-ends-no-entry
 
-> A comma inside quotes does not end an entry.
+> A comma inside quotes does not end an [*entry*](#term-entry).
 
 This follows because a name in quotes is one string, whatever it holds.
 
@@ -4724,7 +4724,7 @@ all f: Frontmatter | f not in Listing implies (no e: Entry | f->e in Item.rel)
 
 #### @spec only-a-block-at-the-top-is-a-frontmatter
 
-> Only a block that starts its document is a frontmatter.
+> Only a block that starts its [*document*](#term-document) is a [*frontmatter*](#term-frontmatter).
 
 This follows because a block lower in a document is part of its text, and a document that starts with a heading asks for nothing.
 
@@ -4773,7 +4773,7 @@ all f: Misquoted | f in Refused
 
 ##### @spec the-refusal-of-a-misquoted-entry-says-to-write-it-in-quotes
 
-> When the checker refuses a misquoted entry, it tells the author to write the name in quotes.
+> When the [*checker*](#term-checker) refuses a misquoted [*entry*](#term-entry), it tells the author to write the name in quotes.
 
 This follows because the author needs only the quotes, and the checker knows it.
 
@@ -4851,7 +4851,7 @@ all f: Doubled | f in Refused
 
 ##### @spec a-runner-the-checker-does-not-know-is-refused
 
-> A frontmatter is one the checker cannot read when `runners` names neither a preset nor `"@runner"`, or holds a map with a key other than `calls`, `modifiers`, `fails`, `from` and `globals`.
+> A [*frontmatter*](#term-frontmatter) is one the [*checker*](#term-checker) cannot read when `runners` names neither a preset nor `"@runner"`, or holds a map with a key other than `calls`, `modifiers`, `fails`, `from` and `globals`.
 
 This follows because a misspelled runner, such as `vitset`, would change which calls are tests, and the author would trust a check of the wrong tests.
 
@@ -4911,25 +4911,25 @@ all f: Stray | f in Refused
 
 #### @spec a-run-takes-its-settings-from-its-entry-document
 
-> A [*run*](#term-run) takes each [*setting*](#term-setting) that the frontmatter of the document it [*enters*](#term-enter) sets.
+> A [*run*](#term-run) takes each [*setting*](#term-setting) that the [*frontmatter*](#term-frontmatter) of the [*document*](#term-document) it [*enters*](#term-enter) sets.
 
 This follows because a project asks for its checks in the frontmatter of its entry document. A check that the project asked for is never dropped. The entry document is the nearest document named CANON.md that holds a setting, from the folder of the run upwards. A document with no setting is not an entry document. A canon with no settings can then lie beside a project that sets them elsewhere.
 
 #### @spec a-path-of-a-setting-is-read-from-the-folder-of-the-entry-document
 
-> The checker reads a path that a setting names from the folder of the entry document.
+> The [*checker*](#term-checker) reads a path that a [*setting*](#term-setting) names from the folder of the entry [*document*](#term-document).
 
 This follows because a setting lies next to the canon it describes and moves with it. A path that starts from the root of a project would name another file after the move.
 
 #### @spec a-key-that-a-listed-plugin-defines-is-known
 
-> The checker does not refuse a key that a plugin in the list of the frontmatter defines.
+> The [*checker*](#term-checker) does not refuse a key that a [*plugin*](#term-plugin) in the list of the [*frontmatter*](#term-frontmatter) defines.
 
 This follows because a plugin owns its options. The checker cannot know them before it loads the plugin. A key of a plugin that the document does not list stays unknown. The options of a plugin that does not run then cannot pass as a check.
 
 #### @spec a-package-field-serves-a-run-that-enters-no-document
 
-> A [*run*](#term-run) that [*enters*](#term-enter) no document takes its settings from the package field.
+> A [*run*](#term-run) that [*enters*](#term-enter) no [*document*](#term-document) takes its settings from the package field.
 
 This follows because a project that keeps its settings in the canon field of its package still asks for its checks there. The settings of a document come first. The field serves while no document holds a setting.
 
@@ -5123,31 +5123,31 @@ all c: Command | available[c] implies c not in Unknown
 
 #### @spec a-plugin-adds-its-own-commands-under-the-name-of-its-package
 
-> A plugin adds each command of its own under a prefix that the name of its package gives. The package `@bigmistqke/canon-plugin-<name>` adds `<name>:<command>`.
+> A [*plugin*](#term-plugin) adds each [*command*](#term-command) of its own under a prefix that the name of its package gives. The package `@bigmistqke/canon-plugin-<name>` adds `<name>:<command>`.
 
 This follows because two plugins can add commands with the same word. Under one name, a run would have to drop one of them or run both. The prefix keeps the commands of each plugin apart, so a run can ask for exactly one.
 
 ##### @spec a-run-asks-for-a-command-of-a-plugin-by-its-prefixed-name
 
-> A run that asks for `<name>:<command>` runs the command `<command>` of the plugin whose package gives the prefix `<name>`.
+> A run that asks for `<name>:<command>` runs the [*command*](#term-command) `<command>` of the [*plugin*](#term-plugin) whose package gives the prefix `<name>`.
 
 This follows because the prefix and the bare name together name one command of one plugin.
 
 ##### @spec the-prefix-is-the-name-of-the-package-without-its-scope-and-without-canon-plugin
 
-> The prefix of a plugin is the name of its package, without its scope and without `canon-plugin-` in front. The name the plugin gives itself plays no part.
+> The prefix of a [*plugin*](#term-plugin) is the name of its package, without its scope and without `canon-plugin-` in front. The name the plugin gives itself plays no part.
 
 This follows because a project installs each package under one name. A plugin that could choose its prefix could take the prefix of another, and stand in for its checks.
 
 ##### @spec a-plugin-adds-to-check-and-generate-without-a-prefix
 
-> A plugin that adds to `check` or `generate` runs when a run asks for that command of the checker. No prefixed name asks for it.
+> A [*plugin*](#term-plugin) that adds to `check` or `generate` runs when a [*run*](#term-run) asks for that [*command*](#term-command) of the [*checker*](#term-checker). No prefixed name asks for it.
 
 This follows because `check` is the one gate of the canon, and `generate` the one writer. A plugin's part of either runs with the rest, or the gate would pass without it.
 
 #### @spec a-bare-name-runs-the-one-command-that-has-it
 
-> When a run asks for a [*bare name*](#term-bare-name) and exactly one command that an applied plugin adds has it, the run runs that command.
+> When a [*run*](#term-run) asks for a [*bare name*](#term-bare-name) and exactly one [*command*](#term-command) that an applied [*plugin*](#term-plugin) adds has it, the run runs that command.
 
 This follows because such a bare name names one command. Running that command drops no check and runs no other.
 
@@ -5393,50 +5393,50 @@ all d, e: Document | d->e in Bare.rel implies ((e in Finding implies d in Findin
 
 ##### @spec generate-keeps-the-frontmatter-of-a-document
 
-> Generate leaves the frontmatter of a document as it was.
+> Generate leaves the [*frontmatter*](#term-frontmatter) of a [*document*](#term-document) as it was.
 
 This follows because the block is the author's, and `generate` writes the regions it owns and the spacing of grammar tables, and nothing else.
 
 
 #### @spec a-runner-marker-the-checker-cannot-read-stops-the-run
 
-> When a runner marker is one the checker cannot read, the checker names it, and the run exits with code 2.
+> When a [*runner*](#term-runner) marker is one the [*checker*](#term-checker) cannot read, the checker names it, and the [*run*](#term-run) exits with code 2.
 
 This follows because a marker says which calls are tests, and one the checker cannot read would change them without a word.
 
 ##### @spec a-runner-marker-with-a-word-other-than-fails-is-refused
 
-> A runner marker with a word after `@runner` other than `fails` is one the checker cannot read.
+> A [*runner*](#term-runner) marker with a word after `@runner` other than `fails` is one the [*checker*](#term-checker) cannot read.
 
 This follows because a misspelled `@runner fail` would make a call that fails on purpose read as a plain test.
 
 ##### @spec a-runner-marker-on-no-declaration-is-refused
 
-> A runner marker that is not right above the declaration of a name with a value is one the checker cannot read.
+> A [*runner*](#term-runner) marker that is not right above the declaration of a name with a value is one the [*checker*](#term-checker) cannot read.
 
 This follows because such a marker names no call, so the checker cannot do what the author meant.
 
 ##### @spec a-runner-marker-the-settings-do-not-list-is-refused
 
-> A runner marker in a project whose setting `runners` does not list `"@runner"` is one the checker cannot read. The checker says to add `"@runner"` to the setting.
+> A [*runner*](#term-runner) marker in a [*project*](#term-project) whose [*setting*](#term-setting) `runners` does not list `"@runner"` is one the [*checker*](#term-checker) cannot read. The checker says to add `"@runner"` to the setting.
 
 This follows because the marker asks for the calls of its function to be tests, and the setting says they are none. Reading the marker would overrule the setting, and ignoring it would drop the tests it asks for.
 
 #### @spec a-source-the-checker-cannot-parse-fails-the-run
 
-> When a suite or a source does not parse as TypeScript, the checker names the file, and the run exits with code 2.
+> When a suite or a [*source*](#term-source) does not parse as TypeScript, the [*checker*](#term-checker) names the [*file*](#term-file), and the [*run*](#term-run) exits with code 2.
 
 This follows because the checker reads the tests and the tags of a file from its syntax. A file it cannot parse holds tests and tags it cannot read, so the checks they ask for cannot run.
 
 ### @spec a-check-with-no-runner-says-it-reads-no-test
 
-> When the project has no runner, the report of `check` says that it reads no tests.
+> When the [*project*](#term-project) has no [*runner*](#term-runner), the report of `check` says that it reads no tests.
 
 This follows because a clean check means the canon holds, and in a project with no runner it holds without tests. The author acts on a clean check, so the report says how much it covers.
 
 ## @axiom the-document-holds-the-canon-the-commands-handle-it
 
-> The documents store the canon. People and sessions read it and change it by its units, through the commands of the checker. So no one has to handle a document by its text.
+> The documents store the canon. People and sessions read it and change it by its [*units*](#term-unit), through the commands of the [*checker*](#term-checker). So no one has to handle a [*document*](#term-document) by its text.
 
 The canon is a structure, and a document is the form it is stored in. A unit [*sits*](#term-sit) in the unit whose heading holds its heading. It [*derives*](#term-derive) from the units its "Derives from:" line names. A [*test*](#term-test) in another file [*checks*](#term-check) it through a [*tag*](#term-tag). The lines of the unit show none of that.
 
@@ -5446,67 +5446,67 @@ So the commands are the way a person or a session works with the canon, and the 
 
 ### @spec show-prints-a-unit-with-what-it-follows-from-what-follows-from-it-and-what-tests-it
 
-> `show` prints each unit on its command line, with what the unit follows from, what follows from it, and the tests that check it. A part named on the command line changes this.
+> `show` prints each [*unit*](#term-unit) on its command line, with what the unit follows from, what follows from it, and the tests that [*check*](#term-check) it. A part named on the command line changes this.
 
 This follows because a reader needs each of these to change a unit, and the documents hold each in a different place.
 
 #### @spec show-prints-the-own-text-of-a-unit-with-where-it-starts
 
-> `show` prints the heading and the [*own text*](#term-own-text) of a unit, after the document and the line where the unit starts.
+> `show` prints the [*heading*](#term-heading) and the [*own text*](#term-own-text) of a [*unit*](#term-unit), after the [*document*](#term-document) and the line where the unit starts.
 
 This follows because the own text is what the unit says, and the line lets a writer open the unit where it is.
 
 #### @spec show-lists-the-units-a-unit-sits-in-up-to-its-root
 
-> `show` lists the unit that a unit sits in, the unit that one sits in, and so on up to a unit that sits in none.
+> `show` lists the [*unit*](#term-unit) that a unit [*sits*](#term-sit) in, the unit that one sits in, and so on up to a unit that sits in none.
 
 This follows because a unit follows from every unit above it, and its root is the value it serves.
 
 #### @spec show-lists-the-units-a-unit-derives-from-on-its-derives-from-line
 
-> `show` lists the units that the "Derives from:" line of a unit names.
+> `show` lists the [*units*](#term-unit) that the "[*Derives*](#term-derive) from:" line of a unit names.
 
 This follows because a unit follows from these as much as from the unit it sits in.
 
 #### @spec show-lists-the-units-that-sit-in-a-unit
 
-> `show` lists the units that sit in a unit, each with the number of tests that check it.
+> `show` lists the [*units*](#term-unit) that [*sit*](#term-sit) in a unit, each with the number of tests that [*check*](#term-check) it.
 
 This follows because these follow from the unit, and a change to the unit can break them.
 
 #### @spec show-lists-the-units-that-derive-from-a-unit-on-their-derives-from-line
 
-> `show` lists the units whose "Derives from:" line names a unit.
+> `show` lists the [*units*](#term-unit) whose "[*Derives*](#term-derive) from:" line names a unit.
 
 This follows because these follow from the unit too. They can sit in another part of the document, or in another document.
 
 #### @spec show-lists-the-tests-that-check-a-unit
 
-> `show` lists each test that checks a unit, by its file, its line and its title.
+> `show` lists each [*test*](#term-test) that [*checks*](#term-check) a [*unit*](#term-unit), by its [*file*](#term-file), its line and its title.
 
 This follows because a change to a claim changes the tests that check it, and a tag sits in another file than its unit.
 
 #### @spec show-of-a-term-lists-its-forms
 
-> `show` lists each [*form*](#term-form) of a term under "Forms:", the words of its stem first.
+> `show` lists each [*form*](#term-form) of a [*term*](#term-term) under "Forms:", the words of its [*stem*](#term-stem) first.
 
 This follows because the reader of a term mark sees through `show` which spellings name the term, the words of its stem among them.
 
 #### @spec show-reads-an-id-as-the-heading-or-the-tree-writes-it
 
-> `show` reads a unit as its id, as its kind and stem after an `@`, or in words as the tree writes it.
+> `show` reads a [*unit*](#term-unit) as its id, as its kind and [*stem*](#term-stem) after an `@`, or in words as the tree writes it.
 
 This follows because a reader copies the name of a unit from where it saw the name, and each of these names one unit.
 
 #### @spec show-of-a-name-that-names-no-unit-fails-the-run
 
-> When a name on the command line of `show` names no unit, the checker says so, and the run exits with code 2.
+> When a name on the command line of `show` names no [*unit*](#term-unit), the [*checker*](#term-checker) says so, and the [*run*](#term-run) exits with code 2.
 
 This follows because a reader who asked for a unit must not take silence for an empty unit.
 
 ### @spec the-index-lists-each-unit-by-its-kind-and-stem-alone
 
-> The [*index*](#term-index) of a document holds a line for each unit: a link to the unit by its kind and stem, indented under the unit it sits in. It holds no statement.
+> The [*index*](#term-index) of a [*document*](#term-document) [*holds*](#term-hold) a line for each [*unit*](#term-unit): a link to the unit by its kind and [*stem*](#term-stem), indented under the unit it [*sits*](#term-sit) in. It holds no [*statement*](#term-statement).
 
 This follows because the index shows the shape of the document at a glance, and `tree` and `show` print the statements for a reader who asks. A statement in the index too would say each claim a second time at the top of the document, where it buries the shape.
 
@@ -5518,7 +5518,7 @@ This follows because the writer of a grammar table changes its cells, and lining
 
 ### @spec show-with-a-part-prints-only-that-part-of-each-unit
 
-> When the command line of `show` names parts of a unit, `show` prints where each unit starts and the id of the unit. Below that, it prints only the parts named: the statement, or the body.
+> When the command line of `show` names parts of a [*unit*](#term-unit), `show` prints where each unit starts and the id of the unit. Below that, it prints only the parts named: the [*statement*](#term-statement), or the body.
 
 Derives from: [`spec-show-prints-a-unit-with-what-it-follows-from-what-follows-from-it-and-what-tests-it`](#spec-show-prints-a-unit-with-what-it-follows-from-what-follows-from-it-and-what-tests-it)
 
@@ -5526,55 +5526,55 @@ This follows because a reader who wants one part of a unit would otherwise cut i
 
 #### @spec show-with-statement-prints-the-statement-as-it-reads
 
-> `show --statement` prints the statement of a unit without the marks of its quote, and each link and each [*term mark*](#term-term-mark) as its words.
+> `show --statement` prints the [*statement*](#term-statement) of a [*unit*](#term-unit) without the marks of its quote, and each link and each [*term mark*](#term-term-mark) as its words.
 
 This follows because a reader asks for the statement to read what the unit claims. The marks of the quote, the targets of the links and the asterisks of the term marks are for the document. They stand between the reader and the words. Asterisks in a code span are the code's own, and stay.
 
 #### @spec show-with-body-prints-the-own-text-after-the-statement
 
-> `show --body` prints the [*own text*](#term-own-text) of a unit after its statement, as the document writes it.
+> `show --body` prints the [*own text*](#term-own-text) of a [*unit*](#term-unit) after its [*statement*](#term-statement), as the [*document*](#term-document) writes it.
 
 This follows because the checker gives the body no structure, so it prints the body as it stands. What the body holds is up to the author and the plugins: a reason, an intent, fenced blocks.
 
 #### @spec show-of-a-part-a-unit-lacks-says-none
 
-> When a unit has no part of those named, `show` prints `none` under its id.
+> When a [*unit*](#term-unit) has no part of those named, `show` prints `none` under its id.
 
 This follows because a reader who asked for a part must not take silence for an empty one.
 
 ### @spec find-lists-the-units-whose-text-holds-every-word-it-is-given
 
-> `find` prints a line for each unit whose id or own text holds every word on its command line. The line holds the document and the line where the unit starts, its id and its statement. A filter on the command line changes which units it lists.
+> `find` prints a line for each unit whose id or [*own text*](#term-own-text) holds every word on its command line. The line holds the [*document*](#term-document) and the line where the unit starts, its id and its [*statement*](#term-statement). A filter on the command line changes which [*units*](#term-unit) it lists.
 
 This follows because a reader often knows what a unit is about and not its id. The line gives the id to ask `show` for.
 
 #### @spec find-matches-a-word-in-the-id-or-the-own-text-whatever-its-case
 
-> A unit matches a word when its id or its own text holds the word, in capitals or not.
+> A [*unit*](#term-unit) matches a word when its id or its [*own text*](#term-own-text) holds the word, in capitals or not.
 
 This follows because the words of a stem are the words of its statement. A reader does not know which of them the unit uses.
 
 #### @spec find-lists-a-unit-only-when-it-holds-every-word
 
-> `find` leaves out a unit that holds some of the words on its command line and not every one.
+> `find` leaves out a [*unit*](#term-unit) that holds some of the words on its command line and not every one.
 
 This follows because a reader narrows a search by adding a word.
 
 #### @spec find-with-a-kind-lists-only-units-of-that-kind
 
-> When the command line of `find` names a kind, it lists only the units of that kind.
+> When the command line of `find` names a kind, it lists only the [*units*](#term-unit) of that kind.
 
 This follows because a reader who looks for a claim to change does not want the terms that use the same words.
 
 #### @spec find-with-several-kinds-lists-the-units-of-each-of-them
 
-> When the command line of `find` names several kinds, it lists the units of each of those kinds, and no unit of another kind.
+> When the command line of `find` names several kinds, it lists the [*units*](#term-unit) of each of those kinds, and no unit of another kind.
 
 This follows because a reader who looks for the claims about a topic wants its specs and its exceptions together. One search lists them in the order of the documents.
 
 #### @spec find-with-a-part-matches-a-word-only-in-that-part
 
-> When the command line of `find` names a part of a unit with `--in`, a unit matches a word only when that part holds the word. The parts are `id`, `statement`, `body` and `all`.
+> When the command line of `find` names a part of a [*unit*](#term-unit) with `--in`, a unit matches a word only when that part holds the word. The parts are `id`, `statement`, `body` and `all`.
 
 Derives from: [`spec-show-with-a-part-prints-only-that-part-of-each-unit`](#spec-show-with-a-part-prints-only-that-part-of-each-unit)
 
@@ -5582,73 +5582,73 @@ This follows because a word in the reason of a unit says less about the unit tha
 
 ##### @spec find-in-id-matches-a-word-in-the-id-alone
 
-> `find --in id` matches a word only when the id of the unit holds it.
+> `find --in id` matches a word only when the id of the [*unit*](#term-unit) holds it.
 
 This follows because a reader who remembers some words of a stem looks for them among the ids. The texts that use the same words are in the way.
 
 ##### @spec find-in-statement-matches-a-word-in-the-statement-as-show-prints-it
 
-> `find --in statement` matches a word only when the statement of the unit holds it, as `show --statement` prints the statement.
+> `find --in statement` matches a word only when the [*statement*](#term-statement) of the [*unit*](#term-unit) holds it, as `show --statement` prints the statement.
 
 This follows because the statement is what the unit claims. A reader who looks for the units that claim something searches the statements.
 
 ##### @spec find-in-body-matches-a-word-in-the-body-as-show-prints-it
 
-> `find --in body` matches a word only when the body of the unit holds it, as `show --body` prints the body.
+> `find --in body` matches a word only when the body of the [*unit*](#term-unit) holds it, as `show --body` prints the body.
 
 This follows because the body holds the reason of a unit and its blocks, such as a formula. A reader who looks for a word of a formula searches the bodies.
 
 ##### @spec find-in-all-matches-a-word-as-find-does-without-a-part
 
-> `find --in all` matches a word when the id or the own text of the unit holds it, as `find` does without `--in`.
+> `find --in all` matches a word when the id or the [*own text*](#term-own-text) of the [*unit*](#term-unit) holds it, as `find` does without `--in`.
 
 This follows because a script that builds a command line names a part each time, even when the part is the whole unit.
 
 #### @spec find-with-no-words-lists-every-unit-its-filters-let-through
 
-> When the command line of `find` holds no word, `find` lists every unit that its filters let through.
+> When the command line of `find` holds no word, `find` lists every [*unit*](#term-unit) that its filters let through.
 
 This follows because a unit holds every word of a list with no words in it. So `find --kind fact` lists the facts of the canon.
 
 #### @spec find-exits-with-the-codes-of-grep
 
-> `find` exits with code 0 when it lists a unit, and with code 1 when it lists none. It exits with code 2 when it cannot read its command line.
+> `find` exits with code 0 when it lists a [*unit*](#term-unit), and with code 1 when it lists none. It exits with code 2 when it cannot read its command line.
 
 This follows because a script asks `find` whether the canon holds a unit, as it asks `grep` whether a file holds a line. With the codes of `grep`, the script reads the answer of `find` as it reads the answer of `grep`.
 
 ##### @spec find-that-lists-a-unit-exits-with-code-0
 
-> When `find` lists a unit, the run exits with code 0.
+> When `find` lists a [*unit*](#term-unit), the [*run*](#term-run) exits with code 0.
 
 This follows because code 0 is how `grep` says that a line matched.
 
 ##### @spec find-that-lists-no-unit-exits-with-code-1
 
-> When no unit matches, `find` prints nothing on standard output, and the run exits with code 1.
+> When no [*unit*](#term-unit) matches, `find` prints nothing on standard output, and the [*run*](#term-run) exits with code 1.
 
 This follows because a script must not take a search that found nothing for one that found something. Code 1 is how `grep` says that no line matched.
 
 ##### @spec find-with-a-kind-it-does-not-know-exits-with-code-2
 
-> When the command line of `find` names a kind that is no kind of unit, `find` says so, and the run exits with code 2.
+> When the command line of `find` names a kind that is no kind of [*unit*](#term-unit), `find` says so, and the [*run*](#term-run) exits with code 2.
 
 This follows because a search for a kind that does not exist finds nothing, and the reader must not take that for an answer.
 
 ##### @spec find-with-a-part-it-does-not-know-exits-with-code-2
 
-> When `--in` names no part of a unit that `find` knows, `find` says so, and the run exits with code 2.
+> When `--in` names no part of a [*unit*](#term-unit) that `find` knows, `find` says so, and the [*run*](#term-run) exits with code 2.
 
 This follows because a search in a part that does not exist finds nothing, and the reader must not take that for an answer.
 
 ### @spec tree-of-a-unit-draws-the-tree-from-that-unit-down
 
-> When the command line of `tree` names a unit, it draws that unit and the units that sit in it, and nothing else.
+> When the command line of `tree` names a unit, it draws that unit and the [*units*](#term-unit) that [*sit*](#term-sit) in it, and nothing else.
 
 This follows because the tree of a whole document is too long to read for one part of it. A reader who knows the part names its root.
 
 ### @spec tree-of-several-units-draws-the-tree-from-each-in-turn
 
-> When the command line of `tree` names several units, it draws the tree from each of them, in the order of the names.
+> When the command line of `tree` names several [*units*](#term-unit), it draws the tree from each of them, in the order of the names.
 
 Derives from: [`spec-tree-of-a-unit-draws-the-tree-from-that-unit-down`](#spec-tree-of-a-unit-draws-the-tree-from-that-unit-down)
 
@@ -5656,73 +5656,73 @@ This follows because `tree -` reads its units from another command, and that com
 
 ### @spec the-output-of-a-reading-command-can-feed-another-command
 
-> The reading commands join in a shell pipeline. `find`, `show` and `tree` print ids alone with `--ids`. A command that takes units reads their names from standard input for `-`.
+> The reading commands join in a shell pipeline. `find`, `show` and `tree` print ids alone with `--ids`. A [*command*](#term-command) that takes [*units*](#term-unit) reads their names from standard input for `-`.
 
 This follows because a reader who works by units chains questions about them. One example is the specs that hold a word, read one part at a time. A pipeline answers such a question through the commands, without a search of the text of the documents. Tools such as `xargs`, `sort`, `comm` and `wc -l` then work on units.
 
 #### @spec ids-prints-one-id-on-each-line-and-nothing-else
 
-> With `--ids`, a reading command prints the id of each unit it would print, one on each line. It prints nothing else: no heading, no statement and no blank line.
+> With `--ids`, a reading [*command*](#term-command) prints the id of each [*unit*](#term-unit) it would print, one on each line. It prints nothing else: no [*heading*](#term-heading), no [*statement*](#term-statement) and no blank line.
 
 This follows because a line is what a pipeline counts and passes on. A tool that reads the output takes each line for one unit, and any other line is a unit that does not exist.
 
 ##### @spec find-with-ids-prints-the-id-of-each-unit-it-lists
 
-> `find --ids` prints the id of each unit that `find` lists, in the same order.
+> `find --ids` prints the id of each [*unit*](#term-unit) that `find` lists, in the same order.
 
 This follows because the id is the one part of the line that another command reads.
 
 ##### @spec show-with-ids-prints-the-id-of-each-unit-it-names
 
-> `show --ids` prints the id of each unit that its command line names, in the order of the names.
+> `show --ids` prints the id of each [*unit*](#term-unit) that its command line names, in the order of the names.
 
 This follows because a unit can be named in several forms, and the id is the form that every command reads.
 
 ##### @spec tree-with-ids-prints-the-id-of-each-unit-of-the-whole-tree
 
-> `tree --ids` with no unit prints the id of each unit that `tree` draws, once, in the order `tree` draws them.
+> `tree --ids` with no [*unit*](#term-unit) prints the id of each unit that `tree` draws, once, in the order `tree` draws them.
 
 This follows because the whole tree holds every unit of the documents. Its ids are the list that other lists of units are compared with.
 
 ##### @spec tree-of-a-unit-with-ids-prints-the-ids-of-that-unit-and-what-sits-in-it
 
-> `tree <unit> --ids` prints the id of the unit and of each unit that `tree <unit>` draws under it.
+> `tree <unit> --ids` prints the id of the [*unit*](#term-unit) and of each unit that `tree <unit>` draws under it.
 
 This follows because the units that sit in a unit are the claims that a change to it can break. A reader passes them on to `show` to read them.
 
 ##### @spec tree-with-gaps-and-ids-prints-the-ids-on-the-branches-to-a-gap
 
-> `tree --gaps --ids` prints the id of each unit that `tree --gaps` draws: the units on a branch that leads to a claim that no test checks.
+> `tree --gaps --ids` prints the id of each unit that `tree --gaps` draws: the [*units*](#term-unit) on a branch that leads to a [*claim*](#term-claim) that no [*test*](#term-test) [*checks*](#term-check).
 
 This follows because the claims that no test checks are the work that remains, and a reader counts them or passes them on.
 
 ##### @spec tree-with-suspect-and-ids-prints-the-id-of-each-suspect
 
-> `tree --suspect --ids` prints the id of each spec that `tree --suspect` lists.
+> `tree --suspect --ids` prints the id of each [*spec*](#term-spec) that `tree --suspect` lists.
 
 This follows because a reader reads each suspect before deciding on it, and `show` takes the ids.
 
 #### @spec a-dash-stands-for-the-names-on-standard-input
 
-> Where a command takes the names of units, the name `-` stands for the names that standard input holds, one on each line.
+> Where a [*command*](#term-command) takes the names of [*units*](#term-unit), the name `-` stands for the names that standard input holds, one on each line.
 
 This follows because a command that reads its units on standard input joins a pipeline without `xargs`. That tool splits a name at its spaces, and `@spec A stem` is one name.
 
 ##### @spec show-reads-the-names-of-a-dash-from-standard-input
 
-> `show -` prints each unit that a line of standard input names, as `show` prints a unit named on its command line.
+> `show -` prints each [*unit*](#term-unit) that a line of standard input names, as `show` prints a unit named on its command line.
 
 This follows because `show` is how a reader reads the units that another command lists.
 
 ##### @spec tree-reads-the-names-of-a-dash-from-standard-input
 
-> `tree -` draws the tree from each unit that a line of standard input names.
+> `tree -` draws the tree from each [*unit*](#term-unit) that a line of standard input names.
 
 This follows because `tree` is how a reader sees what sits in the units that another command lists.
 
 ##### @spec a-line-of-standard-input-names-a-unit-in-any-form-show-reads
 
-> A line of standard input names a unit in any form that `show` reads on its command line. That is its id, its kind and stem after an `@`, or its words as the tree writes them.
+> A line of standard input names a [*unit*](#term-unit) in any [*form*](#term-form) that `show` reads on its command line. That is its id, its kind and [*stem*](#term-stem) after an `@`, or its words as the tree writes them.
 
 Derives from: [`spec-show-reads-an-id-as-the-heading-or-the-tree-writes-it`](#spec-show-reads-an-id-as-the-heading-or-the-tree-writes-it)
 
@@ -5730,19 +5730,19 @@ This follows because each line is one name, so a name with spaces in it needs no
 
 ##### @spec a-blank-line-of-standard-input-names-no-unit
 
-> A line of standard input that holds only blank space names no unit.
+> A line of standard input that holds only blank space names no [*unit*](#term-unit).
 
 This follows because a list that a person or a tool writes can end with a blank line, or hold one between its names.
 
 ##### @spec a-dash-with-no-names-on-standard-input-prints-nothing
 
-> When standard input holds no name, a command whose only name is `-` prints nothing, and the run exits with code 0. `tree -` then draws no tree.
+> When standard input holds no name, a [*command*](#term-command) whose only name is `-` prints nothing, and the [*run*](#term-run) exits with code 0. `tree -` then draws no tree.
 
 This follows because an empty list holds no name of a unit. A pipeline whose first command found nothing must not fail later on, or print the whole canon.
 
 ## @axiom renaming-a-unit-asks-only-for-its-new-stem
 
-> Renaming a unit costs the author the choice of its new stem, and nothing else.
+> Renaming a [*unit*](#term-unit) costs the author the choice of its new [*stem*](#term-stem), and nothing else.
 
 A [*stem*](#term-stem) says what its unit claims, so when the claim changes, the stem changes with it. The canon changes often: its structure grows with the theory it states. But every [*tag*](#term-tag), [*pointer*](#term-pointer) and generated region names a unit by the id it has. A rename by hand is then a hunt through the documents, the suites and the sources.
 
@@ -5752,37 +5752,37 @@ So the author chooses the new stem, and the [*checker*](#term-checker) carries i
 
 #### @spec rename-gives-a-unit-a-new-stem-and-keeps-its-kind
 
-> `rename <id> <stem>` writes the heading of the unit with the id as its own kind and the new stem.
+> `rename <id> <stem>` writes the [*heading*](#term-heading) of the [*unit*](#term-unit) with the id as its own kind and the new [*stem*](#term-stem).
 
 This follows because the stem is the one thing the author chooses. A kind is a claim of its own: a spec that turns into an axiom owes other parents, and a rename cannot choose them.
 
 #### @spec rename-moves-every-name-of-the-unit-to-the-new-id
 
-> After `rename`, each tag, pointer, link in a comment, code span and generated region of the project that named the old id names the new id.
+> After `rename`, each [*tag*](#term-tag), [*pointer*](#term-pointer), link in a [*comment*](#term-comment), [*code span*](#term-code-span) and generated region of the [*project*](#term-project) that named the old id names the new id.
 
 This follows because a name left on the old id is a rotting. The author would have to chase it, and the chase is what the rename spares.
 
 ##### @spec rename-moves-a-pointer-in-the-document-that-holds-the-unit
 
-> A pointer whose fragment is the old id, in the document that holds the unit, gets the new id as its fragment.
+> A [*pointer*](#term-pointer) whose fragment is the old id, in the [*document*](#term-document) that [*holds*](#term-hold) the [*unit*](#term-unit), gets the new id as its fragment.
 
 This follows because a link with no path names a unit of its own document, as the "Derives from:" line of a nested unit does.
 
 ##### @spec rename-moves-a-pointer-from-another-document
 
-> A pointer from another document to the document that holds the unit gets the new id in place of the old one. So does such a pointer in a reference.
+> A [*pointer*](#term-pointer) from another [*document*](#term-document) to the document that [*holds*](#term-hold) the [*unit*](#term-unit) gets the new id in place of the old one. So does such a pointer in a reference.
 
 This follows because a pointer names its unit by the path and the fragment together, and only the fragment changes.
 
 ##### @spec rename-moves-a-tag-to-the-new-id
 
-> A tag that names the old id, in a comment of a suite or a source, or in a reference, names the new id.
+> A [*tag*](#term-tag) that [*names*](#term-name) the old id, in a [*comment*](#term-comment) of a suite or a [*source*](#term-source), or in a reference, names the new id.
 
 This follows because a test checks the units its tags name, and a rename changes no test.
 
 ##### @spec rename-moves-a-link-in-a-comment
 
-> A link in a comment of a source that leads to the unit gets the new id as its fragment.
+> A link in a [*comment*](#term-comment) of a [*source*](#term-source) that leads to the [*unit*](#term-unit) gets the new id as its fragment.
 
 Its path leads from the file that holds the comment. A link into another document keeps its fragment.
 
@@ -5790,25 +5790,25 @@ This follows because a source cites a unit with a link as well as with a tag. A 
 
 ##### @spec rename-moves-a-code-span-that-spells-the-old-id
 
-> A [*code span*](#term-code-span) whose whole text is the old id, in a document or a reference, spells the new id.
+> A [*code span*](#term-code-span) whose whole text is the old id, in a [*document*](#term-document) or a reference, spells the new id.
 
 This follows because a code span that spells an id names the unit to the reader. The text of a link on a "Derives from:" line is such a span.
 
 ##### @spec rename-moves-a-generated-region-named-after-the-unit
 
-> The markers of a generated region that end with the old id end with the new id instead. The statement that a plugin writes for the unit is such a region.
+> The markers of a generated region that end with the old id end with the new id instead. The [*statement*](#term-statement) that a [*plugin*](#term-plugin) writes for the [*unit*](#term-unit) is such a region.
 
 This follows because `generate` finds the region of a unit by its markers. A region left on the old id is one that no unit owns, and the unit would get a second one.
 
 #### @spec rename-changes-no-name-of-another-unit
 
-> `rename` changes only the names of the unit it renames.
+> `rename` changes only the names of the [*unit*](#term-unit) it renames.
 
 This follows because a name that a rename moved by mistake points at the wrong unit, and the check cannot tell.
 
 ##### @spec rename-leaves-a-pointer-into-another-document-alone
 
-> A pointer whose fragment is the old id, but whose path leads to a document that does not hold the unit, keeps its fragment.
+> A [*pointer*](#term-pointer) whose fragment is the old id, but whose path leads to a [*document*](#term-document) that does not [*hold*](#term-hold) the [*unit*](#term-unit), keeps its fragment.
 
 This follows because that pointer names a unit of the other document, which has its own ids.
 
@@ -5820,7 +5820,7 @@ This follows because an id is one word: a rename matches it whole.
 
 ##### @spec rename-leaves-a-tag-in-a-string-alone
 
-> Text in a string of a suite or a source that spells a tag with the old id keeps its text.
+> Text in a string of a suite or a [*source*](#term-source) that spells a [*tag*](#term-tag) with the old id keeps its text.
 
 Derives from: [`spec-a-tag-outside-a-test-tests-nothing`](#spec-a-tag-outside-a-test-tests-nothing)
 
@@ -5828,7 +5828,7 @@ This follows because the checker reads no tag in a string, so that text names no
 
 #### @spec rename-rewrites-the-index
 
-> After `rename`, the index of each document matches the document.
+> After `rename`, the [*index*](#term-index) of each [*document*](#term-document) [*matches*](#term-match) the document.
 
 Derives from: [`spec-an-index-matches-its-document`](#spec-an-index-matches-its-document)
 
@@ -5836,25 +5836,25 @@ This follows because the index lists each unit by the id it has. An index left o
 
 #### @spec a-rename-in-a-clean-project-leaves-it-clean
 
-> When `check` reports no finding before `rename`, it reports no finding after it.
+> When `check` reports no [*finding*](#term-finding) before `rename`, it reports no finding after it.
 
 This follows because a rename changes no claim and no test, so it gives the check nothing new to find.
 
 #### @spec a-rename-that-cannot-hold-is-refused
 
-> When `rename` cannot do what it is asked, the checker says why, changes no file, and the run exits with code 2.
+> When `rename` cannot do what it is asked, the [*checker*](#term-checker) says why, changes no [*file*](#term-file), and the [*run*](#term-run) exits with code 2.
 
 This follows because a rename that runs part of the way leaves the canon in a state that nobody chose.
 
 ##### @spec a-rename-of-an-id-that-the-project-does-not-declare-is-refused
 
-> `rename` refuses an old id that no document of the project declares, and one that only a document it extends declares.
+> `rename` refuses an old id that no [*document*](#term-document) of the [*project*](#term-project) [*declares*](#term-declare), and one that only a document it [*extends*](#term-extension) declares.
 
 This follows because the project holds no such unit to rename. A unit of an extended document lives in another project, and that project renames it.
 
 ##### @spec a-rename-to-an-id-that-a-unit-holds-is-refused
 
-> `rename` refuses a new stem whose id, with the kind of the unit, a document of the project or a document it extends already declares.
+> `rename` refuses a new [*stem*](#term-stem) whose id, with the kind of the [*unit*](#term-unit), a [*document*](#term-document) of the [*project*](#term-project) or a document it [*extends*](#term-extension) already declares.
 
 Derives from: [`spec-a-unit-is-declared-once`](#spec-a-unit-is-declared-once)
 
@@ -5868,37 +5868,37 @@ This follows because a heading with such a stem gives an anchor that differs fro
 
 #### @spec a-dry-run-of-rename-lists-each-change-and-makes-none
 
-> `rename --dry-run` lists each line that `rename` would change, and changes no file.
+> `rename --dry-run` lists each line that `rename` would change, and changes no [*file*](#term-file).
 
 This follows because a rename changes files the author has not opened. The author sees each change before it lands.
 
 ##### @spec a-dry-run-lists-each-line-it-would-change
 
-> `rename --dry-run` prints the file and the number of each line it would change, with the line as it is and the line as it would be.
+> `rename --dry-run` prints the [*file*](#term-file) and the number of each line it would change, with the line as it is and the line as it would be.
 
 This follows because the author judges a change by the line it lands in.
 
 ##### @spec a-dry-run-changes-no-file
 
-> After `rename --dry-run`, every file of the project is as it was.
+> After `rename --dry-run`, every [*file*](#term-file) of the [*project*](#term-project) is as it was.
 
 This follows because a dry run that wrote would be a rename the author did not ask for.
 
 ## @axiom the-checker-depends-on-node-alone
 
-> The package of the checker depends on no package outside Node. What needs a library comes to the checker as a plugin.
+> The package of the [*checker*](#term-checker) [*depends*](#term-depend) on no package outside Node. What needs a library comes to the checker as a [*plugin*](#term-plugin).
 
 A project that installs the checker installs nothing else with it, and a library that a project does not use cannot break its check. A document asks for the plugin whose library it needs, by name in its frontmatter.
 
 ### @spec the-package-of-the-checker-lists-no-dependency
 
-> The `package.json` of the checker lists no package under `dependencies`.
+> The `package.json` of the [*checker*](#term-checker) lists no package under `dependencies`.
 
 This follows because a package that the checker lists, every project that installs the checker installs too.
 
 #### @exception the-checker-reads-the-code-of-a-project-with-a-parser
 
-> The `package.json` of the checker lists `acorn`, `@sveltejs/acorn-typescript` and `periscopic` under `dependencies`, and no other package.
+> The `package.json` of the [*checker*](#term-checker) lists `acorn`, `@sveltejs/acorn-typescript` and `periscopic` under `dependencies`, and no other package.
 
 Derives from: [`fact-node-parses-no-code-into-a-syntax-tree`](#fact-node-parses-no-code-into-a-syntax-tree)
 

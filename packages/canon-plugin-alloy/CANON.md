@@ -219,14 +219,14 @@ It writes its own terms and claims in Alloy, as the checker does. The plugin say
 
 ### @term alloy-plugin
 
-> The Alloy plugin is the plugin that writes the statements of a document from its formulas and checks its logic with the Alloy analyzer.
+> The Alloy plugin is the [*plugin*](../canon/CANON.md#term-plugin) that writes the statements of a [*document*](../canon/CANON.md#term-document) from its formulas and checks its logic with the Alloy analyzer.
 
 A document asks for it in its frontmatter. The commands `generate`, `check` and `alloy:logic` have a part in its work.
 
 
 ### @term generate-command
 
-> The generate command is the command `generate`, in a run that asks for it.
+> The generate command is the [*command*](../canon/CANON.md#term-command) `generate`, in a [*run*](../canon/CANON.md#term-run) that asks for it.
 
 <details>
 <summary>Alloy</summary>
@@ -243,7 +243,7 @@ one sig GenerateCommand in Command {}
 
 ### @term check-command
 
-> The check command is the command `check`, in a run that asks for it.
+> The check command is the [*command*](../canon/CANON.md#term-command) `check`, in a [*run*](../canon/CANON.md#term-run) that asks for it.
 
 <details>
 <summary>Alloy</summary>
@@ -260,7 +260,7 @@ one sig CheckCommand in Command {}
 
 ### @term logic-command
 
-> The logic command is the command `alloy:logic`, in a run that asks for it.
+> The logic command is the [*command*](../canon/CANON.md#term-command) `alloy:logic`, in a [*run*](../canon/CANON.md#term-run) that asks for it.
 
 <details>
 <summary>Alloy</summary>
@@ -277,7 +277,7 @@ one sig LogicCommand in Command {}
 
 ### @term generated-statement
 
-> A generated statement is the statement of a unit that holds a formula, said from that formula between the markers of a generated region.
+> A generated statement is the statement of a [*unit*](../canon/CANON.md#term-unit) that holds a [*formula*](../naturalloy/CANON.md#term-formula), said from that formula between the markers of a generated region.
 
 A person may write the statement instead, and the checker never overwrites it. A document keeps readings when it holds a table of them: only then does the checker say statements.
 
@@ -324,7 +324,7 @@ sig Stated in Unit {}
 
 ### @term word
 
-> A word is a signature, a field of a signature or a predicate that a document declares in its model, and that its readings say.
+> A word is a [*signature*](#term-signature), a field of a signature or a predicate that a [*document*](../canon/CANON.md#term-document) declares in its model, and that its readings say.
 
 A reading says a word in the language of the project. The words of a document are in order when three things hold. Each is declared in the term that names it. Its reading is beside its declaration. A claim, a definition or a fact uses it.
 
@@ -376,7 +376,7 @@ sig Signature in Word {}
 
 ### @term scenario
 
-> A scenario is a situation that a unit says must be possible while every unit of the canon holds.
+> A scenario is a situation that a [*unit*](../canon/CANON.md#term-unit) says must be possible while every unit of the canon holds.
 
 A scenario sits in the unit that holds it. It is possible when the analyzer finds a world where it happens and every held unit holds. It is impossible when the analyzer finds none within the scope.
 
@@ -405,7 +405,7 @@ one sig Blame { rel: Scenario -> Unit }
 
 ### @term search
 
-> A search is one run of the analyzer over some units: it asks whether they can hold, with a scenario or without.
+> A search is one run of the analyzer over some [*units*](../canon/CANON.md#term-unit): it asks whether they can hold, with a [*scenario*](#term-scenario) or without.
 
 <details>
 <summary>Grammar</summary>
@@ -450,7 +450,7 @@ sig Checked in Document {}
 
 ### @term group
 
-> A group is a set of units linked through the words they share.
+> A group is a set of [*units*](../canon/CANON.md#term-unit) linked through the words they share.
 
 A shared word is a signature, a field or a predicate that one unit declares and another mentions.
 
@@ -476,7 +476,7 @@ fact linked { Chain.rel = ^(Share.rel + ~(Share.rel)) }
 
 ### @term lone-formula
 
-> A formula is lone on a signature when it uses the signature, no other unit names the signature, and no scenario names it.
+> A [*formula*](../naturalloy/CANON.md#term-formula) is lone on a [*signature*](#term-signature) when it [*uses*](../canon/CANON.md#term-used) the signature, no other [*unit*](../canon/CANON.md#term-unit) names the signature, and no [*scenario*](#term-scenario) names it.
 
 A unit names a signature when one of its blocks writes the name outside the declaration of that signature. A claim, a definition, a fact, the type of a field and the parent of another signature all name it. A unit of a document that the document extends names it too.
 
@@ -515,13 +515,13 @@ pred loneOn[u: Unit, w: Word] { u->w in Rely.rel and (no v: Unit | v != u and v-
 
 ### @term world
 
-> A world is what the analyzer finds when a search can hold. It has the things of each signature and the tuples of each field, at each step of a trace.
+> A world is what the analyzer finds when a [*search*](#term-search) can hold. It has the things of each [*signature*](#term-signature) and the tuples of each field, at each step of a trace.
 
 A thing is an element of a signature, which the analyzer names after the signature and a number, such as `Claim$0`. A trace has a step for each moment, and ends by looping back to one of its steps, which makes it go on for ever.
 
 ### @term reading-table
 
-> A reading table is a table in the own text of a unit whose headers are `reading`, `holds` and `does not hold`. Each row gives the key of a reading, its words when the key holds, and its words when it does not.
+> A reading table is a table in the [*own text*](../canon/CANON.md#term-own-text) of a [*unit*](../canon/CANON.md#term-unit) whose headers are `reading`, `holds` and `does not hold`. Each row gives the key of a reading, its words when the key holds, and its words when it does not.
 
 ```md
 | reading   | holds                         | does not hold                     |
@@ -542,7 +542,7 @@ A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, 
 
 ### @term noun-table
 
-> A noun table is a table in the own text of a unit whose headers are `signature` and `noun`. Each row gives a signature and its noun.
+> A noun table is a table in the [*own text*](../canon/CANON.md#term-own-text) of a [*unit*](../canon/CANON.md#term-unit) whose headers are `signature` and `noun`. Each row gives a [*signature*](#term-signature) and its noun.
 
 ```md
 | signature | noun               |
@@ -564,7 +564,7 @@ A row says what a `noun` line says with the noun in brackets, `noun Installed: [
 
 ### @term intent
 
-> The intent of a unit with a formula is the prose between its statement and its first fenced block, fold, [*reading table*](#term-reading-table) or [*noun table*](#term-noun-table). In it, the author says what the unit is for.
+> The intent of a [*unit*](../canon/CANON.md#term-unit) with a [*formula*](../naturalloy/CANON.md#term-formula) is the prose between its [*statement*](#term-generated-statement) and its first fenced block, [*fold*](../canon/CANON.md#term-fold), [*reading table*](#term-reading-table) or [*noun table*](#term-noun-table). In it, the author says what the unit is for.
 
 The intent measures the formula. When the generated statement says something the intent does not mean, the formula slipped, or the intent did. A "Derives from:" line and a "Site:" line come right after the statement, so they come before the intent. The intent ends early at a generated region, such as the statement of a scenario.
 
@@ -650,7 +650,7 @@ all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies (u n
 
 #### @spec a-document-that-does-not-name-the-plugin-is-left-as-it-is
 
-> The checker neither writes nor reports the statements of a document that the [*Alloy plugin*](#term-alloy-plugin) does not run over.
+> The [*checker*](../canon/CANON.md#term-checker) neither writes nor reports the statements of a [*document*](../canon/CANON.md#term-document) that the [*Alloy plugin*](#term-alloy-plugin) does not run over.
 
 This follows because the statements are the work of one plugin, and a document that does not ask for it asks for no statements.
 
@@ -891,7 +891,7 @@ all u: Unit | (u in Rewritten implies (u in Unwritten or u in Stale)) and ((u in
 
 ##### @spec generate-writes-the-statement-of-an-unwritten-unit-between-markers
 
-> Generate writes the statement of an unwritten unit between markers, just below its heading.
+> Generate writes the [*statement*](#term-generated-statement) of an unwritten [*unit*](../canon/CANON.md#term-unit) between markers, just below its [*heading*](../canon/CANON.md#term-heading).
 
 This follows because the markers tell the checker that the region is its own, and the heading is where a reader looks.
 
@@ -914,13 +914,13 @@ all u: Unit | u in Stale implies u in Rewritten
 
 ##### @spec generate-writes-a-statement-as-a-quote-that-markdown-reads-as-paragraphs-and-lists
 
-> Generate writes a statement as a quote that Markdown reads as paragraphs and lists.
+> Generate writes a [*statement*](#term-generated-statement) as a quote that Markdown reads as paragraphs and lists.
 
 This follows because a statement that Markdown folds into one paragraph is hard to read, and the statement is for readers.
 
 ##### @spec generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
 
-> Generate writes each link of a statement to a term, of its own document or of another, as a term mark: `[*word*](#term-word)`.
+> Generate writes each link of a [*statement*](#term-generated-statement) to a [*term*](../canon/CANON.md#term-term), of its own [*document*](../canon/CANON.md#term-document) or of another, as a [*term mark*](../canon/CANON.md#term-term-mark): `[*word*](#term-word)`.
 
 This follows because a term mark leads the reader to the term, as a link does. It also sets the word apart as a word of the canon. The checker then holds its words to the forms of the term, and reports a reading that links a word its term does not define.
 
@@ -1034,7 +1034,7 @@ all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Reported) impli
 
 #### @spec check-reports-a-statement-whose-region-names-no-unit
 
-> Check reports a generated [*statement*](#term-generated-statement) whose region names no unit and no scenario of its document.
+> Check reports a generated [*statement*](#term-generated-statement) whose region names no [*unit*](../canon/CANON.md#term-unit) and no [*scenario*](#term-scenario) of its [*document*](../canon/CANON.md#term-document).
 
 This follows because generate writes a region only by the name of what it says, so it never writes such a region again. The statement keeps the words it had when its unit went by that name. A reader takes it for the statement of the unit it sits in. A rename that left its old region behind is the usual cause. Deleting the region clears the report.
 
@@ -1260,49 +1260,49 @@ all w: Word | ((some u: Unit | u->w in Introduce.rel) and (no u: Unit | u->w in 
 
 #### @spec a-word-that-a-fact-a-parent-signature-or-a-predicate-names-is-used
 
-> A word that a fact, a parent signature or a predicate names counts as used.
+> A [*word*](#term-word) that a [*fact*](../canon/CANON.md#term-fact), a parent [*signature*](#term-signature) or a predicate names counts as [*used*](../canon/CANON.md#term-used).
 
 This follows because the model relies on such a word even where no claim names it.
 
 #### @spec a-word-that-a-scenario-names-is-used
 
-> A word that a [*scenario*](#term-scenario) names counts as used.
+> A [*word*](#term-word) that a [*scenario*](#term-scenario) names counts as [*used*](../canon/CANON.md#term-used).
 
 This follows because a scenario is a claim that something is possible, and its statement says the words it names. The lone check counts a scenario as tying a signature to the model for the same reason.
 
 #### @spec a-field-that-another-signature-shares-is-used-only-through-its-own-signature
 
-> When two signatures give a field the same name, a unit uses the field only through its own signature.
+> When two signatures give a field the same name, a [*unit*](../canon/CANON.md#term-unit) [*uses*](../canon/CANON.md#term-used) the field only through its own [*signature*](#term-signature).
 
 This follows because a use of the field of another signature says nothing about this field.
 
 #### @spec a-field-is-used-wherever-a-formula-names-it
 
-> A unit uses a field wherever a formula of it names the field: after a dot, before a dot, or on its own.
+> A [*unit*](../canon/CANON.md#term-unit) [*uses*](../canon/CANON.md#term-used) a field wherever a [*formula*](../naturalloy/CANON.md#term-formula) of it names the field: after a dot, before a dot, or on its own.
 
 This follows because Alloy reads the name of a field as its relation in each of these places. A claim that names the field in any of them relies on it. The readings say that a pair is in a field as `x->y in field`, and a statement may say such a field.
 
 ##### @spec a-field-named-after-a-dot-is-used
 
-> A field that a formula names after a dot, as in `x.field`, counts as used.
+> A field that a [*formula*](../naturalloy/CANON.md#term-formula) names after a dot, as in `x.field`, counts as [*used*](../canon/CANON.md#term-used).
 
 This follows because `x.field` joins a value with the relation of the field.
 
 ##### @spec a-field-named-before-a-dot-is-used
 
-> A field that a formula names before a dot, as in `field.x`, counts as used.
+> A field that a [*formula*](../naturalloy/CANON.md#term-formula) names before a dot, as in `field.x`, counts as [*used*](../canon/CANON.md#term-used).
 
 This follows because `field.x` joins the relation of the field with a value.
 
 ##### @spec a-field-named-on-its-own-is-used
 
-> A field that a formula names on its own, as in `x->y in field` or `field in other`, counts as used.
+> A field that a [*formula*](../naturalloy/CANON.md#term-formula) names on its own, as in `x->y in field` or `field in other`, counts as [*used*](../canon/CANON.md#term-used).
 
 This follows because the field on its own is the whole relation. The readings say that a pair is in a field only in this form.
 
 ##### @spec a-field-that-only-its-declaration-names-is-unused
 
-> A field that only the declaration of its signature names counts as unused.
+> A field that only the declaration of its [*signature*](#term-signature) names counts as unused.
 
 This follows because a declaration makes the field and says nothing of it, so no claim relies on it yet.
 
@@ -1360,19 +1360,19 @@ all d: Document, u: Unit, w: Word | (d not in Worded and d->u in Hold.units and 
 
 #### @spec a-signature-a-field-and-a-predicate-are-declared-words
 
-> A unit declares each signature, field and predicate that a model block of it writes.
+> A [*unit*](../canon/CANON.md#term-unit) declares each [*signature*](#term-signature), field and predicate that a model block of it writes.
 
 This follows because these are the three things of a model that a statement may say.
 
 #### @spec a-declaration-in-a-comment-declares-nothing
 
-> A declaration that only a comment writes declares no [*word*](#term-word).
+> A declaration that only a [*comment*](../canon/CANON.md#term-comment) writes declares no [*word*](#term-word).
 
 This follows because a comment is not the model, and the claims never rely on it.
 
 #### @spec a-reading-is-keyed-by-a-field-alone-or-with-its-signature-or-as-a-primed-set
 
-> A reading says the word it is keyed to: a field alone or with its signature, or a primed set.
+> A reading says the [*word*](#term-word) it is keyed to: a field alone or with its [*signature*](#term-signature), or a primed set.
 
 This follows because an author writes a field both ways, and a set that holds the next moment as its primed name.
 
@@ -1440,49 +1440,49 @@ all w: Word | (w in Undeclared or w in Misplaced or w in Apart or w in Unused) i
 
 #### @spec a-scenario-gets-a-statement-that-says-it-must-be-possible
 
-> When the checker can say the formula of a [*scenario*](#term-scenario), its statement opens with "It must be possible that:".
+> When the [*checker*](../canon/CANON.md#term-checker) can say the [*formula*](../naturalloy/CANON.md#term-formula) of a [*scenario*](#term-scenario), its [*statement*](#term-generated-statement) opens with "It must be possible that:".
 
 This follows because a scenario is a claim that something can happen. A reader who sees only its formula would not know whether it states a rule or a possibility.
 
 #### @spec the-statement-of-a-scenario-sits-just-above-its-block
 
-> The checker writes the statement of a scenario just above its block.
+> The [*checker*](../canon/CANON.md#term-checker) writes the [*statement*](#term-generated-statement) of a [*scenario*](#term-scenario) just above its block.
 
 This follows because a reader looks for the words of a formula where the formula is.
 
 #### @spec the-statement-of-a-scenario-is-not-the-statement-of-its-unit
 
-> The checker does not take the generated statement of a scenario for the statement of the unit that holds the scenario.
+> The [*checker*](../canon/CANON.md#term-checker) does not take the [*generated statement*](#term-generated-statement) of a [*scenario*](#term-scenario) for the [*statement*](../canon/CANON.md#term-statement) of the [*unit*](../canon/CANON.md#term-unit) that holds the scenario.
 
 This follows because the statement of a scenario says what must be possible, and the statement of a unit says what its formula claims. A unit whose only quote is the statement of its scenario has no statement yet.
 
 #### @spec generate-writes-the-statement-of-a-scenario-that-is-missing-or-stale
 
-> Generate writes the statement of a scenario that is not what its formula says, when the checker can say the formula.
+> Generate writes the [*statement*](#term-generated-statement) of a [*scenario*](#term-scenario) that is not what its [*formula*](../naturalloy/CANON.md#term-formula) says, when the [*checker*](../canon/CANON.md#term-checker) can say the formula.
 
 This follows because the checker says a scenario from its formula like any other claim. A statement that is not what the formula says would mislead.
 
 #### @spec generate-leaves-the-statement-of-a-scenario-that-is-current-as-it-is
 
-> Generate leaves the statement of a scenario that is current as it is.
+> Generate leaves the [*statement*](#term-generated-statement) of a [*scenario*](#term-scenario) that is current as it is.
 
 This follows because writing what is already there changes nothing, and a second run must leave the document alone.
 
 #### @spec check-reports-a-statement-of-a-scenario-that-is-not-current
 
-> Check reports the statement of a scenario that is not what its formula says.
+> Check reports the [*statement*](#term-generated-statement) of a [*scenario*](#term-scenario) that is not what its [*formula*](../naturalloy/CANON.md#term-formula) says.
 
 This follows because a statement that is not current may say what the formula does not.
 
 #### @spec a-unit-is-said-with-the-readings-of-the-documents-its-document-extends
 
-> The checker says a unit with the readings of the documents that its document extends.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*unit*](../canon/CANON.md#term-unit) with the readings of the documents that its [*document*](../canon/CANON.md#term-document) [*extends*](../canon/CANON.md#term-extension).
 
 This follows because the words of an extended document are the words of the document that extends it. A statement that could not use them would repeat them.
 
 #### @spec a-word-of-an-extended-document-links-to-that-document
 
-> The checker links a word of an extended document to the term of that document.
+> The [*checker*](../canon/CANON.md#term-checker) links a [*word*](#term-word) of an extended [*document*](../canon/CANON.md#term-document) to the [*term*](../canon/CANON.md#term-term) of that document.
 
 This follows because a reader who meets the word follows it to what it means, and that is in the extended document.
 
@@ -1535,31 +1535,31 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 
 ### @spec a-row-of-a-reading-table-is-a-reading
 
-> The checker reads each row of a [*reading table*](#term-reading-table) as the reading of its key. Its `holds` cell is the positive side, and its `does not hold` cell the negative side.
+> The [*checker*](../canon/CANON.md#term-checker) reads each row of a [*reading table*](#term-reading-table) as the reading of its key. Its `holds` cell is the positive side, and its `does not hold` cell the negative side.
 
 This follows because the checker says a statement with the readings of its words, wherever the document writes them.
 
 ### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
 
-> The checker reads each row of a [*noun table*](#term-noun-table) as the noun of its signature. The noun links to the term of the unit that holds the row. Its article, as in `an hour`, is no part of the link.
+> The [*checker*](../canon/CANON.md#term-checker) reads each row of a [*noun table*](#term-noun-table) as the noun of its [*signature*](#term-signature). The noun links to the [*term*](../canon/CANON.md#term-term) of the [*unit*](../canon/CANON.md#term-unit) that holds the row. Its article, as in `an hour`, is no part of the link.
 
 This follows because the noun of a signature names its things in a statement, wherever the document writes it. A signature is declared in the term that defines it, so its noun links there.
 
 ### @spec check-reports-a-linked-word-that-no-form-of-its-term-spells
 
-> When a reading links a word to a term that has no [*form*](../canon/CANON.md#term-form) the word spells, `check` reports the word as `undefined`. A word in brackets links to the term of the unit that holds the reading, or to the term its link names.
+> When a reading links a [*word*](#term-word) to a [*term*](../canon/CANON.md#term-term) that has no [*form*](../canon/CANON.md#term-form) the word spells, `check` reports the word as `undefined`. A word in brackets links to the term of the [*unit*](../canon/CANON.md#term-unit) that holds the reading, or to the term its link [*names*](../canon/CANON.md#term-name).
 
 This follows because a generated statement writes the word as a link to that term. A reader who follows the link looks for what the word means. A term that has no form the word spells does not say it. Link the word the term defines: `{1} [sits] in {2}` links `sits`, a form of the term `sit`. A noun needs no such check: its signature is declared in the term that defines it, and the noun links there.
 
 ### @spec a-signature-declared-in-a-nested-term-has-the-term-as-its-noun
 
-> A term nested in another term may declare one signature, `in` or `extends` a parent signature. That signature, with no noun of its own, has the nested term as its noun, linked to it: `sig Installed in Plugin` in the term `installed-plugin` has the noun `installed plugin`.
+> A [*term*](../canon/CANON.md#term-term) nested in another term may declare one [*signature*](#term-signature), `in` or `extends` a parent signature. That signature, with no noun of its own, has the nested term as its noun, linked to it: `sig Installed in Plugin` in the term `installed-plugin` has the noun `installed plugin`.
 
 This follows because a nested term names a narrower kind of the term it sits in, and its signature holds the things of that kind. So the stem of the nested term is the name of each of them.
 
 ### @spec a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun
 
-> A signature with no noun takes one from the term that declares it, when its name spells the stem of that term. Its noun is then the words of the stem, linked to the term. A capital after a lowercase letter starts a word, so `TermMark` spells `term-mark`.
+> A [*signature*](#term-signature) with no noun takes one from the [*term*](../canon/CANON.md#term-term) that declares it, when its name spells the [*stem*](../canon/CANON.md#term-stem) of that term. Its noun is then the words of the stem, linked to the term. A capital after a lowercase letter starts a [*word*](#term-word), so `TermMark` spells `term-mark`.
 
 This follows because such a noun says nothing the declaration does not: the term names the signature, and its things are what the term defines. A signature named otherwise has no noun until a noun table gives it one.
 
@@ -1625,25 +1625,25 @@ all u: Unit | u in BareFormula implies u in Held
 
 #### @spec a-unit-that-holds-only-definitions-is-in-the-model-and-is-no-claim
 
-> The definitions of a unit that holds only definitions are part of the model, and the analyzer does not hold them as a claim.
+> The definitions of a [*unit*](../canon/CANON.md#term-unit) that holds only definitions are part of the model, and the analyzer does not hold them as a [*claim*](../canon/CANON.md#term-claim).
 
 This follows because a definition gives a word its meaning and claims nothing, and the claims need the word.
 
 #### @spec the-scope-of-a-document-is-given-to-every-search
 
-> Every search uses the scope that the document asks for.
+> Every [*search*](#term-search) [*uses*](../canon/CANON.md#term-used) the scope that the [*document*](../canon/CANON.md#term-document) asks for.
 
 This follows because a claim that holds in a scope too small to show its flaw would let a contradiction through. The author sets the scope.
 
 #### @spec a-search-about-the-units-together-asks-for-every-held-unit-and-no-other
 
-> The [*search*](#term-search) about all the held units together asks every held unit to hold, and no other.
+> The [*search*](#term-search) about all the held [*units*](../canon/CANON.md#term-unit) together asks every held unit to hold, and no other.
 
 This follows because the units contradict each other only if they cannot hold at once.
 
 #### @spec each-scenario-gets-a-search-with-every-held-unit
 
-> The analyzer asks about each scenario in a search that asks every held unit to hold.
+> The analyzer asks about each [*scenario*](#term-scenario) in a [*search*](#term-search) that asks every held [*unit*](../canon/CANON.md#term-unit) to hold.
 
 This follows because a scenario is possible only if it happens in a world where every held unit holds.
 
@@ -1928,13 +1928,13 @@ all u: Unit, v: Unit | u->v in Together.rel implies u->v in Chain.rel
 
 #### @spec a-unit-in-a-group-with-no-claim-and-no-scenario-is-not-asked-about
 
-> The analyzer is not asked about a unit in a group with no unit to hold and no scenario.
+> The analyzer is not asked about a [*unit*](../canon/CANON.md#term-unit) in a [*group*](#term-group) with no unit to hold and no [*scenario*](#term-scenario).
 
 This follows because such a group has nothing to hold and nothing to allow.
 
 #### @spec the-scope-of-a-group-names-only-the-signatures-it-declares
 
-> The scope of a search names only the signatures that its group declares.
+> The scope of a [*search*](#term-search) names only the signatures that its [*group*](#term-group) declares.
 
 This follows because the analyzer refuses a scope for a signature it does not know, and a group cannot declare what another group holds.
 
@@ -1983,19 +1983,19 @@ all r: Run, c: LogicCommand | (r->c in Ask.rel and ((some x: Scenario | x in Rai
 
 #### @spec logic-stops-when-the-analyzer-cannot-run
 
-> A run of `alloy:logic` exits with code 2 when the Alloy analyzer gives no answer to a search. It gives none when it does not start, and when it leaves a search unsolved.
+> A [*run*](../canon/CANON.md#term-run) of `alloy:logic` exits with code 2 when the Alloy analyzer gives no [*answer*](../run-alloy/CANON.md#term-answer) to a [*search*](#term-search). It gives none when it does not start, and when it leaves a search unsolved.
 
 This follows because a check that did not run found nothing, and the author must not mistake that for a canon that holds together.
 
 ##### @spec logic-stops-when-the-analyzer-does-not-start
 
-> A run of `alloy:logic` exits with code 2 when the Alloy analyzer does not start.
+> A [*run*](../canon/CANON.md#term-run) of `alloy:logic` exits with code 2 when the Alloy analyzer does not start.
 
 This follows because an analyzer that did not start answered no search.
 
 ##### @spec logic-stops-when-the-analyzer-leaves-a-search-unsolved
 
-> A run of `alloy:logic` exits with code 2 when the receipt of a search leaves out the run of that search.
+> A [*run*](../canon/CANON.md#term-run) of `alloy:logic` exits with code 2 when the receipt of a [*search*](#term-search) leaves out the run of that search.
 
 Derives from: [`fact-the-analyzer-exits-with-code-0-only-when-it-solved-every-command`](../run-alloy/CANON.md#fact-the-analyzer-exits-with-code-0-only-when-it-solved-every-command)
 
@@ -2025,7 +2025,7 @@ all d: Document, e: Document, u: Unit | (d in Checked and d->e in Context.rel an
 
 #### @spec a-group-with-no-block-of-a-checked-document-is-not-asked-about
 
-> The analyzer is not asked about a [*group*](#term-group) none of whose blocks is in a document that the project checks.
+> The analyzer is not asked about a [*group*](#term-group) none of whose blocks is in a [*document*](../canon/CANON.md#term-document) that the [*project*](../canon/CANON.md#term-project) checks.
 
 This follows because the extended document is checked where it lives. Asking again would repeat the work and report the same units twice.
 
@@ -2116,7 +2116,7 @@ all u: Unit, w: Signature | (u in Logical and u not in Term and loneOn[u, w]) im
 
 ##### @exception a-signature-that-something-names-without-constraining-it-keeps-a-formula-from-being-reported
 
-> The checker does not report a formula whose signature another unit names, even when that name constrains nothing, as in a predicate that nothing calls.
+> The [*checker*](../canon/CANON.md#term-checker) does not report a [*formula*](../naturalloy/CANON.md#term-formula) whose [*signature*](#term-signature) another [*unit*](../canon/CANON.md#term-unit) names, even when that name constrains nothing, as in a predicate that nothing calls.
 
 Derives from: [`fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature`](#fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature), [`spec-the-lone-check-reads-text-only`](#spec-the-lone-check-reads-text-only)
 
@@ -2279,7 +2279,7 @@ all d: Document, u: Unit, w: Word | (d not in Worded and d->u in Hold.units) imp
 
 ##### @bug a-signature-that-its-declaration-constrains-is-reported
 
-> The checker reports a formula on a signature that only it names, even when the declaration of the signature lets another formula contradict it.
+> The [*checker*](../canon/CANON.md#term-checker) reports a [*formula*](../naturalloy/CANON.md#term-formula) on a [*signature*](#term-signature) that only it names, even when the declaration of the signature lets another formula contradict it.
 
 The check reads which names a declaration writes, and not what the declaration says. Signatures that extend one parent are disjoint. A multiplicity such as `one` fixes the size of a signature. A formula about a signature declared `in` a parent says something of the parent. Each can let another formula contradict the formula.
 
@@ -2287,7 +2287,7 @@ Issue: #18
 
 ##### @exception a-formula-whose-other-words-can-be-contradicted-is-reported
 
-> The checker reports a formula that is lone on a signature, even when the other words of the formula let another formula contradict it.
+> The [*checker*](../canon/CANON.md#term-checker) reports a [*formula*](../naturalloy/CANON.md#term-formula) that is [*lone*](#term-lone-formula) on a [*signature*](#term-signature), even when the other words of the formula let another formula contradict it.
 
 Derives from: [`fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature`](#fact-only-solving-a-model-decides-whether-a-formula-constrains-a-signature), [`spec-the-lone-check-reads-text-only`](#spec-the-lone-check-reads-text-only)
 
@@ -2319,13 +2319,13 @@ A project runs `canon check` on every change, in its continuous integration too.
 
 #### @spec the-lone-check-reads-text-only
 
-> The checker finds the formulas that are [*lone*](#term-lone-formula) on a signature by reading the text of the blocks, without the Alloy analyzer.
+> The [*checker*](../canon/CANON.md#term-checker) finds the formulas that are [*lone*](#term-lone-formula) on a [*signature*](#term-signature) by reading the text of the blocks, without the Alloy analyzer.
 
 This follows because the lone check is part of `canon check`.
 
 ## @axiom logic-takes-only-the-time-its-new-searches-need
 
-> A run of `canon alloy:logic` takes no longer than the machine that runs it needs to answer the [*searches*](#term-search) that no earlier run answered.
+> A [*run*](../canon/CANON.md#term-run) of `canon alloy:logic` takes no longer than the machine that runs it needs to [*answer*](../run-alloy/CANON.md#term-answer) the [*searches*](#term-search) that no earlier run answered.
 
 Derives from: [`axiom-the-analyzer-takes-only-the-time-its-new-programs-need`](../run-alloy/CANON.md#axiom-the-analyzer-takes-only-the-time-its-new-programs-need)
 
@@ -2333,7 +2333,7 @@ This narrows the time a caller of the analyzer waits to `alloy:logic`. A project
 
 #### @spec logic-asks-each-search-through-run-alloy
 
-> `alloy:logic` asks the analyzer about each [*search*](#term-search) through `@bigmistqke/run-alloy`, with the program of the search.
+> `alloy:logic` asks the analyzer about each [*search*](#term-search) through `@bigmistqke/run-alloy`, with the [*program*](../run-alloy/CANON.md#term-program) of the search.
 
 Derives from: [`spec-the-analyzer-runs-no-more-processes-at-once-than-the-machine-holds`](../run-alloy/CANON.md#spec-the-analyzer-runs-no-more-processes-at-once-than-the-machine-holds), [`spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer`](../run-alloy/CANON.md#spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer), [`spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days`](../run-alloy/CANON.md#spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days)
 
@@ -2341,37 +2341,37 @@ This follows because run-alloy runs no more processes at once than the machine h
 
 ##### @spec logic-runs-as-many-searches-at-once-as-run-alloy-allows
 
-> `alloy:logic` runs no more searches at once than run-alloy allows.
+> `alloy:logic` runs no more [*searches*](#term-search) at once than run-alloy allows.
 
 This follows because each search is one process of the analyzer, and run-alloy counts the processes.
 
 ##### @spec an-unchanged-search-is-answered-without-the-analyzer
 
-> When an earlier run kept an answer for a search, and neither its program nor the analyzer changed, `alloy:logic` starts no analyzer process for that search.
+> When an earlier run kept an [*answer*](../run-alloy/CANON.md#term-answer) for a [*search*](#term-search), and neither its [*program*](../run-alloy/CANON.md#term-program) nor the analyzer changed, `alloy:logic` starts no analyzer process for that search.
 
 This follows because run-alloy gives an unchanged program the answer it kept.
 
 ##### @spec a-search-whose-program-changed-is-asked-again
 
-> When a unit of a search changes, `alloy:logic` asks the analyzer about the search again.
+> When a [*unit*](../canon/CANON.md#term-unit) of a [*search*](#term-search) changes, `alloy:logic` asks the analyzer about the search again.
 
 This follows because the change changes the program of the search, and a different model can have a different answer.
 
 ##### @spec a-search-with-other-options-is-asked-again
 
-> When `--show` names a scenario whose search an earlier run answered without `--show`, `alloy:logic` asks the analyzer about that search again.
+> When `--show` names a [*scenario*](#term-scenario) whose [*search*](#term-search) an earlier run answered without `--show`, `alloy:logic` asks the analyzer about that search again.
 
 This follows because the answer of a shown scenario holds the world that the analyzer wrote, so `alloy:logic` reads it in another form. An answer kept without the world has none to print.
 
 ##### @spec a-kept-answer-of-a-shown-scenario-holds-its-world
 
-> When `--show` names a scenario, the answer kept for its search holds the world that the analyzer wrote. A later run with `--show` prints that world without the analyzer.
+> When `--show` names a [*scenario*](#term-scenario), the [*answer*](../run-alloy/CANON.md#term-answer) kept for its [*search*](#term-search) holds the [*world*](#term-world) that the analyzer wrote. A later run with `--show` prints that world without the analyzer.
 
 This follows because a world is part of the answer that `--show` asks for. Any world in which the scenario happens shows that the model allows it.
 
 ##### @spec logic-sweeps-the-kept-answers-after-each-run
 
-> After it checks a document, `alloy:logic` sweeps its folder of kept answers through run-alloy, whether the analyzer answered or not. The sweep removes each kept answer that no run has used in the last 30 days.
+> After it checks a [*document*](../canon/CANON.md#term-document), `alloy:logic` sweeps its folder of [*kept answers*](../run-alloy/CANON.md#term-kept-answer) through run-alloy, whether the analyzer answered or not. The sweep removes each kept [*answer*](../run-alloy/CANON.md#term-answer) that no [*run*](../canon/CANON.md#term-run) has [*used*](../canon/CANON.md#term-used) in the last 30 days.
 
 Derives from: [`spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days`](../run-alloy/CANON.md#spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days)
 
@@ -2379,19 +2379,19 @@ This follows because a change to a unit leaves the answers of the old programs o
 
 ###### @spec logic-sweeps-the-kept-answers-after-a-document-it-answered
 
-> After the analyzer answers every search of a document, `alloy:logic` removes each kept answer of its folder that no run used in 30 days.
+> After the analyzer answers every [*search*](#term-search) of a [*document*](../canon/CANON.md#term-document), `alloy:logic` removes each [*kept answer*](../run-alloy/CANON.md#term-kept-answer) of its folder that no [*run*](../canon/CANON.md#term-run) [*used*](../canon/CANON.md#term-used) in 30 days.
 
 This follows because the answered searches are the ones a run keeps, and the old ones are what the sweep removes.
 
 ###### @spec logic-sweeps-the-kept-answers-after-a-document-the-analyzer-did-not-answer
 
-> When the analyzer leaves a search of a document without an answer, `alloy:logic` still removes each kept answer that no run used in 30 days.
+> When the analyzer leaves a [*search*](#term-search) of a [*document*](../canon/CANON.md#term-document) without an [*answer*](../run-alloy/CANON.md#term-answer), `alloy:logic` still removes each [*kept answer*](../run-alloy/CANON.md#term-kept-answer) that no [*run*](../canon/CANON.md#term-run) [*used*](../canon/CANON.md#term-used) in 30 days.
 
 This follows because a check that fails at each run, such as one that runs out of memory, would otherwise never sweep its folder.
 
 #### @spec logic-keeps-its-answers-where-its-project-says
 
-> `alloy:logic` gives run-alloy the setting `logic.alloy.cache` as the folder that the project sets, and `.cache/canon-alloy` under the root of the project as its default.
+> `alloy:logic` gives run-alloy the [*setting*](../canon/CANON.md#term-setting) `logic.alloy.cache` as the folder that the [*project*](../canon/CANON.md#term-project) sets, and `.cache/canon-alloy` under the root of the project as its default.
 
 Derives from: [`spec-the-folder-of-the-kept-answers-is-the-first-one-named`](../run-alloy/CANON.md#spec-the-folder-of-the-kept-answers-is-the-first-one-named)
 
@@ -2399,25 +2399,25 @@ This follows because the answers belong to the canon of the project. A project k
 
 ##### @spec the-cache-setting-names-the-folder-of-the-kept-answers
 
-> When the setting `logic.alloy.cache` names a folder, `alloy:logic` keeps its answers in that folder, from the root of the project, also when `CANON_ALLOY_CACHE_DIR` names another.
+> When the [*setting*](../canon/CANON.md#term-setting) `logic.alloy.cache` names a folder, `alloy:logic` keeps its answers in that folder, from the root of the [*project*](../canon/CANON.md#term-project), also when `CANON_ALLOY_CACHE_DIR` names another.
 
 This follows because a project may keep its caches in another place, such as a folder that its continuous integration already saves.
 
 ##### @spec canon-alloy-cache-dir-holds-the-answers-of-a-project-that-sets-no-folder
 
-> When the setting `logic.alloy.cache` names no folder and `CANON_ALLOY_CACHE_DIR` names one, `alloy:logic` keeps its answers in the folder that `CANON_ALLOY_CACHE_DIR` names.
+> When the [*setting*](../canon/CANON.md#term-setting) `logic.alloy.cache` names no folder and `CANON_ALLOY_CACHE_DIR` names one, `alloy:logic` keeps its answers in the folder that `CANON_ALLOY_CACHE_DIR` names.
 
 This follows because the environment of a run names one folder for every caller of run-alloy. The answers of a project in a temporary folder then outlive the project.
 
 ##### @spec answers-are-kept-under-the-project-by-default
 
-> When neither the setting `logic.alloy.cache` nor `CANON_ALLOY_CACHE_DIR` names a folder, `alloy:logic` keeps its answers in the folder `.cache/canon-alloy` under the root of the project.
+> When neither the [*setting*](../canon/CANON.md#term-setting) `logic.alloy.cache` nor `CANON_ALLOY_CACHE_DIR` names a folder, `alloy:logic` keeps its answers in the folder `.cache/canon-alloy` under the root of the [*project*](../canon/CANON.md#term-project).
 
 This follows because a project keeps the answers beside its other caches. A continuous integration can then save the folder and restore it in the next run.
 
 ## @axiom a-scenario-that-can-happen-can-be-read
 
-> The author can read a [*world*](#term-world) in which a scenario happens while every held unit holds, in the words of the canon.
+> The author can read a [*world*](#term-world) in which a [*scenario*](#term-scenario) happens while every held [*unit*](../canon/CANON.md#term-unit) holds, in the words of the canon.
 
 A scenario that cannot happen is a strong result: no world within the scope has it. A scenario that can happen is a weak one.
 
@@ -2427,7 +2427,7 @@ The report cannot tell these apart. Only the world shows which path the analyzer
 
 #### @spec show-prints-the-world-of-each-scenario-it-names
 
-> `canon alloy:logic --show <scenario>` prints, after the report, a world in which the named scenario happens while every held unit holds. The author can give `--show` more than once.
+> `canon alloy:logic --show <scenario>` prints, after the report, a [*world*](#term-world) in which the named [*scenario*](#term-scenario) happens while every held [*unit*](../canon/CANON.md#term-unit) holds. The author can give `--show` more than once.
 
 This follows because the author asks about the scenarios whose result they doubt, and a world for every scenario would bury them.
 
@@ -2435,49 +2435,49 @@ The author names a scenario by the id of its statement, such as `scenario-1-spec
 
 #### @spec show-of-a-scenario-that-cannot-happen-prints-no-world
 
-> `canon alloy:logic --show` of a scenario that cannot happen prints no world, and the report says that the scenario cannot happen.
+> `canon alloy:logic --show` of a [*scenario*](#term-scenario) that cannot happen prints no [*world*](#term-world), and the report says that the scenario cannot happen.
 
 This follows because no world has the scenario, and the units the report names are where the author looks instead.
 
 #### @spec show-of-a-name-that-is-no-scenario-stops-logic
 
-> A run of `alloy:logic` exits with code 2 and prints no report when `--show` names no scenario that it checks in the documents.
+> A [*run*](../canon/CANON.md#term-run) of `alloy:logic` exits with code 2 and prints no report when `--show` names no [*scenario*](#term-scenario) that it checks in the documents.
 
 This follows because a misspelt name would otherwise show nothing, and the author would take the silence for an answer.
 
 #### @spec show-names-a-scenario-by-its-place-among-the-scenarios-of-its-unit
 
-> `--show scenario-<n>-<unit>` shows the `n`th scenario of the unit in the document, whichever [*group*](#term-group) the analyzer asks about it in.
+> `--show scenario-<n>-<unit>` shows the `n`th [*scenario*](#term-scenario) of the [*unit*](../canon/CANON.md#term-unit) in the [*document*](../canon/CANON.md#term-document), whichever [*group*](#term-group) the analyzer asks about it in.
 
 This follows because the author reads the name off the statement of the scenario, which counts the scenarios of the unit in the document.
 
 #### @spec show-prints-a-world-once-under-the-document-that-holds-its-scenario
 
-> `canon alloy:logic --show` prints the world of a scenario once, under the document that holds the scenario, and not under a document that extends it.
+> `canon alloy:logic --show` prints the [*world*](#term-world) of a [*scenario*](#term-scenario) once, under the [*document*](../canon/CANON.md#term-document) that [*holds*](../canon/CANON.md#term-hold) the scenario, and not under a document that [*extends*](../canon/CANON.md#term-extension) it.
 
 This follows because a document that extends another asks about its scenarios again. A second copy of the world would read as a second scenario.
 
 #### @spec a-world-the-analyzer-did-not-write-is-reported-and-the-report-stands
 
-> When the analyzer writes no world for a scenario that can happen, `canon alloy:logic --show` says so under the scenario. The report and the exit code stay as they are.
+> When the analyzer writes no [*world*](#term-world) for a [*scenario*](#term-scenario) that can happen, `canon alloy:logic --show` says so under the scenario. The report and the exit code stay as they are.
 
 This follows because the world is a view that the author asked for. The check ran, and its result does not depend on the view.
 
 #### @spec a-world-is-said-step-by-step
 
-> The checker says a world as its steps in order, each under `step <n>:`, counted from 0.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*world*](#term-world) as its steps in order, each under `step <n>:`, counted from 0.
 
 This follows because a scenario is about how things change, and the author follows the change one step at a time.
 
 ##### @spec a-tuple-true-at-every-step-is-said-under-throughout
 
-> A world says each tuple that is true at every step of its trace once, under `throughout:`, before its first step.
+> A [*world*](#term-world) says each tuple that is true at every step of its trace once, under `throughout:`, before its first step.
 
 This follows because a tuple that never changes is part of the setting of the world and not of its story. The reader learns that it never changes from the world itself, and does not have to look for it in every step.
 
 ##### @spec the-first-step-says-everything-else-that-is-true
 
-> The first step says every tuple that is true at it and not at every step. A first step with no such tuple says `nothing else is true`, or `nothing is true` when the world has no tuple under `throughout:`.
+> The first step says every tuple that is true at it and not at every step. A first step with no such tuple says `nothing else is true`, or `nothing is true` when the [*world*](#term-world) has no tuple under `throughout:`.
 
 This follows because the first step has no step before it to differ from.
 
@@ -2489,97 +2489,97 @@ This follows because the way out that the author looks for is a change, and the 
 
 ##### @spec a-world-says-the-step-its-trace-loops-back-to
 
-> A world ends with `then back to step <n>`, the step that its trace loops back to.
+> A [*world*](#term-world) ends with `then back to step <n>`, the step that its trace loops back to.
 
 This follows because what happens after the last step is part of the world. A claim with `always` or `eventually` holds or fails over the loop.
 
 #### @spec a-thing-is-named-after-its-noun-and-its-number
 
-> The checker names a thing after the noun of its signature and its number counted from 1, such as `claim_1` for `Claim$0`.
+> The [*checker*](../canon/CANON.md#term-checker) names a [*thing*](../canon/CANON.md#term-thing) after the noun of its [*signature*](#term-signature) and its number counted from 1, such as `claim_1` for `Claim$0`.
 
 This follows because the statements name their variables the same way, so a world reads as the canon does.
 
 ##### @spec a-thing-of-a-signature-with-a-noun-is-named-after-the-noun-without-its-brackets
 
-> The checker names a thing whose signature has a noun after the words of the noun, without the brackets of a term. The noun `a [lane]` names `Lane$0` `lane_1`.
+> The [*checker*](../canon/CANON.md#term-checker) names a [*thing*](../canon/CANON.md#term-thing) whose [*signature*](#term-signature) has a noun after the words of the noun, without the brackets of a [*term*](../canon/CANON.md#term-term). The noun `a [lane]` names `Lane$0` `lane_1`.
 
 This follows because the brackets of a noun make a link in a statement, and a world is plain text.
 
 ##### @spec a-thing-of-a-signature-with-no-noun-keeps-the-name-the-analyzer-gives-it
 
-> A thing whose signature has no noun keeps the name the analyzer gives it, such as `Claim$0`.
+> A [*thing*](../canon/CANON.md#term-thing) whose [*signature*](#term-signature) has no noun keeps the name the analyzer gives it, such as `Claim$0`.
 
 This follows because no word of the canon says what it is, and a made-up name would say what the canon does not.
 
 #### @spec a-tuple-is-said-with-the-positive-reading-of-its-word
 
-> The checker says a tuple of a set or of a field with the positive reading of its word. The names of its things take the places of the variables.
+> The [*checker*](../canon/CANON.md#term-checker) says a tuple of a set or of a field with the positive reading of its [*word*](#term-word). The names of its things take the places of the variables.
 
 This follows because a reading is how the canon says that a word holds of its things.
 
 ##### @spec a-thing-of-a-set-is-said-with-the-reading-of-the-set
 
-> The checker says a thing of a set with the reading of the set: `claim_1 has ended`.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*thing*](../canon/CANON.md#term-thing) of a set with the reading of the set: `claim_1 has ended`.
 
 This follows because the thing is the one variable of the reading.
 
 ##### @spec a-tuple-of-a-field-is-said-with-the-reading-of-the-field
 
-> The checker says a tuple of a field with the reading of the field, its first thing in `{1}` and the next in `{2}`: `lane_1 holds claim_1`.
+> The [*checker*](../canon/CANON.md#term-checker) says a tuple of a field with the reading of the field, its first [*thing*](../canon/CANON.md#term-thing) in `{1}` and the next in `{2}`: `lane_1 holds claim_1`.
 
 This follows because the reading of a field gives a place to each thing of the tuple.
 
 ##### @spec a-tuple-of-a-field-of-a-one-signature-is-said-without-the-thing-of-that-signature
 
-> A field can belong to a `one` signature and have a reading with a place fewer than its tuples have things. The checker then leaves out the first thing of each tuple, the thing of that signature.
+> A field can belong to a `one` [*signature*](#term-signature) and have a reading with a place fewer than its tuples have things. The [*checker*](../canon/CANON.md#term-checker) then leaves out the first thing of each tuple, the thing of that signature.
 
 This follows because a field of a `one` signature, such as `Probe.rel`, is a relation that the signature only holds. Its reading says the relation.
 
 ##### @spec a-set-whose-reading-has-no-variable-is-said-once-when-it-has-a-thing
 
-> The checker says a set whose reading has no variable, such as a `var lone sig Teardown`, once when it has a thing. It says nothing of the set when it is empty.
+> The [*checker*](../canon/CANON.md#term-checker) says a set whose reading has no variable, such as a `var lone sig Teardown`, once when it has a [*thing*](../canon/CANON.md#term-thing). It says nothing of the set when it is empty.
 
 This follows because the reading says that the set is not empty, and its things have no name of their own to say.
 
 ##### @spec a-thing-of-a-set-with-a-noun-and-no-reading-is-said-as-that-noun
 
-> The checker says a thing of a set that has a noun and no reading as one of that noun: `claim_1 is an app motion`.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*thing*](../canon/CANON.md#term-thing) of a set that has a noun and no reading as one of that noun: `claim_1 is an app motion`.
 
 This follows because the noun says what a thing of the set is.
 
 ##### @spec a-thing-that-another-sentence-names-is-not-said-to-exist
 
-> Take a thing of a signature with no reading, not declared with `in` or `var`. The checker says nothing more of it when another sentence of the world names it.
+> Take a [*thing*](../canon/CANON.md#term-thing) of a [*signature*](#term-signature) with no reading, not declared with `in` or `var`. The [*checker*](../canon/CANON.md#term-checker) says nothing more of it when another sentence of the [*world*](#term-world) names it.
 
 This follows because the name of the thing already says its signature, and the sentence that names it shows that it exists.
 
 ##### @spec a-thing-that-no-sentence-names-is-said-to-exist
 
-> The checker says a thing of a signature with no reading, not declared with `in` or `var`, as `<thing> exists` when no other sentence of the world names it: `AtOnce$0 exists`.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*thing*](../canon/CANON.md#term-thing) of a [*signature*](#term-signature) with no reading, not declared with `in` or `var`, as `<thing> exists` when no other sentence of the [*world*](#term-world) names it: `AtOnce$0 exists`.
 
 This follows because whether such a thing exists can be the way out that the author looks for, and no other sentence would show it.
 
 ##### @spec a-thing-of-a-var-signature-is-said-to-exist-at-each-step-it-is-in
 
-> The checker says a thing of a `var` signature with no reading, not declared with `in`, as `<thing> exists` at each step that holds it.
+> The [*checker*](../canon/CANON.md#term-checker) says a [*thing*](../canon/CANON.md#term-thing) of a `var` [*signature*](#term-signature) with no reading, not declared with `in`, as `<thing> exists` at each step that holds it.
 
 This follows because the things of a `var` signature come and go from step to step, and the change is part of the world.
 
 ##### @spec a-word-with-no-reading-is-said-with-its-alloy-name
 
-> The checker says a tuple of a word with no reading and no noun in Alloy. It gives the name of the word, then its things: `Ended: claim_1`, `Lane.claim: lane_1 -> claim_1`.
+> The [*checker*](../canon/CANON.md#term-checker) says a tuple of a [*word*](#term-word) with no reading and no noun in Alloy. It gives the name of the word, then its things: `Ended: claim_1`, `Lane.claim: lane_1 -> claim_1`.
 
 This follows because a tuple that the author cannot see could be the way out. A missing reading makes the world say less, and leaves nothing out.
 
 #### @spec a-world-says-which-thing-each-variable-of-the-scenario-is
 
-> A world opens with the thing that each variable of its scenario stands for, as `c is claim_1`.
+> A [*world*](#term-world) opens with the thing that each variable of its [*scenario*](#term-scenario) stands for, as `c is claim_1`.
 
 This follows because a scenario says that some things exist. The author has to know which things of the world they are to follow them.
 
 ## @axiom the-parts-of-a-unit-with-logic-are-handled-through-commands
 
-> People and sessions read and change the intent and the readings of a canon through the commands of the plugin, by unit and by key. No one has to edit the text around a generated region by hand.
+> People and sessions read and change the [*intent*](#term-intent) and the readings of a canon through the commands of the [*plugin*](../canon/CANON.md#term-plugin), by [*unit*](../canon/CANON.md#term-unit) and by key. No one has to edit the text around a generated region by hand.
 
 Derives from: [`axiom-the-document-holds-the-canon-the-commands-handle-it`](../canon/CANON.md#axiom-the-document-holds-the-canon-the-commands-handle-it)
 
@@ -2587,49 +2587,49 @@ This narrows the commands that handle the canon to the parts that the plugin giv
 
 #### @spec intent-prints-the-intent-of-each-unit-it-is-given
 
-> `alloy:intent` prints the [*intent*](#term-intent) of each unit that its command line names by id, in the documents the plugin runs over.
+> `alloy:intent` prints the [*intent*](#term-intent) of each [*unit*](../canon/CANON.md#term-unit) that its command line names by id, in the documents the [*plugin*](../canon/CANON.md#term-plugin) runs over.
 
 This follows because a session that changes a formula reads its intent first, to measure the change. The intent sits among generated text, which the session should not have to cut around.
 
 ##### @spec intent-heads-each-intent-with-where-its-unit-starts-and-its-id
 
-> `alloy:intent` prints a line with the document and the line where a unit starts and its id, above the intent of the unit.
+> `alloy:intent` prints a line with the [*document*](../canon/CANON.md#term-document) and the line where a [*unit*](../canon/CANON.md#term-unit) starts and its id, above the [*intent*](#term-intent) of the unit.
 
 This follows because `show` heads a unit the same way. A reader can then search the output by id, and open the unit where it starts.
 
 ##### @spec intent-prints-the-prose-between-the-statement-and-the-first-fenced-block
 
-> `alloy:intent` prints the [*intent*](#term-intent) of a unit as the document writes it. The intent ends before the first fenced block, fold, reading table, noun table or generated region of the unit.
+> `alloy:intent` prints the [*intent*](#term-intent) of a [*unit*](../canon/CANON.md#term-unit) as the [*document*](../canon/CANON.md#term-document) writes it. The intent ends before the first fenced block, [*fold*](../canon/CANON.md#term-fold), [*reading table*](#term-reading-table), [*noun table*](#term-noun-table) or generated region of the unit.
 
 This follows because the intent is the author's own prose, and the reader measures the formula against those exact words.
 
 ##### @spec a-derives-from-line-before-the-intent-is-no-part-of-it
 
-> A "Derives from:" line or a "Site:" line between the statement of a unit and its intent is no part of the [*intent*](#term-intent).
+> A "[*Derives*](../canon/CANON.md#term-derive) from:" line or a "[*Site*](../canon/CANON.md#term-site):" line between the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) and its intent is no part of the [*intent*](#term-intent).
 
 This follows because the checker reads those lines as the derivation and the site of the unit, and a body opens with its derivation line. A command that changed the intent would otherwise change what the unit derives from.
 
 ##### @spec intent-of-a-unit-with-no-intent-says-none
 
-> When a unit with a formula has no [*intent*](#term-intent), `alloy:intent` prints `none` under its line.
+> When a [*unit*](../canon/CANON.md#term-unit) with a [*formula*](../naturalloy/CANON.md#term-formula) has no [*intent*](#term-intent), `alloy:intent` prints `none` under its line.
 
 This follows because a reader who asked for the intent must not take silence for an empty answer.
 
 ##### @spec intent-of-a-unit-that-holds-no-formula-is-refused
 
-> When the command line of `alloy:intent` names a unit that holds no formula, the plugin says so and changes nothing. The run exits with code 2.
+> When the command line of `alloy:intent` names a [*unit*](../canon/CANON.md#term-unit) that holds no [*formula*](../naturalloy/CANON.md#term-formula), the [*plugin*](../canon/CANON.md#term-plugin) says so and changes nothing. The [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because only a unit with a formula has an intent. A unit without one gives its reason in a "This follows because" sentence, which belongs to its own body.
 
 ##### @spec intent-of-a-name-that-names-no-unit-is-refused
 
-> When the command line of `alloy:intent` holds a name of no unit of the plugin's documents, the plugin says so. The run exits with code 2.
+> When the command line of `alloy:intent` holds a name of no [*unit*](../canon/CANON.md#term-unit) of the [*plugin*](../canon/CANON.md#term-plugin)'s documents, the plugin says so. The [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because a reader who asked for a unit must not take silence for an empty intent.
 
 ##### @spec intent-reads-the-ids-of-a-dash-from-standard-input
 
-> `alloy:intent -` prints the [*intent*](#term-intent) of each unit whose id a line of standard input holds. A blank line names no unit.
+> `alloy:intent -` prints the [*intent*](#term-intent) of each [*unit*](../canon/CANON.md#term-unit) whose id a line of standard input holds. A blank line names no unit.
 
 Derives from: [`spec-a-dash-stands-for-the-names-on-standard-input`](../canon/CANON.md#spec-a-dash-stands-for-the-names-on-standard-input)
 
@@ -2637,31 +2637,31 @@ This follows because a session reads the intents of the units that another comma
 
 #### @spec intent-with-write-replaces-the-intent-of-its-unit
 
-> `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the [*intent*](#term-intent) of the unit in its document.
+> `alloy:intent <unit> --write` reads a new intent from standard input, and puts it in place of the [*intent*](#term-intent) of the [*unit*](../canon/CANON.md#term-unit) in its [*document*](../canon/CANON.md#term-document).
 
 This follows because a session that rewords an intent would otherwise edit the document by its text, between a generated statement and a fence.
 
 ##### @spec write-puts-the-text-from-standard-input-in-place-of-the-intent
 
-> After `alloy:intent <unit> --write`, the intent of the unit is the text that standard input gave, without the blank lines around it.
+> After `alloy:intent <unit> --write`, the [*intent*](#term-intent) of the [*unit*](../canon/CANON.md#term-unit) is the text that standard input gave, without the blank lines around it.
 
 This follows because the author says what the intent is, and the command only puts it in its place.
 
 ##### @spec write-gives-a-unit-with-no-intent-one-after-its-statement-and-its-derivation-line
 
-> When the unit has no intent, `alloy:intent --write` puts the text after its statement and its "Derives from:" line, before its first fenced block.
+> When the [*unit*](../canon/CANON.md#term-unit) has no [*intent*](#term-intent), `alloy:intent --write` puts the text after its [*statement*](#term-generated-statement) and its "[*Derives*](../canon/CANON.md#term-derive) from:" line, before its first fenced block.
 
 This follows because that is where an intent sits, so the next read finds it there.
 
 ##### @spec write-changes-nothing-but-the-intent-of-its-unit
 
-> `alloy:intent --write` leaves every line of the document outside the intent of its unit as it was. That holds the heading, the statement, the "Derives from:" line, the formula, the scenarios, the readings and the generated regions.
+> `alloy:intent --write` leaves every line of the [*document*](../canon/CANON.md#term-document) outside the [*intent*](#term-intent) of its [*unit*](../canon/CANON.md#term-unit) as it was. That holds the [*heading*](../canon/CANON.md#term-heading), the [*statement*](#term-generated-statement), the "[*Derives*](../canon/CANON.md#term-derive) from:" line, the [*formula*](../naturalloy/CANON.md#term-formula), the scenarios, the readings and the generated regions.
 
 This follows because the command handles one part of one unit. A write that touched another part would change a claim, a derivation or a statement that the checker owns.
 
 ##### @spec a-write-that-cannot-hold-is-refused
 
-> `alloy:intent --write` refuses a write whose text or command line it cannot hold. It says why, changes no file, and the run exits with code 2.
+> `alloy:intent --write` refuses a write whose text or command line it cannot hold. It says why, changes no [*file*](../canon/CANON.md#term-file), and the [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because a write that went ahead in part would leave a document that the author did not ask for.
 
@@ -2679,13 +2679,13 @@ This follows because the intent ends at the first fold or table, as it does at t
 
 ###### @spec a-write-of-text-with-a-heading-is-refused
 
-> `alloy:intent --write` refuses text that holds a heading.
+> `alloy:intent --write` refuses text that holds a [*heading*](../canon/CANON.md#term-heading).
 
 This follows because a heading ends the own text of a unit. The rest of the unit would move under the new heading.
 
 ###### @spec a-write-of-text-with-a-line-the-checker-reads-as-structure-is-refused
 
-> `alloy:intent --write` refuses text that holds a quote, a "Derives from:" line, a "Site:" line or a comment.
+> `alloy:intent --write` refuses text that holds a quote, a "[*Derives*](../canon/CANON.md#term-derive) from:" line, a "[*Site*](../canon/CANON.md#term-site):" line or a [*comment*](../canon/CANON.md#term-comment).
 
 This follows because the checker reads each of them as part of the unit's structure. A quote reads as a statement that a person wrote, and a comment can mark a generated region.
 
@@ -2697,25 +2697,25 @@ This follows because a unit with a formula owes an intent, so a write cannot tak
 
 ###### @spec a-write-that-names-more-than-one-unit-is-refused
 
-> `alloy:intent --write` refuses a command line that names more than one unit.
+> `alloy:intent --write` refuses a command line that names more than one [*unit*](../canon/CANON.md#term-unit).
 
 This follows because standard input gives one text, and it is the intent of one unit.
 
 ###### @spec a-refused-write-changes-no-file
 
-> When `alloy:intent --write` refuses a write, every document is as it was before the run.
+> When `alloy:intent --write` refuses a write, every [*document*](../canon/CANON.md#term-document) is as it was before the [*run*](../canon/CANON.md#term-run).
 
 This follows because the author fixes the input and runs the command again, and a half-done write would be in the way.
 
 #### @spec readings-lists-each-reading-of-the-documents
 
-> `alloy:readings` prints a line for each reading of the documents the plugin runs over.
+> `alloy:readings` prints a line for each reading of the documents the [*plugin*](../canon/CANON.md#term-plugin) runs over.
 
 This follows because the readings are the words of every generated statement. An author who wants to change how a statement reads looks for the reading first, and the readings sit in many terms.
 
 ##### @spec a-line-of-readings-holds-the-place-the-unit-the-key-and-the-words-of-a-reading
 
-> Each line of `alloy:readings` holds the document and the line of a reading, and the id of its unit. Then it holds the key and the positive and negative words.
+> Each line of `alloy:readings` holds the [*document*](../canon/CANON.md#term-document) and the line of a reading, and the id of its [*unit*](../canon/CANON.md#term-unit). Then it holds the key and the positive and negative words.
 
 This follows because the key is what a reword names, and the unit is where the word is defined. The line is the whole reading, so a search of the output by any of them finds it.
 
@@ -2727,37 +2727,37 @@ This follows because a noun names a signature, and has no positive and negative 
 
 #### @spec readings-with-write-rewords-one-reading-in-place
 
-> `alloy:readings <key> --write "<positive> | <negative>"` puts the new words in place of the words of the reading with that key, in the unit that holds it.
+> `alloy:readings <key> --write "<positive> | <negative>"` puts the new words in place of the words of the reading with that key, in the [*unit*](../canon/CANON.md#term-unit) that holds it.
 
 This follows because a reword by hand means finding the line in a table among many, and keeping its key and its bar intact.
 
 ##### @spec a-reword-changes-only-the-line-of-its-reading
 
-> `alloy:readings --write` changes the line of the reading it rewords, keeps the key of that line, and leaves every other line of every document as it was.
+> `alloy:readings --write` changes the line of the reading it rewords, keeps the key of that line, and leaves every other line of every [*document*](../canon/CANON.md#term-document) as it was.
 
 This follows because the command handles one reading. A statement that uses the reading changes only when `canon generate` runs.
 
 ##### @spec a-reword-names-the-statements-that-are-stale-until-generate
 
-> After a reword, `alloy:readings --write` says that the statements that use the reading are stale until `canon generate` runs. It names each of them in the documents the plugin runs over.
+> After a reword, `alloy:readings --write` says that the statements that use the reading are stale until `canon generate` runs. It names each of them in the documents the [*plugin*](../canon/CANON.md#term-plugin) runs over.
 
 This follows because a reword makes the statements that say the reading differ from what their formulas now say. The author must know to run `generate`, and which statements will change.
 
 ##### @spec a-reword-of-a-key-that-names-no-reading-is-refused
 
-> When no reading of the documents has the key, `alloy:readings --write` says so and changes nothing, and the run exits with code 2.
+> When no reading of the documents has the key, `alloy:readings --write` says so and changes nothing, and the [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because a reword that found nothing to change must not pass for one that did.
 
 ##### @spec a-reword-of-a-key-that-names-more-than-one-reading-is-refused
 
-> When more than one reading of the documents has the key, `alloy:readings --write` names them and changes nothing, and the run exits with code 2.
+> When more than one reading of the documents has the key, `alloy:readings --write` names them and changes nothing, and the [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because the command cannot tell which reading the author means. A reword of each would change words the author did not mean to change.
 
 ##### @spec a-reword-that-is-not-two-sides-is-refused
 
-> When the new words do not part at one bar into two sides that both hold words, `alloy:readings --write` says so and changes nothing. The run exits with code 2.
+> When the new words do not part at one bar into two sides that both hold words, `alloy:readings --write` says so and changes nothing. The [*run*](../canon/CANON.md#term-run) exits with code 2.
 
 This follows because a reading has a positive side and a negative side. A reading that lost one could not say a formula that needs it.
 
@@ -2769,5 +2769,5 @@ This follows because the writer of a reading changes its words, and lining up th
 
 ## @fact only-solving-a-model-decides-whether-a-formula-constrains-a-signature
 
-> Whether the other formulas of a model constrain a signature, or can contradict a formula, depends on what the formulas mean. Only solving the model decides it. The names that a block writes do not.
+> Whether the other formulas of a model constrain a [*signature*](#term-signature), or can contradict a [*formula*](../naturalloy/CANON.md#term-formula), [*depends*](../canon/CANON.md#term-depend) on what the formulas mean. Only solving the model decides it. The names that a block writes do not.
 

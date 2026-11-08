@@ -55,7 +55,7 @@ How run-alloy runs the Alloy analyzer, and why. It is the canon of the package `
 
 ### @term caller
 
-> A caller is a program that runs the Alloy analyzer through run-alloy.
+> A caller is a [*program*](#term-program) that runs the Alloy analyzer through run-alloy.
 
 The Alloy plugin of the canon checker is one, and so is each test suite of this repository that asks the analyzer.
 
@@ -101,7 +101,7 @@ So correctness comes before speed. run-alloy takes a way to answer sooner only w
 
 ## @axiom the-analyzer-takes-only-the-time-its-new-programs-need
 
-> A [*caller*](#term-caller) of the Alloy analyzer waits no longer than the machine that runs it needs to answer the [*programs*](#term-program) that no earlier run answered.
+> A [*caller*](#term-caller) of the Alloy analyzer waits no longer than the machine that runs it needs to [*answer*](#term-answer) the [*programs*](#term-program) that no earlier run answered.
 
 A project asks the analyzer after each change. The Alloy plugin checks a canon, and a test suite checks a parser or a verbalizer. Each program starts the analyzer anew. A program over a model of a thousand lines takes about twelve seconds on its own. A check that takes minutes gets run less often, and a defect then stays in the project for longer.
 
@@ -171,49 +171,49 @@ The program holds the text of the module, its path and every file beside it. A c
 
 ##### @spec an-unchanged-program-is-answered-without-the-analyzer
 
-> When an earlier run kept an [*answer*](#term-answer) for a program, and none of the four things changed, run-alloy starts no analyzer process for that program.
+> When an earlier run kept an [*answer*](#term-answer) for a [*program*](#term-program), and none of the four things changed, run-alloy starts no analyzer process for that program.
 
 This follows because the kept answer is the one the process would give, and the process costs seconds.
 
 ##### @spec a-changed-program-is-asked-again
 
-> When the text of a program differs from that of every kept answer, run-alloy asks the analyzer about the program.
+> When the text of a [*program*](#term-program) differs from that of every [*kept answer*](#term-kept-answer), run-alloy asks the analyzer about the program.
 
 This follows because a different model or a different command can have a different answer.
 
 ##### @spec a-program-whose-files-beside-it-changed-is-asked-again
 
-> When a file beside a program differs from that of the run that kept an answer, run-alloy asks the analyzer again.
+> When a file beside a [*program*](#term-program) differs from that of the run that kept an [*answer*](#term-answer), run-alloy asks the analyzer again.
 
 This follows because the module may open the file, and then the file is part of the model.
 
 ##### @spec a-program-with-another-analyzer-jar-is-asked-again
 
-> When the content of the analyzer's jar differs from the jar that gave a kept answer, run-alloy asks the analyzer about the program again.
+> When the content of the analyzer's jar differs from the jar that gave a [*kept answer*](#term-kept-answer), run-alloy asks the analyzer about the [*program*](#term-program) again.
 
 This follows because another version of the analyzer can translate or solve the same program in another way. The content tells two versions apart even where their paths are the same.
 
 ##### @spec a-program-with-other-options-is-asked-again
 
-> When a caller asks about a program with other options than the run that kept an answer, run-alloy asks the analyzer again. Another form of reading the answer counts as other options.
+> When a [*caller*](#term-caller) asks about a [*program*](#term-program) with other options than the run that kept an [*answer*](#term-answer), run-alloy asks the analyzer again. Another form of reading the answer counts as other options.
 
 This follows because the options decide what the answer holds. The Alloy plugin reads the text of an instance only for a scenario that `--show` names. An answer kept without that text has none to print.
 
 ##### @spec a-program-on-another-major-version-of-java-is-asked-again
 
-> When the analyzer runs on another major version of Java than the one that gave a kept answer, run-alloy asks the analyzer again.
+> When the analyzer runs on another major version of Java than the one that gave a [*kept answer*](#term-kept-answer), run-alloy asks the analyzer again.
 
 This follows because the analyzer runs on the Java that the caller names, and another major version is another platform.
 
 ##### @spec an-analyzer-that-did-not-answer-keeps-no-answer
 
-> When a process of the analyzer gives no answer that the analyzer would give again, run-alloy keeps nothing for the program. The next run asks the analyzer again. These cases count: no receipt, an exit code other than 0, a reading that the caller calls a failure, and a reading that throws.
+> When a process of the analyzer gives no [*answer*](#term-answer) that the analyzer would give again, run-alloy keeps nothing for the [*program*](#term-program). The next run asks the analyzer again. These cases count: no receipt, an exit code other than 0, a reading that the [*caller*](#term-caller) calls a failure, and a reading that throws.
 
 This follows because a failure says nothing about the program. It comes from the machine or the setup, such as a missing Java or a process out of memory. The next run may not share it.
 
 ###### @spec a-process-that-wrote-no-receipt-keeps-no-answer
 
-> When the analyzer writes no receipt for a program, run-alloy keeps nothing for it, and gives the caller what the process printed as a failure.
+> When the analyzer writes no receipt for a [*program*](#term-program), run-alloy keeps nothing for it, and gives the [*caller*](#term-caller) what the process printed as a failure.
 
 Derives from: [`fact-the-analyzer-writes-a-receipt-only-when-it-solved-a-command`](#fact-the-analyzer-writes-a-receipt-only-when-it-solved-a-command)
 
@@ -221,7 +221,7 @@ This follows because a process with no receipt solved no command of the program,
 
 ###### @spec a-process-that-exited-with-another-code-than-0-keeps-no-answer
 
-> When a process of the analyzer exits with a code other than 0, or a signal ends it, run-alloy keeps nothing for the program. The caller still gets what it reads of the process.
+> When a process of the analyzer exits with a code other than 0, or a signal ends it, run-alloy keeps nothing for the [*program*](#term-program). The [*caller*](#term-caller) still gets what it reads of the process.
 
 Derives from: [`fact-the-analyzer-exits-with-code-0-only-when-it-solved-every-command`](#fact-the-analyzer-exits-with-code-0-only-when-it-solved-every-command)
 
@@ -231,19 +231,19 @@ The caller still reads such a process, because the lines of a command that the a
 
 ###### @spec a-process-the-caller-reads-as-a-failure-keeps-no-answer
 
-> When the caller reads a process of the analyzer as a failure, run-alloy keeps nothing for the program, and gives the caller that failure.
+> When the [*caller*](#term-caller) reads a process of the analyzer as a failure, run-alloy keeps nothing for the [*program*](#term-program), and gives the caller that failure.
 
 This follows because the caller knows what an answer holds for it. A process with a receipt can still lack what the caller asked for.
 
 ###### @spec a-process-whose-reading-throws-keeps-no-answer
 
-> When the caller's reading of a process throws, run-alloy keeps nothing for the program. It gives the caller the message of the error as a failure.
+> When the [*caller*](#term-caller)'s reading of a process throws, run-alloy keeps nothing for the [*program*](#term-program). It gives the caller the message of the error as a failure.
 
 This follows because a reading that throws made no answer. A receipt that the analyzer did not finish, such as one cut off by a full disk, makes the reading throw. A caller handles a failure already, and an error that escaped would stop it with no report.
 
 ##### @spec an-answer-kept-under-an-earlier-rule-is-not-read
 
-> When run-alloy changes which answers it keeps, it reads no answer that it kept before the change. It asks the analyzer again.
+> When run-alloy changes which answers it keeps, it reads no [*answer*](#term-answer) that it kept before the change. It asks the analyzer again.
 
 Derives from: [`axiom-a-caller-gets-only-the-answer-the-analyzer-gives`](#axiom-a-caller-gets-only-the-answer-the-analyzer-gives)
 
@@ -251,13 +251,13 @@ This follows because an answer kept under the earlier rule may be one that the n
 
 #### @spec the-folder-of-the-kept-answers-is-the-first-one-named
 
-> run-alloy keeps the answers in the first folder of these that is named: the folder the project sets, the folder `CANON_ALLOY_CACHE_DIR` names, and the caller's default.
+> run-alloy keeps the answers in the first folder of these that is named: the folder the project sets, the folder `CANON_ALLOY_CACHE_DIR` names, and the [*caller*](#term-caller)'s default.
 
 This follows because one folder lets every caller reuse what an earlier run answered, of any caller and any project. The program and the analyzer alone decide an answer, so callers that share a folder can share their answers. A continuous integration then saves and restores one folder for them all.
 
 ##### @spec a-folder-the-project-sets-holds-the-kept-answers
 
-> When the project sets a folder for the kept answers, run-alloy keeps them in that folder, also when `CANON_ALLOY_CACHE_DIR` names another.
+> When the project sets a folder for the [*kept answers*](#term-kept-answer), run-alloy keeps them in that folder, also when `CANON_ALLOY_CACHE_DIR` names another.
 
 This follows because a setting that a project writes down is more particular than the environment of a run. The path of the jar and of Java follow the same order: a path in the frontmatter wins over `CANON_ALLOY_JAR` and `CANON_JAVA`.
 
@@ -269,19 +269,19 @@ This follows because the environment of a run names one folder for every caller 
 
 ##### @spec the-callers-default-folder-holds-the-kept-answers-when-none-is-named
 
-> When neither the project nor `CANON_ALLOY_CACHE_DIR` names a folder, run-alloy keeps the answers in the caller's default folder. A caller with no default keeps none.
+> When neither the project nor `CANON_ALLOY_CACHE_DIR` names a folder, run-alloy keeps the answers in the [*caller*](#term-caller)'s default folder. A caller with no default keeps none.
 
 This follows because each caller knows where its project keeps caches. A caller with no project, such as a function that a test calls, keeps nothing that no one asked for.
 
 ##### @spec canon-alloy-cache-0-keeps-no-answer-and-reads-none
 
-> When `CANON_ALLOY_CACHE` is `0`, run-alloy neither reads a kept answer nor keeps one, and asks the analyzer about every program.
+> When `CANON_ALLOY_CACHE` is `0`, run-alloy neither reads a [*kept answer*](#term-kept-answer) nor keeps one, and asks the analyzer about every [*program*](#term-program).
 
 This follows because the author may want the analyzer's own answer. The author may time the analyzer, or rule out the cache when a result looks wrong.
 
 #### @spec the-kept-answers-are-only-those-used-in-the-last-thirty-days
 
-> The first sweep of a folder of [*kept answers*](#term-kept-answer) in a process removes each kept answer that no run used in the last 30 days.
+> The first sweep of a folder of [*kept answers*](#term-kept-answer) in a process removes each kept [*answer*](#term-answer) that no run used in the last 30 days.
 
 Derives from: [`spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer`](#spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer)
 
@@ -289,13 +289,13 @@ This follows because a change to a model leaves the answers of its old programs 
 
 ##### @spec a-kept-answer-unused-for-thirty-days-is-removed
 
-> When no run has used a kept answer in the last 30 days, the first sweep of its folder in the next process removes it.
+> When no run has used a [*kept answer*](#term-kept-answer) in the last 30 days, the first sweep of its folder in the next process removes it.
 
 This follows because nothing asked that program for a month, so it most likely belongs to a model that changed.
 
 ##### @spec a-kept-answer-that-a-run-uses-is-kept-for-thirty-more-days
 
-> When run-alloy gives a program a [*kept answer*](#term-kept-answer), that answer counts as used at that time.
+> When run-alloy gives a [*program*](#term-program) a [*kept answer*](#term-kept-answer), that [*answer*](#term-answer) counts as used at that time.
 
 This follows because a caller that still asks the program still needs that answer, no matter how long ago the analyzer gave it.
 
@@ -315,7 +315,7 @@ The JVM sets the largest heap from the memory of the machine, by `-XX:MaxRAMPerc
 
 ## @fact the-program-and-the-analyzer-decide-the-answer-of-a-search
 
-> Whether the Alloy analyzer finds an instance for a run depends only on the program and on the analyzer. The analyzer is its jar, its options, and the Java that runs it.
+> Whether the Alloy analyzer finds an instance for a run depends only on the [*program*](#term-program) and on the analyzer. The analyzer is its jar, its options, and the Java that runs it.
 
 A program states a model and a run within a scope, and the run has an instance or has none, whatever machine solves it. The analyzer decides it by translating the program and solving the result. The jar, its options and the Java decide that translation and that solving.
 
