@@ -65,7 +65,7 @@ describe('a noun table', () => {
    */
   it('gives its signature the noun of its row, linked to the term that holds the row', () => {
     const statement = statementOf(doc(`| signature | noun |\n|---|---|\n| Node | vertex |\n\n${READING_TABLE}`));
-    expect(statement).toContain('[vertex](#term-node)');
+    expect(statement).toContain('[*vertex*](#term-node)');
     expect(statement).not.toMatch(/\bnode\b(?!\))/);
   });
 });
@@ -126,5 +126,52 @@ describe('a word that a reading links', () => {
    */
   it('does not look at a noun', () => {
     expect(checkDefinedWords(doc(`| signature | noun |\n|---|---|\n| Node | [vertex] |\n\n${READING_TABLE}`))).toEqual([]);
+  });
+});
+
+describe('a signature declared in a nested term', () => {
+  const NESTED = `# Canon
+
+## Terms
+
+### @term plugin
+
+> A plugin is a package.
+
+\`\`\`alloy vocabulary
+sig Plugin {}
+sig Ran in Plugin {}
+\`\`\`
+
+| reading | holds | does not hold |
+|---|---|---|
+| Ran | {1} has run | {1} has not run |
+
+#### @term installed-plugin
+
+> An installed plugin is a plugin whose package the project has.
+
+\`\`\`alloy vocabulary
+sig Installed in Plugin {}
+\`\`\`
+
+## ${AXIOM} a-root
+
+> A root.
+
+### @spec a-leaf
+
+Every installed plugin runs.
+
+\`\`\`alloy
+all i: Installed | i in Ran
+\`\`\`
+`;
+
+  /**
+   * @canon spec-a-signature-declared-in-a-nested-term-has-the-term-as-its-noun
+   */
+  it('has the nested term as its noun, linked to it', () => {
+    expect(statementOf(NESTED)).toContain('[*installed plugin*](#term-installed-plugin)');
   });
 });

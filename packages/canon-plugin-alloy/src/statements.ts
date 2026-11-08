@@ -14,7 +14,7 @@ import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions'
 import { maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
 import { declaredIn, PARAGRAPHS } from './words.ts';
 import { readingBlocks } from './tables.ts';
-import { AlloyParseError } from '@bigmistqke/parse-alloy';
+import { AlloyParseError, parseModule } from '@bigmistqke/parse-alloy';
 import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
 
 /** The name of the region that holds the generated statement of a unit. */
@@ -86,6 +86,27 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
       }
     }
   }
+  // A term nested in another term names a narrower kind of it: the one signature it declares `in` or `extends` a
+  // parent has the nested term as its noun, `sig Installed in Plugin` in the term `installed-plugin`.
+  for (const { path, units, blocks } of documents) {
+    const terms = new Set(units.filter(u => u.kind === 'term').map(u => u.id));
+    for (const unit of units) {
+      if (unit.kind !== 'term' || unit.parent === undefined || !terms.has(unit.parent)) continue;
+      const declared = blocks
+        .filter(b => b.unit === unit.id && b.lang === 'alloy' && b.role !== 'bounds' && b.role !== 'scenario' && PARAGRAPHS.test(b.body))
+        .flatMap(b => {
+          try {
+            return parseModule(b.body).paragraphs.flatMap(p => (p.t === 'sig' && p.parent !== undefined ? p.names : []));
+          } catch {
+            return [];
+          }
+        });
+      const [name] = declared;
+      if (declared.length !== 1 || name === undefined || merged.nouns.has(name)) continue;
+      merged.nouns.set(name, `[${unit.stem.replace(/-/g, ' ')}]`);
+      merged.nounTargets.set(name, `${path ?? ''}#${unit.id}`);
+    }
+  }
   return withDefinitions(merged, model.map(b => b.body).join('\n'));
 }
 
@@ -115,21 +136,8 @@ function read(unit: string, kind: 'current' | 'stale', quote: string, formula: s
   return { unit, kind: 'misread', message, quote };
 }
 
-/**
- * Which words a statement writes as a term mark: a word whose link leads to a
- * term of the document itself, `#term-…`, and that spells a form of that term,
- * the words of its stem or a spelling of its grammar table. A link to another
- * document needs its path, so it stays a link.
- */
-function markedBy(units: Unit[]): (target: string, word: string) => boolean {
-  const spelling = (words: string): string => words.trim().toLowerCase().split(/\s+/).join(' ');
-  const forms = new Map<string, Set<string>>();
-  for (const unit of units) {
-    if (unit.kind !== 'term') continue;
-    forms.set(`#${unit.id}`, new Set([spelling(unit.stem.replace(/-/g, ' ')), ...(unit.grammar?.forms ?? []).map(f => spelling(f.spelling))]));
-  }
-  return (target, word) => forms.get(target)?.has(spelling(word)) === true;
-}
+/** Which links a statement writes as a term mark, `[*word*](#term-x)`: every link to a term, of this document or another. */
+const marked = (target: string): boolean => /#term-[a-z0-9-]+$/.test(target);
 
 /** What each statement of a document is, in document order; empty for a document with no readings. */
 export function states(src: string, context: Context[] = []): StatementState[] {
@@ -143,7 +151,6 @@ export function states(src: string, context: Context[] = []): StatementState[] {
   if (readings === undefined) return [];
   const units = readUnits(src);
   const blocks = readBlocks(src, units);
-  const marked = markedBy(units);
   const found: StatementState[] = [];
   for (const unit of units) {
     const predicates = blocks.filter(b => b.unit === unit.id && b.lang === 'alloy' && b.role === 'unit');

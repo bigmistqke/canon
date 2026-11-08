@@ -66,15 +66,15 @@ How the Pele plugin of the canon checker behaves, and why. It is the canon of th
 
 ### @term graph-command
 
-> The graph command is the [command](../canon/CANON.md#term-command) `pele:graph`, which the *Pele plugin* adds.
+> The graph command is the [*command*](../canon/CANON.md#term-command) `pele:graph`, which the [*Pele plugin*](#term-pele-plugin) adds.
 
 ### @term graph
 
-> The graph is the Mermaid text of the derivations between the units of the *drawn documents*, from which the *graph command* prints its output.
+> The graph is the Mermaid text of the derivations between the units of the [*drawn documents*](#term-drawn-document), from which the [*graph command*](#term-graph-command) prints its output.
 
 ### @term drawn-document
 
-> A drawn document is a [document](../canon/CANON.md#term-document) that the *Pele plugin* runs over.
+> A drawn document is a [*document*](../canon/CANON.md#term-document) that the [*Pele plugin*](#term-pele-plugin) runs over.
 
 <details>
 <summary>Grammar</summary>
@@ -88,29 +88,29 @@ How the Pele plugin of the canon checker behaves, and why. It is the canon of th
 
 ### @term drawn-unit
 
-> A drawn unit is a unit of a *drawn document* that is not a [term](../canon/CANON.md#term-term), a [conflict](../canon/CANON.md#term-conflict) or a [thread](../canon/CANON.md#term-thread).
+> A drawn unit is a unit of a [*drawn document*](#term-drawn-document) that is not a [*term*](../canon/CANON.md#term-term), a [*conflict*](../canon/CANON.md#term-conflict) or a [*thread*](../canon/CANON.md#term-thread).
 
 ### @term outside-unit
 
-> An outside unit is a unit that a unit of a *drawn document* [derives from](../canon/CANON.md#term-derive), and that no drawn document [holds](../canon/CANON.md#term-hold).
+> An outside unit is a unit that a unit of a [*drawn document*](#term-drawn-document) [*derives*](../canon/CANON.md#term-derive) from, and that no drawn document [*holds*](../canon/CANON.md#term-hold).
 
 ## @axiom the-graph-shows-what-each-unit-follows-from
 
-> A reader of the *graph* sees, for each unit of the *drawn documents*, every unit it follows from, and no other relation between units.
+> A reader of the [*graph*](#term-graph) sees, for each unit of the [*drawn documents*](#term-drawn-document), every unit it follows from, and no other relation between units.
 
-A canon says why each part is the way it is through its derivations. A unit follows from the unit it [sits in](../canon/CANON.md#term-sit), and from the units it [derives from](../canon/CANON.md#term-derive). A picture of those edges shows at a glance which axiom forces a spec, and which specs share a parent. A link in a unit's body is a reference, not a reason. Edges for links would bury the derivations under edges that explain nothing.
+A canon says why each part is the way it is through its derivations. A unit follows from the unit it [*sits*](../canon/CANON.md#term-sit) in, and from the units it [*derives*](../canon/CANON.md#term-derive) from. A picture of those edges shows at a glance which axiom forces a spec, and which specs share a parent. A link in a unit's body is a reference, not a reason. Edges for links would bury the derivations under edges that explain nothing.
 
 The choice this decides: the graph could show every connection between units, the references in their bodies too. It shows the derivations alone.
 
 #### @spec the-graph-is-printed-as-mermaid-text
 
-> A run of the *graph command* without `--svg` prints the *graph*, a Mermaid flowchart, on standard output. The Pele plugin gives the run code 0.
+> A run of the [*graph command*](#term-graph-command) without `--svg` prints the [*graph*](#term-graph), a Mermaid flowchart, on standard output. The Pele plugin gives the run code 0.
 
 This follows because a renderer reads Mermaid text, Pele among them. The reader can send standard output wherever they want it.
 
 #### @spec the-graph-is-printed-as-svg-with-the-svg-option
 
-> A run of the *graph command* with `--svg` prints on standard output the SVG that Pele renders from the *graph*. The plugin adds to it the style and the background that [`spec-the-svg-is-readable-in-a-light-and-a-dark-scheme`](#spec-the-svg-is-readable-in-a-light-and-a-dark-scheme) claims. This holds while the graph and its SVG are within the default limits of Pele. The Pele plugin gives the run code 0.
+> A run of the [*graph command*](#term-graph-command) with `--svg` prints on standard output the SVG that Pele renders from the [*graph*](#term-graph). The plugin adds to it the style and the background that [`spec-the-svg-is-readable-in-a-light-and-a-dark-scheme`](#spec-the-svg-is-readable-in-a-light-and-a-dark-scheme) claims. This holds while the graph and its SVG are within the default limits of Pele. The Pele plugin gives the run code 0.
 
 Derives from: [`fact-pele-renders-synchronously-in-node-without-a-dom`](#fact-pele-renders-synchronously-in-node-without-a-dom), [`fact-pele-limits-source-output-and-edges`](#fact-pele-limits-source-output-and-edges)
 
@@ -120,35 +120,35 @@ The result past Pele's limits is open. The Mermaid text of this repository's lar
 
 #### @spec the-graph-draws-each-drawn-unit
 
-> The *graph* has one node for each *drawn unit*, labelled with the unit's id, and no node for a [term](../canon/CANON.md#term-term), a [conflict](../canon/CANON.md#term-conflict) or a [thread](../canon/CANON.md#term-thread).
+> The [*graph*](#term-graph) has one node for each [*drawn unit*](#term-drawn-unit), labelled with the unit's id, and no node for a [*term*](../canon/CANON.md#term-term), a [*conflict*](../canon/CANON.md#term-conflict) or a [*thread*](../canon/CANON.md#term-thread).
 
 This follows because a term, a conflict and a thread sit in no unit and derive from nothing, and no unit derives from them. Each would be a box with no edge, which shows the reader nothing the axiom promises. The cases are a document alone, several documents, a term, a conflict and a thread.
 
 ##### @spec the-graph-draws-each-drawn-unit-of-a-document-once
 
-> When the plugin runs over one document, the *graph* has exactly one node for each *drawn unit* of that document, labelled with the unit's id.
+> When the plugin runs over one document, the [*graph*](#term-graph) has exactly one node for each [*drawn unit*](#term-drawn-unit) of that document, labelled with the unit's id.
 
 ##### @spec the-graph-draws-the-units-of-several-drawn-documents-in-one-graph
 
-> When the plugin runs over several documents, one *graph* holds a node for each *drawn unit* of each of them.
+> When the plugin runs over several documents, one [*graph*](#term-graph) holds a node for each [*drawn unit*](#term-drawn-unit) of each of them.
 
 This follows because a derivation can cross from one document to another, and in one graph it is one edge.
 
 ##### @spec the-graph-draws-no-term
 
-> The *graph* has no node for a [term](../canon/CANON.md#term-term).
+> The [*graph*](#term-graph) has no node for a [*term*](../canon/CANON.md#term-term).
 
 ##### @spec the-graph-draws-no-conflict
 
-> The *graph* has no node for a [conflict](../canon/CANON.md#term-conflict).
+> The [*graph*](#term-graph) has no node for a [*conflict*](../canon/CANON.md#term-conflict).
 
 ##### @spec the-graph-draws-no-thread
 
-> The *graph* has no node for a [thread](../canon/CANON.md#term-thread).
+> The [*graph*](#term-graph) has no node for a [*thread*](../canon/CANON.md#term-thread).
 
 #### @spec the-graph-runs-from-left-to-right
 
-> The Mermaid text of the *graph* declares a flowchart that runs from left to right.
+> The Mermaid text of the [*graph*](#term-graph) declares a flowchart that runs from left to right.
 
 Derives from: [`fact-pele-lays-out-a-wide-tree-tens-of-thousands-of-pixels-wide`](#fact-pele-lays-out-a-wide-tree-tens-of-thousands-of-pixels-wide)
 
@@ -156,35 +156,35 @@ This follows because most derivations nest, so the graph is mostly a tree with m
 
 #### @spec the-graph-draws-an-edge-for-each-derivation
 
-> The *graph* has an edge from a unit to each unit that follows from it, and no other edge.
+> The [*graph*](#term-graph) has an edge from a unit to each unit that follows from it, and no other edge.
 
-The edge runs from the parent to the unit that follows from it, so the axioms come before the specs they force. The cases are the two kinds of derivation, a derivation into another drawn document, an *outside unit*, and a link in the body.
+The edge runs from the parent to the unit that follows from it, so the axioms come before the specs they force. The cases are the two kinds of derivation, a derivation into another drawn document, an [*outside unit*](#term-outside-unit), and a link in the body.
 
 ##### @spec a-unit-has-an-edge-from-the-unit-it-sits-in
 
-> When a unit [sits in](../canon/CANON.md#term-sit) another unit, the *graph* has an edge from the other unit to it.
+> When a unit [*sits*](../canon/CANON.md#term-sit) in another unit, the [*graph*](#term-graph) has an edge from the other unit to it.
 
 ##### @spec a-unit-has-an-edge-from-each-unit-it-derives-from
 
-> When a unit [derives from](../canon/CANON.md#term-derive) another unit of its own document, the *graph* has an edge from the other unit to it.
+> When a unit [*derives*](../canon/CANON.md#term-derive) from another unit of its own document, the [*graph*](#term-graph) has an edge from the other unit to it.
 
 ##### @spec a-derivation-from-another-drawn-document-is-an-edge
 
-> When a unit derives from a unit of another *drawn document*, the *graph* has an edge from that unit to it.
+> When a unit derives from a unit of another [*drawn document*](#term-drawn-document), the [*graph*](#term-graph) has an edge from that unit to it.
 
 ##### @spec a-derivation-to-an-outside-unit-ends-at-a-node-that-names-it
 
-> Each *outside unit* has one node in the *graph*, labelled with its id, with an edge to each unit that derives from it. No edge leads into that node.
+> Each [*outside unit*](#term-outside-unit) has one node in the [*graph*](#term-graph), labelled with its id, with an edge to each unit that derives from it. No edge leads into that node.
 
 This follows because the reader sees what the unit follows from, while the graph shows no derivations of a document it does not draw.
 
 ##### @spec a-link-in-the-body-draws-no-edge
 
-> A [link](../canon/CANON.md#term-link) in the body of a unit, outside its "Derives from:" line, adds no edge to the *graph*.
+> A [*link*](../canon/CANON.md#term-link) in the body of a unit, outside its "Derives from:" line, adds no edge to the [*graph*](#term-graph).
 
 #### @spec a-node-shows-the-kind-of-its-unit-by-its-colour
 
-> In the Mermaid text of the *graph*, each kind of *drawn unit* gives its nodes a fill of its own. The kinds are axiom, fact, spec, exception and bug.
+> In the Mermaid text of the [*graph*](#term-graph), each kind of [*drawn unit*](#term-drawn-unit) gives its nodes a fill of its own. The kinds are axiom, fact, spec, exception and bug.
 
 This follows because the reader who knows why a unit is there also wants to know what it is. It is a value, a fact of the platform, a claim, a place where a fact pinches, or a known defect. The prefix of a label names the kind, and a colour shows it across the whole graph at once. The cases are the five kinds of drawn unit.
 
@@ -210,21 +210,21 @@ This follows because the reader who knows why a unit is there also wants to know
 
 #### @spec an-edge-shows-which-way-its-unit-follows
 
-> In the Mermaid text of the *graph*, an edge of nesting is solid, and an edge of a "Derives from:" line is dotted.
+> In the Mermaid text of the [*graph*](#term-graph), an edge of nesting is solid, and an edge of a "Derives from:" line is dotted.
 
 This follows because the two ways a unit follows from another read differently. Nesting gives a unit its primary parent, and a "Derives from:" line names a further one. The cases are the two kinds of derivation.
 
 ##### @spec an-edge-from-the-unit-a-unit-sits-in-is-solid
 
-> In the Mermaid text of the *graph*, the edge from the unit that a unit [sits in](../canon/CANON.md#term-sit) is a solid line, `-->`.
+> In the Mermaid text of the [*graph*](#term-graph), the edge from the unit that a unit [*sits*](../canon/CANON.md#term-sit) in is a solid line, `-->`.
 
 ##### @spec an-edge-from-a-unit-it-derives-from-is-dotted
 
-> In the Mermaid text of the *graph*, the edge from a unit that a unit [derives from](../canon/CANON.md#term-derive) is a dotted line, `-.->`.
+> In the Mermaid text of the [*graph*](#term-graph), the edge from a unit that a unit [*derives*](../canon/CANON.md#term-derive) from is a dotted line, `-.->`.
 
 #### @spec the-svg-is-readable-in-a-light-and-a-dark-scheme
 
-> The SVG that the *graph command* prints with `--svg` carries its own colours for a light and a dark colour scheme, and an opaque background.
+> The SVG that the [*graph command*](#term-graph-command) prints with `--svg` carries its own colours for a light and a dark colour scheme, and an opaque background.
 
 Derives from: [`fact-pele-svg-is-transparent-and-coloured-through-css-variables`](#fact-pele-svg-is-transparent-and-coloured-through-css-variables), [`fact-an-svg-in-an-img-takes-its-own-style-and-the-colour-scheme-of-the-img`](#fact-an-svg-in-an-img-takes-its-own-style-and-the-colour-scheme-of-the-img)
 
@@ -246,13 +246,13 @@ The Pele colour variables are `--pele-bg`, `--pele-fg`, `--pele-muted`, `--pele-
 
 ##### @spec a-kind-sets-the-colour-of-its-labels-with-its-fill
 
-> In the Mermaid text of the *graph*, the class that gives a kind its fill also gives the labels of its nodes a colour.
+> In the Mermaid text of the [*graph*](#term-graph), the class that gives a kind its fill also gives the labels of its nodes a colour.
 
 This follows because a kind's fill stays the same in both schemes, while the dark scheme turns the default label colour light. A label keeps the colour chosen for its fill.
 
 #### @spec the-same-documents-give-the-same-output
 
-> Two runs of the *graph command* on one platform, over documents of the same text, print the same bytes, with `--svg` and without.
+> Two runs of the [*graph command*](#term-graph-command) on one platform, over documents of the same text, print the same bytes, with `--svg` and without.
 
 Derives from: [`fact-pele-render-gives-the-same-svg-for-the-same-text`](#fact-pele-render-gives-the-same-svg-for-the-same-text)
 
@@ -262,11 +262,11 @@ Whether two operating systems give the same SVG is open. The fact measured macOS
 
 ##### @spec the-same-documents-give-the-same-mermaid-text
 
-> Two runs of the *graph command* without `--svg` on one platform, over documents of the same text, print the same bytes.
+> Two runs of the [*graph command*](#term-graph-command) without `--svg` on one platform, over documents of the same text, print the same bytes.
 
 ##### @spec the-same-documents-give-the-same-svg
 
-> Two runs of the *graph command* with `--svg` on one platform, over documents of the same text, print the same bytes.
+> Two runs of the [*graph command*](#term-graph-command) with `--svg` on one platform, over documents of the same text, print the same bytes.
 
 ## @fact pele-renders-synchronously-in-node-without-a-dom
 

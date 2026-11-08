@@ -216,7 +216,7 @@ describe('a unit nothing uses', () => {
    * @canon spec-a-unit-is-used
    */
   it('reports no orphaning for a term that only a term mark names', async () => {
-    const marked = canon(`${LEAF}\nA bug can have an *outdated tracking*.\n\n## @term outdated-tracking\n\n> An outdated tracking is a finding.\n`);
+    const marked = canon(`${LEAF}\nA bug can have an [*outdated tracking*](#term-outdated-tracking).\n\n## @term outdated-tracking\n\n> An outdated tracking is a finding.\n`);
     expect((await check(marked, tagged('spec-a-leaf-says-one-thing')))['dead']).toBeUndefined();
   });
 });
@@ -301,9 +301,9 @@ describe('a unit that repeats another', () => {
   });
 
   /**
-   * @canon bug-a-unit-repeated-in-one-document-is-not-reported
+   * @canon spec-a-unit-is-declared-once
    */
-  it.fails('reports a rotting for an id that one document declares twice', async () => {
+  it('reports a rotting for an id that one document declares twice', async () => {
     expect((await check(canon(`${LEAF}${LEAF}`), TEST))['rot']).toBe(1);
   });
 });

@@ -14,7 +14,7 @@ How to write, place and test the units of the canon. [`SKILL.md`](SKILL.md) hold
 | `@bug` | where the code breaks the spec it sits in: a known defect, with an issue and a test that fails until it is fixed | `@spec` |
 | `@conflict` | where units of the canon cannot all hold: a known contradiction, with an issue, that waits for the owner of the design to rule which unit holds | nothing |
 | `@thread` | a question the canon does not decide yet, which the owner of the design has parked: a thought outside the derivation graph, kept so that it is not lost | nothing |
-| `@term` | a word of the project's language: what the thing it names is — never what it does | nothing |
+| `@term` | a word of the project's language: what the thing it names is — never what it does | nothing — may narrow `@term` |
 <!-- kinds:end -->
 
 Tell the kinds apart with two questions:
@@ -100,13 +100,14 @@ This follows because a missing value sets nothing: …
 ## 6. Terms
 
 1. A term defines one word of the project's language. Its statement says what the thing is, in one sentence. Never say what it does: behaviour is a spec.
-2. Write terms in the `## Terms` section of a canon document, as `### @term <stem>`. Join the words of a stem with hyphens, such as `loading-boundary`. No unit sits in a term, and a term sits in no unit (`misnested`).
+2. Write terms in the `## Terms` section of a canon document, as `### @term <stem>`. Join the words of a stem with hyphens, such as `loading-boundary`. Only a term sits in a term, as a narrower kind of it, and a term sits in no other unit (`misnested`).
 3. Choose one word for each concept. List the words to avoid on an `_Avoid_:` line under the statement.
 4. Define only words specific to the project. General programming concepts get no term.
-5. Mark a term in the units whose meaning depends on it: `*present*` names `term-present` of the same document. Mark a term of another document with a link around the mark, `[*present*](../other/CANON.md#term-present)`. A term that no unit marks or links fails the check (`dead`), and a mark that names no term is a rotting.
-6. List every spelling of a term other than its stem in a grammar table, in a `Grammar` fold after its prose. The row `type` names its part of speech. Each other row gives a role and its spellings, `| plural | outdated trackings |`. A mark names a term only in a spelling the term lists. `canon generate` lines up the columns.
-7. Write a term the moment a word's meaning is settled. Do not collect terms for later.
-8. To settle a vague or contested word, use the grill-with-canon skill.
+5. Mark a term in the units whose meaning depends on it, as a link with its words between single asterisks: `[*present*](#term-present)`. A term of another document takes its path: `[*present*](../other/CANON.md#term-present)`. The words must spell a form of the term. A term that no unit marks or links fails the check (`dead`), and a mark that spells no form of its term is a rotting. Single asterisks outside a link are plain emphasis.
+6. Write a narrower kind of a term as a term nested in it, from the general to the specific: `#### @term installed-plugin` under `### @term plugin`. Mark it as one term, `[*installed plugin*](#term-installed-plugin)`.
+7. List every spelling of a term other than its stem in a grammar table, in a `Grammar` fold after its prose. The row `type` names its part of speech. Each other row gives a role and its spellings, `| plural | outdated trackings |`. A mark names a term only in a spelling the term lists. `canon generate` lines up the columns.
+8. Write a term the moment a word's meaning is settled. Do not collect terms for later.
+9. To settle a vague or contested word, use the grill-with-canon skill.
 
 ```md
 ### @term present

@@ -63,17 +63,37 @@ The Alloy plugin of the canon checker is one, and so is each test suite of this 
 
 > A program is what the analyzer reads in one process. It is the text of a module with its commands, its path, and the files beside it that the module may open.
 
+<details>
+<summary>Grammar</summary>
+
+| grammar |          |
+| ------- | -------- |
+| type    | noun     |
+| plural  | programs |
+
+</details>
+
 ### @term answer
 
-> An answer is what a [caller](#term-caller) makes of one process of the analyzer on a [program](#term-program). It may be the receipt, the text of an instance, or the lines that the analyzer printed.
+> An answer is what a [*caller*](#term-caller) makes of one process of the analyzer on a [*program*](#term-program). It may be the receipt, the text of an instance, or the lines that the analyzer printed.
 
 ### @term kept-answer
 
-> A kept answer is an [answer](#term-answer) that run-alloy wrote to a file of its own, named by a hash of what decides it.
+> A kept answer is an [*answer*](#term-answer) that run-alloy wrote to a file of its own, named by a hash of what decides it.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |              |
+| ------- | ------------ |
+| type    | noun         |
+| plural  | kept answers |
+
+</details>
 
 ## @axiom a-caller-gets-only-the-answer-the-analyzer-gives
 
-> run-alloy gives a [caller](#term-caller) only the [answer](#term-answer) that the analyzer gives for the [program](#term-program), by whatever way run-alloy reaches it.
+> run-alloy gives a [*caller*](#term-caller) only the [*answer*](#term-answer) that the analyzer gives for the [*program*](#term-program), by whatever way run-alloy reaches it.
 
 A caller acts on the answer. The Alloy plugin reports a canon as clean or names a contradiction, and a test suite passes or fails. An answer the analyzer would not give is a report that misleads, and a quick one misleads as much as a slow one.
 
@@ -81,7 +101,7 @@ So correctness comes before speed. run-alloy takes a way to answer sooner only w
 
 ## @axiom the-analyzer-takes-only-the-time-its-new-programs-need
 
-> A [caller](#term-caller) of the Alloy analyzer waits no longer than the machine that runs it needs to answer the [programs](#term-program) that no earlier run answered.
+> A [*caller*](#term-caller) of the Alloy analyzer waits no longer than the machine that runs it needs to answer the [*programs*](#term-program) that no earlier run answered.
 
 A project asks the analyzer after each change. The Alloy plugin checks a canon, and a test suite checks a parser or a verbalizer. Each program starts the analyzer anew. A program over a model of a thousand lines takes about twelve seconds on its own. A check that takes minutes gets run less often, and a defect then stays in the project for longer.
 
@@ -141,7 +161,7 @@ The heap stays a limit, so run-alloy still counts the processes that half of the
 
 #### @spec a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer
 
-> run-alloy gives a [program](#term-program) the [answer](#term-answer) that an earlier run kept for it, when four things are the same as for that run. They are the program, the content of the jar, the options, and the major version of Java.
+> run-alloy gives a [*program*](#term-program) the [*answer*](#term-answer) that an earlier run kept for it, when four things are the same as for that run. They are the program, the content of the jar, the options, and the major version of Java.
 
 Derives from: [`axiom-a-caller-gets-only-the-answer-the-analyzer-gives`](#axiom-a-caller-gets-only-the-answer-the-analyzer-gives), [`fact-the-program-and-the-analyzer-decide-the-answer-of-a-search`](#fact-the-program-and-the-analyzer-decide-the-answer-of-a-search)
 
@@ -151,7 +171,7 @@ The program holds the text of the module, its path and every file beside it. A c
 
 ##### @spec an-unchanged-program-is-answered-without-the-analyzer
 
-> When an earlier run kept an [answer](#term-kept-answer) for a program, and none of the four things changed, run-alloy starts no analyzer process for that program.
+> When an earlier run kept an [*answer*](#term-answer) for a program, and none of the four things changed, run-alloy starts no analyzer process for that program.
 
 This follows because the kept answer is the one the process would give, and the process costs seconds.
 
@@ -261,7 +281,7 @@ This follows because the author may want the analyzer's own answer. The author m
 
 #### @spec the-kept-answers-are-only-those-used-in-the-last-thirty-days
 
-> The first sweep of a folder of [kept answers](#term-kept-answer) in a process removes each kept answer that no run used in the last 30 days.
+> The first sweep of a folder of [*kept answers*](#term-kept-answer) in a process removes each kept answer that no run used in the last 30 days.
 
 Derives from: [`spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer`](#spec-a-program-asked-of-the-same-analyzer-keeps-its-earlier-answer)
 
@@ -275,13 +295,13 @@ This follows because nothing asked that program for a month, so it most likely b
 
 ##### @spec a-kept-answer-that-a-run-uses-is-kept-for-thirty-more-days
 
-> When run-alloy gives a program a [kept answer](#term-kept-answer), that answer counts as used at that time.
+> When run-alloy gives a program a [*kept answer*](#term-kept-answer), that answer counts as used at that time.
 
 This follows because a caller that still asks the program still needs that answer, no matter how long ago the analyzer gave it.
 
 #### @spec a-folder-of-kept-answers-is-swept-once-in-a-process
 
-> run-alloy sweeps a folder of [kept answers](#term-kept-answer) at most once in a Node process. A later sweep of that folder in the same process removes nothing, and reads nothing.
+> run-alloy sweeps a folder of [*kept answers*](#term-kept-answer) at most once in a Node process. A later sweep of that folder in the same process removes nothing, and reads nothing.
 
 Derives from: [`spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days`](#spec-the-kept-answers-are-only-those-used-in-the-last-thirty-days)
 

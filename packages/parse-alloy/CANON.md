@@ -64,7 +64,7 @@ This follows because a tool that builds on the tree, such as naturalloy saying a
 
 #### @spec a-formula-the-parser-cannot-read-is-refused-and-the-refusal-names-what-it-cannot-read
 
-> The parser refuses a *formula* with a construct, a stray character or an unclosed bracket that it cannot read, and names it.
+> The parser refuses a [*formula*](#term-parsed-formula) with a construct, a stray character or an unclosed bracket that it cannot read, and names it.
 
 This follows because a tree of part of a formula means less than the formula. The author must know which part failed.
 

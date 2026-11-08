@@ -315,11 +315,11 @@ export function resolveLinks(text: string, links: boolean, self: string | undefi
 }
 
 /**
- * Each link of finished words that `marked` allows, as a term mark: `[run](#term-run)` is `*run*`. It reads the words
+ * Each link of finished words that `marked` allows, as a term mark: `[run](#term-run)` is `[*run*](#term-run)`. It reads the words
  * as the reader gets them, after the numbers of variables are settled, so that a mark spells what the reader reads.
  */
 export const markTerms = (text: string, marked: Marked): string =>
-  text.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (link: string, word: string, target: string) => (marked(target, word) ? `*${word}*` : link));
+  text.replace(/\[([^\]\n]+)\]\(([^)\s]+)\)/g, (link: string, word: string, target: string) => (marked(target, word) ? `[*${word}*](${target})` : link));
 
 /** A formula with the names of this module as plain names: `this/Ran` and `@Ran` are `Ran`, and `fun/min`, `fun/max` and `fun/next` are `min`, `max` and `next`. */
 export function unqualified(node: Node): Node {
