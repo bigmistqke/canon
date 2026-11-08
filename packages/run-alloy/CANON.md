@@ -13,7 +13,7 @@ How run-alloy runs the Alloy analyzer, and why. It is the canon of the package `
 - [`@term caller`](#term-caller)
 - [`@term program`](#term-program)
 - [`@term answer`](#term-answer)
-- [`@term kept-answer`](#term-kept-answer)
+  - [`@term kept-answer`](#term-kept-answer)
 - [`@axiom a-caller-gets-only-the-answer-the-analyzer-gives`](#axiom-a-caller-gets-only-the-answer-the-analyzer-gives)
 - [`@axiom the-analyzer-takes-only-the-time-its-new-programs-need`](#axiom-the-analyzer-takes-only-the-time-its-new-programs-need)
   - [`@spec the-analyzer-runs-no-more-processes-at-once-than-the-machine-holds`](#spec-the-analyzer-runs-no-more-processes-at-once-than-the-machine-holds)
@@ -77,7 +77,7 @@ The Alloy plugin of the canon checker is one, and so is each test suite of this 
 
 > An answer is what a [*caller*](#term-caller) makes of one process of the analyzer on a [*program*](#term-program). It may be the receipt, the text of an instance, or the lines that the analyzer printed.
 
-### @term kept-answer
+#### @term kept-answer
 
 > A kept answer is an [*answer*](#term-answer) that run-alloy wrote to a file of its own, named by a hash of what decides it.
 

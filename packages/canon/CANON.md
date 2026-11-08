@@ -54,11 +54,13 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term unguarded`](#term-unguarded)
 - [`@term adrift`](#term-adrift)
 - [`@term test`](#term-test)
+  - [`@term plain-test`](#term-plain-test)
+  - [`@term expected-failure`](#term-expected-failure)
 - [`@term project`](#term-project)
 - [`@term declare`](#term-declare)
 - [`@term pointer`](#term-pointer)
-- [`@term file-pointer`](#term-file-pointer)
-- [`@term fragment-pointer`](#term-fragment-pointer)
+  - [`@term file-pointer`](#term-file-pointer)
+  - [`@term fragment-pointer`](#term-fragment-pointer)
 - [`@term target`](#term-target)
 - [`@term section`](#term-section)
 - [`@term file`](#term-file)
@@ -80,8 +82,6 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term comment`](#term-comment)
 - [`@term tag`](#term-tag)
 - [`@term carry`](#term-carry)
-- [`@term plain-test`](#term-plain-test)
-- [`@term expected-failure`](#term-expected-failure)
 - [`@term check`](#term-check)
 - [`@term issue`](#term-issue)
 - [`@term tracker`](#term-tracker)
@@ -1360,6 +1360,40 @@ abstract sig Test extends Thing {}
 
 </details>
 
+#### @term plain-test
+
+> A plain test is a test that passes when what it checks holds.
+
+<details>
+<summary>Alloy</summary>
+
+```alloy vocabulary
+sig PlainTest extends Test {}
+```
+
+| reading   | holds                 | does not hold             |
+| --------- | --------------------- | ------------------------- |
+| PlainTest | {1} is a [plain test] | {1} is not a [plain test] |
+
+</details>
+
+#### @term expected-failure
+
+> An expected failure is a test that is marked to fail, with a modifier that a [*runner*](#term-runner) marks a failure with, such as `it.fails`: it fails until the defect it checks is fixed.
+
+<details>
+<summary>Alloy</summary>
+
+```alloy vocabulary
+sig ExpectedFailure extends Test {}
+```
+
+| reading         | holds                        | does not hold                    |
+| --------------- | ---------------------------- | -------------------------------- |
+| ExpectedFailure | {1} is an [expected failure] | {1} is not an [expected failure] |
+
+</details>
+
 ### @term project
 
 > Project is the package whose canon field names the canon.
@@ -1412,11 +1446,11 @@ abstract sig Pointer extends Thing {}
 
 </details>
 
-### @term file-pointer
+#### @term file-pointer
 
 > A file pointer is a pointer with no fragment: it names a [*file*](#term-file).
 
-### @term fragment-pointer
+#### @term fragment-pointer
 
 > A fragment pointer is a pointer with a fragment, after a `#`: it names the unit or the [*section*](#term-section) whose id the fragment holds, in the file its path names.
 
@@ -1837,40 +1871,6 @@ one sig Carry { rel: Test -> Tag }
 | reading   | holds             | does not hold            |
 | --------- | ----------------- | ------------------------ |
 | Carry.rel | {1} [carries] {2} | {1} does not [carry] {2} |
-
-</details>
-
-### @term plain-test
-
-> A plain test is a test that passes when what it checks holds.
-
-<details>
-<summary>Alloy</summary>
-
-```alloy vocabulary
-sig PlainTest extends Test {}
-```
-
-| reading   | holds                 | does not hold             |
-| --------- | --------------------- | ------------------------- |
-| PlainTest | {1} is a [plain test] | {1} is not a [plain test] |
-
-</details>
-
-### @term expected-failure
-
-> An expected failure is a test that is marked to fail, with a modifier that a [*runner*](#term-runner) marks a failure with, such as `it.fails`: it fails until the defect it checks is fixed.
-
-<details>
-<summary>Alloy</summary>
-
-```alloy vocabulary
-sig ExpectedFailure extends Test {}
-```
-
-| reading         | holds                        | does not hold                    |
-| --------------- | ---------------------------- | -------------------------------- |
-| ExpectedFailure | {1} is an [expected failure] | {1} is not an [expected failure] |
 
 </details>
 

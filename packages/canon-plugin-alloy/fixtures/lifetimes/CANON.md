@@ -65,7 +65,7 @@ one sig Clock { var older: Cleanup -> Cleanup }
 
 </details>
 
-## @term failing-cleanup
+### @term failing-cleanup
 
 > A failing cleanup is a cleanup that throws when it runs.
 
@@ -75,10 +75,6 @@ one sig Clock { var older: Cleanup -> Cleanup }
 ```alloy vocabulary
 sig Failing in Cleanup {}
 ```
-
-| signature | noun            |
-| --------- | --------------- |
-| Failing   | failing cleanup |
 
 </details>
 
