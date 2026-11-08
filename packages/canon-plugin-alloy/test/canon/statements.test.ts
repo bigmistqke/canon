@@ -153,9 +153,11 @@ describe('the states of the statements', () => {
   it('writes a quote that Markdown reads as paragraphs and a bulleted list', () => {
     const { src } = write(doc('always all n: Node | n in Started and n not in Done and n in Started and n not in Done implies eventually n in Done'));
     const quote = src.split('\n').filter(l => l.startsWith('>')).slice(1).join('\n');
-    const tree = unified().use(remarkParse).parse(quote) as { children: { type: string; children: { type: string }[] }[] };
-    const inner = tree.children[0]?.children.map(n => n.type);
-    expect(inner).toEqual(['paragraph', 'paragraph', 'list', 'paragraph']);
+    const tree = unified().use(remarkParse).parse(quote) as { children: { type: string; children: { type: string; children?: { type: string }[] }[] }[] };
+    const inner = tree.children[0]?.children ?? [];
+    expect(inner.map(n => n.type)).toEqual(['paragraph', 'list', 'paragraph']);
+    // The line that opens the statement ends in a line break, which keeps the next line on a line of its own.
+    expect(inner[0]?.children?.map(n => n.type)).toContain('break');
   });
 });
 

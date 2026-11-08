@@ -192,7 +192,8 @@ function statementOf(own: string): string | undefined {
   const quote: string[] = [];
   for (const line of lines.slice(first)) {
     if (!line.startsWith('>')) break;
-    quote.push(line.replace(/^>[ \t]?/, ''));
+    // A backslash that ends the line is a line break of the page, no word of the statement.
+    quote.push(line.replace(/^>[ \t]?/, '').replace(/\\$/, ''));
   }
   // A list keeps its lines, so its items and what follows it keep the indentation that says where each one ends.
   if (quote.some(line => /^\s*[-*+] /.test(line))) {

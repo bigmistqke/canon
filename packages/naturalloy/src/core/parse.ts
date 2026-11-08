@@ -7,6 +7,7 @@
  * It reads the text layout. A statement is first read back into the layout the printer made of it: lists, blocks and
  * rules. Then each part is read as a sentence.
  */
+import { longNames } from './names.ts';
 import type { Readings } from '../readings.ts';
 import { unbracketed } from '../readings.ts';
 import { BINARY, COMPARED, INTRO, MOMENT, RULE, WRAP } from './constructs.ts';
@@ -721,7 +722,9 @@ export function canonical(meaning: string): string {
 
 /** What the words of a statement mean, read back by the reading rules: one canonical meaning for each reading. */
 export function readBack(words: string, readings: Readings, free: Iterable<string> = [], meaning: (s: Sentence) => string): string[] {
-  return [...new Set(new Parser(readings, free).statement(words).map(s => canonical(meaning(flat(s) as Sentence))))];
+  // The short names, `U1`, are read as the long ones the printer gave first, `unit_1`.
+  const nouns = [...readings.nouns.values()].map(noun => unbracketed(noun).replace(/^an? /, '').trim());
+  return [...new Set(new Parser(readings, free).statement(longNames(words, nouns)).map(s => canonical(meaning(flat(s) as Sentence))))];
 }
 
 /** The canonical meaning of an IR, as `readBack` gives it. */

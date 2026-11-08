@@ -16,6 +16,8 @@ export interface PrintOptions {
   dropLoneNumbers: boolean;
   /** Leave out a "for every" over a variable named "the" and its noun, and name it "a" and its noun where the words first do. */
   aNounForEvery: boolean;
+  /** Name a variable by the letters of its noun and its number, `U1`, with its noun before the name where the words first name it. */
+  shortNames?: boolean;
 }
 
 /** What a pass of the IR may consult. */
