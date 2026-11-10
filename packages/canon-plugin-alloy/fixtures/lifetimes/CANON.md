@@ -29,14 +29,14 @@ fact creation_order { no o: Owner | o->o in Birth.order  all a, b, c: Owner | (a
 fact siblings_have_an_order { all a, b: Owner | (a != b and some a.parent and a.parent = b.parent) implies (a->b in Birth.order or b->a in Birth.order) }
 ```
 
-| reading     | holds                                                  | does not hold                                              |
-| ----------- | ------------------------------------------------------ | ---------------------------------------------------------- |
-| Disposed    | pulse has disposed {1}                                 | pulse has not disposed {1}                                 |
-| parent | {2} ^is^ the parent of {1} |  |
-| handler | {2} ^is^ the nearest error handler or boundary above {1} |  |
-| Threw       | the dispose of {1} has thrown                          | the dispose of {1} has not thrown                          |
-| Stopped     | the dispose of {1} has been stopped                    | the dispose of {1} has not been stopped                    |
-| Birth.order | {1} was created before {2}                             | {1} was not created before {2}                             |
+| reading     | holds                                                    | does not hold                           |
+| ----------- | -------------------------------------------------------- | --------------------------------------- |
+| Disposed    | pulse has disposed {1}                                   | pulse has not disposed {1}              |
+| parent      | {2} ^is^ the parent of {1}                               |                                         |
+| handler     | {2} ^is^ the nearest error handler or boundary above {1} |                                         |
+| Threw       | the dispose of {1} has thrown                            | the dispose of {1} has not thrown       |
+| Stopped     | the dispose of {1} has been stopped                      | the dispose of {1} has not been stopped |
+| Birth.order | {1} was created before {2}                               | {1} was not created before {2}          |
 
 </details>
 
@@ -59,7 +59,7 @@ one sig Clock { var older: Cleanup -> Cleanup }
 | ----------- | -------------------------------- | ------------------------------------ |
 | Registered  | code has registered {1}          | code has not registered {1}          |
 | Ran         | {1} has run                      | {1} has not run                      |
-| on | {1} ^is^ on {2} |  |
+| on          | {1} ^is^ on {2}                  |                                      |
 | Clock.older | code registered {1} before {2}   | code did not register {1} before {2} |
 | reached     | the error of {1} has reached {2} | the error of {1} has not reached {2} |
 
@@ -139,14 +139,14 @@ fact entering_throws_only { always (some Throwing' implies some Entering') }
 pred runNow[c: Cleanup] { c not in Ran and c in Ran' }
 ```
 
-| reading     | holds                                                                                                                             | does not hold                                                                      |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Throwing' | right after, a call ^is^ throwing | right after, no call is throwing |
-| dispose | pulse ^disposes^ {1} |  |
-| enter | a call ^enters^ {1} |  |
-| runNow | {1} ^runs^ |  |
-| runByCall | code ^disposes^ {2} after pulse disposed it, and that call runs {1}, a cleanup that code has registered on {2} and that has not run | it is not so that code disposes {2} after pulse disposed it and that call runs {1} |
-| throwByCall | code ^disposes^ {1} after pulse disposed it, and that call throws | it is not so that code disposes {1} after pulse disposed it and that call throws |
+| reading     | holds                                                                                                                               | does not hold                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Throwing'   | right after, a call ^is^ throwing                                                                                                   | right after, no call is throwing                                                   |
+| dispose     | pulse ^disposes^ {1}                                                                                                                |                                                                                    |
+| enter       | a call ^enters^ {1}                                                                                                                 |                                                                                    |
+| runNow      | {1} ^runs^                                                                                                                          |                                                                                    |
+| runByCall   | code ^disposes^ {2} after pulse disposed it, and that call runs {1}, a cleanup that code has registered on {2} and that has not run | it is not so that code disposes {2} after pulse disposed it and that call runs {1} |
+| throwByCall | code ^disposes^ {1} after pulse disposed it, and that call throws                                                                   | it is not so that code disposes {1} after pulse disposed it and that call throws   |
 
 ```alloy bounds
 for 3 but 1..8 steps
