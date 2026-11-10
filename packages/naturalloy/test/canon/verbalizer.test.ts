@@ -108,6 +108,22 @@ describe('the words', () => {
   });
 
   /**
+   * @canon spec-a-variable-alone-of-its-noun-is-named-the-noun
+   */
+  it('names a variable the noun alone where the noun is said elsewhere only after "no" or after the last name of the variable', () => {
+    // "no cleanup" names no thing that "the cleanup" could point at.
+    expect(say('all c: Cleanup | (no o: Cleanup | o in Ran) and c in Registered')).toBe(
+      'For every cleanup:\n  all of these hold:\n    - no cleanup has run\n    - code has registered the cleanup'
+    );
+    // "a cleanup" after the last name of the variable comes too late for "the cleanup" to point at it.
+    expect(say('all c: Cleanup | c in Registered implies (some d: Cleanup | d in Ran)')).not.toMatch(/\bC\d\b/);
+    // "a cleanup" before a later name of the variable is a thing that "the cleanup" could point at.
+    expect(say('all c: Cleanup | (some d: Cleanup | d in Ran) implies c in Registered')).toBe(
+      'For every cleanup C1:\n  when there is a cleanup that has run, code has registered cleanup C1.'
+    );
+  });
+
+  /**
    * @canon spec-a-rule-over-every-thing-of-a-kind-says-a-noun-in-its-when
    */
   it('says a rule over every thing of a kind with "a" and the noun where its first side first names the thing', () => {
@@ -613,7 +629,7 @@ describe('a definition', () => {
    */
   it('says what it names exactly when its body holds, for every value of its parameters', () => {
     expect(verbalizeDefinition('pred orphan[u: Unit] { u in Spec and no v: Unit | u->v in Sits.rel }', readings)).toBe(
-      ['For every unit U1:', '  unit U1 is an orphan exactly when unit U1 is a spec that sits in no unit.'].join('\n')
+      'A unit is an orphan exactly when the unit is a spec that sits in no unit.'
     );
   });
 
@@ -737,7 +753,7 @@ describe('a definition', () => {
    * @canon spec-a-body-of-several-formulas-is-said-as-them-holding-together
    */
   it('says a body of several formulas as them holding together', () => {
-    expect(verbalizeDefinition('pred orphan[u: Unit] {\n  u in Spec\n  no v: Unit | u->v in Sits.rel\n}', readings)).toBe('For every unit U1:\n  unit U1 is an orphan exactly when unit U1 is a spec that sits in no unit.');
+    expect(verbalizeDefinition('pred orphan[u: Unit] {\n  u in Spec\n  no v: Unit | u->v in Sits.rel\n}', readings)).toBe('A unit is an orphan exactly when the unit is a spec that sits in no unit.');
     expect(say('{\n  c in Ran\n  d in Ran\n}')).toBe('c has run and d has run.');
   });
 
@@ -801,7 +817,7 @@ describe('the words several clauses share', () => {
     expect(verbalize('all u: Unit | u in A and u in B', shared)).toBe('For every unit:\n  the unit is a definition with an alternative A and is a definition with an alternative B.');
     // Negations of a noun phrase's variable share "is not", and each says its own "a definition with".
     expect(verbalize('all v: Unit | some u: Unit | v->u in Cite.rel and u not in A and u not in B', shared)).toBe(
-      'For every unit U1:\n  unit U1 cites a unit that is not a definition with an alternative A or a definition with an alternative B.'
+      'For every unit:\n  the unit cites a unit that is not a definition with an alternative A or a definition with an alternative B.'
     );
     // The kinds of a definition share "is", and each says what else holds of its kind in full.
     expect(verbalizeDefinition('pred kept[u: Unit] { (u in Spec and u in A) or (u in Bug and u in B) }', shared)).toBe(
@@ -827,7 +843,7 @@ describe('a definition by cases', () => {
    */
   it('is said as a noun phrase for each kind: "a spec that cites no axiom and cites no spec"', () => {
     expect(define('(u in Spec and (no a: Unit | u->a in Cite.rel) and u not in Bug) or (u in Bug and (no s: Unit | u->s in Cite.rel))')).toBe(
-      ['unit U1 is unfounded exactly when unit U1 is one of these:', '    - a spec that cites no unit and is not a bug', '    - a bug that cites no unit'].join('\n')
+      ['A unit is unfounded exactly when the unit is one of these:', '  - a spec that cites no unit and is not a bug', '  - a bug that cites no unit'].join('\n')
     );
   });
 
@@ -836,7 +852,7 @@ describe('a definition by cases', () => {
    */
   it('puts the alternatives of one kind together with "or"', () => {
     expect(define('(u in Spec and (no a: Unit | u->a in Cite.rel)) or (u in Spec and u not in Bug) or (u in Bug and (no s: Unit | u->s in Cite.rel))')).toBe(
-      ['unit U1 is unfounded exactly when unit U1 is one of these:', '    - a spec that cites no unit or is not a bug', '    - a bug that cites no unit'].join('\n')
+      ['A unit is unfounded exactly when the unit is one of these:', '  - a spec that cites no unit or is not a bug', '  - a bug that cites no unit'].join('\n')
     );
   });
 
@@ -853,7 +869,7 @@ describe('a definition by cases', () => {
    * @canon spec-a-definition-with-one-kind-is-one-sentence
    */
   it('is one sentence when there is one kind', () => {
-    expect(define('u in Spec and (no a: Unit | u->a in Cite.rel)')).toBe('unit U1 is unfounded exactly when unit U1 is a spec that cites no unit.');
+    expect(define('u in Spec and (no a: Unit | u->a in Cite.rel)')).toBe('A unit is unfounded exactly when the unit is a spec that cites no unit.');
   });
 
   /**
@@ -869,7 +885,7 @@ describe('a definition by cases', () => {
    */
   it('is said as it stands when a run of "and" would be read two ways beside another alternative of its kind', () => {
     expect(define('(u in Spec and u not in Bug and u not in Axiom) or (u in Spec and (no a: Unit | u->a in Cite.rel)) or (u in Bug and u not in Spec)').split('\n')[0]).toBe(
-      'unit U1 is unfounded exactly when at least one of these holds:'
+      'A unit is unfounded exactly when at least one of these holds:'
     );
   });
 
@@ -1045,8 +1061,8 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase
    */
   it('takes the place of the variable when the variable is said once: "sits in no unit"', () => {
-    expect(said('no v: Unit | u->v in Sit.rel')).toBe('unit U1 sits in no unit.');
-    expect(said('some v: Unit | u->v in Sit.rel')).toBe('unit U1 sits in a unit.');
+    expect(said('no v: Unit | u->v in Sit.rel')).toBe('the unit sits in no unit.');
+    expect(said('some v: Unit | u->v in Sit.rel')).toBe('the unit sits in a unit.');
   });
 
   /**
@@ -1061,8 +1077,8 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-what-else-is-true-of-the-variable-is-a-relative-clause
    */
   it('says what else is true of the variable in a relative clause', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and v in Spec')).toBe('unit U1 sits in a unit that is a spec.');
-    expect(said('some v: Unit | u->v in Sit.rel and v not in Spec')).toBe('unit U1 sits in a unit that is not a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and v in Spec')).toBe('the unit sits in a unit that is a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and v not in Spec')).toBe('the unit sits in a unit that is not a spec.');
     expect(said('some i: Issue | u->i in Name.rel and i not in Known')).toBe('the unit names an issue that tracker does not know.');
     expect(said('some v: Unit | u->v in Sit.rel and v->u in Sit.rel')).toBe('unit U1 sits in a unit that sits in unit U1.');
   });
@@ -1072,7 +1088,7 @@ describe('a quantifier said as a noun phrase', () => {
    */
   it('puts several negations in one: "that is not an axiom, a spec or a fact"', () => {
     expect(said('some v: Unit | u->v in Sit.rel and v not in Axiom and v not in Spec and v not in Fact')).toBe(
-      'unit U1 sits in a unit that is not an axiom, a spec or a fact.'
+      'the unit sits in a unit that is not an axiom, a spec or a fact.'
     );
   });
 
@@ -1081,15 +1097,15 @@ describe('a quantifier said as a noun phrase', () => {
    */
   it('says "another" for a variable that must not be the other one of its kind', () => {
     expect(said('some v: Unit | v != u and v->u in Sit.rel')).toBe('another unit sits in unit U1.');
-    expect(said('some a, b: Unit | a != b and u->a in Name.rel and u->b in Name.rel')).toBe('unit U1 names a unit and names another unit.');
+    expect(said('some a, b: Unit | a != b and u->a in Name.rel and u->b in Name.rel')).toBe('the unit names a unit and names another unit.');
   });
 
   /**
    * @canon spec-a-variable-that-must-differ-from-one-value-is-said-as-other-than-it
    */
   it('says "other than" for a variable that must differ from one value, and in full when it must differ from more', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and v != w')).toBe('unit U1 sits in a unit other than w.');
-    expect(said('some v: Unit | u->v in Sit.rel and not v = w')).toBe('unit U1 sits in a unit other than w.');
+    expect(said('some v: Unit | u->v in Sit.rel and v != w')).toBe('the unit sits in a unit other than w.');
+    expect(said('some v: Unit | u->v in Sit.rel and not v = w')).toBe('the unit sits in a unit other than w.');
     expect(said('some v: Unit | u->v in Sit.rel and v != w and v != x')).toBe('there is a unit U2 such that all of these hold:\n    - unit U1 sits in unit U2\n    - unit U2 and w are different\n    - unit U2 and x are different');
   });
 
@@ -1127,7 +1143,7 @@ describe('a quantifier said as a noun phrase', () => {
    * @canon spec-a-condition-that-is-not-about-the-variable-is-said-apart
    */
   it('says a condition that is not about the variable beside the quantifier, outside it', () => {
-    expect(said('some v: Unit | u->v in Sit.rel and u in Spec')).toBe('unit U1 sits in a unit and is a spec.');
+    expect(said('some v: Unit | u->v in Sit.rel and u in Spec')).toBe('the unit sits in a unit and is a spec.');
   });
 
   /**
@@ -1181,9 +1197,9 @@ describe('a set equal to a variable', () => {
    * @canon spec-a-set-equal-to-a-variable-is-said-as-the-variable-and-no-other
    */
   it('says the variable in the set, and no other member of its type', () => {
-    expect(say('all c: Cleanup, o: Owner | c.on = o')).toBe('For every cleanup and every owner O1:\n  the cleanup is on owner O1 and is on no other owner.');
-    expect(say("all c: Cleanup, o: Owner | o = c.on'")).toBe('For every cleanup and every owner O1:\n  at the next moment, the cleanup is on owner O1 and is on no other owner.');
-    expect(say('all o: Owner | Disposed = o')).toBe('For every owner O1:\n  pulse has disposed owner O1 and pulse has disposed no other owner.');
+    expect(say('all c: Cleanup, o: Owner | c.on = o')).toBe('For every cleanup and every owner:\n  the cleanup is on the owner and is on no other owner.');
+    expect(say("all c: Cleanup, o: Owner | o = c.on'")).toBe('For every cleanup and every owner:\n  at the next moment, the cleanup is on the owner and is on no other owner.');
+    expect(say('all o: Owner | Disposed = o')).toBe('For every owner:\n  pulse has disposed the owner and pulse has disposed no other owner.');
   });
 
   /**
@@ -1388,7 +1404,7 @@ describe('the items of a list said in a sentence', () => {
    * @canon spec-a-subject-is-said-once-when-clauses-begin-with-it
    */
   it('say a subject once, when clauses beside each other begin with it', () => {
-    expect(said('u in Spec and (no v: Unit | u->v in Sit.rel)')).toBe('unit U1 is a spec and sits in no unit.');
+    expect(said('u in Spec and (no v: Unit | u->v in Sit.rel)')).toBe('the unit is a spec and sits in no unit.');
   });
 
   /**
@@ -1568,7 +1584,7 @@ describe('calls', () => {
   it('says a call with an expression by the body, with the expression in place', () => {
     const readings = withDefinitions(parseReadings(read('readings.txt')), `${read('vocabulary.als')}\npred settled[x: Cleanup] { x in Registered and x not in Ran }`);
     expect(say('settled[on.o]', readings)).toBe(
-      ['All of these hold:', '  - for every cleanup C1:', '      when cleanup C1 is on o, code has registered cleanup C1', '  - a cleanup that has not run is on o'].join('\n')
+      ['All of these hold:', '  - when a cleanup is on o, code has registered the cleanup', '  - a cleanup that has not run is on o'].join('\n')
     );
   });
 

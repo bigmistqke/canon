@@ -578,20 +578,29 @@ export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | und
 }
 
 /**
- * Each variable of the words that is the only one of its noun, where the noun says nothing else in them, with its noun.
+ * Each variable of the words that is the only one of its noun, with its noun, where "the" and the noun can point at it
+ * alone. The noun may say something else only after "no" or "no other", or after the last name of the variable.
  * A number of the words' own, `number_1`, is never one.
  */
 function lone(text: string): Map<string, string> {
   const name = /\b([a-z][a-z_]*?)_(\d+)\b/g;
   const byNoun = new Map<string, Set<string>>();
   for (const [whole, stem] of text.matchAll(name)) if (stem !== 'number') byNoun.set(stem as string, (byNoun.get(stem as string) ?? new Set()).add(whole));
-  // A link's target, such as (#term-unit), is not a word the reader sees.
-  const elsewhere = text.replace(/\]\([^)]*\)/g, ']').replace(name, ' ');
+  // A link's target, such as (#term-unit), is not a word the reader sees, and a variable's own name is not the noun said
+  // elsewhere. Both are blanked to their length, so a place in `elsewhere` is the same place in `text`.
+  const blank = (s: string): string => ' '.repeat(s.length);
+  const elsewhere = text.replace(/\]\([^)]*\)/g, link => `]${blank(link.slice(1))}`).replace(name, blank);
   const out = new Map<string, string>();
   for (const [stem, names] of byNoun) {
+    if (names.size !== 1) continue;
     const noun = stem.replace(/_/g, ' ');
-    if (names.size !== 1 || new RegExp(`\\b${noun}(?:s|es)?\\b`, 'i').test(elsewhere)) continue;
     const variable = [...names][0] as string;
+    const last = Math.max(...[...text.matchAll(new RegExp(`\\b${variable}\\b`, 'g'))].map(m => m.index));
+    // A word of the noun after "no" names no thing, and one after the variable's last name comes too late to be what "the" points at.
+    const confusable = [...elsewhere.matchAll(new RegExp(`\\b${noun}(?:s|es)?\\b`, 'gi'))].some(
+      m => m.index < last && !/\bno (?:other )?\[?\*?$/i.test(elsewhere.slice(0, m.index))
+    );
+    if (confusable) continue;
     // Only a variable that a quantifier introduces, "every unit_1" or "a unit_1": one that "values of" or "a step from"
     // introduces stands for each of many, which "the unit" would say as one.
     const first = text.indexOf(variable);
@@ -602,9 +611,8 @@ function lone(text: string): Map<string, string> {
 }
 
 /**
- * The words with the number left off a variable that is the only one of its noun, where the noun says nothing else in
- * them: "for every unit: when the unit is circular". Where the noun appears elsewhere, "the unit" could mean that, so the
- * number stays; so does a number of the words' own, `number_1`.
+ * The words with the number left off a variable that `lone` finds: "for every unit: when the unit is circular". Where
+ * the noun says another thing that "the unit" could mean, the number stays; so does a number of the words' own, `number_1`.
  */
 function unnumbered(text: string): string {
   let out = text;
