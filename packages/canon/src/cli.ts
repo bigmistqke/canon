@@ -1893,11 +1893,47 @@ async function holdToTracker(
   }
 }
 
+/**
+ * Each ignore line of each unit: `Ignore: dead — a standard verb, which readings in other canons mark`. It keeps
+ * the finding it names from its unit, and it is a rotting where it names no finding, gives no reason, or names a
+ * finding its unit does not have. A finding of the tracker that the check did not ask for is not held against it.
+ * The number of findings the lines kept.
+ */
+function applyIgnores(findings: Record<FindingName, string[]>, units: Map<string, Unit>, asked: boolean): number {
+  const IGNORE = /^Ignore:[ \t]*(\S+)(?:[ \t]*—[ \t]*(.*))?$/gm;
+  let ignored = 0;
+  for (const [key, unit] of units) {
+    for (const m of maskFences(unit.own ?? '').matchAll(IGNORE)) {
+      const name = m[1] as FindingName;
+      const reason = (m[2] ?? '').trim();
+      if (!(name in MEANING)) {
+        findings.rot.push(`${key} has an ignore line for "${m[1]}", which names no finding the checker prints`);
+        continue;
+      }
+      if (reason === '') {
+        findings.rot.push(`${key} has an ignore line for ${name} that gives no reason`);
+        continue;
+      }
+      if (TRACKER_FINDINGS.includes(name) && !asked) continue;
+      // A finding is about the unit whose key opens its entry.
+      const about = (entry: string): boolean => entry === key || entry.startsWith(`${key} `) || entry.startsWith(`${key}:`);
+      const kept = findings[name].filter(about);
+      if (kept.length === 0) findings.rot.push(`${key} has an ignore line for ${name}, a finding it does not have`);
+      else {
+        findings[name] = findings[name].filter(entry => !about(entry));
+        ignored += kept.length;
+      }
+    }
+  }
+  return ignored;
+}
+
 async function check(offline: boolean): Promise<void> {
   const { findings, units, suites, bugs } = analyse(false);
   const tracker = CONFIG.tracker;
   const asked = tracker !== undefined && !offline;
   if (asked) await holdToTracker(tracker, bugs, findings);
+  const ignored = applyIgnores(findings, units, asked);
 
   console.log(`canon check — ${ROOT}\n`);
   console.log(`scope: ${DOCS.length} document(s), ${suites} declared suite(s)`);
@@ -1906,6 +1942,7 @@ async function check(offline: boolean): Promise<void> {
     console.log(`issues: ${asked ? `held to the ${tracker.kind} tracker` : 'not checked (--offline)'}`);
   }
   if (!HAS_RUNNER) console.log('tests: none read (runners: []), so no claim owes a test');
+  if (ignored > 0) console.log(`ignored: ${ignored} finding(s), which ignore lines pass over`);
   console.log('');
 
   let total = 0;

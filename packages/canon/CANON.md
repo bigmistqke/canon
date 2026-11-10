@@ -66,6 +66,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
 - [`@term file`](#term-file)
 - [`@term used`](#term-used)
 - [`@term stem`](#term-stem)
+- [`@term ignore-line`](#term-ignore-line)
 - [`@term trailer`](#term-trailer)
 - [`@term repeat`](#term-repeat)
 - [`@term follow`](#term-follow)
@@ -222,6 +223,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
     - [`@spec the-body-of-a-block-is-the-lines-between-its-fences`](#spec-the-body-of-a-block-is-the-lines-between-its-fences)
     - [`@spec the-offset-of-a-block-is-where-its-body-starts-in-the-document`](#spec-the-offset-of-a-block-is-where-its-body-starts-in-the-document)
     - [`@spec a-nested-units-block-is-its-own`](#spec-a-nested-units-block-is-its-own)
+    - [`@spec an-ignore-line-that-names-nothing-it-ignores-is-a-rotting`](#spec-an-ignore-line-that-names-nothing-it-ignores-is-a-rotting)
   - [`@axiom a-finding-is-never-false`](#axiom-a-finding-is-never-false)
     - [`@spec a-tested-claim-is-not-untested`](#spec-a-tested-claim-is-not-untested)
       - [`@spec a-claim-a-declared-test-checks-is-not-untested`](#spec-a-claim-a-declared-test-checks-is-not-untested)
@@ -256,6 +258,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
       - [`@spec a-marker-in-an-example-is-no-marker`](#spec-a-marker-in-an-example-is-no-marker)
       - [`@spec a-call-of-a-function-marked-fails-is-an-expected-failure`](#spec-a-call-of-a-function-marked-fails-is-an-expected-failure)
       - [`@spec a-call-inside-a-marked-function-is-no-test`](#spec-a-call-inside-a-marked-function-is-no-test)
+    - [`@spec an-ignore-line-keeps-its-finding-from-its-unit`](#spec-an-ignore-line-keeps-its-finding-from-its-unit)
   - [`@axiom a-check-the-project-asked-for-is-never-dropped-silently`](#axiom-a-check-the-project-asked-for-is-never-dropped-silently)
     - [`@spec a-document-gets-the-plugins-it-asks-for`](#spec-a-document-gets-the-plugins-it-asks-for)
       - [`@spec a-document-with-no-plugins-list-asks-for-no-plugin`](#spec-a-document-with-no-plugins-list-asks-for-no-plugin)
@@ -317,6 +320,7 @@ How the canon checker behaves now, and why. It is the canon of the package `@big
       - [`@spec a-runner-marker-the-settings-do-not-list-is-refused`](#spec-a-runner-marker-the-settings-do-not-list-is-refused)
     - [`@spec a-source-the-checker-cannot-parse-fails-the-run`](#spec-a-source-the-checker-cannot-parse-fails-the-run)
   - [`@spec a-check-with-no-runner-says-it-reads-no-test`](#spec-a-check-with-no-runner-says-it-reads-no-test)
+  - [`@spec a-check-says-how-many-findings-it-ignored`](#spec-a-check-says-how-many-findings-it-ignored)
 - [`@axiom the-document-holds-the-canon-the-commands-handle-it`](#axiom-the-document-holds-the-canon-the-commands-handle-it)
   - [`@spec show-prints-a-unit-with-what-it-follows-from-what-follows-from-it-and-what-tests-it`](#spec-show-prints-a-unit-with-what-it-follows-from-what-follows-from-it-and-what-tests-it)
     - [`@spec show-prints-the-own-text-of-a-unit-with-where-it-starts`](#spec-show-prints-the-own-text-of-a-unit-with-where-it-starts)
@@ -1102,6 +1106,7 @@ sig Untesting in Finding {}
 > - a [*pointer*](#term-pointer) that names no [*target*](#term-target)
 > - a [*term mark*](#term-term-mark) that names no [*term*](#term-term), or whose words spell no [*form*](#term-form) of its term
 > - a [*grammar table*](#term-grammar-table) that names a type or a role that the [*checker*](#term-checker) does not know, names a role in two rows, or has no row `type`
+> - an [*ignore line*](#term-ignore-line) that names no finding the [*checker*](#term-checker) prints, gives no reason, or names a finding its [*unit*](#term-unit) does not have
 
 The checker prints `rot`.
 
@@ -1555,6 +1560,22 @@ pred used[u: Unit] {
 > A stem is the part of the [*heading*](#term-heading) of a [*unit*](#term-unit) after its kind: words of lowercase letters and digits, joined by single hyphens.
 
 The id of a unit is its kind and its stem, joined by a hyphen: the heading `### @spec a-leaf` declares `spec-a-leaf`. The author writes the stem by hand, so it says what the unit claims.
+
+### @term ignore-line
+
+> An ignore line is a line of the [*own text*](#term-own-text) of a [*unit*](#term-unit) that names a [*finding*](#term-finding) the [*checker*](#term-checker) prints. It says why that finding does not break the canon there: `Ignore: dead — a standard verb, which readings in other canons mark`.
+
+The line starts with `Ignore:`, then the name the checker prints for the finding, such as `dead` or `untested`, then a dash and the reason. The reason is for the reader, who sees why the check passes over the unit.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |              |
+| ------- | ------------ |
+| type    | noun         |
+| plural  | ignore lines |
+
+</details>
 
 ### @term trailer
 
@@ -4117,6 +4138,15 @@ all f: Fence, u: Unit | f->u in Within.rel implies (no v: Unit | v != u and v->f
 
 </details>
 
+#### @spec an-ignore-line-that-names-nothing-it-ignores-is-a-rotting
+
+> The [*checker*](#term-checker) reports a [*rotting*](#term-rotting) for an [*ignore line*](#term-ignore-line) that:
+> - names no finding the checker prints
+> - gives no reason
+> - names a finding its [*unit*](#term-unit) does not have
+
+This follows because an ignore line that ignores nothing would stay in the canon after the reason for it has gone. A later finding of that kind would then pass unseen. A line with no reason tells the reader nothing about why the check passes over the unit.
+
 ### @axiom a-finding-is-never-false
 
 > The [*checker*](#term-checker) reports a [*finding*](#term-finding) only for what breaks the canon.
@@ -4441,6 +4471,12 @@ This follows because such a helper wraps a failure modifier, such as `it.fails`,
 > A call inside the body of a function that a [*runner*](#term-runner) marker marks is no [*test*](#term-test).
 
 This follows because the test is declared where the function is called. The call in its body runs once for each of those tests, so it is none of its own.
+
+#### @spec an-ignore-line-keeps-its-finding-from-its-unit
+
+> When an [*ignore line*](#term-ignore-line) of a [*unit*](#term-unit) names a [*finding*](#term-finding) and gives a reason, the [*checker*](#term-checker) reports no such finding for the unit.
+
+This follows because the owner of the design has said, in the canon, that the finding breaks nothing there. A finding the check reported all the same would ask for a change that nothing needs. The line stands in the unit, so the reader sees both the finding passed over and the reason.
 
 ### @axiom a-check-the-project-asked-for-is-never-dropped-silently
 
@@ -5417,6 +5453,12 @@ This follows because the checker reads the tests and the tags of a file from its
 > When the [*project*](#term-project) has no [*runner*](#term-runner), the report of `check` says that it reads no tests.
 
 This follows because a clean check means the canon holds, and in a project with no runner it holds without tests. The author acts on a clean check, so the report says how much it covers.
+
+### @spec a-check-says-how-many-findings-it-ignored
+
+> When an [*ignore line*](#term-ignore-line) keeps a [*finding*](#term-finding) from its [*unit*](#term-unit), the report of `check` says how many findings it ignored.
+
+This follows because a clean check means the canon holds, and the author acts on it. A check that passed over findings says so, so that the author knows how much the clean result covers.
 
 ## @axiom the-document-holds-the-canon-the-commands-handle-it
 
