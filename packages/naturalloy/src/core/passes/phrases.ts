@@ -211,6 +211,45 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   return chosen.next ? { t: 'moment', op: 'after', body: said, form: 'front' } : said;
 }
 
+/**
+ * The conditions of a thing said as a relative clause of it: each with it as its subject, one with it at its end, or
+ * several with it at their end that share their subject. Undefined where they make no relative clause.
+ */
+function relativeOf(conditions: Sentence[], v: Var, context: Context): Sentence | undefined {
+  if (conditions.length === 0 || !conditions.every(c => clause(c) && c.t !== 'same')) return undefined;
+  const places = (conditions as Clause[]).map(c => place(c, v, context));
+  if (places.some(p => p === undefined)) return undefined;
+  if (conditions.length === 1) return places[0] === 'inside' ? undefined : (conditions[0] as Sentence);
+  if (places.every(p => p === 'start')) return { t: 'and', items: conditions };
+  const subject = places.every(p => p === 'end') ? sharedSubject(conditions as Clause[], v, context) : undefined;
+  return subject === undefined ? undefined : { t: 'and', items: conditions, subject };
+}
+
+/**
+ * A "for every" over several things, whose rule has no "otherwise" and no other quantifier, its first side conditions
+ * that each name one thing, at least one for each, and its second side one clause that names each thing once: that
+ * clause, with each thing as "every" and its noun and its conditions as a relative clause.
+ */
+export const everyPhrases = everywhere('every-phrases', 'spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'all' || s.vars.length < 2 || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
+  const { when, then } = s.body;
+  if (!clause(then) || termsOf(then).some(term => term.t === 'np')) return undefined;
+  const conditions = when.t === 'and' ? when.items : [when];
+  let said: Clause = then;
+  for (const v of s.vars) {
+    if (!context.readings.nouns.has(v.type) || termsOf(then).filter(term => isVar(term, v)).length !== 1) return undefined;
+    const own = conditions.filter(c => names(c, v));
+    // Each condition names one thing of the "for every" alone.
+    if (own.some(c => s.vars.some(other => other !== v && names(c, other)))) return undefined;
+    const relative = relativeOf(own, v, context);
+    if (relative === undefined) return undefined;
+    said = put(said, v, { t: 'np', det: 'every', v, relative });
+  }
+  // Every condition belongs to a thing, and none is a quantifier of its own.
+  if (!conditions.every(c => s.vars.some(v => names(c, v)))) return undefined;
+  return said;
+});
+
 /** Whether a part of the IR names the variable. */
 function names(n: unknown, v: Var): boolean {
   if (Array.isArray(n)) return n.some(x => names(x, v));

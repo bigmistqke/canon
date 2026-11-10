@@ -151,6 +151,19 @@ describe('relative clauses that share their subject', () => {
   });
 });
 
+describe('a rule over several things', () => {
+  /**
+   * @canon spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions
+   */
+  it('says each thing as "every" and its conditions, in the one clause of its second side', () => {
+    expect(say('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on')).toBe('Every cleanup that has run is on every owner that pulse has disposed.');
+    // A thing with no condition of its own, a rule with an "otherwise", and a rule over one thing keep their words.
+    expect(say('all c: Cleanup, o: Owner | o in Disposed implies o in c.on')).not.toMatch(/^Every /);
+    expect(say('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on else c in Registered')).not.toMatch(/^Every /);
+    expect(say('all c: Cleanup | c in Ran implies c in Registered')).toBe('When a cleanup has run, code has registered the cleanup.');
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence

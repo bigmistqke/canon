@@ -165,6 +165,7 @@ export class Printer {
       }
     }
     if (np.det === 'no') return own`no ${np.other === undefined ? '' : 'other '}${noun}${suffix}`;
+    if (np.det === 'every') return own`every ${noun}${suffix}`;
     if (np.other === undefined) return `${this.article(np.v.type)}${noun}${suffix}`;
     if (np.other.t === 'var' && np.other.v.type === np.v.type) return own`another ${noun}${suffix}`;
     return own`${this.article(np.v.type)}${noun} other than ${this.term(np.other)}${suffix}`;

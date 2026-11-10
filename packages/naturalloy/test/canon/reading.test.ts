@@ -43,6 +43,15 @@ describe('the rules of reading', () => {
   });
 
   /**
+   * @canon spec-every-and-a-relative-clause-stands-for-each-thing-the-clause-holds-of
+   */
+  it('reads "every" and a relative clause as each thing of which the relative clause holds', () => {
+    const back = readsBack('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on', readings);
+    expect(back.words).toBe('Every cleanup that has run is on every owner that pulse has disposed.');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
    * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
    */
   it('reads the verbs after "and" in a relative clause with the subject of the first', () => {

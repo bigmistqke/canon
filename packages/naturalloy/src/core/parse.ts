@@ -127,7 +127,7 @@ export class Parser {
   /** A noun phrase: "a unit", "no owner that pulse has disposed", "another unit", "a text other than "a"". */
   private phrases(words: string, scope: Scope): NounPhrase[] {
     const out: NounPhrase[] = [];
-    const m = /^(no other|another|an|a|no) (.+)$/.exec(words);
+    const m = /^(no other|another|an|a|no|every) (.+)$/.exec(words);
     if (m === null) return out;
     const [, det, rest] = m as unknown as [string, string, string];
     for (const [noun, type] of this.types) {
@@ -146,7 +146,7 @@ export class Parser {
         relativeWords === '' ? [undefined] : relativeWords.startsWith('that ') ? this.relative(relativeWords.slice(5), v, scope) : which !== null ? this.afterWhich(which[2] as string, which[1] as string, v, scope) : [];
       for (const otherTerm of others)
         for (const relative of relatives) {
-          const np: NounPhrase = { t: 'np', det: det === 'no' || det === 'no other' ? 'no' : 'a', v };
+          const np: NounPhrase = { t: 'np', det: det === 'no' || det === 'no other' ? 'no' : det === 'every' ? 'every' : 'a', v };
           if (relative !== undefined) np.relative = relative;
           // "another unit" and "no other owner" differ from a thing of their kind the sentence already names: the pass gives
           // them the variable they differ from, which a reader finds as the one thing of the kind in play.

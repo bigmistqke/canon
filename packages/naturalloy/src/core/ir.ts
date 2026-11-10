@@ -31,7 +31,7 @@ export type Term =
 
 export interface NounPhrase {
   t: 'np';
-  det: 'a' | 'no';
+  det: 'a' | 'no' | 'every';
   v: Var;
   /** What else holds of the variable: "that is a spec". */
   relative?: Sentence;
@@ -164,6 +164,8 @@ class Meaning {
         ];
         around.push(inner => {
           const body = conditions.length === 0 ? inner : [...conditions, `(${inner})`].join(' and ');
+          // "every pass that …": the clause holds of each thing its conditions hold of.
+          if (x.det === 'every') return conditions.length === 0 ? `(all ${name}: ${x.v.type} | ${inner})` : `(all ${name}: ${x.v.type} | (${conditions.join(' and ')}) implies (${inner}))`;
           return x.det === 'no' ? `(no ${name}: ${x.v.type} | ${body})` : `(some ${name}: ${x.v.type} | ${body})`;
         });
         return name;

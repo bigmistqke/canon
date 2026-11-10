@@ -301,6 +301,12 @@ export const SWEEP: { what: string; formula: string }[] = [
   ].map(formula => ({ what: 'a thing of a "some" inside its clauses', formula })),
   // Conditions of a noun phrase with the thing at their end that share their subject: "an owner that pulse has disposed and disposes".
   ...['some o: Owner | o in c.on and o in Disposed and dispose[o]', 'some o: Owner | o in c.on and o in Disposed and o not in Stopped'].map(formula => ({ what: 'relative clauses that share their subject', formula })),
+  // A rule over several things: each said as "every" and its conditions, and kept where a thing has none.
+  ...[
+    'all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on',
+    'all c: Cleanup | all o: Owner | (c in Ran and o in Disposed and o not in Stopped) implies o in c.on',
+    'all c: Cleanup, o: Owner | o in Disposed implies o in c.on'
+  ].map(formula => ({ what: 'a rule over several things', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

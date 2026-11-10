@@ -17,6 +17,13 @@ const at = (name: string): number => {
 
 describe('the order of the passes', () => {
   /**
+   * @canon spec-for-every-becomes-one-before-each-thing-is-said-as-every
+   */
+  it('makes a "for every" inside another one before it says each thing as "every"', () => {
+    expect(at('for-every-together')).toBeLessThan(at('every-phrases'));
+  });
+
+  /**
    * @canon spec-a-thing-of-a-some-goes-inside-before-noun-phrases-are-said
    */
   it('says a thing of a "some" inside its clauses before it says noun phrases', () => {
