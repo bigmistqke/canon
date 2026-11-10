@@ -131,6 +131,16 @@ describe('a thing of a "some"', () => {
   });
 });
 
+describe('a thing after a preposition', () => {
+  /**
+   * @canon spec-a-thing-after-a-preposition-is-said-with-the-preposition-and-which
+   */
+  it('is said with the preposition and "which" in its relative clause', () => {
+    const units = parseReadings('noun Unit: unit\nnoun Test: test\nChecks.rel: {1} ^checks^ {2}\nClean: the checker ^reports^ no finding for {1} | the checker reports a finding for {1}');
+    expect(say('some t: Test | some u: Unit | t->u in Checks.rel and u in Clean', units)).toBe('There is a test that checks a unit for which the checker reports no finding.');
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence
@@ -1571,7 +1581,7 @@ describe('an expression said through the types of its columns', () => {
    * @canon spec-membership-in-a-chain-of-navigations-is-said-through-a-member-between
    */
   it('says membership in a chain of navigations through a member between', () => {
-    expect(say('p in c.on.parent')).toBe('c is on an owner that p is the parent of.');
+    expect(say('p in c.on.parent')).toBe('c is on an owner of which p is the parent.');
   });
 
   /**
@@ -1622,8 +1632,8 @@ describe('an expression said through the types of its columns', () => {
    * @canon spec-two-expressions-that-are-equal-are-said-member-by-member
    */
   it('says two expressions that are equal member by member', () => {
-    expect(say('c.on.parent = o')).toBe('For every owner O1:\n  both or neither of these hold:\n    - c is on an owner that owner O1 is the parent of\n    - owner O1 and o are the same');
-    expect(say('c.on.parent != o')).toBe('There is an owner O1 such that exactly one of these holds:\n  - c is on an owner that owner O1 is the parent of\n  - owner O1 and o are the same');
+    expect(say('c.on.parent = o')).toBe('For every owner O1:\n  both or neither of these hold:\n    - c is on an owner of which owner O1 is the parent\n    - owner O1 and o are the same');
+    expect(say('c.on.parent != o')).toBe('There is an owner O1 such that exactly one of these holds:\n  - c is on an owner of which owner O1 is the parent\n  - owner O1 and o are the same');
   });
 
   /**

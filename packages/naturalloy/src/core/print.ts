@@ -7,11 +7,11 @@
  * a reader meets them. The items of a list that stand on their own may each use the same names.
  */
 import { shortNames } from './names.ts';
-import { type Readings, LINK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
+import { type Readings, LINK, LINK_MARK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
 import type { Clause, Num, Sentence, Term, Var } from './ir.ts';
 import type { PrintOptions } from './pass.ts';
 
-import { BINARY, COMPARED, INTRO, MOMENT, RULE, WRAP } from './constructs.ts';
+import { BINARY, COMPARED, INTRO, MOMENT, PREPOSITIONS, RULE, WRAP } from './constructs.ts';
 import { type Doc, type Every, isList, lines, markdownLines } from './layout.ts';
 import { articleFor, Vocabulary } from './vocabulary.ts';
 import { freeNames, holdsPhrase } from './walk.ts';
@@ -141,7 +141,15 @@ export class Printer {
         const rests = parts.map(part => part.slice(hole.length).trim());
         const negations = rests.every(rest => rest.startsWith('is not '));
         suffix = own` that ${negations ? 'is not ' : ''}${coordinate(negations ? rests.map(rest => rest.slice('is not '.length)) : rests, negations ? 'or' : 'and')}`;
-      } else suffix = own` that ${(parts[0] as string).slice(0, -hole.length).trim()}`;
+      } else {
+        // "a unit for which the checker reports no finding": a preposition before the hole goes before "which".
+        const rest = (parts[0] as string).slice(0, -hole.length).trim();
+        const after = new RegExp(`^(.*) (${PREPOSITIONS.join('|')})$`).exec(rest);
+        // Only where words stand between the verb and the preposition: "of which p is the parent", but "that d is on".
+        const last = after === null ? undefined : (after[1] as string).replace(LINK_MARK, (_, __, word: string) => word).split(' ').at(-1);
+        const verb = last !== undefined && (last === 'is' || last === 'are' || this.readings.verbs.has(last) || [...this.readings.verbs.values()].some(f => f.infinitive === last));
+        suffix = after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
+      }
     }
     if (np.det === 'no') return own`no ${np.other === undefined ? '' : 'other '}${noun}${suffix}`;
     if (np.other === undefined) return `${this.article(np.v.type)}${noun}${suffix}`;

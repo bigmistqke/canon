@@ -43,6 +43,19 @@ describe('the rules of reading', () => {
   });
 
   /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   */
+  it('reads a preposition and "which" as a relative clause of the noun before it', () => {
+    const units = withDefinitions(
+      parseReadings('noun Unit: unit\nnoun Test: test\nChecks.rel: {1} ^checks^ {2}\nClean: the checker ^reports^ no finding for {1} | the checker reports a finding for {1}'),
+      'sig Unit {} sig Test {} one sig Checks { rel: Test -> Unit } sig Clean in Unit {}'
+    );
+    const back = readsBack('some t: Test | some u: Unit | t->u in Checks.rel and u in Clean', units);
+    expect(back.words).toContain('a unit for which the checker reports no finding');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
    * @canon spec-the-noun-alone-names-the-one-thing-of-its-kind
    */
   it('names the one thing of its kind by its noun, and two of a kind by their numbers', () => {

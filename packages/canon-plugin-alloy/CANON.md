@@ -2054,7 +2054,7 @@ So the checker reports a formula that no other formula can contradict, and only 
 >
 > There is a [*unit*](../canon/CANON.md#term-unit) such that all of these hold:
 > - the unit holds a formula
-> - a claim, a definition or a fact of the unit uses a [*signature*](#term-signature) that the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on
+> - a claim, a definition or a fact of the unit uses a [*signature*](#term-signature) on which the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone
 <!-- statement-scenario-1-axiom-a-formula-can-be-held-against-the-other-formulas:end -->
 
 <details>

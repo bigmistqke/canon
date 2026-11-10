@@ -10,7 +10,7 @@
 import { longNames } from './names.ts';
 import type { Readings } from '../readings.ts';
 import { unbracketed } from '../readings.ts';
-import { BINARY, COMPARED, INTRO, MOMENT, RULE, WRAP } from './constructs.ts';
+import { BINARY, COMPARED, INTRO, MOMENT, PREPOSITIONS, RULE, WRAP } from './constructs.ts';
 import type { Clause, Compared, Moment, NounPhrase, Num, Sentence, Term, Var } from './ir.ts';
 import { type Doc, readLayout } from './layout.ts';
 import { Vocabulary } from './vocabulary.ts';
@@ -141,7 +141,9 @@ export class Parser {
         others.splice(0, 1, ...this.terms(other[1] as string, scope));
         relativeWords = other[2] ?? '';
       }
-      const relatives: (Sentence | undefined)[] = relativeWords === '' ? [undefined] : relativeWords.startsWith('that ') ? this.relative(relativeWords.slice(5), v, scope) : [];
+      const which = new RegExp(`^(${PREPOSITIONS.join('|')}) which (.+)$`).exec(relativeWords);
+      const relatives: (Sentence | undefined)[] =
+        relativeWords === '' ? [undefined] : relativeWords.startsWith('that ') ? this.relative(relativeWords.slice(5), v, scope) : which !== null ? this.afterWhich(which[2] as string, which[1] as string, v, scope) : [];
       for (const otherTerm of others)
         for (const relative of relatives) {
           const np: NounPhrase = { t: 'np', det: det === 'no' || det === 'no other' ? 'no' : 'a', v };
@@ -181,6 +183,12 @@ export class Parser {
     // "an issue that tracker does not know": the variable at the end.
     out.push(...this.clauses(`${words} ${hole}`, inner));
     return out;
+  }
+
+  /** The words after a preposition and "which": a condition with the variable after that preposition, at its end. */
+  private afterWhich(words: string, preposition: string, v: Var, scope: Scope): Sentence[] {
+    const hole = '\u0003';
+    return this.clauses(`${words} ${preposition} ${hole}`, new Map([...scope, [hole, { t: 'var', v } as Term]]));
   }
 
   /** Every way to read words as a series of two or three parts, "a, b and c" or "a and b". */

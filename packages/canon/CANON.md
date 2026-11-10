@@ -446,7 +446,7 @@ some a: Axiom, s: Spec, t: Test, g: Tag, d: Document, i: Index | s->a in Sit.rel
 > - the [*tracker*](#term-tracker) knows the issue
 > - the tracker has not closed the issue
 > - the checker reports no [*finding*](#term-finding) for the bug
-> - an [*expected failure*](#term-expected-failure) that the checker reports no finding for [*checks*](#term-check) the bug
+> - an [*expected failure*](#term-expected-failure) for which the checker reports no finding [*checks*](#term-check) the bug
 <!-- statement-scenario-2-term-checker:end -->
 
 <details>
