@@ -63,13 +63,16 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
   const model = documents.flatMap(d => d.blocks).filter(b => b.lang === 'alloy' && (b.role === 'vocabulary' || (b.role === 'unit' && PARAGRAPHS.test(b.body))));
   // Each block is read for the unit that holds it, so that a word in brackets links to the term that says it.
   const merged = parseReadings('');
+  // A verb table serves the readings of every unit, so each block is read with every verb line of the documents.
+  const verbLines = documents.flatMap(d => d.readings.flatMap(block => block.body.split('\n').filter(line => /^\s*verb\s/.test(line)))).join('\n');
   for (const { path, readings } of documents) {
     for (const block of readings) {
-      const part = parseReadings(block.body, `${path ?? ''}#${block.unit}`, path);
+      const part = parseReadings(`${verbLines}\n${block.body}`, `${path ?? ''}#${block.unit}`, path);
       for (const [key, value] of part.nouns) merged.nouns.set(key, value);
       for (const [key, value] of part.nounTargets) merged.nounTargets.set(key, value);
       for (const [key, value] of part.articles) merged.articles.set(key, value);
       for (const [key, value] of part.atoms) merged.atoms.set(key, value);
+      for (const [key, value] of part.verbs) merged.verbs.set(key, value);
     }
   }
   // A signature with no noun, declared in a term whose stem its name spells, has the term as its noun.

@@ -71,6 +71,21 @@ describe('a noun table', () => {
   });
 });
 
+describe('a verb table', () => {
+  /**
+   * @canon spec-a-row-of-a-verb-table-gives-the-forms-of-its-verb
+   */
+  it('gives a marked verb the infinitive that its negative takes', () => {
+    const negated = (tables: string): string => statementOf(doc(tables).replace('all n: Node | n in Done', 'all n: Node | n not in Done'));
+    const verbs = '| verb | infinitive | participle |\n|---|---|---|\n| keeps | keep | kept |';
+    const marked = '| reading | holds | does not hold |\n|---|---|---|\n| Done | {1} ^keeps^ readings | |';
+    expect(negated(`${marked}\n\n${verbs}`)).toContain('does not keep readings');
+    // The verb table may stand in another unit than the reading it serves.
+    const apart = doc(marked).replace('all n: Node | n in Done', 'all n: Node | n not in Done').replace('> A root.', `> A root.\n\n${verbs}`);
+    expect(statementOf(apart)).toContain('does not keep readings');
+  });
+});
+
 describe('a signature named after the term that declares it', () => {
   /**
    * @canon spec-a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun

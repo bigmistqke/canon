@@ -56,6 +56,48 @@ describe('the formulas of the lifetimes example', () => {
   });
 });
 
+describe('a marked verb', () => {
+  const marked = (lines: string): ReturnType<typeof parseReadings> => parseReadings(`noun Unit: unit\nverb keeps: keep, kept\n${lines}`);
+
+  /**
+   * @canon spec-a-mark-is-no-part-of-the-words-of-a-reading
+   */
+  it('is said without its carets', () => {
+    expect(say('all u: Unit | u in Worded', marked('Worded: {1} ^keeps^ readings | {1} keeps no readings'))).toBe('For every unit:\n  the unit keeps readings.');
+    expect(marked('Worded: {1} ^keeps^ readings').atoms.get('Worded')?.positive).toBe('{1} keeps readings');
+  });
+
+  /**
+   * @canon spec-a-verb-line-gives-the-forms-of-a-marked-verb
+   */
+  it('takes its infinitive and its participle from a verb line', () => {
+    expect(marked('').verbs.get('keeps')).toEqual({ infinitive: 'keep', participle: 'kept' });
+  });
+
+  /**
+   * @canon spec-a-reading-with-no-negative-side-takes-the-negative-of-its-frame
+   */
+  it('gives a reading with no negative side the negative of its frame', () => {
+    const readings = marked('Worded: {1} ^keeps^ readings\nAmbiguous: {1} ^is^ ambiguous\nPaired: the sides of {1} ^are^ paired |');
+    expect(readings.atoms.get('Worded')?.negative).toBe('{1} does not keep readings');
+    expect(readings.atoms.get('Ambiguous')?.negative).toBe('{1} is not ambiguous');
+    expect(readings.atoms.get('Paired')?.negative).toBe('the sides of {1} are not paired');
+    // A negative the author writes wins over the frame's.
+    expect(marked('Worded: {1} ^keeps^ readings | {1} keeps no readings').atoms.get('Worded')?.negative).toBe('{1} keeps no readings');
+    expect(say('all u: Unit | u not in Worded', readings)).toBe('For every unit:\n  the unit does not keep readings.');
+  });
+
+  /**
+   * @canon spec-a-reading-whose-negative-its-frame-cannot-give-is-refused
+   */
+  it('refuses a line with no negative side whose verb has no infinitive', () => {
+    expect(() => marked('Asked: {1} ^asks^ for help')).toThrow(Refusal);
+    expect(() => marked('Asked: {1} ^asks^ for help')).toThrow(/asks/);
+    // With a negative side, the verb needs no infinitive.
+    expect(() => marked('Asked: {1} ^asks^ for help | {1} asks for no help')).not.toThrow();
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence

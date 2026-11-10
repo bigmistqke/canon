@@ -92,6 +92,7 @@ It writes its own terms and claims in Alloy, as the checker does. The plugin say
   - [`@spec generate-writes-no-statement-for-a-unit-of-an-extended-document`](#spec-generate-writes-no-statement-for-a-unit-of-an-extended-document)
   - [`@spec a-word-declared-in-an-extended-document-is-declared`](#spec-a-word-declared-in-an-extended-document-is-declared)
   - [`@spec a-row-of-a-reading-table-is-a-reading`](#spec-a-row-of-a-reading-table-is-a-reading)
+  - [`@spec a-row-of-a-verb-table-gives-the-forms-of-its-verb`](#spec-a-row-of-a-verb-table-gives-the-forms-of-its-verb)
   - [`@spec a-row-of-a-noun-table-gives-the-noun-of-its-signature`](#spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature)
   - [`@spec check-reports-a-linked-word-that-no-form-of-its-term-spells`](#spec-check-reports-a-linked-word-that-no-form-of-its-term-spells)
   - [`@spec a-signature-declared-in-a-nested-term-has-the-term-as-its-noun`](#spec-a-signature-declared-in-a-nested-term-has-the-term-as-its-noun)
@@ -1561,6 +1562,12 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 > The [*checker*](../canon/CANON.md#term-checker) reads each row of a [*reading table*](#term-reading-table) as the reading of its key. Its `holds` cell is the positive side, and its `does not hold` cell the negative side.
 
 This follows because the checker says a statement with the readings of its words, wherever the document writes them.
+
+### @spec a-row-of-a-verb-table-gives-the-forms-of-its-verb
+
+> The [*checker*](../canon/CANON.md#term-checker) reads each row of a [*verb table*](#term-verb-table) as the infinitive and the participle of its verb, for every reading it reads with the [*document*](../canon/CANON.md#term-document), wherever that reading stands.
+
+This follows because a reading that marks its verb and writes no negative takes its negative from the infinitive of the verb. A verb table in one unit serves the readings of every unit, as a noun serves every statement.
 
 ### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
 

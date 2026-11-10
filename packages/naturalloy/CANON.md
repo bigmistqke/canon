@@ -327,6 +327,11 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-second-side-that-holds-a-time-phrase-before-an-otherwise-is-set-apart`](#spec-a-second-side-that-holds-a-time-phrase-before-an-otherwise-is-set-apart)
   - [`@spec a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart`](#spec-a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart)
 - [`@axiom a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
+  - [`@spec a-reading-gives-its-frame-by-a-marked-verb`](#spec-a-reading-gives-its-frame-by-a-marked-verb)
+    - [`@spec a-mark-is-no-part-of-the-words-of-a-reading`](#spec-a-mark-is-no-part-of-the-words-of-a-reading)
+    - [`@spec a-verb-line-gives-the-forms-of-a-marked-verb`](#spec-a-verb-line-gives-the-forms-of-a-marked-verb)
+    - [`@spec a-reading-with-no-negative-side-takes-the-negative-of-its-frame`](#spec-a-reading-with-no-negative-side-takes-the-negative-of-its-frame)
+    - [`@spec a-reading-whose-negative-its-frame-cannot-give-is-refused`](#spec-a-reading-whose-negative-its-frame-cannot-give-is-refused)
 - [`@thread a-statement-could-be-said-in-tiers-from-its-ir`](#thread-a-statement-could-be-said-in-tiers-from-its-ir)
 - [`@axiom a-short-list-of-rules-settles-what-english-leaves-open`](#axiom-a-short-list-of-rules-settles-what-english-leaves-open)
   - [`@spec a-noun-phrase-covers-the-clause-it-stands-in`](#spec-a-noun-phrase-covers-the-clause-it-stands-in)
@@ -4105,6 +4110,36 @@ This follows because more people read a statement than write it, and stiff words
 The [*frame*](#term-frame) of each reading tells the verbalizer which of those turns a reading can take.
 
 The axiom ranks below [`axiom-a-formula-is-said-without-loss`](#axiom-a-formula-is-said-without-loss). Where the two pull apart, a loss is refused before a stiff phrase is. So fluency goes only as far as a rule of [`axiom-a-short-list-of-rules-settles-what-english-leaves-open`](#axiom-a-short-list-of-rules-settles-what-english-leaves-open) pins it down. A turn of English that readers do not apply the same way each time, such as which noun a trailing clause belongs to, stays out. The words fall back to bullets there.
+
+### @spec a-reading-gives-its-frame-by-a-marked-verb
+
+> The [*verbalizer*](#term-verbalizer) reads the word of a reading between carets as its verb, which gives the reading its [*frame*](#term-frame).
+
+This follows because a relative clause, a passive and a negative each change the words around the verb, and the verb is where a reading's words turn. The verbalizer needs to know where it stands to say any of these.
+
+#### @spec a-mark-is-no-part-of-the-words-of-a-reading
+
+> The carets of a mark are no part of the words of a reading: `{1} ^keeps^ readings` is said "keeps readings".
+
+This follows because the mark is for the verbalizer, and the reader sees the words alone.
+
+#### @spec a-verb-line-gives-the-forms-of-a-marked-verb
+
+> A line `verb keeps: keep, kept` of the readings gives the marked verb `keeps` its infinitive `keep` and its participle `kept`.
+
+This follows because the verbalizer inflects no word itself. A rule of English would say "keeped".
+
+#### @spec a-reading-with-no-negative-side-takes-the-negative-of-its-frame
+
+> Where a reading marks its verb and gives no negative side, its negative is its positive with "is not" for "is", "are not" for "are", and "does not" and the infinitive for any other verb: `{1} ^keeps^ readings` gives `{1} does not keep readings`.
+
+This follows because a negative that says the positive with "not" at its verb says exactly that the positive does not hold. The author writes a negative only where another one reads better, such as "keeps no readings".
+
+#### @spec a-reading-whose-negative-its-frame-cannot-give-is-refused
+
+> The [*verbalizer*](#term-verbalizer) refuses a line of readings that gives no negative side and marks a verb that is not "is" or "are" and that no `verb` line gives the infinitive of.
+
+This follows because a negative the verbalizer had to guess could say something else than the positive does not hold. The refusal names the verb.
 
 ## @thread a-statement-could-be-said-in-tiers-from-its-ir
 

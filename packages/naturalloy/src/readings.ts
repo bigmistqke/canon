@@ -28,6 +28,8 @@ export function asRefusal(error: unknown): Refusal {
 export interface Reading {
   positive: string;
   negative?: string;
+  /** The verb the positive side marks between carets, which gives the reading its frame: `keeps` in `{1} ^keeps^ readings`. */
+  verb?: string;
   /** Where a word in brackets that names no link of its own links to: the place that holds the line, as an href. */
   target?: string;
 }
@@ -56,6 +58,8 @@ export interface Readings {
   articles: Map<string, string>;
   /** The reading of a set, a field, a relation or a predicate, by its name. */
   atoms: Map<string, Reading>;
+  /** The other forms of each verb a reading marks, by its third person: `keeps` has the infinitive `keep` and the participle `kept`. */
+  verbs: Map<string, { infinitive: string; participle?: string }>;
   /**
    * The predicates of the vocabulary. A call of one that has no reading of its
    * own is said by its body, with the arguments in place of the parameters.
@@ -247,10 +251,18 @@ export const withDefinitions = (readings: Readings, vocabulary: string): Reading
  * link in it to an anchor of its own document, `(#term-checker)`, goes through the path.
  */
 export function parseReadings(text: string, target?: string, base?: string): Readings {
-  const readings: Readings = { nouns: new Map([['Int', 'integer'], ['seq/Int', 'sequence index']]), nounTargets: new Map(), articles: new Map(), atoms: new Map(), definitions: new Map(), fields: new Map(), variables: new Set(), holders: new Map(), functions: new Map(), macros: new Map() };
-  for (const raw of text.split('\n')) {
-    const line = (base === undefined ? raw : raw.replace(/\]\(#([^)\s]+)\)/g, `](${base}#$1)`)).trim();
-    if (line === '' || line.startsWith('#')) continue;
+  const readings: Readings = { nouns: new Map([['Int', 'integer'], ['seq/Int', 'sequence index']]), nounTargets: new Map(), articles: new Map(), atoms: new Map(), verbs: new Map(), definitions: new Map(), fields: new Map(), variables: new Set(), holders: new Map(), functions: new Map(), macros: new Map() };
+  const lines = text.split('\n').map(raw => (base === undefined ? raw : raw.replace(/\]\(#([^)\s]+)\)/g, `](${base}#$1)`)).trim());
+  // The verb lines first, so that a reading above its verb's line takes the verb's forms too.
+  for (const line of lines) {
+    const verb = /^verb\s+(\S+)\s*:\s*(.+)$/.exec(line);
+    if (!verb) continue;
+    const [infinitive, participle] = (verb[2] as string).split(',').map(form => form.trim());
+    if (!infinitive) throw new Refusal(`a verb line gives no infinitive: ${line}`);
+    readings.verbs.set(verb[1] as string, participle ? { infinitive, participle } : { infinitive });
+  }
+  for (const line of lines) {
+    if (line === '' || line.startsWith('#') || /^verb\s/.test(line)) continue;
     const noun = /^noun\s+(\w+)\s*:\s*(.+)$/.exec(line);
     if (noun) {
       const written = /^(an?)\s+(.+)$/.exec((noun[2] as string).trim());
@@ -265,11 +277,31 @@ export function parseReadings(text: string, target?: string, base?: string): Rea
     }
     const atom = /^([\w.'/]+)\s*:\s*(.+)$/.exec(line);
     if (!atom) throw new Refusal(`cannot read the line of readings: ${line}`);
-    const [positive, negative] = (atom[2] as string).split('|').map(part => part.trim());
-    readings.atoms.set(atom[1] as string, { positive: positive as string, negative, target });
+    const [marked, written] = (atom[2] as string).split('|').map(part => part.trim());
+    const verb = /\^([^^]+)\^/.exec(marked as string);
+    const positive = (marked as string).replace(/\^([^^]+)\^/g, '$1');
+    const negative = written !== undefined && written !== '' ? written.replace(/\^([^^]+)\^/g, '$1') : verb === null ? undefined : framedNegative(marked as string, verb[1] as string, readings.verbs, line);
+    readings.atoms.set(atom[1] as string, { positive, ...(negative === undefined ? {} : { negative }), ...(verb === null ? {} : { verb: unbracketed(verb[1] as string) }), target });
     balanced(line);
   }
   return readings;
+}
+
+/**
+ * The negative of a reading that marks its verb and writes none: its positive with "not" at the verb. "is" and "are"
+ * take "not" after them; any other verb takes "does not" and its infinitive, which a verb line gives, keeping a link
+ * the verb has. A verb with no infinitive refuses the line.
+ */
+function framedNegative(marked: string, verb: string, verbs: Readings['verbs'], line: string): string {
+  const word = unbracketed(verb);
+  let negated: string;
+  if (word === 'is' || word === 'are') negated = `${verb} not`;
+  else {
+    const forms = verbs.get(word);
+    if (forms === undefined) throw new Refusal(`no verb line gives the infinitive of "${word}", so the line has no negative: ${line}`);
+    negated = `does not ${verb.replace(word, forms.infinitive)}`;
+  }
+  return marked.replace(`^${verb}^`, negated).replace(/\^([^^]+)\^/g, '$1');
 }
 
 /** Marks a word that names a term, and so links: the mark, the href, the mark, the word, the mark. */
