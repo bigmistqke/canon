@@ -307,6 +307,8 @@ export const SWEEP: { what: string; formula: string }[] = [
     'all c: Cleanup | all o: Owner | (c in Ran and o in Disposed and o not in Stopped) implies o in c.on',
     'all c: Cleanup, o: Owner | o in Disposed implies o in c.on'
   ].map(formula => ({ what: 'a rule over several things', formula })),
+  // A thing that only the first side of a rule names: said there as a noun phrase, and "another" for one that must differ.
+  ...['all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran', 'all o, p: Owner, c: Cleanup | (p != o and c in p.~on) implies o in Disposed', 'some d: Cleanup | d->c in Clock.older'].map(formula => ({ what: 'a thing only the first side of a rule names', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

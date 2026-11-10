@@ -20,7 +20,7 @@ describe('the units of the lifetimes fixture', () => {
 
   it('says both sentences of the reported-failure spec, as pulse states them', () => {
     // Pulse: "An error that an owner's cleanup throws during its dispose reaches the nearest error handler or boundary above that owner. The dispose does not throw."
-    expect(src).toContain('is on the owner and pulse has disposed the owner, then from now on, the dispose of the owner has not thrown');
+    expect(src).toContain('when pulse has disposed the owner and a [*failing cleanup*](#term-failing-cleanup) that runs is on the owner, then from now on, the dispose of the owner has not thrown');
     expect(src).toContain('>   - owner O2 is the nearest error handler or boundary above owner O1');
     expect(src).toContain('>   then now or later, the error of the failing cleanup has reached owner O2.');
   });

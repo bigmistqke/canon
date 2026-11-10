@@ -164,6 +164,28 @@ describe('a rule over several things', () => {
   });
 });
 
+describe('a noun phrase inside its clause', () => {
+  /**
+   * @canon spec-a-bare-noun-phrase-may-stand-inside-its-clause
+   */
+  it('stands inside its clause where it has no relative clause', () => {
+    expect(say('some d: Cleanup | d->c in Clock.older')).toBe('Code registered a cleanup before c.');
+    // One with "no" stays out of the clause.
+    expect(say('no d: Cleanup | d->c in Clock.older')).not.toMatch(/registered no cleanup/);
+  });
+});
+
+describe('a thing only the first side of a rule names', () => {
+  /**
+   * @canon spec-a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase
+   */
+  it('is said there as a noun phrase', () => {
+    expect(say('all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran')).toBe('When a cleanup is on an owner that pulse has disposed, the cleanup has run.');
+    // Where its clauses make no noun phrase, the thing stays in the "for every".
+    expect(say('all c: Cleanup, o: Owner | (o in c.on and o in Stopped and o in Disposed) implies c in Ran')).toMatch(/owner/);
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence
@@ -257,8 +279,8 @@ describe('the words', () => {
       'When pulse disposes an owner and a cleanup is on the owner, pulse has disposed the owner.'
     );
     // Several variables, each first named in the first side, or in a claim said before "when".
-    expect(say('all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies c in Ran')).toBe(
-      'When a cleanup is on an owner and pulse has disposed the owner, the cleanup has run.'
+    expect(say('all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies (c in Ran and o in Stopped)')).toBe(
+      'When a cleanup is on an owner and pulse has disposed the owner, the cleanup has run and the dispose of the owner has been stopped.'
     );
     expect(say('all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on')).toBe(
       ['A cleanup is on an owner when all of these hold:', '  - code has registered the cleanup', '  - pulse has disposed the owner', '  - the dispose of the owner has been stopped', '  - the cleanup has run'].join('\n')

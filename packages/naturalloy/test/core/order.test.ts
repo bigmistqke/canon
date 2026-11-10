@@ -17,6 +17,13 @@ const at = (name: string): number => {
 
 describe('the order of the passes', () => {
   /**
+   * @canon spec-a-thing-goes-into-the-first-side-before-noun-phrases-are-said
+   */
+  it('says a thing in the first side of a rule before it says noun phrases', () => {
+    expect(at('some-in-when')).toBeLessThan(at('noun-phrases'));
+  });
+
+  /**
    * @canon spec-for-every-becomes-one-before-each-thing-is-said-as-every
    */
   it('makes a "for every" inside another one before it says each thing as "every"', () => {

@@ -5,7 +5,7 @@ import { forEveryTogether, rulesAsEquivalence } from './merge.ts';
 import { exactlyOne, negationInward } from './negate.ts';
 import { alwaysInsideForEvery, fromNowOnWhenever, untilInASentence } from './time.ts';
 import { conditionsApart, thereIsAThat, xAndNoOther } from './subject.ts';
-import { anotherOfAKind, definitionByKinds, everyPhrases, nounPhrases, someInside } from './phrases.ts';
+import { anotherOfAKind, definitionByKinds, everyPhrases, nounPhrases, someInside, someInWhen } from './phrases.ts';
 import { noneOfThese } from './shared.ts';
 
 export const PASSES: readonly Pass[] = [
@@ -19,6 +19,7 @@ export const PASSES: readonly Pass[] = [
   conditionsApart,
   anotherOfAKind,
   someInside,
+  someInWhen,
   nounPhrases,
   definitionByKinds,
   thereIsAThat,

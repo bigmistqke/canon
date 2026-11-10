@@ -184,6 +184,9 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   let main = ps.findIndex((_, i) => fits(i) && places[i] === 'end');
   if (main === -1) main = ps.findIndex((_, i) => fits(i) && places[i] === 'start');
   if (main === -1 && ofSet && ps.length === 1 && places[0] === 'inside') main = 0;
+  // A bare noun phrase with "a", with no relative clause, may stand inside its clause: "a block of another unit names the
+  // word". One with "no" may not: "the author asks about leaving out no unit" reads as asking about leaving nothing out.
+  if (main === -1 && q === 'some' && ps.length === 1 && places[0] === 'inside' && fits(0)) main = 0;
   if (main === -1) return undefined;
   const relative = ps.filter((_, i) => i !== main);
   // The others say more of the variable: each as its subject, or one with it at its end, "an issue that tracker does not know".
@@ -292,6 +295,34 @@ export const someInside = everywhere('some-inside', 'spec-a-thing-of-a-some-is-s
   }
   if (!changed) return undefined;
   return { ...s, vars, body: items.length === 1 ? (items[0] as Sentence) : { t: 'and', items } };
+});
+
+/**
+ * A "for every" whose rule names a thing in its first side alone, said with that thing as a "some" there, where the
+ * clauses that name it make a noun phrase of it: `all x, v | (r and g) implies t` is `all x | (r and (some v | g))
+ * implies t` when neither `r` nor `t` names `v`.
+ */
+export const someInWhen = everywhere('some-in-when', 'spec-a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'all' || s.vars.length < 2 || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
+  const rule = s.body;
+  let vars = [...s.vars];
+  let items = rule.when.t === 'and' ? [...rule.when.items] : [rule.when];
+  let changed = false;
+  for (const v of [...s.vars].reverse()) {
+    if (vars.length < 2 || names(rule.then, v)) continue;
+    const named = items.filter(item => names(item, v));
+    if (named.length === 0) continue;
+    // Beside another thing of its kind it reads as a second "a cleanup", which may be the first: only "another" tells them apart.
+    const kin = vars.filter(x => x !== v && x.type === v.type);
+    if (kin.some(x => !named.some(item => { const other = differsFrom(item, v); return other?.t === 'var' && other.v.id === x.id; }))) continue;
+    const body: Sentence = named.length === 1 ? (named[0] as Sentence) : { t: 'and', items: named };
+    if (absorbed('some', v, body, context) === undefined) continue;
+    items = [...items.filter(item => !named.includes(item)), { t: 'quant', q: 'some', vars: [v], body }];
+    vars = vars.filter(x => x !== v);
+    changed = true;
+  }
+  if (!changed) return undefined;
+  return { ...s, vars, body: { ...rule, when: items.length === 1 ? (items[0] as Sentence) : { t: 'and', items } } };
 });
 
 /** The quantifier said as noun phrases, each variable inside the next, or undefined where one does not fit. */

@@ -97,7 +97,7 @@ describe('the rules of reading', () => {
       'sig Cleanup {} var sig Ran in Cleanup {} pred quiet[c: Cleanup] { c in Ran }'
     );
     // Two such nouns in one first side, and in a claim before "when": every pair.
-    for (const formula of ['all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies c in Ran', 'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on']) {
+    for (const formula of ['all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies (c in Ran and o in Stopped)', 'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on']) {
       const pair = readsBack(formula, readings);
       expect(pair.words).toMatch(/^(When a cleanup|A cleanup is on an owner)/);
       expect(pair.meanings).toEqual([pair.meant]);

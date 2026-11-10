@@ -45,6 +45,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
       - [`@spec two-rules-become-one-equivalence-before-an-equivalence-is-said-with-exactly-when`](#spec-two-rules-become-one-equivalence-before-an-equivalence-is-said-with-exactly-when)
       - [`@spec a-thing-of-a-some-goes-inside-before-noun-phrases-are-said`](#spec-a-thing-of-a-some-goes-inside-before-noun-phrases-are-said)
       - [`@spec for-every-becomes-one-before-each-thing-is-said-as-every`](#spec-for-every-becomes-one-before-each-thing-is-said-as-every)
+      - [`@spec a-thing-goes-into-the-first-side-before-noun-phrases-are-said`](#spec-a-thing-goes-into-the-first-side-before-noun-phrases-are-said)
       - [`@spec clauses-become-a-sentence-before-a-rule-goes-on-one-line`](#spec-clauses-become-a-sentence-before-a-rule-goes-on-one-line)
       - [`@spec clauses-become-a-sentence-before-their-shared-words-are-said-once`](#spec-clauses-become-a-sentence-before-their-shared-words-are-said-once)
       - [`@spec clauses-become-a-sentence-before-a-second-side-goes-first`](#spec-clauses-become-a-sentence-before-a-second-side-goes-first)
@@ -289,6 +290,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-sentence-starts-with-a-capital-on-the-word-and-not-on-the-bracket`](#spec-a-sentence-starts-with-a-capital-on-the-word-and-not-on-the-bracket)
   - [`@spec a-reading-held-by-no-unit-has-plain-words`](#spec-a-reading-held-by-no-unit-has-plain-words)
   - [`@spec a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase`](#spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase)
+  - [`@spec a-bare-noun-phrase-may-stand-inside-its-clause`](#spec-a-bare-noun-phrase-may-stand-inside-its-clause)
   - [`@spec a-noun-phrase-can-be-the-subject-of-a-sentence`](#spec-a-noun-phrase-can-be-the-subject-of-a-sentence)
   - [`@spec what-else-is-true-of-the-variable-is-a-relative-clause`](#spec-what-else-is-true-of-the-variable-is-a-relative-clause)
   - [`@spec relative-clauses-that-share-their-subject-say-it-once`](#spec-relative-clauses-that-share-their-subject-say-it-once)
@@ -334,6 +336,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart`](#spec-a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart)
 - [`@axiom a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
   - [`@spec each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions`](#spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions)
+  - [`@spec a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase`](#spec-a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase)
   - [`@spec a-thing-of-a-some-is-said-inside-the-clauses-that-name-it`](#spec-a-thing-of-a-some-is-said-inside-the-clauses-that-name-it)
   - [`@spec a-reading-gives-its-frame-by-a-marked-verb`](#spec-a-reading-gives-its-frame-by-a-marked-verb)
     - [`@spec a-mark-is-no-part-of-the-words-of-a-reading`](#spec-a-mark-is-no-part-of-the-words-of-a-reading)
@@ -977,10 +980,10 @@ The standard verbs are the common verbs that readings use, such as "holds", "rep
 ```alloy vocabulary
 sig Pass { ahead: set Pass }
 sig OfIR, OfPrinter in Pass {}
-sig NegationInward, ConditionsApart, AnotherOfAKind, NounPhrases, ThereIsAThat, XAndNoOther, ForEveryTogether, UntilInASentence, TimePhraseInFront, ClausesInASentence, NoneOfThese, RuleOnOneLine, FromNowOnWhenever, ClaimFirst, RulesAsEquivalence, ExactlyWhen, SomeInside, EveryPhrases in Pass {}
+sig NegationInward, ConditionsApart, AnotherOfAKind, NounPhrases, ThereIsAThat, XAndNoOther, ForEveryTogether, UntilInASentence, TimePhraseInFront, ClausesInASentence, NoneOfThese, RuleOnOneLine, FromNowOnWhenever, ClaimFirst, RulesAsEquivalence, ExactlyWhen, SomeInside, EveryPhrases, SomeInWhen in Pass {}
 fact passes {
   Pass = OfIR + OfPrinter and no OfIR & OfPrinter
-  NegationInward + ConditionsApart + AnotherOfAKind + NounPhrases + ThereIsAThat + XAndNoOther + ForEveryTogether + UntilInASentence + TimePhraseInFront + ClausesInASentence + NoneOfThese + RuleOnOneLine + FromNowOnWhenever + ClaimFirst + RulesAsEquivalence + ExactlyWhen + SomeInside + EveryPhrases in OfIR
+  NegationInward + ConditionsApart + AnotherOfAKind + NounPhrases + ThereIsAThat + XAndNoOther + ForEveryTogether + UntilInASentence + TimePhraseInFront + ClausesInASentence + NoneOfThese + RuleOnOneLine + FromNowOnWhenever + ClaimFirst + RulesAsEquivalence + ExactlyWhen + SomeInside + EveryPhrases + SomeInWhen in OfIR
 }
 ```
 
@@ -1007,6 +1010,7 @@ fact passes {
 | ExactlyWhen        | {1} ^says^ an equivalence with "exactly when"                                                |               |
 | SomeInside         | {1} ^says^ a thing of a "some" inside the clauses that name it                               |               |
 | EveryPhrases       | {1} ^says^ each thing of a rule over several as "every" and its conditions                   |               |
+| SomeInWhen         | {1} ^says^ a thing only the first side of a rule names as a noun phrase there                |               |
 
 </details>
 
@@ -1238,6 +1242,23 @@ all a: ForEveryTogether, b: EveryPhrases | a->b in ahead
 
 </details>
 
+###### @spec a-thing-goes-into-the-first-side-before-noun-phrases-are-said
+
+<!-- statement-spec-a-thing-goes-into-the-first-side-before-noun-phrases-are-said:begin — generated by `canon generate`; edits are overwritten -->
+> Every [*pass*](#term-pass) that says a thing only the first side of a rule names as a noun phrase there runs before every pass that says a quantifier as a noun phrase.
+<!-- statement-spec-a-thing-goes-into-the-first-side-before-noun-phrases-are-said:end -->
+
+One pass says a thing in the first side of a rule. That makes the "some" there which the pass of noun phrases turns into a noun phrase. Run in the other order, the thing would stay in the "for every" above the rule.
+
+<details>
+<summary>Alloy</summary>
+
+```alloy
+all a: SomeInWhen, b: NounPhrases | a->b in ahead
+```
+
+</details>
+
 ###### @spec clauses-become-a-sentence-before-a-rule-goes-on-one-line
 
 <!-- statement-spec-clauses-become-a-sentence-before-a-rule-goes-on-one-line:begin — generated by `canon generate`; edits are overwritten -->
@@ -1375,27 +1396,27 @@ This follows because the old form put a plural verb before a single noun, and "s
 This follows because for every x, for every y, a formula holds exactly when for every x and every y it holds. The second "for every" on a line of its own adds a level of indent and nothing else.
 
 <!-- pass-for-every-together:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `for-every-together` is pass 6 of 24 in the pipeline. It changes 188 of the 1772 formulas of the sweep.
+The pass `for-every-together` is pass 6 of 25 in the pipeline. It changes 188 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
 ```text
-always all o: Owner | all c: Cleanup | c in Ran implies o in Disposed
+all c: Cleanup, s: String | c.tags in "a"
 ```
 
 Without the pass:
 
 ```text
-For every owner:
-  for every cleanup:
-    from now on, whenever the cleanup has run, pulse has disposed the owner.
+For every cleanup and every text T1:
+  for every text T2:
+    when the cleanup is tagged text T2, text T2 and "a" are the same.
 ```
 
 With it:
 
 ```text
-For every owner and every cleanup:
-  from now on, whenever the cleanup has run, pulse has disposed the owner.
+For every text T1 and every text T2:
+  when a cleanup is tagged text T2, text T2 and "a" are the same.
 ```
 <!-- pass-for-every-together:end -->
 
@@ -1406,7 +1427,7 @@ For every owner and every cleanup:
 This follows because the noun beside each name tells the reader the kind of the variable wherever it shows. The reader never has to look back to the clause that introduced it. The letters and the number tell it apart from the other variables.
 
 <!-- pass-short-names:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `short-names` is pass 24 of 24 in the pipeline. It changes 1544 of the 1772 formulas of the sweep.
+The pass `short-names` is pass 25 of 25 in the pipeline. It changes 1545 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -1446,7 +1467,7 @@ This follows because "the unit" can then point at one thing only. A number that 
 A variable that a count says first keeps its number: "the values of the owner" would read as the values of one owner.
 
 <!-- pass-lone-numbers-dropped:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `lone-numbers-dropped` is pass 22 of 24 in the pipeline. It changes 1491 of the 1772 formulas of the sweep.
+The pass `lone-numbers-dropped` is pass 23 of 25 in the pipeline. It changes 1461 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -1483,7 +1504,7 @@ Derives from: [`spec-a-variable-alone-of-its-noun-is-named-the-noun`](#spec-a-va
 This follows because the reading rules give "a bug" in a "when" the meaning of every bug. They do so for each noun that the words name again. A line "for every bug:" above the rule then tells the reader nothing more. Where one variable of the "for every" keeps its number, its line stays, and with it the others. A variable named only once would leave "a bug" free to mean one bug or every bug, so the words keep the "for every" there.
 
 <!-- pass-a-noun-for-every:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `a-noun-for-every` is pass 23 of 24 in the pipeline. It changes 16 of the 1772 formulas of the sweep.
+The pass `a-noun-for-every` is pass 24 of 25 in the pipeline. It changes 18 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -1690,7 +1711,7 @@ This follows because the table gives each word a positive and a negative reading
 This follows because the negative reading of each clause says the negation in the words of the table. Moving the `not` inward reaches those clauses without changing what the formula claims.
 
 <!-- pass-negation-inward:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `negation-inward` is pass 1 of 24 in the pipeline. It changes 115 of the 1772 formulas of the sweep.
+The pass `negation-inward` is pass 1 of 25 in the pipeline. It changes 115 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -1740,7 +1761,7 @@ This follows because a rule fails exactly when its condition holds and its conse
 This follows because an equivalence fails exactly when one side holds and the other does not.
 
 <!-- pass-exactly-one:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `exactly-one` is pass 2 of 24 in the pipeline. It changes 30 of the 1772 formulas of the sweep.
+The pass `exactly-one` is pass 2 of 25 in the pipeline. It changes 30 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -1995,7 +2016,7 @@ This follows because a set equals `y` when `y` is in it and nothing else is. The
 This follows because a set equals `x` when `x` is in it and nothing else is, and the two halves say just that. "No other" alone hints that `x` is in the set, which [`spec-no-with-another-is-said-in-full`](#spec-no-with-another-is-said-in-full) guards against. Here the first half says it, so the hint is true. A plain clause keeps "no other" at the level of the claim. Inside a noun phrase, as in "an owner that no other owner is the parent of", it would cover less.
 
 <!-- pass-x-and-no-other:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `x-and-no-other` is pass 5 of 24 in the pipeline. It changes 22 of the 1772 formulas of the sweep.
+The pass `x-and-no-other` is pass 5 of 25 in the pipeline. It changes 22 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2298,7 +2319,7 @@ all f: Series | (f in OneLineRule and f not in TimeFirst) implies f in OneLine
 </details>
 
 <!-- pass-rule-on-one-line:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `rule-on-one-line` is pass 19 of 24 in the pipeline. It changes 273 of the 1772 formulas of the sweep.
+The pass `rule-on-one-line` is pass 20 of 25 in the pipeline. It changes 274 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2329,7 +2350,7 @@ This follows because a rule each way is what `iff` claims. Two rules say each si
 The run of clauses goes second, so that the claim of one clause leads. "The checker writes the statement" comes first, and "the statement is unwritten or stale" after it.
 
 <!-- pass-rules-as-equivalence:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `rules-as-equivalence` is pass 3 of 24 in the pipeline. It changes 2 of the 1772 formulas of the sweep.
+The pass `rules-as-equivalence` is pass 3 of 25 in the pipeline. It changes 2 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2361,7 +2382,7 @@ For every cleanup:
 This follows because "exactly when" says that each side holds when the other does, which is what `iff` claims.
 
 <!-- pass-exactly-when:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `exactly-when` is pass 18 of 24 in the pipeline. It changes 41 of the 1772 formulas of the sweep.
+The pass `exactly-when` is pass 19 of 25 in the pipeline. It changes 41 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2459,7 +2480,7 @@ This follows because always holds from the present on, the present included. "At
 This follows because a rule that holds at every moment is what "whenever" means in plain English. "From now on" keeps the start at the present, as `always` alone does. So the words still leave the moments before it out.
 
 <!-- pass-always-inside-for-every:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `always-inside-for-every` is pass 4 of 24 in the pipeline. It changes 7 of the 1772 formulas of the sweep.
+The pass `always-inside-for-every` is pass 4 of 25 in the pipeline. It changes 7 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2483,7 +2504,7 @@ For every cleanup:
 <!-- pass-always-inside-for-every:end -->
 
 <!-- pass-from-now-on-whenever:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `from-now-on-whenever` is pass 20 of 24 in the pipeline. It changes 8 of the 1772 formulas of the sweep.
+The pass `from-now-on-whenever` is pass 21 of 25 in the pipeline. It changes 8 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2542,7 +2563,7 @@ This follows because the semicolon says that the first side holds now and the se
 This follows because two time phrases in a row, such as "from now on, at the next moment", read as one moment. A reader could also take a second "at the next moment" later in the words as the moment of the first.
 
 <!-- pass-time-phrase-in-front:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `time-phrase-in-front` is pass 15 of 24 in the pipeline. It changes 347 of the 1772 formulas of the sweep.
+The pass `time-phrase-in-front` is pass 16 of 25 in the pipeline. It changes 341 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -2609,7 +2630,7 @@ This follows because since is until turned to the past.
 This follows because a plain clause holds no time phrase, comma or relative clause. So "now or later" can only cover `b`, and "then" can only be a moment of `b` counted from now. "Until then" stops before that moment, as until does, and readers of every size took it that way.
 
 <!-- pass-until-in-a-sentence:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `until-in-a-sentence` is pass 14 of 24 in the pipeline. It changes 40 of the 1772 formulas of the sweep.
+The pass `until-in-a-sentence` is pass 15 of 25 in the pipeline. It changes 40 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -3078,7 +3099,7 @@ all f: Definition | (f in GuardedByKind and byKind[f]) implies f in PhrasePerKin
 </details>
 
 <!-- pass-definition-by-kinds:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `definition-by-kinds` is pass 12 of 24 in the pipeline. It changes 2 of the 1772 formulas of the sweep.
+The pass `definition-by-kinds` is pass 13 of 25 in the pipeline. It changes 2 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -3325,31 +3346,35 @@ all f: Quantifier | (f in VariableOnce and fits[f]) implies f in AsNounPhrase
 </details>
 
 <!-- pass-noun-phrases:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `noun-phrases` is pass 11 of 24 in the pipeline. It changes 160 of the 1772 formulas of the sweep.
+The pass `noun-phrases` is pass 12 of 25 in the pipeline. It changes 195 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
 ```text
-all c: Cleanup, s: String | some t: String | c.name = t
+all c: Cleanup, o: Owner | o in c.on implies o in Disposed
 ```
 
 Without the pass:
 
 ```text
-For every cleanup and every text T1:
-  there is a text T2 such that the cleanup is named text T2.
+When there is a cleanup that is on an owner, pulse has disposed the owner.
 ```
 
 With it:
 
 ```text
-For every cleanup and every text:
-  the cleanup is named a text.
+When a cleanup is on an owner, pulse has disposed the owner.
 ```
 
 - Rejected: "another" where the formula has no "!=".
 - Rejected: a noun phrase hanging only from another noun phrase, "a cleanup is on an owner": it reads as said of every cleanup.
 <!-- pass-noun-phrases:end -->
+
+#### @spec a-bare-noun-phrase-may-stand-inside-its-clause
+
+> A noun phrase with "a" or "another" and no relative clause may stand inside its clause. It stands where the variable stands: "a block of another unit names the word".
+
+This follows because a bare noun phrase ends where its noun does, so a reader takes no word after it for a part of it. A noun phrase with a relative clause still stands at the start or the end of its clause. So does one with "no": a reader could take "the author asks about leaving out no unit" for asking about leaving nothing out.
 
 #### @spec a-noun-phrase-can-be-the-subject-of-a-sentence
 
@@ -3416,7 +3441,7 @@ This follows because "that is not an axiom, a spec or a fact" is shorter and eas
 This follows because "another unit" says what the logic compares, without a name to follow.
 
 <!-- pass-another-of-a-kind:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `another-of-a-kind` is pass 9 of 24 in the pipeline. It changes 1 of the 1772 formulas of the sweep.
+The pass `another-of-a-kind` is pass 9 of 25 in the pipeline. It changes 1 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -3526,7 +3551,7 @@ all f: Quantifier | (f in NothingToAttach and f in VariableSubject and f not in 
 </details>
 
 <!-- pass-there-is-a-that:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `there-is-a-that` is pass 13 of 24 in the pipeline. It changes 4 of the 1772 formulas of the sweep.
+The pass `there-is-a-that` is pass 14 of 25 in the pipeline. It changes 4 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -3640,7 +3665,7 @@ all f: Quantifier | (f in ConditionAside and f not in UnderNo and f in RestFits)
 </details>
 
 <!-- pass-conditions-apart:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `conditions-apart` is pass 8 of 24 in the pipeline. It changes 3 of the 1772 formulas of the sweep.
+The pass `conditions-apart` is pass 8 of 25 in the pipeline. It changes 3 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -3704,27 +3729,28 @@ all f: Series | sentenceable[f] implies f in AsSentence
 </details>
 
 <!-- pass-clauses-in-a-sentence:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `clauses-in-a-sentence` is pass 16 of 24 in the pipeline. It changes 400 of the 1772 formulas of the sweep.
+The pass `clauses-in-a-sentence` is pass 17 of 25 in the pipeline. It changes 396 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
 ```text
-all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran
+all c: Cleanup, o, p: Owner | let s = c.on | o in s and c in Ran
 ```
 
 Without the pass:
 
 ```text
-For every cleanup and every owner:
-  the cleanup has run when all of these hold:
-    - the cleanup is on the owner
-    - pulse has disposed the owner
+For every cleanup, every owner O1 and every owner O2:
+  all of these hold:
+    - the cleanup is on owner O1
+    - the cleanup has run
 ```
 
 With it:
 
 ```text
-When a cleanup is on an owner and pulse has disposed the owner, the cleanup has run.
+For every cleanup, every owner O1 and every owner O2:
+  the cleanup is on owner O1 and has run.
 ```
 <!-- pass-clauses-in-a-sentence:end -->
 
@@ -3896,7 +3922,7 @@ all f: Series | (f in SharedNegatives and f in AsBullets) implies f in SaysNoneO
 </details>
 
 <!-- pass-none-of-these:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `none-of-these` is pass 17 of 24 in the pipeline. It changes 1 of the 1772 formulas of the sweep.
+The pass `none-of-these` is pass 18 of 25 in the pipeline. It changes 1 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -4085,7 +4111,7 @@ all f: Series | (f in ListFirstSide and f in PlainSecondSide and f not in Otherw
 </details>
 
 <!-- pass-claim-first:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `claim-first` is pass 21 of 24 in the pipeline. It changes 8 of the 1772 formulas of the sweep.
+The pass `claim-first` is pass 22 of 25 in the pipeline. It changes 9 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -4174,7 +4200,7 @@ This follows because a person states a rule over two kinds of thing this way. "F
 Two "every" in one clause leave a reader no order to get wrong. Every pass and every pass is the same claim either way round. A rule that holds another quantifier stays as it was. An "every" beside an "a" or a "no" has two orders a reader could take.
 
 <!-- pass-every-phrases:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `every-phrases` is pass 7 of 24 in the pipeline. It changes 1 of the 1772 formulas of the sweep.
+The pass `every-phrases` is pass 7 of 25 in the pipeline. It changes 1 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
@@ -4195,6 +4221,37 @@ Every cleanup that has run is on every owner that pulse has disposed.
 ```
 <!-- pass-every-phrases:end -->
 
+### @spec a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase
+
+> Take a "for every" whose rule names a thing in its first side alone. The clauses there that name the thing may make a noun phrase of it. The [*verbalizer*](#term-verbalizer) then says the thing in that side as that noun phrase. So a rule over two units and a word opens "when a block of another unit names the word outside its declaration".
+
+This follows because a rule for every such thing says that its second side holds wherever some such thing makes its first side hold. The words then need the thing only where it matters, and the "for every" names it no more.
+
+The thing stays in the "for every" where another thing of its kind stays there too. Only a thing that must differ from that one may go. "When a cleanup is on an owner and a cleanup is on the owner" leaves the reader to wonder if the two cleanups are one. "Another unit" says they are not.
+
+<!-- pass-some-in-when:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
+The pass `some-in-when` is pass 11 of 25 in the pipeline. It changes 35 of the 1775 formulas of the sweep.
+
+The shortest of them, as written in Alloy:
+
+```text
+all c: Cleanup, o: Owner | o in c.on implies o in Disposed
+```
+
+Without the pass:
+
+```text
+For every cleanup and every owner:
+  when the cleanup is on the owner, pulse has disposed the owner.
+```
+
+With it:
+
+```text
+When a cleanup is on an owner, pulse has disposed the owner.
+```
+<!-- pass-some-in-when:end -->
+
 ### @spec a-thing-of-a-some-is-said-inside-the-clauses-that-name-it
 
 > Take a "some" over several things, and a thing of it that only some of its clauses name. Where those clauses say a noun phrase of the thing, the [*verbalizer*](#term-verbalizer) says the thing inside them. So `some d: Document, u: Unit | d in Worded and d->u in Hold.units and u in Logical` reads "a document that keeps readings and holds a unit that holds a formula".
@@ -4208,7 +4265,7 @@ The clause that holds the noun phrase comes after the other clauses of the "some
 A thing that must differ from another stays too. "Another owner" differs from the owner named last before it, and moving the thing would change which owner that is.
 
 <!-- pass-some-inside:begin — generated by `node test/core/wordings.ts --write`; edits are overwritten -->
-The pass `some-inside` is pass 10 of 24 in the pipeline. It changes 5 of the 1772 formulas of the sweep.
+The pass `some-inside` is pass 10 of 25 in the pipeline. It changes 5 of the 1775 formulas of the sweep.
 
 The shortest of them, as written in Alloy:
 
