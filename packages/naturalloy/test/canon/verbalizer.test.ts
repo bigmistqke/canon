@@ -56,6 +56,23 @@ describe('the formulas of the lifetimes example', () => {
   });
 });
 
+describe('two rules that go each way', () => {
+  /**
+   * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence
+   */
+  it('are said as one equivalence of their sides, with a run of clauses second', () => {
+    expect(say('all c: Cleanup | (c in Ran implies c in Registered) and (c in Registered implies c in Ran)')).toBe(
+      'For every cleanup:\n  code has registered the cleanup exactly when the cleanup has run.'
+    );
+    const units = parseReadings('noun Unit: unit\nWritten: {1} is written | {1} is not written\nStale: {1} is stale | {1} is not stale\nFresh: {1} is unwritten | {1} is not unwritten');
+    const both = say('all u: Unit | (u in Written implies (u in Fresh or u in Stale)) and ((u in Fresh or u in Stale) implies u in Written)', units);
+    expect(both).not.toMatch(/\bwhen\b(?! all| at least)/);
+    expect(both.indexOf('is written')).toBeLessThan(both.indexOf('unwritten'));
+    // A rule that goes one way only, beside another, stays a rule.
+    expect(say('all c: Cleanup | (c in Ran implies c in Registered) and (c in Registered implies c.on in Disposed)')).toMatch(/when the cleanup has run, code has registered the cleanup/);
+  });
+});
+
 describe('the words', () => {
   /**
    * @canon spec-a-quantifier-is-said-with-the-noun-of-its-type-for-each-variable

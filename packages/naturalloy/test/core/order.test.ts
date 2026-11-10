@@ -17,6 +17,13 @@ const at = (name: string): number => {
 
 describe('the order of the passes', () => {
   /**
+   * @canon spec-two-rules-become-one-equivalence-before-an-equivalence-is-said-with-exactly-when
+   */
+  it('makes two rules one equivalence before it says an equivalence with "exactly when"', () => {
+    expect(at('rules-as-equivalence')).toBeLessThan(at('exactly-when'));
+  });
+
+  /**
    * @canon spec-a-negation-moves-inward-before-noun-phrases-are-said
    */
   it('moves a negation inward before it says noun phrases', () => {
