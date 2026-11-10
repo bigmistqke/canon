@@ -8,6 +8,7 @@
  * rules. Then each part is read as a sentence.
  */
 import { longNames } from './names.ts';
+import { verbWord } from './words.ts';
 import type { Readings } from '../readings.ts';
 import { unbracketed } from '../readings.ts';
 import { BINARY, COMPARED, INTRO, MOMENT, PREPOSITIONS, RULE, WRAP } from './constructs.ts';
@@ -202,6 +203,8 @@ export class Parser {
       if (parts.length < 2) continue;
       const first = (parts[0] as string).split(' ');
       for (let n = 1; n < first.length; n++) {
+        // The subject ends where a verb begins, as the printer cuts it.
+        if (!verbWord(first[n] as string, this.readings)) continue;
         const subject = first.slice(0, n).join(' ');
         let all: Sentence[][] = [[]];
         for (const [i, part] of parts.entries()) all = all.flatMap(done => this.clauses(`${i === 0 ? part : `${subject} ${part}`} ${hole}`, inner).map(c => [...done, c]));

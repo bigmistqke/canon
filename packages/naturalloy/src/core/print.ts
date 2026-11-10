@@ -15,7 +15,7 @@ import { BINARY, COMPARED, INTRO, MOMENT, PREPOSITIONS, RULE, WRAP } from './con
 import { type Doc, type Every, isList, lines, markdownLines } from './layout.ts';
 import { articleFor, Vocabulary } from './vocabulary.ts';
 import { freeNames, holdsPhrase } from './walk.ts';
-import { coordinate, fixed, holdsComma, holdsOwnComma, holdsTime, marked, own, series, shareSubject, timed, unmarked, VARIABLE } from './words.ts';
+import { coordinate, fixed, holdsComma, holdsOwnComma, holdsTime, marked, own, series, shareSubject, timed, unmarked, VARIABLE, verbWord } from './words.ts';
 
 export type { Doc };
 
@@ -161,12 +161,12 @@ export class Printer {
         const after = new RegExp(`^(.*) (${PREPOSITIONS.join('|')})$`).exec(rest);
         // Only where words stand between the verb and the preposition: "of which p is the parent", but "that d is on".
         const last = after === null ? undefined : (after[1] as string).replace(LINK_MARK, (_, __, word: string) => word).split(' ').at(-1);
-        const verb = last !== undefined && (last === 'is' || last === 'are' || this.readings.verbs.has(last) || [...this.readings.verbs.values()].some(f => f.infinitive === last));
+        const verb = last !== undefined && verbWord(last, this.readings);
         // "a unit whose formula the analyzer is asked to hold": "the" and a part before "of" go after "whose".
         // Not after "is" or "are", which "whose parent p is" would leave alone at the end.
-        const part = after !== null && after[2] === 'of' ? /^(.*) the (\S+)$/.exec(after[1] as string) : null;
-        if (part !== null && /\b(?:is|are)$/.test(part[1] as string)) part.splice(0);
-        suffix = part !== null && part.length > 0 ? own` whose ${part[2] as string} ${part[1] as string}` : after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
+        const matched = after !== null && after[2] === 'of' ? /^(.*) the (\S+)$/.exec(after[1] as string) : null;
+        const part = matched !== null && !/\b(?:is|are)$/.test(matched[1] as string) ? matched : null;
+        suffix = part !== null ? own` whose ${part[2] as string} ${part[1] as string}` : after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
       }
     }
     if (np.det === 'no') return own`no ${np.other === undefined ? '' : 'other '}${noun}${suffix}`;
@@ -441,7 +441,8 @@ export class Printer {
           // Several variables: the words must first name each where the reader meets the rule's "a": in its first side
           // when that side comes first, or in the claim before "when" when the claim does.
           const claim = isList(body) && body.intro.includes(` ${RULE.when} `) ? body.intro.slice(0, body.intro.indexOf(` ${RULE.when} `)) : undefined;
-          const opening = claim ?? (typeof body !== 'string' && body.kind === 'rule' ? body.when : typeof body === 'string' && body.startsWith(`${RULE.when} `) ? body.slice(0, body.indexOf(', ')) : undefined);
+          const comma = typeof body === 'string' ? body.indexOf(', ') : -1;
+          const opening = claim ?? (typeof body !== 'string' && body.kind === 'rule' ? body.when : typeof body === 'string' && body.startsWith(`${RULE.when} `) && comma !== -1 ? body.slice(0, comma) : undefined);
           if (s.vars.length > 1 && opening !== undefined && every.vars.every(v => mentions(opening, v.name) > 0)) return { kind: 'block', intro, body, every };
         }
       }

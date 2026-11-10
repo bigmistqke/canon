@@ -72,6 +72,8 @@ describe('a marked verb', () => {
    */
   it('takes its infinitive and its participle from a verb line', () => {
     expect(marked('').verbs.get('keeps')).toEqual({ infinitive: 'keep', participle: 'kept' });
+    // A verb line with no participle keeps the participle of the standard verb of the same infinitive.
+    expect(parseReadings('verb keeps: keep').verbs.get('keeps')).toEqual({ infinitive: 'keep', participle: 'kept' });
   });
 
   /**
@@ -163,6 +165,8 @@ describe('a rule over several things', () => {
     expect(say('all c: Cleanup, o: Owner | o in Disposed implies o in c.on')).not.toMatch(/^Every /);
     expect(say('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on else c in Registered')).not.toMatch(/^Every /);
     expect(say('all c: Cleanup | c in Ran implies c in Registered')).toBe('When a cleanup has run, code has registered the cleanup.');
+    // A second side that negates keeps its "for every": "is not on every owner" would read as "not on all of them".
+    expect(say('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o not in c.on')).not.toMatch(/every owner that/);
   });
 });
 

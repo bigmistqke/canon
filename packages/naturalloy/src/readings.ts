@@ -261,7 +261,10 @@ export function parseReadings(text: string, target?: string, base?: string): Rea
     if (!verb) continue;
     const [infinitive, participle] = (verb[2] as string).split(',').map(form => form.trim());
     if (!infinitive) throw new Refusal(`a verb line gives no infinitive: ${line}`);
-    readings.verbs.set(verb[1] as string, participle ? { infinitive, participle } : { infinitive });
+    // A line with no participle keeps the participle of the standard verb it spells, where that has the same infinitive.
+    const standard = STANDARD_VERBS.get(verb[1] as string);
+    const kept = participle ?? (standard?.infinitive === infinitive ? standard.participle : undefined);
+    readings.verbs.set(verb[1] as string, kept ? { infinitive, participle: kept } : { infinitive });
   }
   for (const line of lines) {
     if (line === '' || line.startsWith('#') || /^verb\s/.test(line)) continue;

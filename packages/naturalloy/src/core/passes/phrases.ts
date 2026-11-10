@@ -9,7 +9,7 @@ import type { Clause, NounPhrase, Sentence, Term, Var } from '../ir.ts';
 import { type Context, everywhere, type Pass } from '../pass.ts';
 import { Vocabulary } from '../vocabulary.ts';
 import { mentions } from '../walk.ts';
-import { seen, timed } from '../words.ts';
+import { seen, timed, verbWord } from '../words.ts';
 
 /** The terms of a clause, in the order of its slots. */
 export function termsOf(c: Clause): Term[] {
@@ -47,13 +47,6 @@ function template(c: Clause, context: Context): string | undefined {
   }
 }
 
-/** The words that may open the rest of a clause after its subject: the verbs the readings know, and those of English that every clause may use. */
-export function verbWord(word: string, readings: Context['readings']): boolean {
-  const plain = word.replace(/^\[|\].*$/g, '');
-  if (['is', 'are', 'was', 'were', 'has', 'have', 'had', 'does', 'do', 'did', 'can', 'cannot'].includes(plain)) return true;
-  return readings.verbs.has(plain) || [...readings.verbs.values()].some(forms => forms.infinitive === plain);
-}
-
 /**
  * How many words of their readings clauses with the variable at their end share before the rest of each, which opens
  * with a verb: 2 for "the tracker knows" and "the tracker has not closed". The other things a clause names count as
@@ -66,7 +59,8 @@ export function sharedSubject(clauses: Clause[], v: Var, context: Context): numb
     if (t === undefined) return undefined;
     const at = termsOf(c).findIndex(term => isVar(term, v)) + 1;
     if (!t.endsWith(`{${at}}`)) return undefined;
-    const filled = t.slice(0, -`{${at}}`.length).replace(/\{(\d+)\}/g, (_, n: string) => `{${JSON.stringify(termsOf(c)[Number(n) - 1])}}`);
+    // A thing in a slot is one word, as the printer counts it: no space of its own may split it.
+    const filled = t.slice(0, -`{${at}}`.length).replace(/\{(\d+)\}/g, (_, n: string) => `{${JSON.stringify(termsOf(c)[Number(n) - 1]).replace(/\s/g, '_')}}`);
     words.push(filled.trim().split(/\s+/));
   }
   let shared = 0;
@@ -237,6 +231,8 @@ export const everyPhrases = everywhere('every-phrases', 'spec-each-thing-of-a-ru
   if (s.t !== 'quant' || s.q !== 'all' || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
   const { when, then } = s.body;
   if (!clause(then) || termsOf(then).some(term => term.t === 'np')) return undefined;
+  // "is not on every owner" reads as "not on all of them", where the rule says "on none": a negative clause keeps its "for every".
+  if ('negative' in then && then.negative) return undefined;
   const conditions = when.t === 'and' ? when.items : [when];
   let said: Clause = then;
   let differing = false;
