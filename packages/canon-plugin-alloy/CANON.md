@@ -920,9 +920,11 @@ This follows because a statement that Markdown folds into one paragraph is hard 
 
 ##### @spec generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
 
-> Generate writes each link of a [*statement*](#term-generated-statement) to a [*term*](../canon/CANON.md#term-term), of its own [*document*](../canon/CANON.md#term-document) or of another, as a [*term mark*](../canon/CANON.md#term-term-mark): `[*word*](#term-word)`.
+> Generate writes each link of a [*statement*](#term-generated-statement) to a [*term*](../canon/CANON.md#term-term), of its own [*document*](../canon/CANON.md#term-document) or of another, as a [*term mark*](../canon/CANON.md#term-term-mark): `[*word*](#term-word)`. A link whose words spell no form of its term stays a plain link.
 
-This follows because a term mark leads the reader to the term, as a link does. It also sets the word apart as a word of the canon. The checker then holds its words to the forms of the term, and reports a reading that links a word its term does not define.
+This follows because a term mark leads the reader to the term, as a link does. It also sets the word apart as a word of the canon.
+
+A word that spells no form of its term is a fault of the reading, which `check` reports there as `undefined`. A term mark of it in the statement would be reported too, in the generated region, where an edit does not last. So the statement keeps the link, and the one report points at the reading the author can change.
 
 ##### @spec generate-leaves-a-current-statement-as-it-is
 

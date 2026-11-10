@@ -87,7 +87,8 @@ always all n: Node | n in Started implies eventually finished[n]
     expect(unit?.statement).toContain('the node has started');
     expect(unit?.statement).not.toContain('[started]');
     expect(unit?.statement).not.toContain('*started*');
-    expect(unit?.statement).toContain('[*finished*](#term-done)');
+    // "finished" is no form of the term done, so it links as a plain link.
+    expect(unit?.statement).toContain('[finished](#term-done)');
   });
 
   it('never name its own unit in a statement', () => {

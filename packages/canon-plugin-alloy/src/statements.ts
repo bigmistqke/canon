@@ -11,11 +11,11 @@
  */
 import { readBlocks, type Block } from '@bigmistqke/canon/blocks';
 import { beginMarker, regionAt, replaceRegion } from '@bigmistqke/canon/regions';
-import { maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
+import { grammarOf, maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
 import { declaredIn, PARAGRAPHS } from './words.ts';
 import { readingBlocks } from './tables.ts';
 import { AlloyParseError, parseModule } from '@bigmistqke/parse-alloy';
-import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Readings } from '@bigmistqke/naturalloy';
+import { isDefinition, isRefusal, parseReadings, readsBack, verbalize, verbalizeDefinition, withDefinitions, type Marked, type Readings } from '@bigmistqke/naturalloy';
 
 /** The name of the region that holds the generated statement of a unit. */
 export const regionName = (unit: string): string => `statement-${unit}`;
@@ -136,8 +136,25 @@ function read(unit: string, kind: 'current' | 'stale', quote: string, formula: s
   return { unit, kind: 'misread', message, quote };
 }
 
-/** Which links a statement writes as a term mark, `[*word*](#term-x)`: every link to a term, of this document or another. */
-const marked = (target: string): boolean => /#term-[a-z0-9-]+$/.test(target);
+/**
+ * Which links a statement writes as a term mark, `[*word*](#term-x)`: a link to a term, of this document or another,
+ * whose words spell a form of that term, in capitals or not. A link whose words spell none stays a link: the reading
+ * that links it is reported, and a mark would be reported again in a region no edit lasts in.
+ */
+function markedIn(src: string, context: Context[]): Marked {
+  const forms = new Map<string, Set<string>>();
+  for (const text of [...context.map(c => c.src), src])
+    for (const unit of readUnits(text)) {
+      if (unit.kind !== 'term') continue;
+      const spelled = new Set([unit.stem.replace(/-/g, ' ')]);
+      for (const form of grammarOf(unit.own)?.forms ?? []) spelled.add(form.spelling.toLowerCase());
+      forms.set(unit.id, spelled);
+    }
+  return (target, word) => {
+    const id = /#(term-[a-z0-9-]+)$/.exec(target)?.[1];
+    return id !== undefined && (forms.get(id)?.has(word.toLowerCase()) ?? false);
+  };
+}
 
 /** What each statement of a document is, in document order; empty for a document with no readings. */
 export function states(src: string, context: Context[] = []): StatementState[] {
@@ -149,6 +166,7 @@ export function states(src: string, context: Context[] = []): StatementState[] {
     return [{ unit: '(readings)', kind: 'unsayable', message: error.message }];
   }
   if (readings === undefined) return [];
+  const marked = markedIn(src, context);
   const units = readUnits(src);
   const blocks = readBlocks(src, units);
   const found: StatementState[] = [];

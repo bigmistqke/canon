@@ -232,12 +232,14 @@ Done: {1} is [finished] | {1} is not [finished]
   /**
    * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
    */
-  it('writes each link to a term as a term mark, whatever its words spell', () => {
+  it('writes each link to a term as a term mark, and keeps as a link one whose words spell no form of its term', () => {
     const { src } = write(TERMS);
     const statement = src.split('\n').filter(l => l.startsWith('>')).join('\n');
     expect(statement).toContain('[*node*](#term-node)');
-    expect(statement).toContain('[*finished*](#term-done)');
     expect(statement).not.toContain('[node](#term-node)');
+    // "finished" is no form of the term done, which the reading reports: the statement keeps the link.
+    expect(statement).toContain('[finished](#term-done)');
+    expect(statement).not.toContain('[*finished*](#term-done)');
   });
 
   /**

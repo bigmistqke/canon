@@ -65,7 +65,8 @@ describe('a noun table', () => {
    */
   it('gives its signature the noun of its row, linked to the term that holds the row', () => {
     const statement = statementOf(doc(`| signature | noun |\n|---|---|\n| Node | vertex |\n\n${READING_TABLE}`));
-    expect(statement).toContain('[*vertex*](#term-node)');
+    // "vertex" is no form of the term node, so it links as a plain link rather than a term mark.
+    expect(statement).toContain('[vertex](#term-node)');
     expect(statement).not.toMatch(/\bnode\b(?!\))/);
   });
 });
