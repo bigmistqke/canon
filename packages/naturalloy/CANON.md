@@ -295,6 +295,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec what-else-is-true-of-the-variable-is-a-relative-clause`](#spec-what-else-is-true-of-the-variable-is-a-relative-clause)
   - [`@spec relative-clauses-that-share-their-subject-say-it-once`](#spec-relative-clauses-that-share-their-subject-say-it-once)
   - [`@spec a-thing-after-a-preposition-is-said-with-the-preposition-and-which`](#spec-a-thing-after-a-preposition-is-said-with-the-preposition-and-which)
+  - [`@spec a-thing-after-the-part-of-is-said-with-whose`](#spec-a-thing-after-the-part-of-is-said-with-whose)
   - [`@spec several-negations-of-a-variable-are-one-negation`](#spec-several-negations-of-a-variable-are-one-negation)
   - [`@spec a-variable-that-must-differ-from-another-of-its-kind-is-said-as-another`](#spec-a-variable-that-must-differ-from-another-of-its-kind-is-said-as-another)
   - [`@spec a-variable-that-must-differ-from-one-value-is-said-as-other-than-it`](#spec-a-variable-that-must-differ-from-one-value-is-said-as-other-than-it)
@@ -336,6 +337,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart`](#spec-a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart)
 - [`@axiom a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
   - [`@spec each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions`](#spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions)
+  - [`@spec a-thing-of-a-rule-that-must-differ-from-another-is-said-as-every-other`](#spec-a-thing-of-a-rule-that-must-differ-from-another-is-said-as-every-other)
   - [`@spec a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase`](#spec-a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase)
   - [`@spec a-thing-of-a-some-is-said-inside-the-clauses-that-name-it`](#spec-a-thing-of-a-some-is-said-inside-the-clauses-that-name-it)
   - [`@spec a-reading-gives-its-frame-by-a-marked-verb`](#spec-a-reading-gives-its-frame-by-a-marked-verb)
@@ -3428,6 +3430,14 @@ This follows because "that the checker reports no finding for" leaves its prepos
 
 The preposition moves only where words stand between it and the verb. So "an owner of which p is the parent", but "an owner that d is on". With the verb right before the preposition, "on which d is" would leave the verb alone at the end.
 
+#### @spec a-thing-after-the-part-of-is-said-with-whose
+
+> The thing of a relative clause may stand at the end of its reading after "the", a noun and "of". The [*verbalizer*](#term-verbalizer) then says that noun after "whose". So `the analyzer is asked to hold the formula of {1}` gives "a unit whose formula the analyzer is asked to hold".
+
+Derives from: [`axiom-a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
+
+This follows because "whose formula" says the part and its thing in two words. "Of which the analyzer is asked to hold the formula" puts the part far from its thing. Where "is" or "are" ends the words before the part, "whose parent p is" would leave the verb alone at the end. The words then keep "of which p is the parent".
+
 #### @spec several-negations-of-a-variable-are-one-negation
 
 > The [*verbalizer*](#term-verbalizer) says several negations of a variable as one negation that lists the kinds, when the [*quantifier*](#term-quantifier) [*fits*](#term-fit) a noun phrase.
@@ -4221,6 +4231,14 @@ Every cleanup that has run is on every owner that pulse has disposed.
 ```
 <!-- pass-every-phrases:end -->
 
+### @spec a-thing-of-a-rule-that-must-differ-from-another-is-said-as-every-other
+
+> Take a "for every" over one thing, whose rule says that the thing differs from a thing named before it. Its rule must have the shape a rule over several things has. The [*verbalizer*](#term-verbalizer) says its clause with the thing as "every other", its noun, and its other conditions as a relative clause. So it reads "the search holds every other unit whose formula the analyzer is asked to hold".
+
+Derives from: [`axiom-a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
+
+This follows because "every other unit" says each unit but one, and which one: the unit named last before it. A rule over one thing that names no such thing keeps its "when a unit …", which says it as well.
+
 ### @spec a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase
 
 > Take a "for every" whose rule names a thing in its first side alone. The clauses there that name the thing may make a noun phrase of it. The [*verbalizer*](#term-verbalizer) then says the thing in that side as that noun phrase. So a rule over two units and a word opens "when a block of another unit names the word outside its declaration".
@@ -4370,7 +4388,7 @@ This follows because a reader meets the first phrase first, and takes what follo
 
 #### @spec a-relative-clause-says-more-of-the-noun-it-follows
 
-> A relative clause, "that …" or a preposition and "which …", says what else holds of the noun right before it. An "and" inside it joins only its own conditions.
+> A relative clause, "that …", a preposition and "which …", or "whose" and a noun, says what else holds of the noun right before it. An "and" inside it joins only its own conditions.
 
 This follows because "that" points back to the nearest noun. The verbalizer puts a relative clause only where nothing follows that its "and" could take in. In "an issue that the tracker knows and has not closed", the words after "and" take the subject that the first condition gives, "the tracker".
 
@@ -4418,7 +4436,7 @@ This follows because a reader takes "when" as a rule and "exactly when" as both 
 
 #### @spec another-differs-from-the-thing-of-its-kind-named-last
 
-> "Another unit" and "no other unit" differ from the unit the words named last before them. That unit is in the same clause, in the clause before it, or where a [*quantifier*](#term-quantifier) introduced it.
+> "Another unit", "no other unit" and "every other unit" differ from the unit the words named last before them. That unit is in the same clause, in the clause before it, or where a [*quantifier*](#term-quantifier) introduced it.
 
 This follows because a reader looks back for what "other" points at, as for "the". A subject that a series leaves out is not in the words, so it is not what a reader finds.
 

@@ -127,7 +127,7 @@ export class Parser {
   /** A noun phrase: "a unit", "no owner that pulse has disposed", "another unit", "a text other than "a"". */
   private phrases(words: string, scope: Scope): NounPhrase[] {
     const out: NounPhrase[] = [];
-    const m = /^(no other|another|an|a|no|every) (.+)$/.exec(words);
+    const m = /^(no other|another|an|a|no|every other|every) (.+)$/.exec(words);
     if (m === null) return out;
     const [, det, rest] = m as unknown as [string, string, string];
     for (const [noun, type] of this.types) {
@@ -142,14 +142,29 @@ export class Parser {
         relativeWords = other[2] ?? '';
       }
       const which = new RegExp(`^(${PREPOSITIONS.join('|')}) which (.+)$`).exec(relativeWords);
+      const whose = /^whose (\S+) (.+)$/.exec(relativeWords);
       const relatives: (Sentence | undefined)[] =
-        relativeWords === '' ? [undefined] : relativeWords.startsWith('that ') ? this.relative(relativeWords.slice(5), v, scope) : which !== null ? this.afterWhich(which[2] as string, which[1] as string, v, scope) : [];
+        relativeWords === ''
+          ? [undefined]
+          : relativeWords.startsWith('that ')
+            ? this.relative(relativeWords.slice(5), v, scope)
+            : which !== null
+              ? this.afterWhich(which[2] as string, which[1] as string, v, scope)
+              : whose !== null
+                ? this.afterWhich(`${whose[2] as string} the ${whose[1] as string}`, 'of', v, scope)
+                : [];
       for (const otherTerm of others)
         for (const relative of relatives) {
-          const np: NounPhrase = { t: 'np', det: det === 'no' || det === 'no other' ? 'no' : det === 'every' ? 'every' : 'a', v };
+          const np: NounPhrase = { t: 'np', det: det === 'no' || det === 'no other' ? 'no' : det === 'every' || det === 'every other' ? 'every' : 'a', v };
           if (relative !== undefined) np.relative = relative;
           // "another unit" and "no other owner" differ from a thing of their kind the sentence already names: the pass gives
           // them the variable they differ from, which a reader finds as the one thing of the kind in play.
+          // "every other unit": every unit but the thing of its kind the words named last.
+          if (det === 'every other') {
+            const kin = [...scope.values()].filter(term => term.t === 'var' && term.v.type === type).at(-1);
+            if (kin !== undefined) out.push({ ...np, other: kin });
+            continue;
+          }
           if (det === 'another' || det === 'no other') {
             // It differs from the thing of its kind the words named last: in its clause, in the clause before, or where a
             // quantifier introduced it.

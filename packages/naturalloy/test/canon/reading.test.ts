@@ -53,6 +53,18 @@ describe('the rules of reading', () => {
 
   /**
    * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   * @canon spec-another-differs-from-the-thing-of-its-kind-named-last
+   */
+  it('reads "whose" and a part, and "every other" as differing from the thing named last', () => {
+    const searches = withDefinitions(parseReadings('noun Unit: unit\nnoun Search: search\nHeld: the analyzer ^is^ asked to hold the formula of {1}\nPose.rel: {1} ^holds^ {2}\nLeave.rel: {1} ^leaves^ out {2}'), 'sig Unit {} sig Search {} sig Held in Unit {} one sig Pose { rel: Search -> Unit } one sig Leave { rel: Search -> Unit }');
+    for (const formula of ['some s: Search | some u: Unit | s->u in Pose.rel and u in Held', 'some s: Search | some u: Unit | s->u in Leave.rel and (all v: Unit | (v in Held and v != u) implies s->v in Pose.rel)']) {
+      const back = readsBack(formula, searches);
+      expect(back.meanings).toEqual([back.meant]);
+    }
+  });
+
+  /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
    */
   it('reads the verbs after "and" in a relative clause with the subject of the first', () => {
     const issues = withDefinitions(

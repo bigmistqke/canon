@@ -410,6 +410,8 @@ one sig Blame { rel: Scenario -> Unit }
 
 > A search is one run of the analyzer over some [*units*](../canon/CANON.md#term-unit): it asks whether they can hold, with a [*scenario*](#term-scenario) or without.
 
+A search holds a unit when it asks the analyzer to hold the formula of that unit.
+
 <details>
 <summary>Grammar</summary>
 
@@ -445,7 +447,7 @@ sig Checked in Document {}
 | Contradicting | {1} ^is^ held with units that cannot all hold                                              | {1} is held with units that can all hold |
 | Named         | the [checker](../canon/CANON.md#term-checker) ^names^ {1} in its report of a contradiction |                                          |
 | Checked       | the project ^lists^ {1} among the documents it checks                                      |                                          |
-| Pose.units    | {1} ^requires^ {2} to hold                                                                 |                                          |
+| Pose.units    | {1} ^holds^ {2}                                                                            |                                          |
 | Pose.scenario | {1} ^requires^ {2} to happen                                                               |                                          |
 | Leave.rel     | {1} ^leaves^ out {2}                                                                       |                                          |
 
@@ -1679,11 +1681,8 @@ all s: Search, c: Scenario | (s in Trial and s->c in Pose.scenario) implies (c i
 > then there is exactly one [*unit*](../canon/CANON.md#term-unit) U1 such that all of these hold:
 > - the search leaves out unit U1
 > - the analyzer is asked to hold the formula of unit U1
-> - the search does not require unit U1 to hold
-> - for every unit U2:\
->   the search requires unit U2 to hold when all of these hold:
->   - the analyzer is asked to hold the formula of unit U2
->   - unit U2 and unit U1 are different
+> - the search does not hold unit U1
+> - the search holds every other unit whose formula the analyzer is asked to hold
 <!-- statement-spec-a-trial-leaves-out-one-held-unit-and-keeps-the-rest:end -->
 
 To find the unit a repair has to touch, the checker asks again, leaving out one held unit at a time. Each trial drops exactly one and keeps the rest. When the scenario becomes possible, that one unit is the one standing in its way.

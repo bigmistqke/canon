@@ -234,20 +234,31 @@ function relativeOf(conditions: Sentence[], v: Var, context: Context): Sentence 
  * clause, with each thing as "every" and its noun and its conditions as a relative clause.
  */
 export const everyPhrases = everywhere('every-phrases', 'spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions', (s, context) => {
-  if (s.t !== 'quant' || s.q !== 'all' || s.vars.length < 2 || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
+  if (s.t !== 'quant' || s.q !== 'all' || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
   const { when, then } = s.body;
   if (!clause(then) || termsOf(then).some(term => term.t === 'np')) return undefined;
   const conditions = when.t === 'and' ? when.items : [when];
   let said: Clause = then;
+  let differing = false;
   for (const v of s.vars) {
     if (!context.readings.nouns.has(v.type) || termsOf(then).filter(term => isVar(term, v)).length !== 1) return undefined;
     const own = conditions.filter(c => names(c, v));
+    // "every other unit": a condition that it differs from a thing of its kind named before, outside the "for every".
+    const differs = own.find(c => {
+      const other = differsFrom(c, v);
+      return other?.t === 'var' && other.v.type === v.type && !s.vars.includes(other.v);
+    });
+    const rest = own.filter(c => c !== differs);
     // Each condition names one thing of the "for every" alone.
-    if (own.some(c => s.vars.some(other => other !== v && names(c, other)))) return undefined;
-    const relative = relativeOf(own, v, context);
-    if (relative === undefined) return undefined;
-    said = put(said, v, { t: 'np', det: 'every', v, relative });
+    if (rest.some(c => s.vars.some(other => other !== v && names(c, other)))) return undefined;
+    const relative = rest.length === 0 && differs !== undefined ? undefined : relativeOf(rest, v, context);
+    if (relative === undefined && !(rest.length === 0 && differs !== undefined)) return undefined;
+    if (differs !== undefined) differing = true;
+    const other = differs === undefined ? undefined : differsFrom(differs, v);
+    said = put(said, v, { t: 'np', det: 'every', v, ...(relative === undefined ? {} : { relative }), ...(other === undefined ? {} : { other }) });
   }
+  // A rule over one thing says "every" only as "every other": else "when a unit …" says it.
+  if (s.vars.length < 2 && !differing) return undefined;
   // Every condition belongs to a thing, and none is a quantifier of its own.
   if (!conditions.every(c => s.vars.some(v => names(c, v)))) return undefined;
   return said;

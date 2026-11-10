@@ -162,11 +162,15 @@ export class Printer {
         // Only where words stand between the verb and the preposition: "of which p is the parent", but "that d is on".
         const last = after === null ? undefined : (after[1] as string).replace(LINK_MARK, (_, __, word: string) => word).split(' ').at(-1);
         const verb = last !== undefined && (last === 'is' || last === 'are' || this.readings.verbs.has(last) || [...this.readings.verbs.values()].some(f => f.infinitive === last));
-        suffix = after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
+        // "a unit whose formula the analyzer is asked to hold": "the" and a part before "of" go after "whose".
+        // Not after "is" or "are", which "whose parent p is" would leave alone at the end.
+        const part = after !== null && after[2] === 'of' ? /^(.*) the (\S+)$/.exec(after[1] as string) : null;
+        if (part !== null && /\b(?:is|are)$/.test(part[1] as string)) part.splice(0);
+        suffix = part !== null && part.length > 0 ? own` whose ${part[2] as string} ${part[1] as string}` : after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
       }
     }
     if (np.det === 'no') return own`no ${np.other === undefined ? '' : 'other '}${noun}${suffix}`;
-    if (np.det === 'every') return own`every ${noun}${suffix}`;
+    if (np.det === 'every') return own`every ${np.other !== undefined && np.other.t === 'var' && np.other.v.type === np.v.type ? 'other ' : ''}${noun}${suffix}`;
     if (np.other === undefined) return `${this.article(np.v.type)}${noun}${suffix}`;
     if (np.other.t === 'var' && np.other.v.type === np.v.type) return own`another ${noun}${suffix}`;
     return own`${this.article(np.v.type)}${noun} other than ${this.term(np.other)}${suffix}`;

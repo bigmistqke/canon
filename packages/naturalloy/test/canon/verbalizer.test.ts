@@ -188,6 +188,26 @@ describe('a thing only the first side of a rule names', () => {
   });
 });
 
+describe('a thing after "the formula of"', () => {
+  /**
+   * @canon spec-a-thing-after-the-part-of-is-said-with-whose
+   */
+  it('is said with "whose" and the part', () => {
+    const searches = parseReadings('noun Unit: unit\nnoun Search: search\nHeld: the analyzer ^is^ asked to hold the formula of {1}\nPose.rel: {1} ^holds^ {2}\nLeave.rel: {1} ^leaves^ out {2}');
+    expect(say('some s: Search | some u: Unit | s->u in Pose.rel and u in Held', searches)).toBe('There is a search that holds a unit whose formula the analyzer is asked to hold.');
+  });
+});
+
+describe('a thing that must differ from one named before it', () => {
+  /**
+   * @canon spec-a-thing-of-a-rule-that-must-differ-from-another-is-said-as-every-other
+   */
+  it('is said as "every other" in the clause of its rule', () => {
+    const searches = parseReadings('noun Unit: unit\nnoun Search: search\nHeld: the analyzer ^is^ asked to hold the formula of {1}\nPose.rel: {1} ^holds^ {2}\nLeave.rel: {1} ^leaves^ out {2}');
+    expect(say('some s: Search | some u: Unit | s->u in Leave.rel and (all v: Unit | (v in Held and v != u) implies s->v in Pose.rel)', searches)).toContain('holds every other unit whose formula the analyzer is asked to hold');
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence
