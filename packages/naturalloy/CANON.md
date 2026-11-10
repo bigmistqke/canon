@@ -22,6 +22,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
 - [`@term series`](#term-series)
 - [`@term sentenceable`](#term-sentenceable)
 - [`@term line`](#term-line)
+- [`@term frame`](#term-frame)
 - [`@term pass`](#term-pass)
 - [`@term pipeline`](#term-pipeline)
 - [`@fact every-moment-has-a-next-moment`](#fact-every-moment-has-a-next-moment)
@@ -325,6 +326,8 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-comma-of-a-reading-after-then-is-left-on-its-line`](#spec-a-comma-of-a-reading-after-then-is-left-on-its-line)
   - [`@spec a-second-side-that-holds-a-time-phrase-before-an-otherwise-is-set-apart`](#spec-a-second-side-that-holds-a-time-phrase-before-an-otherwise-is-set-apart)
   - [`@spec a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart`](#spec-a-second-or-last-side-of-a-rule-that-holds-a-series-is-set-apart)
+- [`@axiom a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it)
+- [`@thread a-statement-could-be-said-in-tiers-from-its-ir`](#thread-a-statement-could-be-said-in-tiers-from-its-ir)
 - [`@axiom a-short-list-of-rules-settles-what-english-leaves-open`](#axiom-a-short-list-of-rules-settles-what-english-leaves-open)
   - [`@spec a-noun-phrase-covers-the-clause-it-stands-in`](#spec-a-noun-phrase-covers-the-clause-it-stands-in)
   - [`@spec the-first-noun-phrase-of-a-clause-covers-the-next`](#spec-the-first-noun-phrase-of-a-clause-covers-the-next)
@@ -913,6 +916,24 @@ pred sentenceable[f: Series] { f in Few and f not in NotClause and (f not in Com
 
 > A line is one line of a table of readings, which gives a word of the logic its sentences.
 
+### @term frame
+
+> A frame is the shape of a reading: where each thing the reading speaks of stands around its verb.
+
+A reading gives its frame by its verb, which it marks between carets: `{1} ^keeps^ readings`. The words before the verb are its subject, and the words after it are its object and its phrases. The frame is one of five:
+
+- a verb with an object: `{1} ^holds^ {2}`
+- a verb with a phrase after a preposition: `{1} ^asks^ for {2}`
+- a subject that is a part of a thing, "the … of": `the statement of {1} ^is^ current`
+- "is" with an adjective or a noun: `{1} ^is^ ambiguous`
+- a verb with a clause after "that": `the checker ^reports^ that {1} cannot happen`
+
+The frame tells which words a relative clause about each thing takes: "that keeps readings", "for which a run asks", "whose statement is current".
+
+A reading with no marked verb is a fixed clause, said as it stands. Where its "does not hold" side is empty, the negative comes from the frame: "does not keep", "is not". The five frames follow the frames of OntoLex-Lemon and LexInfo. The forms of a verb follow the lexicon of Attempto Controlled English: its third person, its infinitive and its participle. The mark gives the third person, and the readings give the other two.
+
+No reading marks its verb yet.
+
 ### @term pass
 
 > A pass is one named change to how the [*verbalizer*](#term-verbalizer) says a statement. A pass of the IR changes the sentence a [*formula*](#term-formula) was lowered to. A pass of the printer changes the words the printer lays it out in.
@@ -992,7 +1013,7 @@ With 5 bits, `1 << 9` is `1 << 1`, and `1 << 7` and `1 << -1` are 0. Checked wit
 
 > The [*verbalizer*](#term-verbalizer) says a [*formula*](#term-formula) only in words that translate it without loss, and refuses a formula that it cannot say that way.
 
-This follows because a reader learns from the words what the formula claims. Words that say more or less than the formula mislead that reader, so a refusal is better than a loss. How natural the words sound comes after.
+This follows because a reader learns from the words what the formula claims. Words that say more or less than the formula mislead that reader, so a refusal is better than a loss. How natural the words sound comes after: [`axiom-a-formula-is-said-as-a-person-would-write-it`](#axiom-a-formula-is-said-as-a-person-would-write-it).
 
 #### @spec a-statement-is-said-through-passes-that-each-keep-its-meaning
 
@@ -4074,6 +4095,20 @@ This follows because a reader could take the time phrase as covering the "otherw
 > The [*verbalizer*](#term-verbalizer) sets apart a side of a rule after "then" or "otherwise" when that side is a [*series*](#term-series) of clauses after a comma.
 
 This follows because a reader could take the last clause of the series as a claim of its own, outside the rule. An example is "a, and at the next moment, b".
+
+## @axiom a-formula-is-said-as-a-person-would-write-it
+
+> Among the words that say a [*formula*](#term-formula) without loss, the [*verbalizer*](#term-verbalizer) says the ones a person would write. Those are sentences before bullets, each thing named once, and the fewest words that still say it all. It uses only the turns of English that the reading rules settle, so that no reader has to guess what a sentence means.
+
+This follows because more people read a statement than write it, and stiff words cost each reader time. A reader who has to work out which clause a phrase belongs to may also work it out wrong.
+
+The [*frame*](#term-frame) of each reading tells the verbalizer which of those turns a reading can take.
+
+The axiom ranks below [`axiom-a-formula-is-said-without-loss`](#axiom-a-formula-is-said-without-loss). Where the two pull apart, a loss is refused before a stiff phrase is. So fluency goes only as far as a rule of [`axiom-a-short-list-of-rules-settles-what-english-leaves-open`](#axiom-a-short-list-of-rules-settles-what-english-leaves-open) pins it down. A turn of English that readers do not apply the same way each time, such as which noun a trailing clause belongs to, stays out. The words fall back to bullets there.
+
+## @thread a-statement-could-be-said-in-tiers-from-its-ir
+
+Since the verbalizer holds the IR of each formula, it could say a statement in more than one tier. The checked statement would stay lossless under the reading rules. Beside it, a looser tier could read the way a person writes, marked as such, and never the claim. The owner of the design chose the single lossless tier for now, and left the tiers for later.
 
 ## @axiom a-short-list-of-rules-settles-what-english-leaves-open
 

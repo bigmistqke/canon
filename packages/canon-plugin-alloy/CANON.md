@@ -27,6 +27,7 @@ It writes its own terms and claims in Alloy, as the checker does. The plugin say
 - [`@term world`](#term-world)
 - [`@term reading-table`](#term-reading-table)
 - [`@term noun-table`](#term-noun-table)
+- [`@term verb-table`](#term-verb-table)
 - [`@term intent`](#term-intent)
 - [`@axiom a-statement-says-what-its-logic-says`](#axiom-a-statement-says-what-its-logic-says)
   - [`@spec a-document-that-keeps-no-readings-is-left-as-it-is`](#spec-a-document-that-keeps-no-readings-is-left-as-it-is)
@@ -531,7 +532,7 @@ A thing is an element of a signature, which the analyzer names after the signatu
 | Installed | the project has installed {1} | the project has not installed {1} |
 ```
 
-A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading.
+A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading. A reading that marks its verb finds the other forms of the verb in a [*verb table*](#term-verb-table).
 <details>
 <summary>Grammar</summary>
 
@@ -561,6 +562,30 @@ A row says what a `noun` line says with the noun in brackets, `noun Installed: [
 | ------- | ----------- |
 | type    | noun        |
 | plural  | noun tables |
+
+</details>
+
+### @term verb-table
+
+> A verb table is a table in the [*own text*](../canon/CANON.md#term-own-text) of a [*unit*](../canon/CANON.md#term-unit) whose headers are `verb`, `infinitive` and `participle`. Each row gives a verb that a reading marks, and the other forms of that verb.
+
+```md
+| verb    | infinitive | participle |
+| ------- | ---------- | ---------- |
+| keeps   | keep       | kept       |
+| reports | report     | reported   |
+```
+
+A reading marks its verb to give its [*frame*](../naturalloy/CANON.md#term-frame), and the verbalizer needs the other forms of the verb for a negative and a passive. A marked verb that links to a verb term takes its forms from the grammar table of the term, and needs no row. The plugin inflects no word itself, as a grammar table does not. A tool may propose the rows from a lexicon of English, for the author to read and keep. The rows stand in the document, so every form shows in its diff.
+
+No document holds a verb table yet.
+<details>
+<summary>Grammar</summary>
+
+| grammar |             |
+| ------- | ----------- |
+| type    | noun        |
+| plural  | verb tables |
 
 </details>
 
