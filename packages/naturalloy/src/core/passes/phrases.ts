@@ -277,6 +277,20 @@ export const someInside = everywhere('some-inside', 'spec-a-thing-of-a-some-is-s
   let changed = false;
   for (let moved = true; moved && vars.length > 1; ) {
     moved = false;
+    // Two things of a kind that must differ go in together, where the pass of "another" says them: "an owner and another owner".
+    for (const [i, a] of vars.entries())
+      for (const b of vars.slice(i + 1)) {
+        if (moved || a.type !== b.type) continue;
+        const named = items.filter(item => names(item, a) || names(item, b));
+        if (named.length === items.length || !named.some(item => item.t === 'same' && item.negative && names(item, a) && names(item, b))) continue;
+        const pair: Sentence = { t: 'quant', q: 'some', vars: [a, b], body: { t: 'and', items: named } };
+        const said = 'run' in anotherOfAKind ? anotherOfAKind.run(pair, context) : pair;
+        if (said === pair) continue;
+        items = [...items.filter(item => !named.includes(item)), said];
+        vars = vars.filter(x => x !== a && x !== b);
+        changed = moved = true;
+      }
+    if (moved) continue;
     for (const v of [...vars].reverse()) {
       const named = items.filter(item => names(item, v));
       // A thing goes inside only where the words say more of it than the clause that names it beside another.

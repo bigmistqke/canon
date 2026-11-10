@@ -122,6 +122,8 @@ describe('a thing of a "some"', () => {
    */
   it('is said inside the clauses that name it, where they say a noun phrase of it', () => {
     expect(say('some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed')).toBe('There is a cleanup that has run and is on an owner that pulse has disposed.');
+    // Two things of a kind that must differ go in together, as "an owner and another owner".
+    expect(say('some c: Cleanup, o, p: Owner | o != p and o in c.on and p in c.on and c in Ran')).toMatch(/the cleanup is on an owner and is on another owner/);
     // The cleanup that code has registered is no subject of its clause, so "there is" takes "such that"; the owner is inside all the same.
     expect(say('some c: Cleanup, o: Owner | c in Registered and o in c.on and o in Disposed')).toBe(
       'There is a cleanup such that code has registered the cleanup and the cleanup is on an owner that pulse has disposed.'
