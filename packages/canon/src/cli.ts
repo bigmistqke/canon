@@ -280,20 +280,20 @@ const TERM_MARK = /(?<![*\\\w])\*(?![*\s])([^*\n]+?)(?<![\s\\])\*(?![*\w])/g;
 
 /**
  * The term marks of a document: the links whose whole text sits between two
- * single asterisks, `[*words*](href)`, with their words, where the asterisk and
- * the link start and end, and the href. Frontmatter, fences, the index and code
+ * single asterisks, `[*words*](href)`, with their words, where the first
+ * asterisk stands, and the href. Frontmatter, fences, the index and code
  * spans hold no term mark.
  */
-function termMarks(src: string): Array<{ words: string; at: number; start: number; end: number; href: string }> {
+function termMarks(src: string): Array<{ words: string; at: number; href: string }> {
   const prose = maskFences(src).replace(/(`+)[^\n]*?\1/g, m => ' '.repeat(m.length));
-  const marks: Array<{ words: string; at: number; start: number; end: number; href: string }> = [];
+  const marks: Array<{ words: string; at: number; href: string }> = [];
   for (const m of prose.matchAll(TERM_MARK)) {
     const at = m.index ?? 0;
     const after = at + m[0].length;
     // Only the text of a link is a term mark: single asterisks elsewhere are emphasis.
     const link = prose[at - 1] === '[' ? /^\]\(([^)\s]+)\)/.exec(prose.slice(after)) : null;
     if (link === null) continue;
-    marks.push({ words: (m[1] as string).trim(), at, start: at - 1, end: after + link[0].length, href: link[1] as string });
+    marks.push({ words: (m[1] as string).trim(), at, href: link[1] as string });
   }
   return marks;
 }
