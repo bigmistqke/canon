@@ -236,9 +236,9 @@ A document asks for it in its frontmatter. The commands `generate`, `check` and 
 one sig GenerateCommand in Command {}
 ```
 
-| reading         | holds                                                           | does not hold                                                       |
-| --------------- | --------------------------------------------------------------- | ------------------------------------------------------------------- |
-| GenerateCommand | {1} is the [command](../canon/CANON.md#term-command) `generate` | {1} is not the [command](../canon/CANON.md#term-command) `generate` |
+| reading         | holds                                                             | does not hold |
+| --------------- | ----------------------------------------------------------------- | ------------- |
+| GenerateCommand | {1} ^is^ the [command](../canon/CANON.md#term-command) `generate` |               |
 
 </details>
 
@@ -253,9 +253,9 @@ one sig GenerateCommand in Command {}
 one sig CheckCommand in Command {}
 ```
 
-| reading      | holds                                                        | does not hold                                                    |
-| ------------ | ------------------------------------------------------------ | ---------------------------------------------------------------- |
-| CheckCommand | {1} is the [command](../canon/CANON.md#term-command) `check` | {1} is not the [command](../canon/CANON.md#term-command) `check` |
+| reading      | holds                                                          | does not hold |
+| ------------ | -------------------------------------------------------------- | ------------- |
+| CheckCommand | {1} ^is^ the [command](../canon/CANON.md#term-command) `check` |               |
 
 </details>
 
@@ -270,9 +270,9 @@ one sig CheckCommand in Command {}
 one sig LogicCommand in Command {}
 ```
 
-| reading      | holds                                                              | does not hold                                                          |
-| ------------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| LogicCommand | {1} is the [command](../canon/CANON.md#term-command) `alloy:logic` | {1} is not the [command](../canon/CANON.md#term-command) `alloy:logic` |
+| reading      | holds                                                                | does not hold |
+| ------------ | -------------------------------------------------------------------- | ------------- |
+| LogicCommand | {1} ^is^ the [command](../canon/CANON.md#term-command) `alloy:logic` |               |
 
 </details>
 
@@ -301,25 +301,25 @@ sig Worded in Document {}
 sig Stated in Unit {}
 ```
 
-| reading     | holds                                                                                         | does not hold                                                                                         |
-| ----------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Logical     | {1} holds a formula                                                                           | {1} holds no formula                                                                                  |
-| Generated   | the [statement] of {1} sits between the markers of a generated region                         | the [statement] of {1} does not sit between the markers of a generated region                         |
-| Differs     | the [statement] of {1} differs from what its formula says                                     | the [statement] of {1} does not differ from what its formula says                                     |
-| Wordless    | the formula of {1} names a word that has no reading                                           | the formula of {1} names no word that has no reading                                                  |
-| Twofold     | {1} holds more than one formula                                                               | {1} does not hold more than one formula                                                               |
-| Faulted     | the verbalizer fails on the formula of {1} with a fault of its own                            | the verbalizer does not fail on the formula of {1} with a fault of its own                            |
-| Unsayable   | the formula of {1} cannot be said in words                                                    | the formula of {1} can be said in words                                                               |
-| Current     | the [statement] of {1} is current                                                             | the [statement] of {1} is not current                                                                 |
-| Misread     | the [statement] of {1} reads back as more or other than its formula                           | the [statement] of {1} reads back as its formula alone                                                |
-| Stale       | the [statement] of {1} is stale                                                               | the [statement] of {1} is not stale                                                                   |
-| Unwritten   | the [statement] of {1} is unwritten                                                           | the [statement] of {1} is not unwritten                                                               |
-| Handwritten | the [statement] of {1} is handwritten                                                         | the [statement] of {1} is not handwritten                                                             |
-| Reported    | the [checker](../canon/CANON.md#term-checker) reports the [statement] of {1}                  | the [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}                  |
-| Rewritten   | the [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | the [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates |
-| Explained   | the [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said      | the [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said      |
-| Worded      | {1} keeps readings                                                                            | {1} keeps no readings                                                                                 |
-| Stated      | {1} has a [statement](../canon/CANON.md#term-statement)                                       | {1} has no [statement](../canon/CANON.md#term-statement)                                              |
+| reading     | holds                                                                                           | does not hold                                            |
+| ----------- | ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| Logical     | {1} ^holds^ a formula                                                                           | {1} holds no formula                                     |
+| Generated   | the [statement] of {1} ^sits^ between the markers of a generated region                         |                                                          |
+| Differs     | the [statement] of {1} ^differs^ from what its formula says                                     |                                                          |
+| Wordless    | the formula of {1} ^names^ a word that has no reading                                           | the formula of {1} names no word that has no reading     |
+| Twofold     | {1} ^holds^ more than one formula                                                               |                                                          |
+| Faulted     | the verbalizer ^fails^ on the formula of {1} with a fault of its own                            |                                                          |
+| Unsayable   | the formula of {1} cannot be said in words                                                      | the formula of {1} can be said in words                  |
+| Current     | the [statement] of {1} ^is^ current                                                             |                                                          |
+| Misread     | the [statement] of {1} ^reads^ back as more or other than its formula                           | the [statement] of {1} reads back as its formula alone   |
+| Stale       | the [statement] of {1} ^is^ stale                                                               |                                                          |
+| Unwritten   | the [statement] of {1} ^is^ unwritten                                                           |                                                          |
+| Handwritten | the [statement] of {1} ^is^ handwritten                                                         |                                                          |
+| Reported    | the [checker](../canon/CANON.md#term-checker) ^reports^ the [statement] of {1}                  |                                                          |
+| Rewritten   | the [checker](../canon/CANON.md#term-checker) ^writes^ the [statement] of {1} when it generates |                                                          |
+| Explained   | the [checker](../canon/CANON.md#term-checker) ^says^ why the formula of {1} cannot be said      |                                                          |
+| Worded      | {1} ^keeps^ readings                                                                            | {1} keeps no readings                                    |
+| Stated      | {1} ^has^ a [statement](../canon/CANON.md#term-statement)                                       | {1} has no [statement](../canon/CANON.md#term-statement) |
 
 </details>
 
@@ -343,18 +343,18 @@ one sig Voice { rel: Unit -> Word }
 one sig Rely { rel: Unit -> Word }
 ```
 
-| reading       | holds                                                     | does not hold                                                     |
-| ------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
-| Field         | {1} is a field of a signature                             | {1} is not a field of a signature                                 |
-| Predicate     | {1} is a predicate                                        | {1} is not a predicate                                            |
-| Undeclared    | {1} is undeclared                                         | {1} is not undeclared                                             |
-| Misplaced     | {1} is misplaced                                          | {1} is not misplaced                                              |
-| Apart         | {1} stands apart from its declaration                     | {1} does not stand apart from its declaration                     |
-| Unused        | {1} is unused                                             | {1} is not unused                                                 |
-| Flagged       | the [checker](../canon/CANON.md#term-checker) reports {1} | the [checker](../canon/CANON.md#term-checker) does not report {1} |
-| Introduce.rel | {1} declares {2}                                          | {1} does not declare {2}                                          |
-| Voice.rel     | a reading in {1} says {2}                                 | no reading in {1} says {2}                                        |
-| Rely.rel      | a claim, a definition or a fact of {1} uses {2}           | no claim, definition or fact of {1} uses {2}                      |
+| reading       | holds                                                       | does not hold                                |
+| ------------- | ----------------------------------------------------------- | -------------------------------------------- |
+| Field         | {1} ^is^ a field of a signature                             |                                              |
+| Predicate     | {1} ^is^ a predicate                                        |                                              |
+| Undeclared    | {1} ^is^ undeclared                                         |                                              |
+| Misplaced     | {1} ^is^ misplaced                                          |                                              |
+| Apart         | {1} ^stands^ apart from its declaration                     |                                              |
+| Unused        | {1} ^is^ unused                                             |                                              |
+| Flagged       | the [checker](../canon/CANON.md#term-checker) ^reports^ {1} |                                              |
+| Introduce.rel | {1} ^declares^ {2}                                          |                                              |
+| Voice.rel     | a reading in {1} ^says^ {2}                                 | no reading in {1} says {2}                   |
+| Rely.rel      | a claim, a definition or a fact of {1} ^uses^ {2}           | no claim, definition or fact of {1} uses {2} |
 
 </details>
 
@@ -371,9 +371,9 @@ A signature declared `in` another is a part of that other, and one that `extends
 sig Signature in Word {}
 ```
 
-| reading   | holds              | does not hold          |
-| --------- | ------------------ | ---------------------- |
-| Signature | {1} is a signature | {1} is not a signature |
+| reading   | holds                | does not hold |
+| --------- | -------------------- | ------------- |
+| Signature | {1} ^is^ a signature |               |
 
 </details>
 
@@ -395,14 +395,14 @@ one sig Frees { rel: Unit -> Scenario }
 one sig Blame { rel: Scenario -> Unit }
 ```
 
-| reading    | holds                                                                        | does not hold                                                                        |
-| ---------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| Possible   | {1} is a [scenario] that can happen while every held unit holds              | {1} is not a [scenario] that can happen while every held unit holds                  |
-| Impossible | {1} is a [scenario] that cannot happen while every held unit holds           | {1} is not a [scenario] that cannot happen while every held unit holds               |
-| Raised     | the [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | the [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen |
-| Probe.rel  | the author asks about leaving out {2} for {1}                                | the author does not ask about leaving out {2} for {1}                                |
-| Frees.rel  | leaving out {1} lets {2} happen                                              | leaving out {1} does not let {2} happen                                              |
-| Blame.rel  | the [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | the [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1} |
+| reading    | holds                                                                          | does not hold                           |
+| ---------- | ------------------------------------------------------------------------------ | --------------------------------------- |
+| Possible   | {1} ^is^ a [scenario] that can happen while every held unit holds              |                                         |
+| Impossible | {1} ^is^ a [scenario] that cannot happen while every held unit holds           |                                         |
+| Raised     | the [checker](../canon/CANON.md#term-checker) ^reports^ that {1} cannot happen |                                         |
+| Probe.rel  | the author ^asks^ about leaving out {2} for {1}                                |                                         |
+| Frees.rel  | leaving out {1} lets {2} happen                                                | leaving out {1} does not let {2} happen |
+| Blame.rel  | the [checker](../canon/CANON.md#term-checker) ^names^ {2} in its report of {1} |                                         |
 
 </details>
 
@@ -435,19 +435,19 @@ one sig Leave { rel: Search -> Unit }
 sig Checked in Document {}
 ```
 
-| reading       | holds                                                                                    | does not hold                                                                                    |
-| ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Trial         | {1} leaves one unit out                                                                  | {1} leaves no unit out                                                                           |
-| First         | {1} is asked before any scenario is known to be impossible                               | {1} is not asked before any scenario is known to be impossible                                   |
-| Afterwards    | {1} is asked after the first [search] is answered                                        | {1} is not asked after the first [search] is answered                                            |
-| BareFormula   | {1} holds a formula with no keyword                                                      | {1} holds no formula without a keyword                                                           |
-| Held          | the analyzer is asked to hold the formula of {1}                                         | the analyzer is not asked to hold the formula of {1}                                             |
-| Contradicting | {1} is held with units that cannot all hold                                              | {1} is held with units that can all hold                                                         |
-| Named         | the [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | the [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction |
-| Checked       | the project lists {1} among the documents it checks                                      | the project does not list {1} among the documents it checks                                      |
-| Pose.units    | {1} requires {2} to hold                                                                 | {1} does not require {2} to hold                                                                 |
-| Pose.scenario | {1} requires {2} to happen                                                               | {1} does not require {2} to happen                                                               |
-| Leave.rel     | {1} leaves out {2}                                                                       | {1} does not leave out {2}                                                                       |
+| reading       | holds                                                                                      | does not hold                            |
+| ------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------- |
+| Trial         | {1} ^leaves^ one unit out                                                                  | {1} leaves no unit out                   |
+| First         | {1} ^is^ asked before any scenario is known to be impossible                               |                                          |
+| Afterwards    | {1} ^is^ asked after the first [search] is answered                                        |                                          |
+| BareFormula   | {1} ^holds^ a formula with no keyword                                                      | {1} holds no formula without a keyword   |
+| Held          | the analyzer ^is^ asked to hold the formula of {1}                                         |                                          |
+| Contradicting | {1} ^is^ held with units that cannot all hold                                              | {1} is held with units that can all hold |
+| Named         | the [checker](../canon/CANON.md#term-checker) ^names^ {1} in its report of a contradiction |                                          |
+| Checked       | the project ^lists^ {1} among the documents it checks                                      |                                          |
+| Pose.units    | {1} ^requires^ {2} to hold                                                                 |                                          |
+| Pose.scenario | {1} ^requires^ {2} to happen                                                               |                                          |
+| Leave.rel     | {1} ^leaves^ out {2}                                                                       |                                          |
 
 </details>
 
@@ -469,11 +469,11 @@ one sig Together { rel: Unit -> Unit }
 fact linked { Chain.rel = ^(Share.rel + ~(Share.rel)) }
 ```
 
-| reading      | holds                                             | does not hold                                  |
-| ------------ | ------------------------------------------------- | ---------------------------------------------- |
-| Share.rel    | {1} shares a word with {2}                        | {1} shares no word with {2}                    |
-| Chain.rel    | {1} is linked to {2} through shared words         | {1} is not linked to {2} through shared words  |
-| Together.rel | the analyzer is asked about {1} together with {2} | the analyzer is asked about {1} apart from {2} |
+| reading      | holds                                               | does not hold                                  |
+| ------------ | --------------------------------------------------- | ---------------------------------------------- |
+| Share.rel    | {1} ^shares^ a word with {2}                        | {1} shares no word with {2}                    |
+| Chain.rel    | {1} ^is^ linked to {2} through shared words         |                                                |
+| Together.rel | the analyzer ^is^ asked about {1} together with {2} | the analyzer is asked about {1} apart from {2} |
 
 </details>
 
@@ -506,13 +506,13 @@ sig Unchallenged in Unit {}
 pred loneOn[u: Unit, w: Word] { u->w in Rely.rel and (no v: Unit | v != u and v->w in Utter.rel) and (no v: Unit | v->w in Picture.rel) }
 ```
 
-| reading      | holds                                                                                   | does not hold                                                                                   |
-| ------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Utter.rel    | a block of {1} names {2} outside its declaration                                        | no block of {1} names {2} outside its declaration                                               |
-| Picture.rel  | a scenario of {1} names {2}                                                             | no scenario of {1} names {2}                                                                    |
-| Expose.rel   | the [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | the [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2} |
-| Unchallenged | no other formula can contradict the formula of {1}                                      | another formula can contradict the formula of {1}                                               |
-| loneOn       | the formula of {1} is [lone](#term-lone-formula) on {2}                                 | the formula of {1} is not lone on {2}                                                           |
+| reading      | holds                                                                                     | does not hold                                     |
+| ------------ | ----------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Utter.rel    | a block of {1} ^names^ {2} outside its declaration                                        | no block of {1} names {2} outside its declaration |
+| Picture.rel  | a scenario of {1} ^names^ {2}                                                             | no scenario of {1} names {2}                      |
+| Expose.rel   | the [checker](../canon/CANON.md#term-checker) ^reports^ the formula of {1} as lone on {2} |                                                   |
+| Unchallenged | no other formula can contradict the formula of {1}                                        | another formula can contradict the formula of {1} |
+| loneOn       | the formula of {1} ^is^ [lone](#term-lone-formula) on {2}                                 | the formula of {1} is not lone on {2}             |
 
 </details>
 
@@ -578,10 +578,10 @@ The intent measures the formula. When the generated statement says something the
 sig Intended, Aimless in Unit {}
 ```
 
-| reading  | holds                                                                          | does not hold                                                                          |
-| -------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
-| Intended | {1} has an [intent]                                                            | {1} has no [intent]                                                                    |
-| Aimless  | the [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | the [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent] |
+| reading  | holds                                                                            | does not hold       |
+| -------- | -------------------------------------------------------------------------------- | ------------------- |
+| Intended | {1} ^has^ an [intent]                                                            | {1} has no [intent] |
+| Aimless  | the [checker](../canon/CANON.md#term-checker) ^reports^ that {1} has no [intent] |                     |
 
 </details>
 

@@ -17,6 +17,7 @@ contains: contain, contained
 declares: declare, declared
 depends: depend, depended
 derives: derive, derived
+differs: differ, differed
 disposes: dispose, disposed
 enters: enter, entered
 exits: exit, exited
