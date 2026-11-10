@@ -61,6 +61,12 @@ describe('the rules of reading', () => {
       parseReadings('noun Cleanup: cleanup\nRan: {1} has run | {1} has not run\nquiet: {1} is quiet | {1} is not quiet'),
       'sig Cleanup {} var sig Ran in Cleanup {} pred quiet[c: Cleanup] { c in Ran }'
     );
+    // Two such nouns in one first side, and in a claim before "when": every pair.
+    for (const formula of ['all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies c in Ran', 'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on']) {
+      const pair = readsBack(formula, readings);
+      expect(pair.words).toMatch(/^(When a cleanup|A cleanup is on an owner)/);
+      expect(pair.meanings).toEqual([pair.meant]);
+    }
     const definition = readsBack('pred quiet[c: Cleanup] { c in Ran }', quiet);
     expect(definition.words).toBe('A cleanup is quiet exactly when the cleanup has run.');
     expect(definition.meanings).toEqual([definition.meant]);

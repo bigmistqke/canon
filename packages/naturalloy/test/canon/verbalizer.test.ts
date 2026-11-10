@@ -131,6 +131,15 @@ describe('the words', () => {
     expect(say('all o: Owner | (dispose[o] and some c: Cleanup | c.on = o) implies o in Disposed')).toBe(
       'When pulse disposes an owner and a cleanup is on the owner, pulse has disposed the owner.'
     );
+    // Several variables, each first named in the first side, or in a claim said before "when".
+    expect(say('all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies c in Ran')).toBe(
+      'When a cleanup is on an owner and pulse has disposed the owner, the cleanup has run.'
+    );
+    expect(say('all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on')).toBe(
+      ['A cleanup is on an owner when all of these hold:', '  - code has registered the cleanup', '  - pulse has disposed the owner', '  - the dispose of the owner has been stopped', '  - the cleanup has run'].join('\n')
+    );
+    // One variable that keeps its number keeps the "for every" of the others with it.
+    expect(say('all c, d: Cleanup, o: Owner | (c in o.~on and d in o.~on) implies o in Disposed')).toMatch(/^For every /);
   });
 
   /**

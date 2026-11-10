@@ -362,10 +362,7 @@ export class Parser {
       for (const [when, rest] of splits(main, ', ')) {
         const then = rest.startsWith(`${RULE.then} `) ? rest.slice(RULE.then.length + 1) : rest;
         // "when a bug …, … the bug": the rule over every bug.
-        if (lead === RULE.when && otherwiseWords === undefined)
-          for (const every of this.every([when], [then], scope))
-            for (const w of this.sentence(every.docs[0] as string, every.inner))
-              for (const t of this.sentence(then, every.inner)) out.push({ t: 'quant', q: 'all', vars: [every.v], body: { t: 'rule', when: w, then: t } });
+        if (lead === RULE.when && otherwiseWords === undefined) out.push(...this.everyLine(when, then, scope));
         for (const w of this.sentence(when, scope))
           for (const t of this.sentence(then, scope)) {
             const rules: Sentence[] =
@@ -527,16 +524,54 @@ export class Parser {
     return out.some(x => x === undefined) ? undefined : (out as { name: string; v: Var }[]);
   }
 
+  /** The words of a rule on one line, "when a bug …, … the bug", read for every bug, and so for each such noun of its first side. */
+  private everyLine(when: string, then: string, scope: Scope): Sentence[] {
+    const out: Sentence[] = [];
+    for (const every of this.every([when], [then], scope)) {
+      const inner = every.docs[0] as string;
+      const bodies: Sentence[] = [];
+      for (const w of this.sentence(inner, every.inner)) for (const t of this.sentence(then, every.inner)) bodies.push({ t: 'rule', when: w, then: t });
+      bodies.push(...this.everyLine(inner, then, every.inner));
+      for (const body of bodies) out.push({ t: 'quant', q: 'all', vars: [every.v], body });
+    }
+    return out;
+  }
+
+  /**
+   * A rule "when …, …" with "a cleanup" in its first side, where "the cleanup" follows, read for every cleanup. What
+   * is left may say "an owner" the same way, read for every owner inside: "when a run asks for a command, …".
+   */
+  private everyRule(doc: Extract<Doc, { kind: 'rule' }>, scope: Scope): Sentence[] {
+    const out: Sentence[] = [];
+    for (const every of this.every([doc.when], [doc.then], scope)) {
+      const inner = { ...doc, when: every.docs[0] as Doc };
+      const bodies: Sentence[] = [];
+      for (const when of this.doc(inner.when, every.inner)) for (const then of this.doc(inner.then, every.inner)) bodies.push({ t: 'rule', when, then });
+      bodies.push(...this.everyRule(inner, every.inner));
+      for (const body of bodies) out.push({ t: 'quant', q: 'all', vars: [every.v], body });
+    }
+    return out;
+  }
+
+  /**
+   * "pulse has disposed p when all of these hold:": a rule said with its second side first, and "a cleanup" in that
+   * side, where "the cleanup" follows, read for every cleanup; and so on for each such noun the claim says.
+   */
+  private claimRule(claim: string, rest: string, doc: Extract<Doc, { kind: 'list' }>, scope: Scope): Sentence[] {
+    const out: Sentence[] = [];
+    for (const when of this.intro(rest, doc, scope)) for (const then of this.sentence(claim, scope)) out.push({ t: 'rule', when, then });
+    for (const every of this.every([claim], [{ ...doc, intro: rest }], scope))
+      for (const body of this.claimRule(every.docs[0] as string, rest, doc, every.inner)) out.push({ t: 'quant', q: 'all', vars: [every.v], body });
+    return out;
+  }
+
   // ---- the layout ----
 
   private doc(doc: Doc, scope: Scope): Sentence[] {
     if (typeof doc === 'string') return this.sentence(doc, scope);
     if (doc.kind === 'rule') {
       const out: Sentence[] = [];
-      if (doc.lead === RULE.when && doc.otherwise === undefined)
-        for (const every of this.every([doc.when], [doc.then], scope))
-          for (const when of this.doc(every.docs[0] as Doc, every.inner))
-            for (const then of this.doc(doc.then, every.inner)) out.push({ t: 'quant', q: 'all', vars: [every.v], body: { t: 'rule', when, then } });
+      if (doc.lead === RULE.when && doc.otherwise === undefined) out.push(...this.everyRule(doc, scope));
       for (const when of this.doc(doc.when, scope))
         for (const then of this.doc(doc.then, scope)) {
           const rules: Sentence[] = doc.otherwise === undefined ? [{ t: 'rule', when, then }] : this.doc(doc.otherwise, scope).map(o => ({ t: 'rule', when, then, otherwise: o }) as Sentence);
@@ -553,12 +588,7 @@ export class Parser {
     // "pulse has disposed p when all of these hold:": a rule said with its second side first, and "a cleanup" in that
     // side, where "the cleanup" follows, for every cleanup.
     if (doc.kind === 'list')
-      for (const [claim, rest] of splits(intro, ` ${RULE.when} `)) {
-        for (const when of this.intro(rest, doc, scope)) for (const then of this.sentence(claim, scope)) out.push({ t: 'rule', when, then });
-        for (const every of this.every([claim], [{ ...doc, intro: rest }], scope))
-          for (const when of this.intro(rest, doc, every.inner))
-            for (const then of this.sentence(every.docs[0] as string, every.inner)) out.push({ t: 'quant', q: 'all', vars: [every.v], body: { t: 'rule', when, then } });
-      }
+      for (const [claim, rest] of splits(intro, ` ${RULE.when} `)) out.push(...this.claimRule(claim, rest, doc, scope));
     // "a unit is unfounded exactly when at least one of these holds:", for every unit.
     if (intro.includes(' exactly when '))
       for (const every of this.every([intro], [doc.kind === 'list' ? { ...doc, intro: '' } : doc.body], scope, true))
@@ -699,6 +729,17 @@ function flat(node: unknown): unknown {
   if (Array.isArray(node)) return node.map(flat);
   if (node === null || typeof node !== 'object') return node;
   const o = Object.fromEntries(Object.entries(node).map(([k, v]) => [k, flat(v)])) as Record<string, unknown>;
+  // "for every run: for every command: …" says what "for every run and every command: …" says, in whichever order the
+  // words named them: one "for every", its variables in an order of their types alone.
+  if (o.t === 'quant' && o.q === 'all' && Array.isArray(o.vars)) {
+    const body = o.body as Record<string, unknown>;
+    if (body.t === 'quant' && body.q === 'all' && Array.isArray(body.vars)) {
+      o.vars = [...(o.vars as unknown[]), ...(body.vars as unknown[])];
+      o.body = body.body;
+    }
+    const type = (v: unknown): string => JSON.stringify((v as Record<string, unknown>).type);
+    o.vars = [...(o.vars as unknown[])].sort((a, b) => (type(a) < type(b) ? -1 : type(a) > type(b) ? 1 : 0));
+  }
   if ((o.t === 'and' || o.t === 'or') && Array.isArray(o.items)) o.items = (o.items as Record<string, unknown>[]).flatMap(i => (i.t === o.t ? (i.items as unknown[]) : [i]));
   // "a spec that cites no axiom or cites no fact" says a kind and options of it, which the IR may hold as one alternative
   // of the kind with an "or" inside, or as an alternative for each option: the same, made one shape.

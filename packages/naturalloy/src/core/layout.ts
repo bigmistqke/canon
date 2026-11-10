@@ -14,13 +14,13 @@ export type Doc =
   | { kind: 'rule'; lead: string; when: Doc; then: Doc; otherwise?: Doc };
 
 /**
- * A "for every" over one variable that the words could leave out: the intro it has, the name of its variable, and
- * "a" or "an" with the name, said where the words first name the variable in its place.
+ * A "for every" that the words could leave out: the intro it has, and for each of its variables the name, and "a" or
+ * "an" with the name, said where the words first name the variable in its place.
  */
 export interface Every {
   intro: string;
-  name: string;
-  said: string;
+  /** Each variable of the "for every", in the order the words first name them. */
+  vars: { name: string; said: string }[];
 }
 
 export const isList = (doc: Doc): doc is Extract<Doc, { kind: 'list' }> => typeof doc !== 'string' && doc.kind === 'list';

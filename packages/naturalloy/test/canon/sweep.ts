@@ -275,6 +275,14 @@ export const SWEEP: { what: string; formula: string }[] = [
     'pred gone[o: Owner] { o in Disposed }',
     'pred gone[o: Owner] { o in Disposed and o not in Stopped }'
   ].map(formula => ({ what: '"for every" over one thing of a kind', formula })),
+  // "for every" over things of several kinds: said as "a" and each noun where the first side, or a claim said before
+  // "when", first names each; kept whole where one of them is named once or keeps its number.
+  ...[
+    'all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran',
+    'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies o in c.on',
+    'all c: Cleanup, o: Owner | o in c.on implies o in Disposed',
+    'all c, d: Cleanup, o: Owner | (o in c.on and o in d.on) implies o in Disposed'
+  ].map(formula => ({ what: '"for every" over things of several kinds', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

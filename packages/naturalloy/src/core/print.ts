@@ -405,10 +405,18 @@ export class Printer {
       const intro = own`for ${coordinate(shown.map(name => `every ${name}`), 'and')}`;
       const body = this.sentence(s.body);
       // A rule with no "otherwise" whose first side names the variable, which the words name again after it.
-      if (s.vars.length === 1 && s.body.t === 'rule' && s.body.otherwise === undefined) {
+      if (s.body.t === 'rule' && s.body.otherwise === undefined) {
         const when = this.whens.get(s.body);
-        const every = this.every(intro, s.vars[0] as Var, shown[0] as string);
-        if (when !== undefined && mentions(when, every.name) > 0 && mentions(body, every.name) > 1) return { kind: 'block', intro, body, every };
+        const every = this.every(intro, s.vars, shown);
+        const again = every.vars.every(v => mentions(body, v.name) > 1);
+        if (when !== undefined && again) {
+          if (s.vars.length === 1 && mentions(when, (every.vars[0] as { name: string }).name) > 0) return { kind: 'block', intro, body, every };
+          // Several variables: the words must first name each where the reader meets the rule's "a": in its first side
+          // when that side comes first, or in the claim before "when" when the claim does.
+          const claim = isList(body) && body.intro.includes(` ${RULE.when} `) ? body.intro.slice(0, body.intro.indexOf(` ${RULE.when} `)) : undefined;
+          const opening = claim ?? (typeof body !== 'string' && body.kind === 'rule' ? body.when : typeof body === 'string' && body.startsWith(`${RULE.when} `) ? body.slice(0, body.indexOf(', ')) : undefined);
+          if (s.vars.length > 1 && opening !== undefined && every.vars.every(v => mentions(opening, v.name) > 0)) return { kind: 'block', intro, body, every };
+        }
       }
       return this.apart(intro, body);
     }
@@ -499,16 +507,17 @@ export class Printer {
     const intro = own`for ${coordinate(shown.map(name => `every ${name}`), 'and')}`;
     // A definition whose words open with its one parameter, which they name again after it.
     if (shown.length === 1) {
-      const every = this.every(intro, s.params[0] as Var, shown[0] as string);
+      const every = this.every(intro, s.params, shown);
+      const { name } = every.vars[0] as { name: string };
       const opening = typeof sentence === 'string' ? sentence : sentence.kind === 'rule' ? '' : sentence.intro;
-      if (opening.startsWith(`${VARIABLE}${every.name}${VARIABLE} `) && mentions(sentence, every.name) > 1) return { kind: 'block', intro, body: sentence, every };
+      if (opening.startsWith(`${VARIABLE}${name}${VARIABLE} `) && mentions(sentence, name) > 1) return { kind: 'block', intro, body: sentence, every };
     }
     return this.apart(intro, sentence);
   }
 
-  /** The "for every" with the given intro over `v`, which `shown` names, as the words could leave it out. */
-  private every(intro: string, v: Var, shown: string): Every {
-    return { intro, name: this.nameOf(v), said: `${this.article(v.type)}${shown}` };
+  /** The "for every" with the given intro over `vars`, which `shown` names, as the words could leave it out. */
+  private every(intro: string, vars: readonly Var[], shown: readonly string[]): Every {
+    return { intro, vars: vars.map((v, i) => ({ name: this.nameOf(v), said: `${this.article(v.type)}${shown[i] as string}` })) };
   }
 }
 
@@ -549,9 +558,12 @@ function withoutEvery(doc: Doc, lone: ReadonlySet<string>): Doc {
   if (doc.kind === 'list') return { ...doc, items: doc.items.map(item => withoutEvery(item, lone)) };
   if (doc.kind === 'rule') return { ...doc, when: withoutEvery(doc.when, lone), then: withoutEvery(doc.then, lone), ...(doc.otherwise === undefined ? {} : { otherwise: withoutEvery(doc.otherwise, lone) }) };
   const body = withoutEvery(doc.body, lone);
-  // Only the "for every" as the printer made it: an intro another part has put words before is not one.
-  if (doc.every !== undefined && doc.every.intro === doc.intro && lone.has(doc.every.name)) return first(body, `${VARIABLE}${doc.every.name}${VARIABLE}`, doc.every.said) ?? { ...doc, body };
-  return { ...doc, body };
+  // Only the "for every" as the printer made it: an intro another part has put words before is not one. Every variable
+  // of it must be named the noun alone, or the "for every" stays whole.
+  if (doc.every === undefined || doc.every.intro !== doc.intro || !doc.every.vars.every(v => lone.has(v.name))) return { ...doc, body };
+  let out: Doc | undefined = body;
+  for (const v of doc.every.vars) out = out === undefined ? undefined : first(out, `${VARIABLE}${v.name}${VARIABLE}`, v.said);
+  return out ?? { ...doc, body };
 }
 
 /** A doc as text: laid out, with a capital where the sentence starts with its own words and a period where it ends. */
