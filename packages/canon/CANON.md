@@ -1553,7 +1553,7 @@ The id of a unit is its kind and its stem, joined by a hyphen: the heading `### 
 
 > An ignore line is a line of the [*own text*](#term-own-text) of a [*unit*](#term-unit) that names a [*finding*](#term-finding) the [*checker*](#term-checker) prints. It says why that finding does not break the canon there: `Ignore: dead — a standard verb, which readings in other canons mark`.
 
-The line starts with `Ignore:`, then the name the checker prints for the finding, such as `dead` or `untested`, then a dash and the reason. The reason is for the reader, who sees why the check passes over the unit.
+The line starts with `Ignore:`, then the name the checker prints for the finding, such as `dead` or `untested`, then an em dash and the reason. A hyphen or any other dash in place of the em dash gives no reason. The reason is for the reader, who sees why the check passes over the unit.
 
 <details>
 <summary>Grammar</summary>
@@ -4463,7 +4463,7 @@ This follows because the test is declared where the function is called. The call
 
 > When an [*ignore line*](#term-ignore-line) of a [*unit*](#term-unit) names a [*finding*](#term-finding) and gives a reason, the [*checker*](#term-checker) reports no such finding for the unit.
 
-This follows because the owner of the design has said, in the canon, that the finding breaks nothing there. A finding the check reported all the same would ask for a change that nothing needs. The line stands in the unit, so the reader sees both the finding passed over and the reason.
+A finding that the checker reports by a line of the document is a finding of the unit whose own text holds that line. This follows because the owner of the design has said, in the canon, that the finding breaks nothing there. A finding the check reported all the same would ask for a change that nothing needs. The line stands in the unit, so the reader sees both the finding passed over and the reason.
 
 ### @axiom a-check-the-project-asked-for-is-never-dropped-silently
 

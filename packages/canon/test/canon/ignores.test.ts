@@ -36,6 +36,18 @@ describe('an ignore line', () => {
     expect((await check(lonely('Ignore: dead')))['rot']).toBe(1);
     const stale = await check(lonely('Ignore: dead — a word that other canons use\nIgnore: untested — a term owes no test'));
     expect(stale['rot']).toBe(1);
+    // A name that only an object of the language knows, and a hyphen in place of the dash, are rottings too.
+    expect((await check(lonely('Ignore: toString — a word that other canons use')))['rot']).toBe(1);
+    expect((await check(lonely('Ignore: dead - a word that other canons use')))['rot']).toBe(1);
+  });
+
+  /**
+   * @canon spec-an-ignore-line-keeps-its-finding-from-its-unit
+   */
+  it('keeps a finding the checker reports by the line of its unit', async () => {
+    const marked = lonely('Some [*lonelies*](#term-lonely) stand apart.\n\nIgnore: rot — a plural this term leaves out of its grammar on purpose');
+    const found = await check(marked);
+    expect(found['rot']).toBeUndefined();
   });
 
   /**
