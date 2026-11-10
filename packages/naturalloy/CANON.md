@@ -1,5 +1,6 @@
 ---
 plugins: ["@bigmistqke/canon-plugin-retext", "@bigmistqke/canon-plugin-alloy"]
+documents: [CANON.md, VERBS.md]
 suites: test/canon
 sources: [test]
 command: node ../canon/src/cli.ts
@@ -332,6 +333,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
     - [`@spec a-mark-is-no-part-of-the-words-of-a-reading`](#spec-a-mark-is-no-part-of-the-words-of-a-reading)
     - [`@spec a-verb-line-gives-the-forms-of-a-marked-verb`](#spec-a-verb-line-gives-the-forms-of-a-marked-verb)
     - [`@spec a-verb-line-wins-over-a-standard-verb`](#spec-a-verb-line-wins-over-a-standard-verb)
+    - [`@spec the-standard-verbs-are-the-verb-terms-of-verbs-md`](#spec-the-standard-verbs-are-the-verb-terms-of-verbs-md)
     - [`@spec a-standard-verb-needs-no-verb-line`](#spec-a-standard-verb-needs-no-verb-line)
     - [`@spec a-reading-with-no-negative-side-takes-the-negative-of-its-frame`](#spec-a-reading-with-no-negative-side-takes-the-negative-of-its-frame)
     - [`@spec a-reading-whose-negative-its-frame-cannot-give-is-refused`](#spec-a-reading-whose-negative-its-frame-cannot-give-is-refused)
@@ -946,7 +948,7 @@ The five frames follow the frames of OntoLex-Lemon and LexInfo. The forms of a v
 
 > A standard verb is a verb whose forms naturalloy gives. A reading can mark it with no verb term of its own.
 
-The standard verbs are the common verbs that readings use, such as "holds", "reports" and "says", with their infinitive and their participle. [`src/core/verbs.ts`](src/core/verbs.ts) lists them. A canon that uses a verb in a sense of its own defines it as a term. A mark that links to the term takes the forms of the term instead.
+The standard verbs are the common verbs that readings use, such as "holds", "reports" and "says", with their infinitive and their participle. [VERBS.md](VERBS.md) defines each as a term, and [`src/core/verbs.ts`](src/core/verbs.ts) holds the forms that its grammar tables give. A canon that uses a verb in a sense of its own defines it as a term. A mark that links to the term takes the forms of the term instead.
 
 <details>
 <summary>Grammar</summary>
@@ -4153,6 +4155,12 @@ This follows because the verbalizer inflects no word itself. A rule of English w
 > A `verb` line of the readings gives the forms of its verb in place of those of the [*standard verb*](#term-standard-verb) it spells.
 
 This follows because a canon may use a verb in a sense of its own, and the nearer words count most.
+
+#### @spec the-standard-verbs-are-the-verb-terms-of-verbs-md
+
+> The [*standard verbs*](#term-standard-verb) are the verb terms of [VERBS.md](VERBS.md). Each gives its third person and its participle in its grammar table, and its stem is its infinitive.
+
+This follows because a standard verb is a word, and a canon defines a word as a term: what it means, and its forms. A script writes the list in the source from the terms, and a test fails where the two differ.
 
 #### @spec a-standard-verb-needs-no-verb-line
 
