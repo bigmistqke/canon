@@ -943,7 +943,7 @@ describe('a word that names a term', () => {
    */
   it('writes a term mark where its caller marks the word, and a link where it does not', () => {
     const marked = (target: string, word: string): boolean => target === '#term-x' && word === 'run';
-    expect(verbalize('a in Ran', readings, 'markdown', undefined, marked)).toBe('a has *run*.');
+    expect(verbalize('a in Ran', readings, 'markdown', undefined, marked)).toBe('a has [*run*](#term-x).');
     expect(verbalize('a in Done', readings, 'markdown', undefined, marked)).toBe('a is [done](#term-x).');
     expect(verbalize('a in Ran', readings, 'text', undefined, marked)).toBe('a has run.');
   });
@@ -1009,7 +1009,7 @@ describe('a word that names a term', () => {
   it('starts a sentence with a capital on the word and not on the bracket', () => {
     expect(markdown('a in Alarm')).toBe('[Alarm](#term-x) rings for a.');
     expect(verbalize('a in Alarm', readings)).toBe('Alarm rings for a.');
-    expect(verbalize('a in Alarm', readings, 'markdown', undefined, () => true)).toBe('*Alarm* rings for a.');
+    expect(verbalize('a in Alarm', readings, 'markdown', undefined, () => true)).toBe('[*Alarm*](#term-x) rings for a.');
   });
 
   /**
@@ -2762,3 +2762,4 @@ describe('the lines of the Markdown layout', () => {
     expect(markdownLines(doc)).toEqual(['when all of these hold:', '- a holds', '- b holds', '', 'then c holds']);
   });
 });
+

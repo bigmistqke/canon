@@ -58,13 +58,13 @@ How parse-alloy reads Alloy, and why. It is the canon of the package `@bigmistqk
 
 ## @axiom alloy-is-read-as-the-analyzer-reads-it
 
-> parse-alloy reads Alloy exactly as the Alloy analyzer reads it: every formula grouped as the analyzer groups it. It refuses, with the place and the reason, anything it cannot read that way.
+> parse-alloy reads Alloy exactly as the Alloy analyzer reads it: every [*formula*](#term-parsed-formula) grouped as the analyzer groups it. It refuses, with the place and the reason, anything it cannot read that way.
 
 This follows because a tool that builds on the tree, such as naturalloy saying a formula in words, inherits every mistake in it. A formula grouped otherwise than the analyzer groups it means something else, and nothing downstream can notice. A refusal is better than a wrong tree.
 
 #### @spec a-formula-the-parser-cannot-read-is-refused-and-the-refusal-names-what-it-cannot-read
 
-> The parser refuses a *formula* with a construct, a stray character or an unclosed bracket that it cannot read, and names it.
+> The parser refuses a [*formula*](#term-parsed-formula) with a construct, a stray character or an unclosed bracket that it cannot read, and names it.
 
 This follows because a tree of part of a formula means less than the formula. The author must know which part failed.
 
@@ -76,13 +76,13 @@ This follows because the bar ends the declaration, and what follows is the claim
 
 #### @spec a-temporal-operator-takes-the-formula-next-to-it
 
-> The parser reads the formula next to a temporal operator as its operand.
+> The parser reads the [*formula*](#term-parsed-formula) next to a temporal operator as its operand.
 
 This follows because the analyzer binds `always`, `eventually`, `after` and the other unary temporal operators as tightly as `not`.
 
 #### @spec a-semicolon-takes-everything-after-it
 
-> The parser reads the formula after a `;` as everything that follows it, and the formula before it as everything back to the start, `implies` and `or` included. A `;` after the bar of a quantifier ends the body of the quantifier, and still takes everything back to the start.
+> The parser reads the [*formula*](#term-parsed-formula) after a `;` as everything that follows it, and the formula before it as everything back to the start, `implies` and `or` included. A `;` after the bar of a quantifier ends the body of the quantifier, and still takes everything back to the start.
 
 This follows because the Alloy analyzer binds the semicolon looser than every connective and groups it to the right.
 

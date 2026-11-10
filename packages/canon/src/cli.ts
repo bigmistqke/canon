@@ -24,7 +24,7 @@ import { configKeysOf, CORE_COMMANDS, documentsFor, findCommands, findNamed, typ
 import { beginMarker, replaceRegion } from './regions.ts';
 import { contextOf } from './extends.ts';
 import { hasSettings, readFrontmatter } from './frontmatter.ts';
-import { alignGrammarTables, grammarOf, maskFences, readUnits } from './units.ts';
+import { alignGrammarTables, grammarOf, maskFences, readUnits, type Unit as UnitOfDocument } from './units.ts';
 import { parseSource, testsOf, type Exports, type Syntax, type TestBlock } from './tests.ts';
 import { MARKER, marksOf, runnersOf, type Runner } from './runners.ts';
 
@@ -279,18 +279,21 @@ const spelling = (words: string): string => words.trim().toLowerCase().split(/\s
 const TERM_MARK = /(?<![*\\\w])\*(?![*\s])([^*\n]+?)(?<![\s\\])\*(?![*\w])/g;
 
 /**
- * The term marks of a document: their words, where they start, and the href of
- * the link whose whole text they are. Frontmatter, fences, the index and code
+ * The term marks of a document: the links whose whole text sits between two
+ * single asterisks, `[*words*](href)`, with their words, where the first
+ * asterisk stands, and the href. Frontmatter, fences, the index and code
  * spans hold no term mark.
  */
-function termMarks(src: string): Array<{ words: string; at: number; href?: string }> {
+function termMarks(src: string): Array<{ words: string; at: number; href: string }> {
   const prose = maskFences(src).replace(/(`+)[^\n]*?\1/g, m => ' '.repeat(m.length));
-  const marks: Array<{ words: string; at: number; href?: string }> = [];
+  const marks: Array<{ words: string; at: number; href: string }> = [];
   for (const m of prose.matchAll(TERM_MARK)) {
     const at = m.index ?? 0;
-    const end = at + m[0].length;
-    const link = prose[at - 1] === '[' ? /^\]\(([^)\s]+)\)/.exec(prose.slice(end)) : null;
-    marks.push({ words: (m[1] as string).trim(), at, href: link?.[1] });
+    const after = at + m[0].length;
+    // Only the text of a link is a term mark: single asterisks elsewhere are emphasis.
+    const link = prose[at - 1] === '[' ? /^\]\(([^)\s]+)\)/.exec(prose.slice(after)) : null;
+    if (link === null) continue;
+    marks.push({ words: (m[1] as string).trim(), at, href: link[1] as string });
   }
   return marks;
 }
@@ -1037,9 +1040,12 @@ function analyse(write: boolean): Analysis {
       }
     }
 
-    // An extended document is read with this one, so an id that both declare names two units.
+    // An id that the document declares twice names two units, and so does one that an extended document declares too.
     {
-      const ids = new Set(readUnits(docSource).map(u => u.id));
+      const declared = readUnits(docSource).map(u => u.id);
+      for (const id of new Set(declared.filter((id, i) => declared.indexOf(id) !== i)))
+        findings.rot.push(`${rel}#${id} — ${rel} declares it ${declared.filter(other => other === id).length} times, so a pointer or a tag cannot say which unit it names`);
+      const ids = new Set(declared);
       let context: string[] = [];
       try {
         context = contextOf(file, ROOT);
@@ -1153,17 +1159,9 @@ function analyse(write: boolean): Analysis {
       }
     }
 
-    // A term mark names the term of its own document whose stem its words spell,
-    // or, as the text of a link, the target of the link.
+    // A term mark is a link to a term: it names the term its link names, and its words spell a form of that term.
     if (rel.endsWith('.md')) {
-      const terms = readUnits(docSource).filter(u => u.kind === 'term');
-      const termIds = terms.map(u => u.id);
-      // The spellings that each term's grammar table gives, besides the words of its stem.
-      const given = new Map<string, string[]>();
-      for (const t of terms) {
-        const own = spelling(stemWords(t.id));
-        const forms = [...new Set((t.grammar?.forms ?? []).map(f => spelling(f.spelling)))].filter(f => f !== own);
-        given.set(t.id, forms);
+      for (const t of readUnits(docSource).filter(u => u.kind === 'term')) {
         if (t.grammar === undefined) continue;
         if (t.grammar.type === undefined) findings.rot.push(`${rel}#${t.id} — its grammar table has no row "type"`);
         for (const unknown of t.grammar.unknown)
@@ -1171,30 +1169,30 @@ function analyse(write: boolean): Analysis {
         for (const repeated of new Set(t.grammar.repeated))
           findings.rot.push(`${rel}#${t.id} — its grammar table names "${repeated}" in more than one row`);
       }
-      // Each spelling, with the terms whose stem it spells and the terms a plugin gives it for.
-      const byStem = new Map(termIds.map(id => [spelling(stemWords(id)), id]));
-      const byForm = new Map<string, string[]>();
-      for (const id of termIds) for (const form of given.get(id) ?? []) byForm.set(form, [...(byForm.get(form) ?? []), id]);
-
-      // A form that another term goes by too leaves a mark that spells it unable to say which term it names.
-      for (const [form, ids] of byForm) {
-        const stem = byStem.get(form);
-        if (stem !== undefined) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')} and the stem of ${stem}, so a term mark cannot say which term it names`);
-        else if (ids.length > 1) findings.rot.push(`${rel}: "${form}" is a form of ${ids.join(' and ')}, so a term mark cannot say which term it names`);
-      }
-
-      for (const mark of termMarks(docSource)) {
+      // The terms of each document a mark links into, by the path from this one: its own first.
+      const termsIn = new Map<string, Map<string, UnitOfDocument> | undefined>([['', new Map<string, UnitOfDocument>(readUnits(docSource).filter(u => u.kind === 'term').map(u => [u.id, u]))]]);
+      const termsOf = (path: string): Map<string, UnitOfDocument> | undefined => {
+        if (!termsIn.has(path)) {
+          const file = resolve(dirname(join(ROOT, rel)), path);
+          termsIn.set(path, existsSync(file) ? new Map(readUnits(readFileSync(file, 'utf8')).filter(u => u.kind === 'term').map(u => [u.id, u])) : undefined);
+        }
+        return termsIn.get(path);
+      };
+      const formsOf = (term: UnitOfDocument): Set<string> => new Set([spelling(stemWords(term.id)), ...(term.grammar?.forms ?? []).map(f => spelling(f.spelling))]);
+      const marks = termMarks(docSource).map(mark => {
+        const [path = '', frag = ''] = mark.href.split('#');
+        return { ...mark, term: frag.startsWith('term-') ? termsOf(path)?.get(frag) : undefined, frag, path };
+      });
+      for (const mark of marks) {
         const where = `${rel}:${docLineAt(mark.at)}`;
-        if (mark.href !== undefined) {
-          const frag = mark.href.split('#')[1] ?? '';
-          if (!frag.startsWith('term-')) findings.rot.push(`${where} — term mark "*${mark.words}*" links to ${mark.href}, which is no term`);
+        if (!mark.frag.startsWith('term-')) {
+          findings.rot.push(`${where} — term mark "*${mark.words}*" links to ${mark.href}, which is no term`);
           continue;
         }
-        const words = spelling(mark.words);
-        const named = byStem.get(words) ?? (byForm.get(words)?.length === 1 ? byForm.get(words)?.[0] : undefined);
-        if (named !== undefined) citedTargets.add(`${rel}#${named}`);
-        else if ((byForm.get(words)?.length ?? 0) > 1) findings.rot.push(`${where} — term mark "*${mark.words}*" spells a form of ${byForm.get(words)?.join(' and ')}, so it names neither`);
-        else findings.rot.push(`${where} — term mark "*${mark.words}*" names no term: ${rel} declares no term with that form`);
+        // A target that is not there is a pointer that names no target, which the pointers report.
+        if (mark.term === undefined) continue;
+        if (!formsOf(mark.term).has(spelling(mark.words)))
+          findings.rot.push(`${where} — term mark "*${mark.words}*" spells no form of ${mark.frag}; list the spelling in its grammar table, or link the term these words name`);
       }
     }
   }

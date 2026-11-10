@@ -63,7 +63,9 @@ export const OWES: Record<Kind, Kind[][] | null> = {
  */
 export const MAY_CITE: Partial<Record<Kind, Kind[]>> = {
   'axiom-': ['axiom-'],
-  'spec-': ['fact-']
+  'spec-': ['fact-'],
+  // A term may sit in a more general term, which it narrows: an installed plugin is a kind of plugin.
+  'term-': ['term-']
 };
 
 /** kind → every kind it may cite, owed or not. */

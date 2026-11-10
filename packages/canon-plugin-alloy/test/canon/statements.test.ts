@@ -232,21 +232,23 @@ Done: {1} is [finished] | {1} is not [finished]
   /**
    * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
    */
-  it('is a term mark when it spells a form of a term of the document, and a link when it does not', () => {
+  it('writes each link to a term as a term mark, and keeps as a link one whose words spell no form of its term', () => {
     const { src } = write(TERMS);
     const statement = src.split('\n').filter(l => l.startsWith('>')).join('\n');
-    expect(statement).toContain('*node*');
+    expect(statement).toContain('[*node*](#term-node)');
     expect(statement).not.toContain('[node](#term-node)');
+    // "finished" is no form of the term done, which the reading reports: the statement keeps the link.
     expect(statement).toContain('[finished](#term-done)');
+    expect(statement).not.toContain('[*finished*](#term-done)');
   });
 
   /**
    * @canon spec-generate-writes-a-word-of-a-term-of-the-document-as-a-term-mark
    */
-  it('is a term mark when it spells a form that the grammar table of the term holds', () => {
+  it('is a term mark whose words a grammar table of the term may list as a form', () => {
     const listed = TERMS.replace('> A node is done when it has finished.\n', '> A node is done when it has finished.\n\n| grammar | |\n|---|---|\n| type | adjective |\n| also | finished |\n');
     const statement = write(listed).src.split('\n').filter(l => l.startsWith('>')).join('\n');
-    expect(statement).toContain('*finished*');
+    expect(statement).toContain('[*finished*](#term-done)');
   });
 });
 

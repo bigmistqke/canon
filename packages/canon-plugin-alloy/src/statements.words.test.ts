@@ -81,12 +81,13 @@ always all n: Node | n in Started implies eventually finished[n]
   it('name the terms that say them, the first time each is mentioned', () => {
     const { src } = write(linked);
     const unit = readUnits(src).find(u => u.id === 'axiom-a-node-finishes');
-    // "node" spells the stem of its term, so it is a term mark; "finished" spells no form of term-done, so it is a link.
-    expect(unit?.statement).toContain('for every *node*');
+    // Each word that links to a term is a term mark: the link with its words between single asterisks.
+    expect(unit?.statement).toContain('for every [*node*](#term-node)');
     // "started" is said by the term for the node, which the statement has already named: a term is named once
     expect(unit?.statement).toContain('the node has started');
     expect(unit?.statement).not.toContain('[started]');
     expect(unit?.statement).not.toContain('*started*');
+    // "finished" is no form of the term done, so it links as a plain link.
     expect(unit?.statement).toContain('[finished](#term-done)');
   });
 
