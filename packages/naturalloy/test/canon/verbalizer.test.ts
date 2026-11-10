@@ -686,6 +686,19 @@ describe('a predicate with no reading of its own', () => {
       ['All of these hold:', '  - for every cleanup:', '      the cleanup has run', '  - for every cleanup:', '      code has registered the cleanup.'].join('\n')
     );
     expect(say('(some c: Cleanup | c in Registered) and (some c: Cleanup | c in Registered)', readings)).toContain('there is a cleanup C2 such that code has registered cleanup C2');
+    // A statement that a time phrase opens stands on its own too: its cleanups count from 1 again.
+    const both = say('(always all c, d: Cleanup | c in Ran implies d in Ran) and (always all c, d: Cleanup | c in Registered implies d in Registered)', readings);
+    expect(both).not.toMatch(/C3|C4/);
+  });
+
+  /**
+   * @canon spec-a-variable-alone-of-its-noun-is-named-the-noun
+   */
+  it('names a variable the noun alone where only another statement of its list says its noun', () => {
+    const readings = parseReadings('noun Cleanup: cleanup\nRan: {1} ^has^ run | {1} has not run\nRegistered: code ^has^ registered {1} | code has not registered {1}');
+    const both = say('(all c: Cleanup | c in Ran implies c in Registered) and (all c, d: Cleanup | c in Registered implies d in Registered)', readings);
+    expect(both).toMatch(/^All of these hold:\n  - (for every cleanup:|when a cleanup)/);
+    expect(both).not.toMatch(/cleanup C1:\n\s+when cleanup C1 has run, code has registered cleanup C1/);
   });
 
   /**

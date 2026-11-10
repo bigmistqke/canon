@@ -97,7 +97,8 @@ export class Printer {
     const all = new Set(before);
     let joint = new Set(before);
     const docs = items.map(item => {
-      const own = item.t === 'quant' && item.q === 'all';
+      // A "for every", or one that a time phrase opens, "from now on, for every", is a statement of its own.
+      const own = (item.t === 'quant' && item.q === 'all') || (item.t === 'moment' && item.body.t === 'quant' && item.body.q === 'all');
       this.used.clear();
       for (const name of own ? before : joint) this.used.add(name);
       const doc = this.sentence(item);
@@ -606,9 +607,31 @@ export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | und
       const without = withoutEvery(doc, new Set(lone(text).keys()));
       if (without !== doc) text = said(without);
     }
-    text = unnumbered(text);
+    text = unnumbered(eachStatement(text));
   }
   return marking(options.shortNames === true ? shortNames(text) : text);
+}
+
+/**
+ * The words with the lone numbers of each statement of their opening list dropped there: a statement of a list that
+ * opens with "for every", or with "from now on, for every", stands on its own, and another statement that says its
+ * noun does not keep its number. The words of any other shape are as they were.
+ */
+function eachStatement(text: string): string {
+  const lines = text.split('\n');
+  const first = lines.findIndex((line, i) => i > 0 && /^\s*- /.test(line));
+  if (first === -1 || !/:$/.test(lines[first - 1] as string)) return text;
+  const bullet = (lines[first] as string).match(/^\s*- /)?.[0] as string;
+  const starts = lines.map((line, i) => (i >= first && line.startsWith(bullet) ? i : -1)).filter(i => i !== -1);
+  // Only a list of the opening line: no line after the list may stand outside it.
+  if (lines.slice(first).some(line => line.trim() !== '' && !line.startsWith(bullet) && !line.startsWith(' '.repeat(bullet.length)))) return text;
+  const out = lines.slice(0, first);
+  for (const [k, at] of starts.entries()) {
+    const segment = lines.slice(at, starts[k + 1] ?? lines.length).join('\n');
+    const own = new RegExp(`^${bullet.replace(/[-]/g, '\\-')}(?:from now on, )?for every `, 'i').test(segment);
+    out.push(own ? unnumbered(segment) : segment);
+  }
+  return out.join('\n');
 }
 
 /**

@@ -3476,10 +3476,10 @@ A checker can act as an advisor, whose findings are hints the author weighs. It 
 > - when a [*test*](#term-test) is [*adrift*](#term-adrift), the checker reports a finding for the test
 > - when a [*pointer*](#term-pointer) names no [*target*](#term-target), the checker reports a finding for the pointer
 > - when a [*term mark*](#term-term-mark) names no [*term*](#term-term), the checker reports a finding for the term mark
-> - for every unit U1:\
->   when unit U1 is not [*used*](#term-used) and is not a [*conflict*](#term-conflict), the checker reports a finding for unit U1
-> - for every unit U1:\
->   when a [*trailer*](#term-trailer) [*follows*](#term-follow) unit U1, the checker reports a finding for unit U1
+> - for every unit:\
+>   when the unit is not [*used*](#term-used) and is not a [*conflict*](#term-conflict), the checker reports a finding for the unit
+> - for every unit:\
+>   when a [*trailer*](#term-trailer) [*follows*](#term-follow) the unit, the checker reports a finding for the unit
 > - when a [*document*](#term-document) [*holds*](#term-hold) a unit and holds no [*index*](#term-index), the checker reports a finding for the document
 > - when a document holds an index that does not [*match*](#term-match) the document, the checker reports a finding for the document
 > - when a claim names a [*site*](#term-site) that no [*source*](#term-source) holds, the checker reports a finding for the claim
