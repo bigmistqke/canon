@@ -1893,11 +1893,56 @@ async function holdToTracker(
   }
 }
 
+/**
+ * Each ignore line of each unit: `Ignore: dead — a standard verb, which readings in other canons mark`. It keeps
+ * the finding it names from its unit, and it is a rotting where it names no finding, gives no reason, or names a
+ * finding its unit does not have. A finding of the tracker that the check did not ask for is not held against it.
+ * The number of findings the lines kept.
+ */
+function applyIgnores(findings: Record<FindingName, string[]>, units: Map<string, Unit>, asked: boolean): number {
+  const IGNORE = /^Ignore:[ \t]*(.*)$/gm;
+  // A finding about a line, "CANON.md:12 — …", is about the unit that starts last before that line in its document.
+  const at = (entry: string): string | undefined => {
+    const m = /^(\S+?):(\d+)\b/.exec(entry);
+    if (m === null) return undefined;
+    let owner: Unit | undefined;
+    for (const unit of units.values()) if (unit.doc === m[1] && unit.line <= Number(m[2]) && (owner === undefined || unit.line > owner.line)) owner = unit;
+    return owner === undefined ? undefined : `${owner.doc}#${owner.id}`;
+  };
+  let ignored = 0;
+  for (const [key, unit] of units) {
+    for (const m of maskFences(unit.own ?? '').matchAll(IGNORE)) {
+      const said = (m[1] ?? '').trim();
+      const name = said.split(/\s/)[0] as FindingName;
+      if (!Object.hasOwn(MEANING, name)) {
+        findings.rot.push(`${key} has an ignore line for "${name}", which names no finding the checker prints`);
+        continue;
+      }
+      const reason = /^\S+[ \t]+—[ \t]+(\S.*)$/.exec(said)?.[1];
+      if (reason === undefined) {
+        findings.rot.push(`${key} has an ignore line for ${name} that gives no reason after an em dash: write \`Ignore: ${name} — <reason>\``);
+        continue;
+      }
+      if (TRACKER_FINDINGS.includes(name) && !asked) continue;
+      // A finding is about the unit whose key opens its entry, or whose own text holds the line it names.
+      const about = (entry: string): boolean => entry === key || entry.startsWith(`${key} `) || entry.startsWith(`${key}:`) || at(entry) === key;
+      const kept = findings[name].filter(about);
+      if (kept.length === 0) findings.rot.push(`${key} has an ignore line for ${name}, a finding it does not have`);
+      else {
+        findings[name] = findings[name].filter(entry => !about(entry));
+        ignored += kept.length;
+      }
+    }
+  }
+  return ignored;
+}
+
 async function check(offline: boolean): Promise<void> {
   const { findings, units, suites, bugs } = analyse(false);
   const tracker = CONFIG.tracker;
   const asked = tracker !== undefined && !offline;
   if (asked) await holdToTracker(tracker, bugs, findings);
+  const ignored = applyIgnores(findings, units, asked);
 
   console.log(`canon check — ${ROOT}\n`);
   console.log(`scope: ${DOCS.length} document(s), ${suites} declared suite(s)`);
@@ -1906,6 +1951,7 @@ async function check(offline: boolean): Promise<void> {
     console.log(`issues: ${asked ? `held to the ${tracker.kind} tracker` : 'not checked (--offline)'}`);
   }
   if (!HAS_RUNNER) console.log('tests: none read (runners: []), so no claim owes a test');
+  if (ignored > 0) console.log(`ignored: ${ignored} finding(s), which ignore lines pass over`);
   console.log('');
 
   let total = 0;

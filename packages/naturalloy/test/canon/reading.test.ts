@@ -43,6 +43,53 @@ describe('the rules of reading', () => {
   });
 
   /**
+   * @canon spec-every-and-a-relative-clause-stands-for-each-thing-the-clause-holds-of
+   */
+  it('reads "every" and a relative clause as each thing of which the relative clause holds', () => {
+    const back = readsBack('all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on', readings);
+    expect(back.words).toBe('Every cleanup that has run is on every owner that pulse has disposed.');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   * @canon spec-another-differs-from-the-thing-of-its-kind-named-last
+   */
+  it('reads "whose" and a part, and "every other" as differing from the thing named last', () => {
+    const searches = withDefinitions(parseReadings('noun Unit: unit\nnoun Search: search\nHeld: the analyzer ^is^ asked to hold the formula of {1}\nPose.rel: {1} ^holds^ {2}\nLeave.rel: {1} ^leaves^ out {2}'), 'sig Unit {} sig Search {} sig Held in Unit {} one sig Pose { rel: Search -> Unit } one sig Leave { rel: Search -> Unit }');
+    for (const formula of ['some s: Search | some u: Unit | s->u in Pose.rel and u in Held', 'some s: Search | some u: Unit | s->u in Leave.rel and (all v: Unit | (v in Held and v != u) implies s->v in Pose.rel)']) {
+      const back = readsBack(formula, searches);
+      expect(back.meanings).toEqual([back.meant]);
+    }
+  });
+
+  /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   */
+  it('reads the verbs after "and" in a relative clause with the subject of the first', () => {
+    const issues = withDefinitions(
+      parseReadings('noun Bug: bug\nnoun Issue: issue\nName.rel: {1} ^names^ {2}\nKnown: the tracker ^knows^ {1}\nClosed: the tracker ^has^ closed {1} | the tracker has not closed {1}'),
+      'sig Bug {} sig Issue {} one sig Name { rel: Bug -> Issue } sig Known, Closed in Issue {}'
+    );
+    const back = readsBack('some b: Bug | some i: Issue | b->i in Name.rel and i in Known and i not in Closed', issues);
+    expect(back.words).toContain('an issue that the tracker knows and has not closed');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   */
+  it('reads a preposition and "which" as a relative clause of the noun before it', () => {
+    const units = withDefinitions(
+      parseReadings('noun Unit: unit\nnoun Test: test\nChecks.rel: {1} ^checks^ {2}\nClean: the checker ^reports^ no finding for {1} | the checker reports a finding for {1}'),
+      'sig Unit {} sig Test {} one sig Checks { rel: Test -> Unit } sig Clean in Unit {}'
+    );
+    const back = readsBack('some t: Test | some u: Unit | t->u in Checks.rel and u in Clean', units);
+    expect(back.words).toContain('a unit for which the checker reports no finding');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
    * @canon spec-the-noun-alone-names-the-one-thing-of-its-kind
    */
   it('names the one thing of its kind by its noun, and two of a kind by their numbers', () => {
@@ -61,6 +108,12 @@ describe('the rules of reading', () => {
       parseReadings('noun Cleanup: cleanup\nRan: {1} has run | {1} has not run\nquiet: {1} is quiet | {1} is not quiet'),
       'sig Cleanup {} var sig Ran in Cleanup {} pred quiet[c: Cleanup] { c in Ran }'
     );
+    // Two such nouns in one first side, and in a claim before "when": every pair.
+    for (const formula of ['all c: Cleanup, o: Owner | (c in o.~on and o in Disposed) implies (c in Ran and o in Stopped)', 'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies c in o.~on']) {
+      const pair = readsBack(formula, readings);
+      expect(pair.words).toMatch(/^(When a cleanup|A cleanup is on an owner)/);
+      expect(pair.meanings).toEqual([pair.meant]);
+    }
     const definition = readsBack('pred quiet[c: Cleanup] { c in Ran }', quiet);
     expect(definition.words).toBe('A cleanup is quiet exactly when the cleanup has run.');
     expect(definition.meanings).toEqual([definition.meant]);

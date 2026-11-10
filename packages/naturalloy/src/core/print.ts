@@ -7,15 +7,15 @@
  * a reader meets them. The items of a list that stand on their own may each use the same names.
  */
 import { shortNames } from './names.ts';
-import { type Readings, LINK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
+import { type Readings, LINK, LINK_MARK, mark, markTerms, Refusal, resolveLinks, unbracketed, type Marked } from '../readings.ts';
 import type { Clause, Num, Sentence, Term, Var } from './ir.ts';
 import type { PrintOptions } from './pass.ts';
 
-import { BINARY, COMPARED, INTRO, MOMENT, RULE, WRAP } from './constructs.ts';
+import { BINARY, COMPARED, INTRO, MOMENT, PREPOSITIONS, RULE, WRAP } from './constructs.ts';
 import { type Doc, type Every, isList, lines, markdownLines } from './layout.ts';
 import { articleFor, Vocabulary } from './vocabulary.ts';
 import { freeNames, holdsPhrase } from './walk.ts';
-import { coordinate, fixed, holdsComma, holdsOwnComma, holdsTime, marked, own, series, shareSubject, timed, unmarked, VARIABLE } from './words.ts';
+import { coordinate, fixed, holdsComma, holdsOwnComma, holdsTime, marked, own, series, shareSubject, timed, unmarked, VARIABLE, verbWord } from './words.ts';
 
 export type { Doc };
 
@@ -97,7 +97,8 @@ export class Printer {
     const all = new Set(before);
     let joint = new Set(before);
     const docs = items.map(item => {
-      const own = item.t === 'quant' && item.q === 'all';
+      // A "for every", or one that a time phrase opens, "from now on, for every", is a statement of its own.
+      const own = (item.t === 'quant' && item.q === 'all') || (item.t === 'moment' && item.body.t === 'quant' && item.body.q === 'all');
       this.used.clear();
       for (const name of own ? before : joint) this.used.add(name);
       const doc = this.sentence(item);
@@ -137,13 +138,39 @@ export class Printer {
       const parts = (np.relative.t === 'and' ? np.relative.items : [np.relative]).map(part => this.sentence(part) as string);
       if (before === undefined) this.names.delete(np.v.id);
       else this.names.set(np.v.id, before);
-      if (parts.every(part => part.startsWith(hole))) {
+      const relative = np.relative;
+      if (relative.t === 'and' && relative.subject !== undefined) {
+        // "an issue that the tracker knows and has not closed": the shared words once, from the first, and the rest of each.
+        const n = relative.subject;
+        const said = relative.items.map(item => {
+          const c = item as Extract<Clause, { t: 'reading' }>;
+          const reading = this.readings.atoms.get(c.key);
+          const words = ((c.negative ? reading?.negative : reading?.positive) ?? '').trim().replace(/\s*\{\d+\}$/, '').split(/\s+/);
+          // The thing itself stands in the last slot, which the relative clause leaves out.
+          const slots = c.args.map(a => (a.t === 'var' && a.v.id === np.v.id ? '' : this.term(a)));
+          return { subject: this.filled(words.slice(0, n).join(' '), reading?.target, slots), rest: this.filled(words.slice(n).join(' '), reading?.target, slots) };
+        });
+        suffix = own` that ${(said[0] as { subject: string }).subject} ${coordinate(said.map(x => x.rest), 'and')}`;
+      } else if (parts.every(part => part.startsWith(hole))) {
         const rests = parts.map(part => part.slice(hole.length).trim());
         const negations = rests.every(rest => rest.startsWith('is not '));
         suffix = own` that ${negations ? 'is not ' : ''}${coordinate(negations ? rests.map(rest => rest.slice('is not '.length)) : rests, negations ? 'or' : 'and')}`;
-      } else suffix = own` that ${(parts[0] as string).slice(0, -hole.length).trim()}`;
+      } else {
+        // "a unit for which the checker reports no finding": a preposition before the hole goes before "which".
+        const rest = (parts[0] as string).slice(0, -hole.length).trim();
+        const after = new RegExp(`^(.*) (${PREPOSITIONS.join('|')})$`).exec(rest);
+        // Only where words stand between the verb and the preposition: "of which p is the parent", but "that d is on".
+        const last = after === null ? undefined : (after[1] as string).replace(LINK_MARK, (_, __, word: string) => word).split(' ').at(-1);
+        const verb = last !== undefined && verbWord(last, this.readings);
+        // "a unit whose formula the analyzer is asked to hold": "the" and a part before "of" go after "whose".
+        // Not after "is" or "are", which "whose parent p is" would leave alone at the end.
+        const matched = after !== null && after[2] === 'of' ? /^(.*) the (\S+)$/.exec(after[1] as string) : null;
+        const part = matched !== null && !/\b(?:is|are)$/.test(matched[1] as string) ? matched : null;
+        suffix = part !== null ? own` whose ${part[2] as string} ${part[1] as string}` : after === null || verb ? own` that ${rest}` : own` ${after[2] as string} which ${after[1] as string}`;
+      }
     }
     if (np.det === 'no') return own`no ${np.other === undefined ? '' : 'other '}${noun}${suffix}`;
+    if (np.det === 'every') return own`every ${np.other !== undefined && np.other.t === 'var' && np.other.v.type === np.v.type ? 'other ' : ''}${noun}${suffix}`;
     if (np.other === undefined) return `${this.article(np.v.type)}${noun}${suffix}`;
     if (np.other.t === 'var' && np.other.v.type === np.v.type) return own`another ${noun}${suffix}`;
     return own`${this.article(np.v.type)}${noun} other than ${this.term(np.other)}${suffix}`;
@@ -405,10 +432,19 @@ export class Printer {
       const intro = own`for ${coordinate(shown.map(name => `every ${name}`), 'and')}`;
       const body = this.sentence(s.body);
       // A rule with no "otherwise" whose first side names the variable, which the words name again after it.
-      if (s.vars.length === 1 && s.body.t === 'rule' && s.body.otherwise === undefined) {
+      if (s.body.t === 'rule' && s.body.otherwise === undefined) {
         const when = this.whens.get(s.body);
-        const every = this.every(intro, s.vars[0] as Var, shown[0] as string);
-        if (when !== undefined && mentions(when, every.name) > 0 && mentions(body, every.name) > 1) return { kind: 'block', intro, body, every };
+        const every = this.every(intro, s.vars, shown);
+        const again = every.vars.every(v => mentions(body, v.name) > 1);
+        if (when !== undefined && again) {
+          if (s.vars.length === 1 && mentions(when, (every.vars[0] as { name: string }).name) > 0) return { kind: 'block', intro, body, every };
+          // Several variables: the words must first name each where the reader meets the rule's "a": in its first side
+          // when that side comes first, or in the claim before "when" when the claim does.
+          const claim = isList(body) && body.intro.includes(` ${RULE.when} `) ? body.intro.slice(0, body.intro.indexOf(` ${RULE.when} `)) : undefined;
+          const comma = typeof body === 'string' ? body.indexOf(', ') : -1;
+          const opening = claim ?? (typeof body !== 'string' && body.kind === 'rule' ? body.when : typeof body === 'string' && body.startsWith(`${RULE.when} `) && comma !== -1 ? body.slice(0, comma) : undefined);
+          if (s.vars.length > 1 && opening !== undefined && every.vars.every(v => mentions(opening, v.name) > 0)) return { kind: 'block', intro, body, every };
+        }
       }
       return this.apart(intro, body);
     }
@@ -499,16 +535,17 @@ export class Printer {
     const intro = own`for ${coordinate(shown.map(name => `every ${name}`), 'and')}`;
     // A definition whose words open with its one parameter, which they name again after it.
     if (shown.length === 1) {
-      const every = this.every(intro, s.params[0] as Var, shown[0] as string);
+      const every = this.every(intro, s.params, shown);
+      const { name } = every.vars[0] as { name: string };
       const opening = typeof sentence === 'string' ? sentence : sentence.kind === 'rule' ? '' : sentence.intro;
-      if (opening.startsWith(`${VARIABLE}${every.name}${VARIABLE} `) && mentions(sentence, every.name) > 1) return { kind: 'block', intro, body: sentence, every };
+      if (opening.startsWith(`${VARIABLE}${name}${VARIABLE} `) && mentions(sentence, name) > 1) return { kind: 'block', intro, body: sentence, every };
     }
     return this.apart(intro, sentence);
   }
 
-  /** The "for every" with the given intro over `v`, which `shown` names, as the words could leave it out. */
-  private every(intro: string, v: Var, shown: string): Every {
-    return { intro, name: this.nameOf(v), said: `${this.article(v.type)}${shown}` };
+  /** The "for every" with the given intro over `vars`, which `shown` names, as the words could leave it out. */
+  private every(intro: string, vars: readonly Var[], shown: readonly string[]): Every {
+    return { intro, vars: vars.map((v, i) => ({ name: this.nameOf(v), said: `${this.article(v.type)}${shown[i] as string}` })) };
   }
 }
 
@@ -549,9 +586,12 @@ function withoutEvery(doc: Doc, lone: ReadonlySet<string>): Doc {
   if (doc.kind === 'list') return { ...doc, items: doc.items.map(item => withoutEvery(item, lone)) };
   if (doc.kind === 'rule') return { ...doc, when: withoutEvery(doc.when, lone), then: withoutEvery(doc.then, lone), ...(doc.otherwise === undefined ? {} : { otherwise: withoutEvery(doc.otherwise, lone) }) };
   const body = withoutEvery(doc.body, lone);
-  // Only the "for every" as the printer made it: an intro another part has put words before is not one.
-  if (doc.every !== undefined && doc.every.intro === doc.intro && lone.has(doc.every.name)) return first(body, `${VARIABLE}${doc.every.name}${VARIABLE}`, doc.every.said) ?? { ...doc, body };
-  return { ...doc, body };
+  // Only the "for every" as the printer made it: an intro another part has put words before is not one. Every variable
+  // of it must be named the noun alone, or the "for every" stays whole.
+  if (doc.every === undefined || doc.every.intro !== doc.intro || !doc.every.vars.every(v => lone.has(v.name))) return { ...doc, body };
+  let out: Doc | undefined = body;
+  for (const v of doc.every.vars) out = out === undefined ? undefined : first(out, `${VARIABLE}${v.name}${VARIABLE}`, v.said);
+  return out ?? { ...doc, body };
 }
 
 /** A doc as text: laid out, with a capital where the sentence starts with its own words and a period where it ends. */
@@ -572,26 +612,57 @@ export function finish(doc: Doc, layout: 'text' | 'markdown', self: string | und
       const without = withoutEvery(doc, new Set(lone(text).keys()));
       if (without !== doc) text = said(without);
     }
-    text = unnumbered(text);
+    text = unnumbered(eachStatement(text));
   }
   return marking(options.shortNames === true ? shortNames(text) : text);
 }
 
 /**
- * Each variable of the words that is the only one of its noun, where the noun says nothing else in them, with its noun.
+ * The words with the lone numbers of each statement of their opening list dropped there: a statement of a list that
+ * opens with "for every", or with "from now on, for every", stands on its own, and another statement that says its
+ * noun does not keep its number. The words of any other shape are as they were.
+ */
+function eachStatement(text: string): string {
+  const lines = text.split('\n');
+  const first = lines.findIndex((line, i) => i > 0 && /^\s*- /.test(line));
+  if (first === -1 || !/:$/.test(lines[first - 1] as string)) return text;
+  const bullet = (lines[first] as string).match(/^\s*- /)?.[0] as string;
+  const starts = lines.map((line, i) => (i >= first && line.startsWith(bullet) ? i : -1)).filter(i => i !== -1);
+  // Only a list of the opening line: no line after the list may stand outside it.
+  if (lines.slice(first).some(line => line.trim() !== '' && !line.startsWith(bullet) && !line.startsWith(' '.repeat(bullet.length)))) return text;
+  const out = lines.slice(0, first);
+  for (const [k, at] of starts.entries()) {
+    const segment = lines.slice(at, starts[k + 1] ?? lines.length).join('\n');
+    const own = new RegExp(`^${bullet.replace(/[-]/g, '\\-')}(?:from now on, )?for every `, 'i').test(segment);
+    out.push(own ? unnumbered(segment) : segment);
+  }
+  return out.join('\n');
+}
+
+/**
+ * Each variable of the words that is the only one of its noun, with its noun, where "the" and the noun can point at it
+ * alone. The noun may say something else only after "no" or "no other", or after the last name of the variable.
  * A number of the words' own, `number_1`, is never one.
  */
 function lone(text: string): Map<string, string> {
   const name = /\b([a-z][a-z_]*?)_(\d+)\b/g;
   const byNoun = new Map<string, Set<string>>();
   for (const [whole, stem] of text.matchAll(name)) if (stem !== 'number') byNoun.set(stem as string, (byNoun.get(stem as string) ?? new Set()).add(whole));
-  // A link's target, such as (#term-unit), is not a word the reader sees.
-  const elsewhere = text.replace(/\]\([^)]*\)/g, ']').replace(name, ' ');
+  // A link's target, such as (#term-unit), is not a word the reader sees, and a variable's own name is not the noun said
+  // elsewhere. Both are blanked to their length, so a place in `elsewhere` is the same place in `text`.
+  const blank = (s: string): string => ' '.repeat(s.length);
+  const elsewhere = text.replace(/\]\([^)]*\)/g, link => `]${blank(link.slice(1))}`).replace(name, blank);
   const out = new Map<string, string>();
   for (const [stem, names] of byNoun) {
+    if (names.size !== 1) continue;
     const noun = stem.replace(/_/g, ' ');
-    if (names.size !== 1 || new RegExp(`\\b${noun}(?:s|es)?\\b`, 'i').test(elsewhere)) continue;
     const variable = [...names][0] as string;
+    const last = Math.max(...[...text.matchAll(new RegExp(`\\b${variable}\\b`, 'g'))].map(m => m.index));
+    // A word of the noun after "no" names no thing, and one after the variable's last name comes too late to be what "the" points at.
+    const confusable = [...elsewhere.matchAll(new RegExp(`\\b${noun}(?:s|es)?\\b`, 'gi'))].some(
+      m => m.index < last && !/\bno (?:other )?\[?\*?$/i.test(elsewhere.slice(0, m.index))
+    );
+    if (confusable) continue;
     // Only a variable that a quantifier introduces, "every unit_1" or "a unit_1": one that "values of" or "a step from"
     // introduces stands for each of many, which "the unit" would say as one.
     const first = text.indexOf(variable);
@@ -602,9 +673,8 @@ function lone(text: string): Map<string, string> {
 }
 
 /**
- * The words with the number left off a variable that is the only one of its noun, where the noun says nothing else in
- * them: "for every unit: when the unit is circular". Where the noun appears elsewhere, "the unit" could mean that, so the
- * number stays; so does a number of the words' own, `number_1`.
+ * The words with the number left off a variable that `lone` finds: "for every unit: when the unit is circular". Where
+ * the noun says another thing that "the unit" could mean, the number stays; so does a number of the words' own, `number_1`.
  */
 function unnumbered(text: string): string {
   let out = text;

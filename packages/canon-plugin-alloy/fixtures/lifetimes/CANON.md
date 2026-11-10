@@ -29,14 +29,14 @@ fact creation_order { no o: Owner | o->o in Birth.order  all a, b, c: Owner | (a
 fact siblings_have_an_order { all a, b: Owner | (a != b and some a.parent and a.parent = b.parent) implies (a->b in Birth.order or b->a in Birth.order) }
 ```
 
-| reading     | holds                                                  | does not hold                                              |
-| ----------- | ------------------------------------------------------ | ---------------------------------------------------------- |
-| Disposed    | pulse has disposed {1}                                 | pulse has not disposed {1}                                 |
-| parent      | {2} is the parent of {1}                               | {2} is not the parent of {1}                               |
-| handler     | {2} is the nearest error handler or boundary above {1} | {2} is not the nearest error handler or boundary above {1} |
-| Threw       | the dispose of {1} has thrown                          | the dispose of {1} has not thrown                          |
-| Stopped     | the dispose of {1} has been stopped                    | the dispose of {1} has not been stopped                    |
-| Birth.order | {1} was created before {2}                             | {1} was not created before {2}                             |
+| reading     | holds                                                    | does not hold                           |
+| ----------- | -------------------------------------------------------- | --------------------------------------- |
+| Disposed    | pulse has disposed {1}                                   | pulse has not disposed {1}              |
+| parent      | {2} ^is^ the parent of {1}                               |                                         |
+| handler     | {2} ^is^ the nearest error handler or boundary above {1} |                                         |
+| Threw       | the dispose of {1} has thrown                            | the dispose of {1} has not thrown       |
+| Stopped     | the dispose of {1} has been stopped                      | the dispose of {1} has not been stopped |
+| Birth.order | {1} was created before {2}                               | {1} was not created before {2}          |
 
 </details>
 
@@ -59,7 +59,7 @@ one sig Clock { var older: Cleanup -> Cleanup }
 | ----------- | -------------------------------- | ------------------------------------ |
 | Registered  | code has registered {1}          | code has not registered {1}          |
 | Ran         | {1} has run                      | {1} has not run                      |
-| on          | {1} is on {2}                    | {1} is not on {2}                    |
+| on          | {1} ^is^ on {2}                  |                                      |
 | Clock.older | code registered {1} before {2}   | code did not register {1} before {2} |
 | reached     | the error of {1} has reached {2} | the error of {1} has not reached {2} |
 
@@ -139,14 +139,14 @@ fact entering_throws_only { always (some Throwing' implies some Entering') }
 pred runNow[c: Cleanup] { c not in Ran and c in Ran' }
 ```
 
-| reading     | holds                                                                                                                             | does not hold                                                                      |
-| ----------- | --------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Throwing'   | right after, a call is throwing                                                                                                   | right after, no call is throwing                                                   |
-| dispose     | pulse disposes {1}                                                                                                                | pulse does not dispose {1}                                                         |
-| enter       | a call enters {1}                                                                                                                 | a call does not enter {1}                                                          |
-| runNow      | {1} runs                                                                                                                          | {1} does not run                                                                   |
-| runByCall   | code disposes {2} after pulse disposed it, and that call runs {1}, a cleanup that code has registered on {2} and that has not run | it is not so that code disposes {2} after pulse disposed it and that call runs {1} |
-| throwByCall | code disposes {1} after pulse disposed it, and that call throws                                                                   | it is not so that code disposes {1} after pulse disposed it and that call throws   |
+| reading     | holds                                                                                                                               | does not hold                                                                      |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Throwing'   | right after, a call ^is^ throwing                                                                                                   | right after, no call is throwing                                                   |
+| dispose     | pulse ^disposes^ {1}                                                                                                                |                                                                                    |
+| enter       | a call ^enters^ {1}                                                                                                                 |                                                                                    |
+| runNow      | {1} ^runs^                                                                                                                          |                                                                                    |
+| runByCall   | code ^disposes^ {2} after pulse disposed it, and that call runs {1}, a cleanup that code has registered on {2} and that has not run | it is not so that code disposes {2} after pulse disposed it and that call runs {1} |
+| throwByCall | code ^disposes^ {1} after pulse disposed it, and that call throws                                                                   | it is not so that code disposes {1} after pulse disposed it and that call throws   |
 
 ```alloy bounds
 for 3 but 1..8 steps
@@ -182,14 +182,8 @@ some o, h: Owner, c: Failing | o.handler = h and eventually (dispose[o] and c.on
 ### @spec disposing-an-owner-runs-its-cleanups
 
 <!-- statement-spec-disposing-an-owner-runs-its-cleanups:begin — generated by `canon generate`; edits are overwritten -->
-> From now on, for every [*owner*](#term-owner) and every [*cleanup*](#term-cleanup):\
-> when all of these hold:
-> - pulse disposes the owner
-> - code has registered the cleanup
-> - the cleanup is on the owner
-> - the cleanup has not run
->
-> then now or later, the cleanup has run.
+> From now on, for every [*cleanup*](#term-cleanup):\
+> when code has registered the cleanup, the cleanup has not run and is on an [*owner*](#term-owner) that pulse disposes, then now or later, the cleanup has run.
 <!-- statement-spec-disposing-an-owner-runs-its-cleanups:end -->
 
 Disposing an owner is how its cleanups get their turn. When pulse disposes the owner, every cleanup that code has registered on it runs sooner or later, unless it has already run. Pulse leaves none behind.
@@ -229,21 +223,21 @@ and
 
 <!-- statement-spec-owner-cleanups-run-newest-first-and-in-isolation:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - from now on, for every [*owner*](#term-owner) O1, every [*cleanup*](#term-cleanup) C1 and every cleanup C2:\
+> - from now on, for every [*owner*](#term-owner), every [*cleanup*](#term-cleanup) C1 and every cleanup C2:\
 >   when all of these hold:
->   - pulse disposes owner O1
+>   - pulse disposes the owner
 >   - code has registered cleanup C1
 >   - cleanup C1 has not run
 >   - code has registered cleanup C2
 >   - cleanup C2 has not run
->   - cleanup C1 is on owner O1
->   - cleanup C2 is on owner O1
+>   - cleanup C1 is on the owner
+>   - cleanup C2 is on the owner
 >   - code registered cleanup C1 before cleanup C2
 >
 >   then the following holds:\
 >   cleanup C2 runs now or later, and until then, cleanup C1 does not run
-> - from now on, for every owner O2 and every [*failing cleanup*](#term-failing-cleanup):\
->   when the failing cleanup runs, is on owner O2 and pulse has disposed owner O2, then from now on, the dispose of owner O2 has not been stopped.
+> - from now on, for every owner:\
+>   when pulse has disposed the owner and a [*failing cleanup*](#term-failing-cleanup) that runs is on the owner, then from now on, the dispose of the owner has not been stopped.
 <!-- statement-spec-owner-cleanups-run-newest-first-and-in-isolation:end -->
 
 An owner's cleanups unwind like a stack: the one registered last runs first. Each runs in isolation, so a cleanup that fails does not stop the dispose.
@@ -295,17 +289,17 @@ always all o: Owner | (enter[o] and o in Disposed) implies some Throwing'
 >
 >   then the following holds:\
 >   pulse disposes owner O2 now or later, and until then, the cleanup does not run
-> - from now on, for every owner O3, every owner O4 and every owner O5:\
+> - from now on, for every owner O1, every owner O2 and every owner O3:\
 >   when all of these hold:
->   - pulse disposes owner O3
->   - owner O3 is the parent of owner O4
->   - owner O3 is the parent of owner O5
->   - owner O4 was created before owner O5
->   - pulse has not disposed owner O4
->   - pulse has not disposed owner O5
+>   - pulse disposes owner O1
+>   - owner O1 is the parent of owner O2
+>   - owner O1 is the parent of owner O3
+>   - owner O2 was created before owner O3
+>   - pulse has not disposed owner O2
+>   - pulse has not disposed owner O3
 >
 >   then the following holds:\
->   pulse disposes owner O5 now or later, and until then, pulse does not dispose owner O4.
+>   pulse disposes owner O3 now or later, and until then, pulse does not dispose owner O2.
 <!-- statement-spec-an-owner-disposes-its-sub-owners-before-its-own-cleanups:end -->
 
 An owner tears down from the inside out. Pulse disposes each of its children before it runs any cleanup registered on the owner, so a cleanup never finds a child still alive. The children go newest first, like the cleanups.
@@ -329,16 +323,16 @@ and
 
 <!-- statement-spec-a-throwing-owner-cleanup-is-reported:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - from now on, for every [*owner*](#term-owner) O1 and every [*failing cleanup*](#term-failing-cleanup) FC1:\
->   when failing cleanup FC1 runs, is on owner O1 and pulse has disposed owner O1, then from now on, the dispose of owner O1 has not thrown
-> - from now on, for every owner O2, every owner O3 and every failing cleanup FC2:\
+> - from now on, for every [*owner*](#term-owner):\
+>   when pulse has disposed the owner and a [*failing cleanup*](#term-failing-cleanup) that runs is on the owner, then from now on, the dispose of the owner has not thrown
+> - from now on, for every owner O1, every owner O2 and every failing cleanup:\
 >   when all of these hold:
->   - failing cleanup FC2 runs
->   - failing cleanup FC2 is on owner O2
->   - pulse has disposed owner O2
->   - owner O3 is the nearest error handler or boundary above owner O2
+>   - the failing cleanup runs
+>   - the failing cleanup is on owner O1
+>   - pulse has disposed owner O1
+>   - owner O2 is the nearest error handler or boundary above owner O1
 >
->   then now or later, the error of failing cleanup FC2 has reached owner O3.
+>   then now or later, the error of the failing cleanup has reached owner O2.
 <!-- statement-spec-a-throwing-owner-cleanup-is-reported:end -->
 
 A cleanup that throws while its owner is disposed does not make the dispose throw. Its error goes where errors go in pulse: to the nearest error handler or boundary above the owner.

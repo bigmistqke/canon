@@ -17,6 +17,34 @@ const at = (name: string): number => {
 
 describe('the order of the passes', () => {
   /**
+   * @canon spec-a-thing-goes-into-the-first-side-before-noun-phrases-are-said
+   */
+  it('says a thing in the first side of a rule before it says noun phrases', () => {
+    expect(at('some-in-when')).toBeLessThan(at('noun-phrases'));
+  });
+
+  /**
+   * @canon spec-for-every-becomes-one-before-each-thing-is-said-as-every
+   */
+  it('makes a "for every" inside another one before it says each thing as "every"', () => {
+    expect(at('for-every-together')).toBeLessThan(at('every-phrases'));
+  });
+
+  /**
+   * @canon spec-a-thing-of-a-some-goes-inside-before-noun-phrases-are-said
+   */
+  it('says a thing of a "some" inside its clauses before it says noun phrases', () => {
+    expect(at('some-inside')).toBeLessThan(at('noun-phrases'));
+  });
+
+  /**
+   * @canon spec-two-rules-become-one-equivalence-before-an-equivalence-is-said-with-exactly-when
+   */
+  it('makes two rules one equivalence before it says an equivalence with "exactly when"', () => {
+    expect(at('rules-as-equivalence')).toBeLessThan(at('exactly-when'));
+  });
+
+  /**
    * @canon spec-a-negation-moves-inward-before-noun-phrases-are-said
    */
   it('moves a negation inward before it says noun phrases', () => {

@@ -64,3 +64,6 @@ export const COMPARED: Record<Compared, string> = {
 
 /** Every phrase that places words in time, as a pattern of their start: the time phrases, the sides of `until` and `since`, and the wrap of integers. */
 export const TIME_PHRASES: string[] = [...Object.values(MOMENT), BINARY.until.second, BINARY.since.second, 'now or at', 'now and at', 'at every', 'right after', 'up to and including', 'back to and including', WRAP.trim().replace(/,$/, '')];
+
+/** The prepositions a relative clause may put before "which": "a unit for which the checker reports no finding". */
+export const PREPOSITIONS = ['about', 'after', 'before', 'by', 'for', 'from', 'in', 'into', 'of', 'on', 'over', 'to', 'with'];

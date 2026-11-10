@@ -71,6 +71,20 @@ describe('a noun table', () => {
   });
 });
 
+describe('a verb term', () => {
+  /**
+   * @canon spec-a-verb-term-gives-the-forms-of-a-verb-that-links-to-it
+   */
+  it('gives a verb that a reading marks and links to it the forms its negative takes', () => {
+    const term = '### @term tend\n\n> To tend a thing is to look after it.\n\n| grammar | |\n|---|---|\n| type | verb |\n| third person | tends |\n| participle | tended |\n\n';
+    const marked = '| reading | holds | does not hold |\n|---|---|---|\n| Done | {1} ^[tends](#term-tend)^ readings | |';
+    const src = doc(marked).replace('## Terms\n\n', `## Terms\n\n${term}`).replace('all n: Node | n in Done', 'all n: Node | n not in Done');
+    const statement = statementOf(src);
+    expect(statement).toContain('does not');
+    expect(statement).toContain('[*tend*](#term-tend) readings');
+  });
+});
+
 describe('a signature named after the term that declares it', () => {
   /**
    * @canon spec-a-signature-named-after-the-term-that-declares-it-has-the-term-as-its-noun

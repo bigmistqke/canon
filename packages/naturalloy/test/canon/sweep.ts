@@ -275,6 +275,42 @@ export const SWEEP: { what: string; formula: string }[] = [
     'pred gone[o: Owner] { o in Disposed }',
     'pred gone[o: Owner] { o in Disposed and o not in Stopped }'
   ].map(formula => ({ what: '"for every" over one thing of a kind', formula })),
+  // "for every" over things of several kinds: said as "a" and each noun where the first side, or a claim said before
+  // "when", first names each; kept whole where one of them is named once or keeps its number.
+  ...[
+    'all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran',
+    'all c: Cleanup, o: Owner | (c in Registered and o in Disposed and o in Stopped and c in Ran) implies o in c.on',
+    'all c: Cleanup, o: Owner | o in c.on implies o in Disposed',
+    'all c, d: Cleanup, o: Owner | (o in c.on and o in d.on) implies o in Disposed'
+  ].map(formula => ({ what: '"for every" over things of several kinds', formula })),
+  // Two rules that go each way: one equivalence; and a rule beside one that does not go back, two rules.
+  ...[
+    'all c: Cleanup | (c in Ran implies c in Registered) and (c in Registered implies c in Ran)',
+    'all o: Owner | (o in Disposed implies (o in Stopped or some c: Cleanup | o in c.on)) and ((o in Stopped or some c: Cleanup | o in c.on) implies o in Disposed)',
+    'all c: Cleanup | (c in Ran implies c in Registered) and (c in Registered implies c.on in Disposed)'
+  ].map(formula => ({ what: 'two rules that go each way', formula })),
+  // A "some" over several things: a thing said inside the clauses that name it where they make a noun phrase, and kept above them where they do not.
+  ...[
+    'some c: Cleanup, o: Owner | c in Registered and o in c.on and o in Disposed',
+    'some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed',
+    'some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed and o in Stopped',
+    'some c: Cleanup, o: Owner | o in c.on and c in Ran and c in Registered and o in Disposed and o in Stopped',
+    'some c, d: Cleanup, o: Owner | c in Ran and o in c.on and d in Registered and o in d.on',
+    // A thing that must differ from another stays where "another" names the thing it differs from.
+    'some o, p, q: Owner | o != q and p in o.parent and q in p.parent and q in Disposed',
+    // Two things of a kind that must differ go in together.
+    'some c: Cleanup, o, p: Owner | o != p and o in c.on and p in c.on and c in Ran'
+  ].map(formula => ({ what: 'a thing of a "some" inside its clauses', formula })),
+  // Conditions of a noun phrase with the thing at their end that share their subject: "an owner that pulse has disposed and disposes".
+  ...['some o: Owner | o in c.on and o in Disposed and dispose[o]', 'some o: Owner | o in c.on and o in Disposed and o not in Stopped'].map(formula => ({ what: 'relative clauses that share their subject', formula })),
+  // A rule over several things: each said as "every" and its conditions, and kept where a thing has none.
+  ...[
+    'all c: Cleanup, o: Owner | (c in Ran and o in Disposed) implies o in c.on',
+    'all c: Cleanup | all o: Owner | (c in Ran and o in Disposed and o not in Stopped) implies o in c.on',
+    'all c: Cleanup, o: Owner | o in Disposed implies o in c.on'
+  ].map(formula => ({ what: 'a rule over several things', formula })),
+  // A thing that only the first side of a rule names: said there as a noun phrase, and "another" for one that must differ.
+  ...['all c: Cleanup, o: Owner | (o in c.on and o in Disposed) implies c in Ran', 'all o, p: Owner, c: Cleanup | (p != o and c in p.~on) implies o in Disposed', 'some d: Cleanup | d->c in Clock.older'].map(formula => ({ what: 'a thing only the first side of a rule names', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

@@ -31,7 +31,7 @@ export type Term =
 
 export interface NounPhrase {
   t: 'np';
-  det: 'a' | 'no';
+  det: 'a' | 'no' | 'every';
   v: Var;
   /** What else holds of the variable: "that is a spec". */
   relative?: Sentence;
@@ -85,7 +85,7 @@ export type Moment = 'always' | 'eventually' | 'after' | 'before' | 'once' | 'hi
 export type Sentence =
   | Clause
   /** As bullets, as one sentence, or for `a ; b`: bullets until both are plain clauses, then "a, and at the next moment, b". */
-  | { t: 'and'; items: Sentence[]; form?: 'list' | 'sentence' | 'sequence' | 'sequence-sentence' | 'none-of' }
+  | { t: 'and'; items: Sentence[]; form?: 'list' | 'sentence' | 'sequence' | 'sequence-sentence' | 'none-of'; /** Conditions of a noun phrase that share the first this many words of their readings, said once: "that the tracker knows and has not closed". */ subject?: number }
   | { t: 'or'; items: Sentence[]; form?: 'list' | 'sentence' }
   /**
    * Whole below "it is not the case that", where no formula takes the negation in; as untrue, for a predicate said by
@@ -164,6 +164,8 @@ class Meaning {
         ];
         around.push(inner => {
           const body = conditions.length === 0 ? inner : [...conditions, `(${inner})`].join(' and ');
+          // "every pass that …": the clause holds of each thing its conditions hold of.
+          if (x.det === 'every') return conditions.length === 0 ? `(all ${name}: ${x.v.type} | ${inner})` : `(all ${name}: ${x.v.type} | (${conditions.join(' and ')}) implies (${inner}))`;
           return x.det === 'no' ? `(no ${name}: ${x.v.type} | ${body})` : `(some ${name}: ${x.v.type} | ${body})`;
         });
         return name;

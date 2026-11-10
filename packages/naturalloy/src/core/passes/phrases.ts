@@ -9,7 +9,7 @@ import type { Clause, NounPhrase, Sentence, Term, Var } from '../ir.ts';
 import { type Context, everywhere, type Pass } from '../pass.ts';
 import { Vocabulary } from '../vocabulary.ts';
 import { mentions } from '../walk.ts';
-import { seen, timed } from '../words.ts';
+import { seen, timed, verbWord } from '../words.ts';
 
 /** The terms of a clause, in the order of its slots. */
 export function termsOf(c: Clause): Term[] {
@@ -45,6 +45,28 @@ function template(c: Clause, context: Context): string | undefined {
     default:
       return undefined;
   }
+}
+
+/**
+ * How many words of their readings clauses with the variable at their end share before the rest of each, which opens
+ * with a verb: 2 for "the tracker knows" and "the tracker has not closed". The other things a clause names count as
+ * words, so that "the bug names" and "the issue names" share none. Undefined where they share no subject.
+ */
+export function sharedSubject(clauses: Clause[], v: Var, context: Context): number | undefined {
+  const words: string[][] = [];
+  for (const c of clauses) {
+    const t = c.t === 'reading' ? template(c, context)?.trim() : undefined;
+    if (t === undefined) return undefined;
+    const at = termsOf(c).findIndex(term => isVar(term, v)) + 1;
+    if (!t.endsWith(`{${at}}`)) return undefined;
+    // A thing in a slot is one word, as the printer counts it: no space of its own may split it.
+    const filled = t.slice(0, -`{${at}}`.length).replace(/\{(\d+)\}/g, (_, n: string) => `{${JSON.stringify(termsOf(c)[Number(n) - 1]).replace(/\s/g, '_')}}`);
+    words.push(filled.trim().split(/\s+/));
+  }
+  let shared = 0;
+  while (words.every(w => w[shared] !== undefined && w[shared] === (words[0] as string[])[shared])) shared++;
+  for (let n = shared; n > 0; n--) if (words.every(w => w.length > n && verbWord(w[n] as string, context.readings))) return n;
+  return undefined;
 }
 
 /** Where the variable stands in a clause that says it once: at its start, at its end, or inside. Undefined where the clause does not say it once. */
@@ -156,13 +178,21 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   let main = ps.findIndex((_, i) => fits(i) && places[i] === 'end');
   if (main === -1) main = ps.findIndex((_, i) => fits(i) && places[i] === 'start');
   if (main === -1 && ofSet && ps.length === 1 && places[0] === 'inside') main = 0;
+  // A bare noun phrase with "a", with no relative clause, may stand inside its clause: "a block of another unit names the
+  // word". One with "no" may not: "the author asks about leaving out no unit" reads as asking about leaving nothing out.
+  if (main === -1 && q === 'some' && ps.length === 1 && places[0] === 'inside' && fits(0)) main = 0;
   if (main === -1) return undefined;
   const relative = ps.filter((_, i) => i !== main);
   // The others say more of the variable: each as its subject, or one with it at its end, "an issue that tracker does not know".
+  let subject: number | undefined;
   if (relative.length > 0) {
     const asSubject = relative.every(p => places[ps.indexOf(p)] === 'start');
     const asObject = relative.length === 1 && places[ps.indexOf(relative[0] as Part)] === 'end';
-    if (!asSubject && !asObject) return undefined;
+    // Several with it at their end, "an issue that the tracker knows and has not closed": they must share their subject.
+    if (!asSubject && !asObject) {
+      subject = relative.every(p => places[ps.indexOf(p)] === 'end') ? sharedSubject(relative.map(p => p.clause), v, context) : undefined;
+      if (subject === undefined) return undefined;
+    }
     // "x and y are different" has the variable in a subject of two, which a relative clause cannot take.
     if (relative.some(p => p.clause.t === 'same')) return undefined;
   }
@@ -170,7 +200,7 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
     t: 'np',
     det: q === 'no' ? 'no' : 'a',
     v,
-    ...(relative.length === 0 ? {} : { relative: relative.length === 1 ? (relative[0] as Part).clause : { t: 'and', items: relative.map(p => p.clause) } }),
+    ...(relative.length === 0 ? {} : { relative: relative.length === 1 ? (relative[0] as Part).clause : { t: 'and', items: relative.map(p => p.clause), ...(subject === undefined ? {} : { subject }) } }),
     ...(other === undefined ? {} : { other })
   };
   const chosen = ps[main] as Part;
@@ -178,10 +208,146 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   return chosen.next ? { t: 'moment', op: 'after', body: said, form: 'front' } : said;
 }
 
-export const nounPhrases: Pass = {
-  ...everywhere('noun-phrases', 'spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase', (s, context) => {
-  // A quantifier an earlier pass has given a form keeps it.
-  if (s.t !== 'quant' || (s.q !== 'some' && s.q !== 'no') || s.form !== undefined) return undefined;
+/**
+ * The conditions of a thing said as a relative clause of it: each with it as its subject, one with it at its end, or
+ * several with it at their end that share their subject. Undefined where they make no relative clause.
+ */
+function relativeOf(conditions: Sentence[], v: Var, context: Context): Sentence | undefined {
+  if (conditions.length === 0 || !conditions.every(c => clause(c) && c.t !== 'same')) return undefined;
+  const places = (conditions as Clause[]).map(c => place(c, v, context));
+  if (places.some(p => p === undefined)) return undefined;
+  if (conditions.length === 1) return places[0] === 'inside' ? undefined : (conditions[0] as Sentence);
+  if (places.every(p => p === 'start')) return { t: 'and', items: conditions };
+  const subject = places.every(p => p === 'end') ? sharedSubject(conditions as Clause[], v, context) : undefined;
+  return subject === undefined ? undefined : { t: 'and', items: conditions, subject };
+}
+
+/**
+ * A "for every" over several things, whose rule has no "otherwise" and no other quantifier, its first side conditions
+ * that each name one thing, at least one for each, and its second side one clause that names each thing once: that
+ * clause, with each thing as "every" and its noun and its conditions as a relative clause.
+ */
+export const everyPhrases = everywhere('every-phrases', 'spec-each-thing-of-a-rule-over-several-is-said-as-every-and-its-conditions', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'all' || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
+  const { when, then } = s.body;
+  if (!clause(then) || termsOf(then).some(term => term.t === 'np')) return undefined;
+  // "is not on every owner" reads as "not on all of them", where the rule says "on none": a negative clause keeps its "for every".
+  if ('negative' in then && then.negative) return undefined;
+  const conditions = when.t === 'and' ? when.items : [when];
+  let said: Clause = then;
+  let differing = false;
+  for (const v of s.vars) {
+    if (!context.readings.nouns.has(v.type) || termsOf(then).filter(term => isVar(term, v)).length !== 1) return undefined;
+    const own = conditions.filter(c => names(c, v));
+    // "every other unit": a condition that it differs from a thing of its kind named before, outside the "for every".
+    const differs = own.find(c => {
+      const other = differsFrom(c, v);
+      return other?.t === 'var' && other.v.type === v.type && !s.vars.includes(other.v);
+    });
+    const rest = own.filter(c => c !== differs);
+    // Each condition names one thing of the "for every" alone.
+    if (rest.some(c => s.vars.some(other => other !== v && names(c, other)))) return undefined;
+    const relative = rest.length === 0 && differs !== undefined ? undefined : relativeOf(rest, v, context);
+    if (relative === undefined && !(rest.length === 0 && differs !== undefined)) return undefined;
+    if (differs !== undefined) differing = true;
+    const other = differs === undefined ? undefined : differsFrom(differs, v);
+    said = put(said, v, { t: 'np', det: 'every', v, ...(relative === undefined ? {} : { relative }), ...(other === undefined ? {} : { other }) });
+  }
+  // A rule over one thing says "every" only as "every other": else "when a unit …" says it.
+  if (s.vars.length < 2 && !differing) return undefined;
+  // Every condition belongs to a thing, and none is a quantifier of its own.
+  if (!conditions.every(c => s.vars.some(v => names(c, v)))) return undefined;
+  return said;
+});
+
+/** Whether a part of the IR names the variable. */
+function names(n: unknown, v: Var): boolean {
+  if (Array.isArray(n)) return n.some(x => names(x, v));
+  if (n === null || typeof n !== 'object') return false;
+  const o = n as Record<string, unknown>;
+  if ((o.t === 'var' || o.t === 'np') && (o.v as Var | undefined)?.id === v.id) return true;
+  return Object.values(o).some(x => names(x, v));
+}
+
+/**
+ * A "some" over several things with each thing that only some of its clauses name said inside those clauses, as a
+ * "some" of its own, where they say a noun phrase of it: `some x, v | r and g` is `some x | r and (some v | g)` when
+ * `r` does not name `v`. The later things go first, as the noun phrases say them innermost, and the clause that holds
+ * the noun phrase goes after the others.
+ */
+export const someInside = everywhere('some-inside', 'spec-a-thing-of-a-some-is-said-inside-the-clauses-that-name-it', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'some' || s.vars.length < 2 || s.form !== undefined || s.origin !== undefined) return undefined;
+  // A "some" that the pass of noun phrases says whole, each thing inside the next, is left to it.
+  if (phrased(s, context)) return undefined;
+  let vars = [...s.vars];
+  let items = s.body.t === 'and' ? [...s.body.items] : [s.body];
+  let changed = false;
+  for (let moved = true; moved && vars.length > 1; ) {
+    moved = false;
+    // Two things of a kind that must differ go in together, where the pass of "another" says them: "an owner and another owner".
+    for (const [i, a] of vars.entries())
+      for (const b of vars.slice(i + 1)) {
+        if (moved || a.type !== b.type) continue;
+        const named = items.filter(item => names(item, a) || names(item, b));
+        if (named.length === items.length || !named.some(item => item.t === 'same' && item.negative && names(item, a) && names(item, b))) continue;
+        const pair: Sentence = { t: 'quant', q: 'some', vars: [a, b], body: { t: 'and', items: named } };
+        const said = 'run' in anotherOfAKind ? anotherOfAKind.run(pair, context) : pair;
+        if (said === pair) continue;
+        items = [...items.filter(item => !named.includes(item)), said];
+        vars = vars.filter(x => x !== a && x !== b);
+        changed = moved = true;
+      }
+    if (moved) continue;
+    for (const v of [...vars].reverse()) {
+      const named = items.filter(item => names(item, v));
+      // A thing goes inside only where the words say more of it than the clause that names it beside another.
+      if (named.length < 2 || named.length === items.length) continue;
+      // "another owner" differs from the owner named last before it, which moving the thing would change.
+      if (named.some(item => differsFrom(item, v) !== undefined)) continue;
+      const body: Sentence = named.length === 1 ? (named[0] as Sentence) : { t: 'and', items: named };
+      if (absorbed('some', v, body, context) === undefined) continue;
+      // The clause that holds the noun phrase goes last: a clause after it could be read as part of its relative clause.
+      const inner: Sentence = { t: 'quant', q: 'some', vars: [v], body };
+      items = [...items.filter(item => !named.includes(item)), inner];
+      vars = vars.filter(x => x !== v);
+      changed = moved = true;
+      break;
+    }
+  }
+  if (!changed) return undefined;
+  return { ...s, vars, body: items.length === 1 ? (items[0] as Sentence) : { t: 'and', items } };
+});
+
+/**
+ * A "for every" whose rule names a thing in its first side alone, said with that thing as a "some" there, where the
+ * clauses that name it make a noun phrase of it: `all x, v | (r and g) implies t` is `all x | (r and (some v | g))
+ * implies t` when neither `r` nor `t` names `v`.
+ */
+export const someInWhen = everywhere('some-in-when', 'spec-a-thing-only-the-first-side-of-a-rule-names-is-said-there-as-a-noun-phrase', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'all' || s.vars.length < 2 || s.body.t !== 'rule' || s.body.otherwise !== undefined) return undefined;
+  const rule = s.body;
+  let vars = [...s.vars];
+  let items = rule.when.t === 'and' ? [...rule.when.items] : [rule.when];
+  let changed = false;
+  for (const v of [...s.vars].reverse()) {
+    if (vars.length < 2 || names(rule.then, v)) continue;
+    const named = items.filter(item => names(item, v));
+    if (named.length === 0) continue;
+    // Beside another thing of its kind it reads as a second "a cleanup", which may be the first: only "another" tells them apart.
+    const kin = vars.filter(x => x !== v && x.type === v.type);
+    if (kin.some(x => !named.some(item => { const other = differsFrom(item, v); return other?.t === 'var' && other.v.id === x.id; }))) continue;
+    const body: Sentence = named.length === 1 ? (named[0] as Sentence) : { t: 'and', items: named };
+    if (absorbed('some', v, body, context) === undefined) continue;
+    items = [...items.filter(item => !named.includes(item)), { t: 'quant', q: 'some', vars: [v], body }];
+    vars = vars.filter(x => x !== v);
+    changed = true;
+  }
+  if (!changed) return undefined;
+  return { ...s, vars, body: { ...rule, when: items.length === 1 ? (items[0] as Sentence) : { t: 'and', items } } };
+});
+
+/** The quantifier said as noun phrases, each variable inside the next, or undefined where one does not fit. */
+function asPhrases(s: Extract<Sentence, { t: 'quant' }>, context: Context): Sentence | undefined {
   // Variables of different kinds are said one inside the other: the last innermost, under "some", then the first.
   const [first, ...later] = s.vars as [Var, ...Var[]];
   let body: Sentence = s.body;
@@ -190,7 +356,19 @@ export const nounPhrases: Pass = {
     if (inner === undefined) return undefined;
     body = inner;
   }
-  return absorbed(s.q, first, body, context, s.origin === 'set');
+  return absorbed(s.q as 'some' | 'no', first, body, context, s.origin === 'set');
+}
+
+/** Whether the pass of noun phrases says the quantifier whole. */
+function phrased(s: Extract<Sentence, { t: 'quant' }>, context: Context): boolean {
+  return asPhrases(s, context) !== undefined;
+}
+
+export const nounPhrases: Pass = {
+  ...everywhere('noun-phrases', 'spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase', (s, context) => {
+  // A quantifier an earlier pass has given a form keeps it.
+  if (s.t !== 'quant' || (s.q !== 'some' && s.q !== 'no') || s.form !== undefined) return undefined;
+  return asPhrases(s, context);
 }),
   evidence: {
     rejected: ['"another" where the formula has no "!=".', 'a noun phrase hanging only from another noun phrase, "a cleanup is on an owner": it reads as said of every cleanup.']

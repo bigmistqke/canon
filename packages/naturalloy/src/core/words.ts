@@ -5,7 +5,7 @@
  * in its own words and in the words of a reading; the marks are invisible, as the marks of variables and links are, and
  * `finish` takes them out. The guards ask whether a mark is there, not what the English says.
  */
-import { LINK, LINK_MARK, plain } from '../readings.ts';
+import { LINK, LINK_MARK, plain, type Readings } from '../readings.ts';
 import { MOMENT, TIME_PHRASES } from './constructs.ts';
 
 /** Marks a variable in the words, so that a sentence is never started with a capital in place of the variable's own letter. */
@@ -93,4 +93,11 @@ export function shareSubject(clauses: string[]): string[] {
 export function coordinate(words: string[], word: 'and' | 'or'): string {
   if (words.length === 1) return words[0] as string;
   return `${words.slice(0, -1).join(own`, `)}${marked(` ${word} `, true)}${words[words.length - 1]}`;
+}
+
+/** The words that may open the rest of a clause after its subject: the verbs the readings know, and those of English that every clause may use. */
+export function verbWord(word: string, readings: Readings): boolean {
+  const plain = word.replace(/^\[|\].*$/g, '');
+  if (['is', 'are', 'was', 'were', 'has', 'have', 'had', 'does', 'do', 'did', 'can', 'cannot'].includes(plain)) return true;
+  return readings.verbs.has(plain) || [...readings.verbs.values()].some(forms => forms.infinitive === plain);
 }

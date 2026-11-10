@@ -1,21 +1,25 @@
 /** The passes, in the order they run. */
 import type { Pass } from '../pass.ts';
 import { claimFirst, clausesInASentence, exactlyWhen, ruleOnOneLine, timePhraseInFront } from './layout.ts';
-import { forEveryTogether } from './merge.ts';
+import { forEveryTogether, rulesAsEquivalence } from './merge.ts';
 import { exactlyOne, negationInward } from './negate.ts';
 import { alwaysInsideForEvery, fromNowOnWhenever, untilInASentence } from './time.ts';
 import { conditionsApart, thereIsAThat, xAndNoOther } from './subject.ts';
-import { anotherOfAKind, definitionByKinds, nounPhrases } from './phrases.ts';
+import { anotherOfAKind, definitionByKinds, everyPhrases, nounPhrases, someInside, someInWhen } from './phrases.ts';
 import { noneOfThese } from './shared.ts';
 
 export const PASSES: readonly Pass[] = [
   negationInward,
   exactlyOne,
+  rulesAsEquivalence,
   alwaysInsideForEvery,
   xAndNoOther,
   forEveryTogether,
+  everyPhrases,
   conditionsApart,
   anotherOfAKind,
+  someInside,
+  someInWhen,
   nounPhrases,
   definitionByKinds,
   thereIsAThat,

@@ -63,13 +63,26 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
   const model = documents.flatMap(d => d.blocks).filter(b => b.lang === 'alloy' && (b.role === 'vocabulary' || (b.role === 'unit' && PARAGRAPHS.test(b.body))));
   // Each block is read for the unit that holds it, so that a word in brackets links to the term that says it.
   const merged = parseReadings('');
+  // A verb term gives the forms of a verb a reading marks, in any unit and in the documents that extend its own:
+  // its stem is the infinitive, its grammar table its third person and its participle.
+  const verbLines = documents
+    .flatMap(d => d.units)
+    .flatMap(unit => {
+      const grammar = unit.kind === 'term' ? grammarOf(unit.own) : undefined;
+      if (grammar?.type !== 'verb') return [];
+      const participle = grammar.forms.find(f => f.role === 'participle')?.spelling;
+      const infinitive = unit.stem.replace(/-/g, ' ');
+      return grammar.forms.filter(f => f.role === 'third person').map(f => `verb ${f.spelling}: ${infinitive}${participle === undefined ? '' : `, ${participle}`}`);
+    })
+    .join('\n');
   for (const { path, readings } of documents) {
     for (const block of readings) {
-      const part = parseReadings(block.body, `${path ?? ''}#${block.unit}`, path);
+      const part = parseReadings(`${verbLines}\n${block.body}`, `${path ?? ''}#${block.unit}`, path);
       for (const [key, value] of part.nouns) merged.nouns.set(key, value);
       for (const [key, value] of part.nounTargets) merged.nounTargets.set(key, value);
       for (const [key, value] of part.articles) merged.articles.set(key, value);
       for (const [key, value] of part.atoms) merged.atoms.set(key, value);
+      for (const [key, value] of part.verbs) merged.verbs.set(key, value);
     }
   }
   // A signature with no noun, declared in a term whose stem its name spells, has the term as its noun.
