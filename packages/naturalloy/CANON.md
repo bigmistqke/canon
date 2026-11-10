@@ -387,30 +387,30 @@ sig ThereIsThat, ThereIsThatList, LongConditions, NoUnderNo, UnderNo in Quantifi
 fact quantifier_wordings { no ConditionApart & InFull and no AsNounPhrase & InFull and no ThereIsThat & InFull and no ThereIsThatList & InFull and no ThereIsThat & ThereIsThatList and AsSubjectPhrase + RelativeClause + OneNegation + SaysAnother + NestsPhrases in AsNounPhrase and no VariableOnce & VariableTwice }
 ```
 
-| reading               | holds                                                                                                                                                                                              | does not hold                                                                                                                                                                                              |
-| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| VariableOnce          | the sentence says the variable of {1} once                                                                                                                                                         | the sentence does not say the variable of {1} once                                                                                                                                                         |
-| AsNounPhrase          | [verbalizer](#term-verbalizer) says {1} as a noun phrase in the place of the variable, such as "sits in no unit"                                                                                   | [verbalizer](#term-verbalizer) does not say {1} as a noun phrase in the place of the variable, such as "sits in no unit"                                                                                   |
-| VariableSubject       | the variable of {1} is the subject of the sentence                                                                                                                                                 | the variable of {1} is not the subject of the sentence                                                                                                                                                     |
-| AsSubjectPhrase       | [verbalizer](#term-verbalizer) says {1} with the noun phrase as the subject, such as "a tag names unit U1"                                                                                         | [verbalizer](#term-verbalizer) does not say {1} with the noun phrase as the subject, such as "a tag names unit U1"                                                                                         |
-| VariableWithCondition | the variable of {1} has a further condition                                                                                                                                                        | the variable of {1} has no further condition                                                                                                                                                               |
-| RelativeClause        | [verbalizer](#term-verbalizer) says {1} with a relative clause, such as "a unit that is a spec"                                                                                                    | [verbalizer](#term-verbalizer) does not say {1} with a relative clause, such as "a unit that is a spec"                                                                                                    |
-| OneNegation           | [verbalizer](#term-verbalizer) says {1} with one negation that lists the kinds                                                                                                                     | [verbalizer](#term-verbalizer) does not say {1} with one negation that lists the kinds                                                                                                                     |
-| SaysAnother           | [verbalizer](#term-verbalizer) says {1} with "another" before the noun                                                                                                                             | [verbalizer](#term-verbalizer) does not say {1} with "another" before the noun                                                                                                                             |
-| NestsPhrases          | [verbalizer](#term-verbalizer) says {1} as nested phrases, such as "a test checks a bug that sits in unit U1"                                                                                      | [verbalizer](#term-verbalizer) does not say {1} as nested phrases, such as "a test checks a bug that sits in unit U1"                                                                                      |
-| VariableTwice         | the reading of {1} says the variable twice                                                                                                                                                         | the reading of {1} does not say the variable twice                                                                                                                                                         |
-| NothingToAttach       | {1} has no fact that puts its variable beside a thing the sentence names                                                                                                                           | {1} has a fact that puts its variable beside a thing the sentence names                                                                                                                                    |
-| NoWithAnother         | {1} says no variable differs from another and holds a condition                                                                                                                                    | {1} does not both say that no variable differs from another and hold a condition                                                                                                                           |
-| ConditionAside        | the condition of {1} is not about its variable                                                                                                                                                     | the condition of {1} is about its variable                                                                                                                                                                 |
-| TimedCondition        | {1} has several conditions, one of which begins with a time phrase                                                                                                                                 | {1} does not have several conditions, one of which begins with a time phrase                                                                                                                               |
-| InFull                | [verbalizer](#term-verbalizer) says {1} in full, with "there is" and a name for its variable                                                                                                       | [verbalizer](#term-verbalizer) does not say {1} in full, with "there is" and a name for its variable                                                                                                       |
-| ThereIsThat           | [verbalizer](#term-verbalizer) says {1} as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec" | [verbalizer](#term-verbalizer) does not say {1} as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec" |
-| ThereIsThatList       | [verbalizer](#term-verbalizer) says {1} as "there is" with its noun and "that", and its conditions as bullets below it without their subject                                                       | [verbalizer](#term-verbalizer) does not say {1} as "there is" with its noun and "that", and its conditions as bullets below it without their subject                                                       |
-| UnderNo               | {1} is under "no"                                                                                                                                                                                  | {1} is not under "no"                                                                                                                                                                                      |
-| RestFits              | the conditions of {1} that are about its variable fit a noun phrase                                                                                                                                | the conditions of {1} that are about its variable do not fit a noun phrase                                                                                                                                 |
-| ConditionApart        | [verbalizer](#term-verbalizer) says the conditions of {1} that are not about its variable beside it, outside it                                                                                    | [verbalizer](#term-verbalizer) does not say the conditions of {1} that are not about its variable beside it, outside it                                                                                    |
-| LongConditions        | {1} has more than three conditions, or conditions longer than a line                                                                                                                               | {1} has three conditions or fewer that fit a line                                                                                                                                                          |
-| NoUnderNo             | {1} is under "no" with a condition that says "no"                                                                                                                                                  | {1} is not under "no" with a condition that says "no"                                                                                                                                                      |
+| reading               | holds                                                                                                                                                                                                  | does not hold                                                                                                                                                                                                  |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| VariableOnce          | the sentence says the variable of {1} once                                                                                                                                                             | the sentence does not say the variable of {1} once                                                                                                                                                             |
+| AsNounPhrase          | the [verbalizer](#term-verbalizer) says {1} as a noun phrase in the place of the variable, such as "sits in no unit"                                                                                   | the [verbalizer](#term-verbalizer) does not say {1} as a noun phrase in the place of the variable, such as "sits in no unit"                                                                                   |
+| VariableSubject       | the variable of {1} is the subject of the sentence                                                                                                                                                     | the variable of {1} is not the subject of the sentence                                                                                                                                                         |
+| AsSubjectPhrase       | the [verbalizer](#term-verbalizer) says {1} with the noun phrase as the subject, such as "a tag names unit U1"                                                                                         | the [verbalizer](#term-verbalizer) does not say {1} with the noun phrase as the subject, such as "a tag names unit U1"                                                                                         |
+| VariableWithCondition | the variable of {1} has a further condition                                                                                                                                                            | the variable of {1} has no further condition                                                                                                                                                                   |
+| RelativeClause        | the [verbalizer](#term-verbalizer) says {1} with a relative clause, such as "a unit that is a spec"                                                                                                    | the [verbalizer](#term-verbalizer) does not say {1} with a relative clause, such as "a unit that is a spec"                                                                                                    |
+| OneNegation           | the [verbalizer](#term-verbalizer) says {1} with one negation that lists the kinds                                                                                                                     | the [verbalizer](#term-verbalizer) does not say {1} with one negation that lists the kinds                                                                                                                     |
+| SaysAnother           | the [verbalizer](#term-verbalizer) says {1} with "another" before the noun                                                                                                                             | the [verbalizer](#term-verbalizer) does not say {1} with "another" before the noun                                                                                                                             |
+| NestsPhrases          | the [verbalizer](#term-verbalizer) says {1} as nested phrases, such as "a test checks a bug that sits in unit U1"                                                                                      | the [verbalizer](#term-verbalizer) does not say {1} as nested phrases, such as "a test checks a bug that sits in unit U1"                                                                                      |
+| VariableTwice         | the reading of {1} says the variable twice                                                                                                                                                             | the reading of {1} does not say the variable twice                                                                                                                                                             |
+| NothingToAttach       | {1} has no fact that puts its variable beside a thing the sentence names                                                                                                                               | {1} has a fact that puts its variable beside a thing the sentence names                                                                                                                                        |
+| NoWithAnother         | {1} says no variable differs from another and holds a condition                                                                                                                                        | {1} does not both say that no variable differs from another and hold a condition                                                                                                                               |
+| ConditionAside        | the condition of {1} is not about its variable                                                                                                                                                         | the condition of {1} is about its variable                                                                                                                                                                     |
+| TimedCondition        | {1} has several conditions, one of which begins with a time phrase                                                                                                                                     | {1} does not have several conditions, one of which begins with a time phrase                                                                                                                                   |
+| InFull                | the [verbalizer](#term-verbalizer) says {1} in full, with "there is" and a name for its variable                                                                                                       | the [verbalizer](#term-verbalizer) does not say {1} in full, with "there is" and a name for its variable                                                                                                       |
+| ThereIsThat           | the [verbalizer](#term-verbalizer) says {1} as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec" | the [verbalizer](#term-verbalizer) does not say {1} as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec" |
+| ThereIsThatList       | the [verbalizer](#term-verbalizer) says {1} as "there is" with its noun and "that", and its conditions as bullets below it without their subject                                                       | the [verbalizer](#term-verbalizer) does not say {1} as "there is" with its noun and "that", and its conditions as bullets below it without their subject                                                       |
+| UnderNo               | {1} is under "no"                                                                                                                                                                                      | {1} is not under "no"                                                                                                                                                                                          |
+| RestFits              | the conditions of {1} that are about its variable fit a noun phrase                                                                                                                                    | the conditions of {1} that are about its variable do not fit a noun phrase                                                                                                                                     |
+| ConditionApart        | the [verbalizer](#term-verbalizer) says the conditions of {1} that are not about its variable beside it, outside it                                                                                    | the [verbalizer](#term-verbalizer) does not say the conditions of {1} that are not about its variable beside it, outside it                                                                                    |
+| LongConditions        | {1} has more than three conditions, or conditions longer than a line                                                                                                                                   | {1} has three conditions or fewer that fit a line                                                                                                                                                              |
+| NoUnderNo             | {1} is under "no" with a condition that says "no"                                                                                                                                                      | {1} is not under "no" with a condition that says "no"                                                                                                                                                          |
 
 </details>
 
@@ -562,22 +562,22 @@ fact case_wordings { no PhrasePerKind & AsItStands and JoinedWithOr + OneCoordin
 | ---------- | ---------- |
 | Definition | definition |
 
-| reading           | holds                                                                                                                    | does not hold                                                                                                                    |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
-| GuardedByKind     | the alternatives of {1} each begin with the kind of the subject                                                          | the alternatives of {1} do not each begin with the kind of the subject                                                           |
-| PhrasePerKind     | [verbalizer](#term-verbalizer) says {1} as a list with a noun phrase for each kind, such as "a spec that cites no axiom" | [verbalizer](#term-verbalizer) does not say {1} as a list with a noun phrase for each kind, such as "a spec that cites no axiom" |
-| SameKindTwice     | {1} has two alternatives for one kind                                                                                    | {1} does not have two alternatives for one kind                                                                                  |
-| JoinedWithOr      | [verbalizer](#term-verbalizer) says {1} as one noun phrase for that kind, with the alternatives joined by or             | [verbalizer](#term-verbalizer) does not say {1} as one noun phrase for that kind, with the alternatives joined by or             |
-| OrInsideKind      | {1} has an or inside one kind                                                                                            | {1} has no or inside one kind                                                                                                    |
-| OneCoordination   | [verbalizer](#term-verbalizer) says {1} as one run of clauses joined by commas and or                                    | [verbalizer](#term-verbalizer) does not say {1} as one run of clauses joined by commas and or                                    |
-| OneKind           | the alternatives of {1} are of one kind                                                                                  | the alternatives of {1} are not of one kind                                                                                      |
-| OneSentenceKind   | [verbalizer](#term-verbalizer) says {1} as one sentence                                                                  | [verbalizer](#term-verbalizer) does not say {1} as one sentence                                                                  |
-| NoKindFirst       | {1} has an alternative that does not begin with its kind                                                                 | {1} has no alternative that does not begin with its kind                                                                         |
-| AmbiguousAnd      | {1} has a run of "and" beside another alternative of its kind                                                            | {1} has no run of "and" beside another alternative of its kind                                                                   |
-| NotAboutSubject   | {1} has an alternative that says something about another unit                                                            | {1} has no alternative that says something about another unit                                                                    |
-| KindsShareAMember | {1} has two kinds that can share a member                                                                                | {1} does not have two kinds that can share a member                                                                              |
-| CommaInOption     | {1} has an option of one kind that holds a comma                                                                         | {1} has no option of one kind that holds a comma                                                                                 |
-| AsItStands        | [verbalizer](#term-verbalizer) says {1} as a list of the alternatives as they stand                                      | [verbalizer](#term-verbalizer) does not say {1} as a list of the alternatives as they stand                                      |
+| reading           | holds                                                                                                                        | does not hold                                                                                                                        |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| GuardedByKind     | the alternatives of {1} each begin with the kind of the subject                                                              | the alternatives of {1} do not each begin with the kind of the subject                                                               |
+| PhrasePerKind     | the [verbalizer](#term-verbalizer) says {1} as a list with a noun phrase for each kind, such as "a spec that cites no axiom" | the [verbalizer](#term-verbalizer) does not say {1} as a list with a noun phrase for each kind, such as "a spec that cites no axiom" |
+| SameKindTwice     | {1} has two alternatives for one kind                                                                                        | {1} does not have two alternatives for one kind                                                                                      |
+| JoinedWithOr      | the [verbalizer](#term-verbalizer) says {1} as one noun phrase for that kind, with the alternatives joined by or             | the [verbalizer](#term-verbalizer) does not say {1} as one noun phrase for that kind, with the alternatives joined by or             |
+| OrInsideKind      | {1} has an or inside one kind                                                                                                | {1} has no or inside one kind                                                                                                        |
+| OneCoordination   | the [verbalizer](#term-verbalizer) says {1} as one run of clauses joined by commas and or                                    | the [verbalizer](#term-verbalizer) does not say {1} as one run of clauses joined by commas and or                                    |
+| OneKind           | the alternatives of {1} are of one kind                                                                                      | the alternatives of {1} are not of one kind                                                                                          |
+| OneSentenceKind   | the [verbalizer](#term-verbalizer) says {1} as one sentence                                                                  | the [verbalizer](#term-verbalizer) does not say {1} as one sentence                                                                  |
+| NoKindFirst       | {1} has an alternative that does not begin with its kind                                                                     | {1} has no alternative that does not begin with its kind                                                                             |
+| AmbiguousAnd      | {1} has a run of "and" beside another alternative of its kind                                                                | {1} has no run of "and" beside another alternative of its kind                                                                       |
+| NotAboutSubject   | {1} has an alternative that says something about another unit                                                                | {1} has no alternative that says something about another unit                                                                        |
+| KindsShareAMember | {1} has two kinds that can share a member                                                                                    | {1} does not have two kinds that can share a member                                                                                  |
+| CommaInOption     | {1} has an option of one kind that holds a comma                                                                             | {1} has no option of one kind that holds a comma                                                                                     |
+| AsItStands        | the [verbalizer](#term-verbalizer) says {1} as a list of the alternatives as they stand                                      | the [verbalizer](#term-verbalizer) does not say {1} as a list of the alternatives as they stand                                      |
 
 </details>
 
@@ -713,39 +713,39 @@ fact series_wordings { no Items & Rule and Items = Few + Many and no Few & Many 
 | --------- | ---- |
 | Series    | list |
 
-| reading            | holds                                                                                                                   | does not hold                                                                                                                   |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| Items              | {1} is a run of clauses joined by and or by or                                                                          | {1} is not a run of clauses joined by and or by or                                                                              |
-| Rule               | {1} is a rule with a first side and a second                                                                            | {1} is not a rule with a first side and a second                                                                                |
-| Few                | {1} has three clauses or fewer                                                                                          | {1} does not have three clauses or fewer                                                                                        |
-| Many               | {1} has more than three clauses                                                                                         | {1} does not have more than three clauses                                                                                       |
-| MoreThanTwo        | {1} has more than two clauses                                                                                           | {1} has two clauses or fewer                                                                                                    |
-| NotClause          | {1} has an item that is more than one clause                                                                            | {1} has only items that are one clause                                                                                          |
-| CommaItem          | {1} has an item that holds a comma                                                                                      | {1} has no item that holds a comma                                                                                              |
-| TooLong            | {1} is longer than a line when it is put in a sentence                                                                  | {1} fits a line when it is put in a sentence                                                                                    |
-| TimeBeforeLast     | {1} has a clause before its last that begins with a time phrase                                                         | {1} has no clause before its last that begins with a time phrase                                                                |
-| RelativeBeforeLast | {1} has a clause before its last with a relative clause in it                                                           | {1} has no clause before its last with a relative clause in it                                                                  |
-| AndInOr            | {1} is a list of alternatives where one alternative holds an and                                                        | {1} is not a list of alternatives where one alternative holds an and                                                            |
-| AsSentence         | [verbalizer](#term-verbalizer) says {1} in a sentence                                                                   | [verbalizer](#term-verbalizer) does not say {1} in a sentence                                                                   |
-| AsBullets          | [verbalizer](#term-verbalizer) says {1} as bullets                                                                      | [verbalizer](#term-verbalizer) does not say {1} as bullets                                                                      |
-| KeepsAndApart      | [verbalizer](#term-verbalizer) says {1} as bullets that cannot be read two ways                                         | [verbalizer](#term-verbalizer) does not say {1} as bullets that cannot be read two ways                                         |
-| SharedSubject      | {1} has clauses that begin with the same subject                                                                        | {1} has no clauses that begin with the same subject                                                                             |
-| PairInList         | {1} has a clause about a pair of variables                                                                              | {1} has no clause about a pair of variables                                                                                     |
-| SharedNegatives    | {1} is a run of negative clauses about one subject that share their verb, each before a noun phrase of its own          | {1} is not a run of negative clauses about one subject that share their verb, each before a noun phrase of its own              |
-| SaysNoneOfThese    | [verbalizer](#term-verbalizer) says the subject and the verb that the clauses of {1} share once, before "none of these" | [verbalizer](#term-verbalizer) does not say the subject and the verb that the clauses of {1} share once, before "none of these" |
-| OneLineRule        | {1} is a rule whose two sides are each one clause                                                                       | {1} is not a rule whose two sides are each one clause                                                                           |
-| TimeFirst          | {1} is a rule whose first side begins with a time phrase                                                                | {1} is not a rule whose first side begins with a time phrase                                                                    |
-| TimeSecond         | {1} is a rule whose second side begins with a time phrase                                                               | {1} is not a rule whose second side begins with a time phrase                                                                   |
-| OneLine            | [verbalizer](#term-verbalizer) says {1} on one line, as "when" the first side, the second side                          | [verbalizer](#term-verbalizer) does not say {1} on one line, as "when" the first side, the second side                          |
-| KeepsThen          | [verbalizer](#term-verbalizer) says {1} with "then" before the time phrase                                              | [verbalizer](#term-verbalizer) does not say {1} with "then" before the time phrase                                              |
-| DropsThen          | [verbalizer](#term-verbalizer) says {1} without "then"                                                                  | [verbalizer](#term-verbalizer) does not say {1} without "then"                                                                  |
-| ThenOwnLine        | [verbalizer](#term-verbalizer) says {1} with "then" at the start of the second side, on a line of its own               | [verbalizer](#term-verbalizer) does not say {1} with "then" at the start of the second side, on a line of its own               |
-| ListFirstSide      | {1} is a rule whose first side is a run of clauses said as bullets                                                      | {1} is not a rule whose first side is a run of clauses said as bullets                                                          |
-| PlainSecondSide    | {1} is a rule whose second side is one line with no time phrase, relative clause, comma or "when"                       | {1} is not a rule whose second side is one line with no time phrase, relative clause, comma or "when"                           |
-| Otherwise          | {1} is a rule with an "otherwise"                                                                                       | {1} is not a rule with an "otherwise"                                                                                           |
-| SecondSideFirst    | [verbalizer](#term-verbalizer) says the second side of {1} before its first side                                        | [verbalizer](#term-verbalizer) does not say the second side of {1} before its first side                                        |
-| Whenever           | {1} is a rule at every later moment, said "from now on, whenever"                                                       | {1} is not a rule at every later moment, said "from now on, whenever"                                                           |
-| BelowTime          | {1} stands right below a time phrase                                                                                    | {1} does not stand right below a time phrase                                                                                    |
+| reading            | holds                                                                                                                       | does not hold                                                                                                                       |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| Items              | {1} is a run of clauses joined by and or by or                                                                              | {1} is not a run of clauses joined by and or by or                                                                                  |
+| Rule               | {1} is a rule with a first side and a second                                                                                | {1} is not a rule with a first side and a second                                                                                    |
+| Few                | {1} has three clauses or fewer                                                                                              | {1} does not have three clauses or fewer                                                                                            |
+| Many               | {1} has more than three clauses                                                                                             | {1} does not have more than three clauses                                                                                           |
+| MoreThanTwo        | {1} has more than two clauses                                                                                               | {1} has two clauses or fewer                                                                                                        |
+| NotClause          | {1} has an item that is more than one clause                                                                                | {1} has only items that are one clause                                                                                              |
+| CommaItem          | {1} has an item that holds a comma                                                                                          | {1} has no item that holds a comma                                                                                                  |
+| TooLong            | {1} is longer than a line when it is put in a sentence                                                                      | {1} fits a line when it is put in a sentence                                                                                        |
+| TimeBeforeLast     | {1} has a clause before its last that begins with a time phrase                                                             | {1} has no clause before its last that begins with a time phrase                                                                    |
+| RelativeBeforeLast | {1} has a clause before its last with a relative clause in it                                                               | {1} has no clause before its last with a relative clause in it                                                                      |
+| AndInOr            | {1} is a list of alternatives where one alternative holds an and                                                            | {1} is not a list of alternatives where one alternative holds an and                                                                |
+| AsSentence         | the [verbalizer](#term-verbalizer) says {1} in a sentence                                                                   | the [verbalizer](#term-verbalizer) does not say {1} in a sentence                                                                   |
+| AsBullets          | the [verbalizer](#term-verbalizer) says {1} as bullets                                                                      | the [verbalizer](#term-verbalizer) does not say {1} as bullets                                                                      |
+| KeepsAndApart      | the [verbalizer](#term-verbalizer) says {1} as bullets that cannot be read two ways                                         | the [verbalizer](#term-verbalizer) does not say {1} as bullets that cannot be read two ways                                         |
+| SharedSubject      | {1} has clauses that begin with the same subject                                                                            | {1} has no clauses that begin with the same subject                                                                                 |
+| PairInList         | {1} has a clause about a pair of variables                                                                                  | {1} has no clause about a pair of variables                                                                                         |
+| SharedNegatives    | {1} is a run of negative clauses about one subject that share their verb, each before a noun phrase of its own              | {1} is not a run of negative clauses about one subject that share their verb, each before a noun phrase of its own                  |
+| SaysNoneOfThese    | the [verbalizer](#term-verbalizer) says the subject and the verb that the clauses of {1} share once, before "none of these" | the [verbalizer](#term-verbalizer) does not say the subject and the verb that the clauses of {1} share once, before "none of these" |
+| OneLineRule        | {1} is a rule whose two sides are each one clause                                                                           | {1} is not a rule whose two sides are each one clause                                                                               |
+| TimeFirst          | {1} is a rule whose first side begins with a time phrase                                                                    | {1} is not a rule whose first side begins with a time phrase                                                                        |
+| TimeSecond         | {1} is a rule whose second side begins with a time phrase                                                                   | {1} is not a rule whose second side begins with a time phrase                                                                       |
+| OneLine            | the [verbalizer](#term-verbalizer) says {1} on one line, as "when" the first side, the second side                          | the [verbalizer](#term-verbalizer) does not say {1} on one line, as "when" the first side, the second side                          |
+| KeepsThen          | the [verbalizer](#term-verbalizer) says {1} with "then" before the time phrase                                              | the [verbalizer](#term-verbalizer) does not say {1} with "then" before the time phrase                                              |
+| DropsThen          | the [verbalizer](#term-verbalizer) says {1} without "then"                                                                  | the [verbalizer](#term-verbalizer) does not say {1} without "then"                                                                  |
+| ThenOwnLine        | the [verbalizer](#term-verbalizer) says {1} with "then" at the start of the second side, on a line of its own               | the [verbalizer](#term-verbalizer) does not say {1} with "then" at the start of the second side, on a line of its own               |
+| ListFirstSide      | {1} is a rule whose first side is a run of clauses said as bullets                                                          | {1} is not a rule whose first side is a run of clauses said as bullets                                                              |
+| PlainSecondSide    | {1} is a rule whose second side is one line with no time phrase, relative clause, comma or "when"                           | {1} is not a rule whose second side is one line with no time phrase, relative clause, comma or "when"                               |
+| Otherwise          | {1} is a rule with an "otherwise"                                                                                           | {1} is not a rule with an "otherwise"                                                                                               |
+| SecondSideFirst    | the [verbalizer](#term-verbalizer) says the second side of {1} before its first side                                        | the [verbalizer](#term-verbalizer) does not say the second side of {1} before its first side                                        |
+| Whenever           | {1} is a rule at every later moment, said "from now on, whenever"                                                           | {1} is not a rule at every later moment, said "from now on, whenever"                                                               |
+| BelowTime          | {1} stands right below a time phrase                                                                                        | {1} does not stand right below a time phrase                                                                                        |
 
 </details>
 
@@ -850,7 +850,7 @@ some f: Series | f in OneLineRule and f in TimeFirst
 <!-- statement-scenario-7-term-series:begin — generated by `canon generate`; edits are overwritten -->
 > It must be possible that:
 >
-> There is a list such that [*verbalizer*](#term-verbalizer) says the second side of the list before its first side.
+> There is a list such that the [*verbalizer*](#term-verbalizer) says the second side of the list before its first side.
 <!-- statement-scenario-7-term-series:end -->
 
 <details>
@@ -2186,7 +2186,7 @@ This follows because the analyzer does not read either as a formula, so neither 
 > - a [*list*](#term-series) is a rule whose two sides are each one clause
 > - the list is not a rule whose first side begins with a time phrase
 >
-> then [*verbalizer*](#term-verbalizer) says the list on one line, as "when" the first side, the second side.
+> then the [*verbalizer*](#term-verbalizer) says the list on one line, as "when" the first side, the second side.
 <!-- statement-spec-a-rule-of-two-clauses-is-said-on-one-line:end -->
 
 A short rule reads best as one sentence. Laid out with a line per side, `all c: Cleanup | c in Ran implies c in Registered` breaks before `then code has registered the cleanup`. On one line it reads `When a cleanup has run, code has registered the cleanup`. A first side that opens with a time phrase stays off one line. In `when at the next moment, c has run, d has run`, the phrase seems to cover d too.
@@ -2932,7 +2932,7 @@ This follows because the statement sits in a Markdown document, and a definition
 > - the alternatives of a [*definition*](#term-definition-passage) each begin with the kind of the subject
 > - the definition can be said [*kind by kind*](#term-by-kind)
 >
-> then [*verbalizer*](#term-verbalizer) says the definition as a list with a noun phrase for each kind, such as "a spec that cites no axiom".
+> then the [*verbalizer*](#term-verbalizer) says the definition as a list with a noun phrase for each kind, such as "a spec that cites no axiom".
 <!-- statement-spec-a-definition-by-cases-is-said-as-a-noun-phrase-for-each-kind:end -->
 
 As it stands, a definition by cases repeats its subject in every case: `unit U1 is a spec`, `unit U1 cites no unit that is an axiom`, nested under `all of these hold`. The verbalizer instead names each kind once, as the head of a noun phrase: `a spec that cites no axiom and cites no spec`. The list then has one line per kind, and the reader sees at once what each kind must do. This applies when the verbalizer can say the definition [*kind by kind*](#term-by-kind).
@@ -2971,7 +2971,7 @@ A thing is kept exactly when the thing is a cleanup that has run.
 #### @spec the-alternatives-of-one-kind-are-put-together-with-or
 
 <!-- statement-spec-the-alternatives-of-one-kind-are-put-together-with-or:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has two alternatives for one kind and can be said [*kind by kind*](#term-by-kind), [*verbalizer*](#term-verbalizer) says the definition as one noun phrase for that kind, with the alternatives joined by or.
+> When a [*definition*](#term-definition-passage) has two alternatives for one kind and can be said [*kind by kind*](#term-by-kind), the [*verbalizer*](#term-verbalizer) says the definition as one noun phrase for that kind, with the alternatives joined by or.
 <!-- statement-spec-the-alternatives-of-one-kind-are-put-together-with-or:end -->
 
 A canon often gives one kind two cases, as term-unfounded does: an exception without a spec, and an exception without a fact. Listed apart, two lines would begin "an exception that", as if the kind came twice. The verbalizer merges them into one phrase joined by "or": `an exception that cites no spec or cites no fact`. Each kind then keeps exactly one line in the list.
@@ -2988,7 +2988,7 @@ all f: Definition | (f in SameKindTwice and byKind[f]) implies f in JoinedWithOr
 #### @spec the-options-of-an-or-inside-a-kind-are-one-coordination
 
 <!-- statement-spec-the-options-of-an-or-inside-a-kind-are-one-coordination:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has an or inside one kind and can be said [*kind by kind*](#term-by-kind), [*verbalizer*](#term-verbalizer) says the definition as one run of clauses joined by commas and or.
+> When a [*definition*](#term-definition-passage) has an or inside one kind and can be said [*kind by kind*](#term-by-kind), the [*verbalizer*](#term-verbalizer) says the definition as one run of clauses joined by commas and or.
 <!-- statement-spec-the-options-of-an-or-inside-a-kind-are-one-coordination:end -->
 
 A kind can hold its own choice, as in `a bug, and it names no issue or names an unknown issue or is not tested`. Said as it stands, that choice nests a second `at least one of these holds` under the kind. The verbalizer flattens it into one run after "that": `a bug that names no issue, names an issue that tracker does not know or is not tested`. Commas and a single "or" carry the run, so it reads in one pass.
@@ -3005,7 +3005,7 @@ all f: Definition | (f in OrInsideKind and byKind[f]) implies f in OneCoordinati
 #### @spec a-definition-with-one-kind-is-one-sentence
 
 <!-- statement-spec-a-definition-with-one-kind-is-one-sentence:begin — generated by `canon generate`; edits are overwritten -->
-> When the alternatives of a [*definition*](#term-definition-passage) are of one kind and the definition can be said [*kind by kind*](#term-by-kind), [*verbalizer*](#term-verbalizer) says the definition as one sentence.
+> When the alternatives of a [*definition*](#term-definition-passage) are of one kind and the definition can be said [*kind by kind*](#term-by-kind), the [*verbalizer*](#term-verbalizer) says the definition as one sentence.
 <!-- statement-spec-a-definition-with-one-kind-is-one-sentence:end -->
 
 When every alternative has the same kind, the list would read `unit U1 is one of these:` over a single bullet. That promises a choice the definition does not offer. So the verbalizer says it as one sentence: `unit U1 is unfounded exactly when U1 is a spec that cites no unit`.
@@ -3022,7 +3022,7 @@ all f: Definition | (f in OneKind and byKind[f]) implies f in OneSentenceKind
 #### @spec a-definition-by-cases-is-said-as-it-stands-when-an-alternative-does-not-begin-with-its-kind
 
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-alternative-does-not-begin-with-its-kind:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has an alternative that does not begin with its kind, [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
+> When a [*definition*](#term-definition-passage) has an alternative that does not begin with its kind, the [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-alternative-does-not-begin-with-its-kind:end -->
 
 The phrase for a kind needs a kind to head it: `a spec that …`. An alternative such as `the unit is not an axiom` names no kind, so no phrase can start with one. Forcing it into the list would drop a case or invent a kind. So when any alternative does not open with its kind, the verbalizer keeps every alternative as it stands, under `at least one of these holds`.
@@ -3039,7 +3039,7 @@ all f: Definition | f in NoKindFirst implies f in AsItStands
 #### @spec a-definition-by-cases-is-said-as-it-stands-when-a-run-of-and-would-read-two-ways
 
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-a-run-of-and-would-read-two-ways:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has a run of "and" beside another alternative of its kind, [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
+> When a [*definition*](#term-definition-passage) has a run of "and" beside another alternative of its kind, the [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-a-run-of-and-would-read-two-ways:end -->
 
 Two cases of one kind merge with "or", and that breaks when one case is itself a run of "and". Then `A spec that is not tested and is not paired or cites no unit` can group the "or" two ways. It can join the last clause, or the whole run. The two groupings define different units, and nothing in the words picks one.
@@ -3058,7 +3058,7 @@ all f: Definition | f in AmbiguousAnd implies f in AsItStands
 #### @spec a-definition-by-cases-is-said-as-it-stands-when-an-alternative-is-not-about-its-subject
 
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-alternative-is-not-about-its-subject:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has an alternative that says something about another unit, [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
+> When a [*definition*](#term-definition-passage) has an alternative that says something about another unit, the [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-alternative-is-not-about-its-subject:end -->
 
 Each line of a definition by kinds reads `a bug that …`, so every clause after "that" must be about the bug. Term-hidden has a case `project has a tracker and the unit names no issue`. Put after "a bug that", "has a tracker" would read as a claim about the bug, not the project. So when any alternative says something of another thing, the verbalizer keeps the alternatives as they stand, each with its own subject.
@@ -3075,7 +3075,7 @@ all f: Definition | f in NotAboutSubject implies f in AsItStands
 #### @spec a-definition-by-cases-is-said-as-it-stands-when-two-of-its-kinds-can-share-a-member
 
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-two-of-its-kinds-can-share-a-member:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has two kinds that can share a member, [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
+> When a [*definition*](#term-definition-passage) has two kinds that can share a member, the [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-two-of-its-kinds-can-share-a-member:end -->
 
 `The unit is one of these: a spec that is tested; a bug that is paired`, and a reader can take that as exactly one line. When specs and bugs share no member, as signatures that extend one signature, nothing meets two lines and both readings agree. When a unit can be a spec and a bug at once, a tested, paired one meets both lines. A reader taking "exactly one" would then wrongly leave it out. So the verbalizer lists the alternatives as they stand, under `at least one of these holds`.
@@ -3092,7 +3092,7 @@ all f: Definition | f in KindsShareAMember implies f in AsItStands
 #### @spec a-definition-by-cases-is-said-as-it-stands-when-an-option-of-a-kind-holds-a-comma
 
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-option-of-a-kind-holds-a-comma:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*definition*](#term-definition-passage) has an option of one kind that holds a comma, [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
+> When a [*definition*](#term-definition-passage) has an option of one kind that holds a comma, the [*verbalizer*](#term-verbalizer) says the definition as a list of the alternatives as they stand.
 <!-- statement-spec-a-definition-by-cases-is-said-as-it-stands-when-an-option-of-a-kind-holds-a-comma:end -->
 
 Said kind by kind, the options of one kind run after "that", joined by commas and one "or". An option that holds a comma of its own breaks that run. Take "a bug that cites a unit that is not an axiom, a spec or a bug or is not tested". Does "or is not tested" belong to the bug, or to the unit it cites? The reader cannot tell.
@@ -3179,7 +3179,7 @@ This follows because a word with no unit to lead to is only a word.
 #### @spec a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase
 
 <!-- statement-spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase:begin — generated by `canon generate`; edits are overwritten -->
-> When the sentence says the variable of a [*quantifier*](#term-quantifier) once and the quantifier [*fits*](#term-fit) a noun phrase, [*verbalizer*](#term-verbalizer) says the quantifier as a noun phrase in the place of the variable, such as "sits in no unit".
+> When the sentence says the variable of a [*quantifier*](#term-quantifier) once and the quantifier [*fits*](#term-fit) a noun phrase, the [*verbalizer*](#term-verbalizer) says the quantifier as a noun phrase in the place of the variable, such as "sits in no unit".
 <!-- statement-spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase:end -->
 
 Spelled out in full, `some o: Owner | o in c.on` reads `there is an owner such that c is on the owner`. The reader meets the owner twice and must match the two mentions. When the sentence names the variable once and the quantifier [*fits*](#term-fit) a noun phrase, the [*verbalizer*](#term-verbalizer) puts the phrase where the variable stood: `c is on an owner`. Under "no" it reads `c is on no owner`.
@@ -3223,7 +3223,7 @@ For every cleanup and every text T1:
 #### @spec a-noun-phrase-can-be-the-subject-of-a-sentence
 
 <!-- statement-spec-a-noun-phrase-can-be-the-subject-of-a-sentence:begin — generated by `canon generate`; edits are overwritten -->
-> When the variable of a [*quantifier*](#term-quantifier) is the subject of the sentence and the quantifier [*fits*](#term-fit) a noun phrase, [*verbalizer*](#term-verbalizer) says the quantifier with the noun phrase as the subject, such as "a tag names unit U1".
+> When the variable of a [*quantifier*](#term-quantifier) is the subject of the sentence and the quantifier [*fits*](#term-fit) a noun phrase, the [*verbalizer*](#term-verbalizer) says the quantifier with the noun phrase as the subject, such as "a tag names unit U1".
 <!-- statement-spec-a-noun-phrase-can-be-the-subject-of-a-sentence:end -->
 
 In `some d: Cleanup | o in d.on`, the cleanup is what the sentence is about. Spelled out, it reads `there is a cleanup such that the cleanup is on o`. When the quantifier fits a noun phrase, the phrase opens the sentence as its subject instead: `a cleanup is on o`, or `no cleanup is on o`. The o after the verb gives the phrase something to hang from.
@@ -3240,7 +3240,7 @@ all f: Quantifier | (f in VariableSubject and fits[f]) implies f in AsSubjectPhr
 #### @spec what-else-is-true-of-the-variable-is-a-relative-clause
 
 <!-- statement-spec-what-else-is-true-of-the-variable-is-a-relative-clause:begin — generated by `canon generate`; edits are overwritten -->
-> When the variable of a [*quantifier*](#term-quantifier) has a further condition and the quantifier [*fits*](#term-fit) a noun phrase, [*verbalizer*](#term-verbalizer) says the quantifier with a relative clause, such as "a unit that is a spec".
+> When the variable of a [*quantifier*](#term-quantifier) has a further condition and the quantifier [*fits*](#term-fit) a noun phrase, the [*verbalizer*](#term-verbalizer) says the quantifier with a relative clause, such as "a unit that is a spec".
 <!-- statement-spec-what-else-is-true-of-the-variable-is-a-relative-clause:end -->
 
 `some o: Owner | o in c.on and o in Disposed` says two things of one owner. In full it reads `there is an owner such that c is on the owner and pulse has disposed the owner`. When the quantifier fits a noun phrase, the second condition joins the phrase as a relative clause: `c is on an owner that pulse has disposed`. The reader meets one owner, once.
@@ -3309,7 +3309,7 @@ This follows because a test that checks a bug that sits in a unit reads from lef
 #### @spec a-quantifier-whose-variable-would-be-said-twice-is-said-in-full
 
 <!-- statement-spec-a-quantifier-whose-variable-would-be-said-twice-is-said-in-full:begin — generated by `canon generate`; edits are overwritten -->
-> When the reading of a [*quantifier*](#term-quantifier) says the variable twice, [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
+> When the reading of a [*quantifier*](#term-quantifier) says the variable twice, the [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
 <!-- statement-spec-a-quantifier-whose-variable-would-be-said-twice-is-said-in-full:end -->
 
 `some o: Owner | o in o.parent` says that one owner is its own parent. As noun phrases it would read `an owner is the parent of an owner`, which a reader takes as two owners. So the verbalizer says it in full, and both places share one name: `there is an owner such that the owner is the parent of the owner`.
@@ -3333,7 +3333,7 @@ all f: Quantifier | f in VariableTwice implies f in InFull
 >   - the quantifier has more than three conditions, or conditions longer than a line and is under "no"
 >   - the quantifier is under "no" with a condition that says "no"
 >
-> then [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
+> then the [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
 <!-- statement-spec-a-quantifier-with-nothing-to-attach-to-is-said-in-full:end -->
 
 A noun phrase alone in its sentence misleads: `a cleanup has run` reads as a rule about every cleanup. `There is a … that` repairs most such cases, as the next spec says. Where it cannot, the verbalizer says the quantifier in full. It cannot when the variable is not the subject of each condition: `some o: Owner | o in Disposed` reads `there is an owner such that pulse has disposed the owner`.
@@ -3360,7 +3360,7 @@ all f: Quantifier | (f in NothingToAttach and (f not in VariableSubject or (f in
 > - the quantifier does not both say that no variable differs from another and hold a condition
 >
 > then the following holds:\
-> [*verbalizer*](#term-verbalizer) says the quantifier as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec".
+> the [*verbalizer*](#term-verbalizer) says the quantifier as "there is" with its noun and a relative clause, such as "there is a unit that is a spec", or under "no" with one condition, such as "no unit is a spec".
 <!-- statement-spec-a-quantifier-about-its-variable-alone-is-said-with-there-is-and-that:end -->
 
 `some d: Cleanup | d in Ran` cannot be a bare noun phrase, since `a cleanup has run` reads as a rule about every cleanup. In full it reads `there is a cleanup such that the cleanup has run`, which names the cleanup twice. So the verbalizer lets `there is` give the phrase a place, and the conditions follow as one relative clause: `there is a cleanup that has run and has a label`.
@@ -3416,7 +3416,7 @@ No cleanup has run.
 > - the quantifier does not both say that no variable differs from another and hold a condition
 >
 > then the following holds:\
-> [*verbalizer*](#term-verbalizer) says the quantifier as "there is" with its noun and "that", and its conditions as bullets below it without their subject.
+> the [*verbalizer*](#term-verbalizer) says the quantifier as "there is" with its noun and "that", and its conditions as bullets below it without their subject.
 <!-- statement-spec-many-conditions-about-a-variable-alone-are-bullets-after-there-is-that:end -->
 
 Four conditions on one cleanup are too many for one relative clause. In full they read `there is a cleanup such that all of these hold:`, with "the cleanup" opening each bullet. Instead the verbalizer writes `there is a cleanup that:`, and each bullet goes on from "that": "has run", "has a label", "has a flag", "has a pin". Under "no", such bullets could each read as denied on its own, so "no" keeps the full form.
@@ -3433,7 +3433,7 @@ all f: Quantifier | (f in NothingToAttach and f in VariableSubject and f in Long
 #### @spec no-with-another-is-said-in-full
 
 <!-- statement-spec-no-with-another-is-said-in-full:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*quantifier*](#term-quantifier) says no variable differs from another and holds a condition, [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
+> When a [*quantifier*](#term-quantifier) says no variable differs from another and holds a condition, the [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
 <!-- statement-spec-no-with-another-is-said-in-full:end -->
 
 `some d: Cleanup | d != c and o in d.on` reads `a cleanup other than c is on o`. Under "no", the short form would be `no other cleanup is on o`. That hints that c is on o, which the formula does not say. So the verbalizer says it in full, with the difference from c as a condition of its own.
@@ -3452,7 +3452,7 @@ all f: Quantifier | f in NoWithAnother implies f in InFull
 <!-- statement-spec-a-quantifier-with-a-time-phrase-in-one-of-several-conditions-is-said-in-full:begin — generated by `canon generate`; edits are overwritten -->
 > When the following holds:\
 > a [*quantifier*](#term-quantifier) has several conditions, one of which begins with a time phrase\
-> then [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
+> then the [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
 <!-- statement-spec-a-quantifier-with-a-time-phrase-in-one-of-several-conditions-is-said-in-full:end -->
 
 In `some o: Owner | o in c.on' and p in o.parent`, only the first condition holds at the next moment. As a noun phrase it would read `at the next moment, c is on an owner that p is the parent of`. There the time phrase seems to cover the parent too. So the verbalizer says it in full, and the time phrase stays on its own bullet. With one condition the phrase is safe: `at the next moment, c is on an owner`.
@@ -3474,7 +3474,7 @@ all f: Quantifier | f in TimedCondition implies f in InFull
 > - the quantifier is not under "no"
 > - the conditions of the quantifier that are about its variable fit a noun phrase
 >
-> then [*verbalizer*](#term-verbalizer) says the conditions of the quantifier that are not about its variable beside it, outside it.
+> then the [*verbalizer*](#term-verbalizer) says the conditions of the quantifier that are not about its variable beside it, outside it.
 <!-- statement-spec-a-condition-that-is-not-about-the-variable-is-said-apart:end -->
 
 Take `there is an owner such that c is on the owner and d has run`. Its second condition is about d, not about the owner. Which owner c is on does not change whether d has run. So the [*verbalizer*](#term-verbalizer) says that condition beside the quantifier, outside it: "c is on an owner and d has run".
@@ -3523,7 +3523,7 @@ For every cleanup, every owner O1 and every owner O2:
 >   - the quantifier is under "no"
 >   - the conditions of the quantifier that are about its variable do not fit a noun phrase
 >
-> then [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
+> then the [*verbalizer*](#term-verbalizer) says the quantifier in full, with "there is" and a name for its variable.
 <!-- statement-spec-a-condition-under-no-that-is-not-about-the-variable-is-said-in-full:end -->
 
 Under "no", a condition about something else cannot step outside. Take `there is no owner such that c is on the owner and d has run`. It holds when c is on no owner, or when d has not run. Said apart, that "or" would come back as a second clause, which reads no lighter. So the [*verbalizer*](#term-verbalizer) keeps such a quantifier in full.
@@ -3540,7 +3540,7 @@ all f: Quantifier | (f in ConditionAside and (f in UnderNo or f not in RestFits)
 #### @spec three-clauses-or-fewer-are-said-in-a-sentence
 
 <!-- statement-spec-three-clauses-or-fewer-are-said-in-a-sentence:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) [*can be put in a sentence*](#term-sentenceable), [*verbalizer*](#term-verbalizer) says the list in a sentence.
+> When a [*list*](#term-series) [*can be put in a sentence*](#term-sentenceable), the [*verbalizer*](#term-verbalizer) says the list in a sentence.
 <!-- statement-spec-three-clauses-or-fewer-are-said-in-a-sentence:end -->
 
 Bullets cost a heading line and a line for each clause. Without this rule, `the cleanup is on owner_1 and has run` would take three lines: `all of these hold:` over two bullets. So the verbalizer puts every list that can go in a sentence into one.
@@ -3583,7 +3583,7 @@ For every cleanup, every owner O1 and every owner O2:
 #### @spec a-longer-list-or-a-list-with-a-comma-is-bullets
 
 <!-- statement-spec-a-longer-list-or-a-list-with-a-comma-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) is a run of clauses joined by and or by or and cannot be put in a sentence, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) is a run of clauses joined by and or by or and cannot be put in a sentence, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-longer-list-or-a-list-with-a-comma-is-bullets:end -->
 
 A sentence loses the reader when it carries many clauses, a comma inside an item, or an item longer than a clause. Bullets give each item a line of its own, so the reader sees where each one ends. So any run of "and" or "or" that cannot go in a sentence goes in bullets, under `All of these hold:` or `At least one of these holds:`.
@@ -3600,7 +3600,7 @@ all f: Series | (f in Items and not sentenceable[f]) implies f in AsBullets
 ##### @spec a-list-of-more-than-three-clauses-is-bullets
 
 <!-- statement-spec-a-list-of-more-than-three-clauses-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) has more than three clauses, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) has more than three clauses, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-of-more-than-three-clauses-is-bullets:end -->
 
 As a sentence, this list reads `c has run, code has registered c, pulse has disposed o and the dispose of o has been stopped`. The reader has to count commas to find each condition. As bullets, each condition has a line of its own under `All of these hold:`. So a list of more than three clauses is always bullets.
@@ -3617,7 +3617,7 @@ all f: Series | f in Many implies f in AsBullets
 ##### @spec a-list-with-a-comma-in-an-item-and-more-than-two-clauses-is-bullets
 
 <!-- statement-spec-a-list-with-a-comma-in-an-item-and-more-than-two-clauses-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> [*Verbalizer*](#term-verbalizer) says a [*list*](#term-series) as bullets when all of these hold:
+> The [*verbalizer*](#term-verbalizer) says a [*list*](#term-series) as bullets when all of these hold:
 > - the list has an item that holds a comma
 > - the list has more than two clauses
 <!-- statement-spec-a-list-with-a-comma-in-an-item-and-more-than-two-clauses-is-bullets:end -->
@@ -3636,7 +3636,7 @@ all f: Series | (f in CommaItem and f in MoreThanTwo) implies f in AsBullets
 ##### @spec a-list-too-long-for-a-line-is-bullets
 
 <!-- statement-spec-a-list-too-long-for-a-line-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) is longer than a line when it is put in a sentence, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) is longer than a line when it is put in a sentence, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-too-long-for-a-line-is-bullets:end -->
 
 A sentence that runs past a line is hard to take in at once, even with few clauses. `The dispose of o has been stopped, the dispose of p has been stopped and d is on an owner that pulse has disposed` runs to 113 characters. That passes the limit of 110, so the [*verbalizer*](#term-verbalizer) says it as three bullets. With `code has registered d` as its last clause, the sentence fits and stays one line.
@@ -3653,7 +3653,7 @@ all f: Series | f in TooLong implies f in AsBullets
 ##### @spec a-list-with-a-time-phrase-before-its-last-clause-is-bullets
 
 <!-- statement-spec-a-list-with-a-time-phrase-before-its-last-clause-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) has a clause before its last that begins with a time phrase, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) has a clause before its last that begins with a time phrase, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-with-a-time-phrase-before-its-last-clause-is-bullets:end -->
 
 A time phrase early in a sentence seems to cover every clause after it. So `At the next moment, c has run and d has run` reads as if d runs at the next moment too. The formula puts only c there. So such a list is bullets, and each clause stands on a line of its own. At the end of a list the phrase has nothing after it to cover. `c has run and at the next moment, pulse has disposed o` stays a sentence.
@@ -3670,7 +3670,7 @@ all f: Series | f in TimeBeforeLast implies f in AsBullets
 ##### @spec a-list-with-a-relative-clause-before-its-last-clause-is-bullets
 
 <!-- statement-spec-a-list-with-a-relative-clause-before-its-last-clause-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) has a clause before its last with a relative clause in it, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) has a clause before its last with a relative clause in it, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-with-a-relative-clause-before-its-last-clause-is-bullets:end -->
 
 In running prose a relative clause has no visible end, so it seems to swallow the clauses after it. So `c is on no owner that pulse has disposed and code has registered c` reads as one description of the owner. In the formula the relative clause ends with its own item. So the [*verbalizer*](#term-verbalizer) puts such a list in bullets, and the line break marks where that clause stops. A relative clause in the last clause swallows nothing, so its list can stay a sentence.
@@ -3693,7 +3693,7 @@ This follows because the "and" of that subject reads like the "and" of the list.
 ##### @spec a-list-right-below-a-time-phrase-is-bullets
 
 <!-- statement-spec-a-list-right-below-a-time-phrase-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) stands right below a time phrase, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) stands right below a time phrase, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-right-below-a-time-phrase-is-bullets:end -->
 
 In "at the next moment, c has run and code has registered c", the time phrase can seem to cover "c has run" alone. The registering would then hold now. Bullets below the phrase put both clauses under it, where the formula puts them. So a list right below a time phrase is bullets, even a short one.
@@ -3710,7 +3710,7 @@ all f: Series | f in BelowTime implies f in AsBullets
 #### @spec an-item-that-is-more-than-a-clause-makes-the-list-bullets
 
 <!-- statement-spec-an-item-that-is-more-than-a-clause-makes-the-list-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) has an item that is more than one clause, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) has an item that is more than one clause, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-an-item-that-is-more-than-a-clause-makes-the-list-bullets:end -->
 
 An item with its own quantifier or its own list has no visible end in a sentence. So `For every cleanup, the cleanup has run and code has registered c` leaves open what "for every cleanup" covers. In bullets, the quantifier and its clause sit in one bullet, and the next bullet starts clear of it. So one such item is enough: the [*verbalizer*](#term-verbalizer) says the whole list as bullets.
@@ -3729,9 +3729,9 @@ all f: Series | f in NotClause implies f in AsBullets
 <!-- statement-spec-negative-clauses-that-share-their-words-are-said-once-before-none-of-these:begin — generated by `canon generate`; edits are overwritten -->
 > When all of these hold:
 > - a [*list*](#term-series) is a run of negative clauses about one subject that share their verb, each before a noun phrase of its own
-> - [*verbalizer*](#term-verbalizer) says the list as bullets
+> - the [*verbalizer*](#term-verbalizer) says the list as bullets
 >
-> then verbalizer says the subject and the verb that the clauses of the list share once, before "none of these".
+> then the verbalizer says the subject and the verb that the clauses of the list share once, before "none of these".
 <!-- statement-spec-negative-clauses-that-share-their-words-are-said-once-before-none-of-these:end -->
 
 Derives from: [`spec-words-said-once-for-several-clauses-hold-no-noun-phrase`](#spec-words-said-once-for-several-clauses-hold-no-noun-phrase)
@@ -3783,7 +3783,7 @@ For every cleanup:
 
 <!-- statement-spec-an-and-inside-an-or-is-kept-apart:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*list*](#term-series) L1:\
-> when list L1 is a list of alternatives where one alternative holds an and, [*verbalizer*](#term-verbalizer) says list L1 as bullets that cannot be read two ways.
+> when list L1 is a list of alternatives where one alternative holds an and, the [*verbalizer*](#term-verbalizer) says list L1 as bullets that cannot be read two ways.
 <!-- statement-spec-an-and-inside-an-or-is-kept-apart:end -->
 
 `c has run or code has registered c and pulse has disposed o` has two meanings. Either c has run, or both other clauses hold. Or pulse has disposed o, and one of the first two holds as well. A statement must have one meaning.
@@ -3818,7 +3818,7 @@ This follows because "unit U1 is a spec and sits in no unit" says it once, and r
 #### @spec a-list-with-a-clause-about-a-pair-of-variables-is-bullets
 
 <!-- statement-spec-a-list-with-a-clause-about-a-pair-of-variables-is-bullets:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) has a clause about a pair of variables, [*verbalizer*](#term-verbalizer) says the list as bullets.
+> When a [*list*](#term-series) has a clause about a pair of variables, the [*verbalizer*](#term-verbalizer) says the list as bullets.
 <!-- statement-spec-a-list-with-a-clause-about-a-pair-of-variables-is-bullets:end -->
 
 A clause about a pair of variables holds an "and" of its own: "unit U1 and unit U2 are different". In a sentence beside other clauses, that "and" reads as one more join. "Unit U1 and unit U2 are different and unit U1 is a spec" could also share "unit U1" as the subject of the last clause. So a list that holds such a clause is bullets, and the pair keeps a line of its own.
@@ -3835,7 +3835,7 @@ all f: Series | f in PairInList implies f in AsBullets
 #### @spec a-rule-keeps-its-then-before-a-time-phrase
 
 <!-- statement-spec-a-rule-keeps-its-then-before-a-time-phrase:begin — generated by `canon generate`; edits are overwritten -->
-> [*Verbalizer*](#term-verbalizer) says a [*list*](#term-series) with "then" before the time phrase when all of these hold:
+> The [*verbalizer*](#term-verbalizer) says a [*list*](#term-series) with "then" before the time phrase when all of these hold:
 > - the list is a rule whose two sides are each one clause
 > - the list is not a rule whose first side begins with a time phrase
 > - the list is a rule whose second side begins with a time phrase
@@ -3855,7 +3855,7 @@ all f: Series | (f in OneLineRule and f not in TimeFirst and f in TimeSecond) im
 #### @spec a-rule-drops-its-then-before-anything-else
 
 <!-- statement-spec-a-rule-drops-its-then-before-anything-else:begin — generated by `canon generate`; edits are overwritten -->
-> [*Verbalizer*](#term-verbalizer) says a [*list*](#term-series) without "then" when all of these hold:
+> The [*verbalizer*](#term-verbalizer) says a [*list*](#term-series) without "then" when all of these hold:
 > - the list is a rule whose two sides are each one clause
 > - the list is not a rule whose first side begins with a time phrase
 > - the list is not a rule whose second side begins with a time phrase
@@ -3875,7 +3875,7 @@ all f: Series | (f in OneLineRule and f not in TimeFirst and f not in TimeSecond
 #### @spec a-rule-whose-first-side-begins-with-a-time-phrase-puts-its-then-on-a-line-of-its-own
 
 <!-- statement-spec-a-rule-whose-first-side-begins-with-a-time-phrase-puts-its-then-on-a-line-of-its-own:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*list*](#term-series) is a rule whose first side begins with a time phrase, [*verbalizer*](#term-verbalizer) says the list with "then" at the start of the second side, on a line of its own.
+> When a [*list*](#term-series) is a rule whose first side begins with a time phrase, the [*verbalizer*](#term-verbalizer) says the list with "then" at the start of the second side, on a line of its own.
 <!-- statement-spec-a-rule-whose-first-side-begins-with-a-time-phrase-puts-its-then-on-a-line-of-its-own:end -->
 
 On one line, `When at the next moment, c has run, code has registered c` leaves the reach of the time phrase to a guess. It could cover "c has run" alone, or the registering too. So the second side starts on a line of its own with "then", below the first side: `then code has registered c`. The line break and the "then" show where the time phrase stops.
@@ -3895,9 +3895,9 @@ all f: Series | f in TimeFirst implies f in ThenOwnLine
 > When all of these hold:
 > - a [*list*](#term-series) is a rule with a first side and a second
 > - the list is not a rule whose two sides are each one clause
-> - [*verbalizer*](#term-verbalizer) does not say the second side of the list before its first side
+> - the [*verbalizer*](#term-verbalizer) does not say the second side of the list before its first side
 >
-> then verbalizer says the list with "then" at the start of the second side, on a line of its own.
+> then the verbalizer says the list with "then" at the start of the second side, on a line of its own.
 <!-- statement-spec-a-rule-with-a-list-for-a-side-puts-its-then-on-a-line-of-its-own:end -->
 
 A rule with a side longer than one clause cannot fit on a line. After a run of bullets, an unmarked second side would look like one more bullet. So the second side starts on a line of its own with "then": `then at the next moment, pulse has disposed p`. A rule said with its second side first needs no "then", because its bullets end the statement.
@@ -3914,7 +3914,7 @@ all f: Series | (f in Rule and f not in OneLineRule and f not in SecondSideFirst
 #### @spec a-rule-whose-first-side-is-bullets-says-its-second-side-first
 
 <!-- statement-spec-a-rule-whose-first-side-is-bullets-says-its-second-side-first:begin — generated by `canon generate`; edits are overwritten -->
-> [*Verbalizer*](#term-verbalizer) says the second side of a [*list*](#term-series) before its first side when all of these hold:
+> The [*verbalizer*](#term-verbalizer) says the second side of a [*list*](#term-series) before its first side when all of these hold:
 > - the list is a rule whose first side is a run of clauses said as bullets
 > - the list is a rule whose second side is one line with no time phrase, relative clause, comma or "when"
 > - the list is not a rule with an "otherwise"

@@ -300,25 +300,25 @@ sig Worded in Document {}
 sig Stated in Unit {}
 ```
 
-| reading     | holds                                                                                     | does not hold                                                                                     |
-| ----------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
-| Logical     | {1} holds a formula                                                                       | {1} holds no formula                                                                              |
-| Generated   | the [statement] of {1} sits between the markers of a generated region                     | the [statement] of {1} does not sit between the markers of a generated region                     |
-| Differs     | the [statement] of {1} differs from what its formula says                                 | the [statement] of {1} does not differ from what its formula says                                 |
-| Wordless    | the formula of {1} names a word that has no reading                                       | the formula of {1} names no word that has no reading                                              |
-| Twofold     | {1} holds more than one formula                                                           | {1} does not hold more than one formula                                                           |
-| Faulted     | the verbalizer fails on the formula of {1} with a fault of its own                        | the verbalizer does not fail on the formula of {1} with a fault of its own                        |
-| Unsayable   | the formula of {1} cannot be said in words                                                | the formula of {1} can be said in words                                                           |
-| Current     | the [statement] of {1} is current                                                         | the [statement] of {1} is not current                                                             |
-| Misread     | the [statement] of {1} reads back as more or other than its formula                       | the [statement] of {1} reads back as its formula alone                                            |
-| Stale       | the [statement] of {1} is stale                                                           | the [statement] of {1} is not stale                                                               |
-| Unwritten   | the [statement] of {1} is unwritten                                                       | the [statement] of {1} is not unwritten                                                           |
-| Handwritten | the [statement] of {1} is handwritten                                                     | the [statement] of {1} is not handwritten                                                         |
-| Reported    | [checker](../canon/CANON.md#term-checker) reports the [statement] of {1}                  | [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}                  |
-| Rewritten   | [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates |
-| Explained   | [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said      | [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said      |
-| Worded      | {1} keeps readings                                                                        | {1} keeps no readings                                                                             |
-| Stated      | {1} has a [statement](../canon/CANON.md#term-statement)                                   | {1} has no [statement](../canon/CANON.md#term-statement)                                          |
+| reading     | holds                                                                                         | does not hold                                                                                         |
+| ----------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Logical     | {1} holds a formula                                                                           | {1} holds no formula                                                                                  |
+| Generated   | the [statement] of {1} sits between the markers of a generated region                         | the [statement] of {1} does not sit between the markers of a generated region                         |
+| Differs     | the [statement] of {1} differs from what its formula says                                     | the [statement] of {1} does not differ from what its formula says                                     |
+| Wordless    | the formula of {1} names a word that has no reading                                           | the formula of {1} names no word that has no reading                                                  |
+| Twofold     | {1} holds more than one formula                                                               | {1} does not hold more than one formula                                                               |
+| Faulted     | the verbalizer fails on the formula of {1} with a fault of its own                            | the verbalizer does not fail on the formula of {1} with a fault of its own                            |
+| Unsayable   | the formula of {1} cannot be said in words                                                    | the formula of {1} can be said in words                                                               |
+| Current     | the [statement] of {1} is current                                                             | the [statement] of {1} is not current                                                                 |
+| Misread     | the [statement] of {1} reads back as more or other than its formula                           | the [statement] of {1} reads back as its formula alone                                                |
+| Stale       | the [statement] of {1} is stale                                                               | the [statement] of {1} is not stale                                                                   |
+| Unwritten   | the [statement] of {1} is unwritten                                                           | the [statement] of {1} is not unwritten                                                               |
+| Handwritten | the [statement] of {1} is handwritten                                                         | the [statement] of {1} is not handwritten                                                             |
+| Reported    | the [checker](../canon/CANON.md#term-checker) reports the [statement] of {1}                  | the [checker](../canon/CANON.md#term-checker) does not report the [statement] of {1}                  |
+| Rewritten   | the [checker](../canon/CANON.md#term-checker) writes the [statement] of {1} when it generates | the [checker](../canon/CANON.md#term-checker) does not write the [statement] of {1} when it generates |
+| Explained   | the [checker](../canon/CANON.md#term-checker) says why the formula of {1} cannot be said      | the [checker](../canon/CANON.md#term-checker) does not say why the formula of {1} cannot be said      |
+| Worded      | {1} keeps readings                                                                            | {1} keeps no readings                                                                                 |
+| Stated      | {1} has a [statement](../canon/CANON.md#term-statement)                                       | {1} has no [statement](../canon/CANON.md#term-statement)                                              |
 
 </details>
 
@@ -327,6 +327,8 @@ sig Stated in Unit {}
 > A word is a [*signature*](#term-signature), a field of a signature or a predicate that a [*document*](../canon/CANON.md#term-document) declares in its model, and that its readings say.
 
 A reading says a word in the language of the project. The words of a document are in order when three things hold. Each is declared in the term that names it. Its reading is beside its declaration. A claim, a definition or a fact uses it.
+
+A word that a reading says and no unit declares is undeclared. A word declared in a unit that is no term is misplaced. A word whose reading is in another unit than its declaration stands apart from its declaration. A word that no claim, definition or fact uses is unused.
 
 <details>
 <summary>Alloy</summary>
@@ -340,18 +342,18 @@ one sig Voice { rel: Unit -> Word }
 one sig Rely { rel: Unit -> Word }
 ```
 
-| reading       | holds                                                            | does not hold                                                            |
-| ------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Field         | {1} is a field of a signature                                    | {1} is not a field of a signature                                        |
-| Predicate     | {1} is a predicate                                               | {1} is not a predicate                                                   |
-| Undeclared    | {1} is said by a reading and declared by nothing                 | {1} is said by no reading or is declared                                 |
-| Misplaced     | {1} is declared in a unit that is not a term                     | {1} is not declared in a unit that is not a term                         |
-| Apart         | the reading of {1} is in another unit than its declaration       | the reading of {1} is in the unit of its declaration                     |
-| Unused        | no claim, definition or fact uses {1}                            | a claim, a definition or a fact uses {1}                                 |
-| Flagged       | [checker](../canon/CANON.md#term-checker) reports the [word] {1} | [checker](../canon/CANON.md#term-checker) does not report the [word] {1} |
-| Introduce.rel | {1} declares {2}                                                 | {1} does not declare {2}                                                 |
-| Voice.rel     | a reading in {1} says {2}                                        | no reading in {1} says {2}                                               |
-| Rely.rel      | a claim, a definition or a fact of {1} uses {2}                  | no claim, definition or fact of {1} uses {2}                             |
+| reading       | holds                                                     | does not hold                                                     |
+| ------------- | --------------------------------------------------------- | ----------------------------------------------------------------- |
+| Field         | {1} is a field of a signature                             | {1} is not a field of a signature                                 |
+| Predicate     | {1} is a predicate                                        | {1} is not a predicate                                            |
+| Undeclared    | {1} is undeclared                                         | {1} is not undeclared                                             |
+| Misplaced     | {1} is misplaced                                          | {1} is not misplaced                                              |
+| Apart         | {1} stands apart from its declaration                     | {1} does not stand apart from its declaration                     |
+| Unused        | {1} is unused                                             | {1} is not unused                                                 |
+| Flagged       | the [checker](../canon/CANON.md#term-checker) reports {1} | the [checker](../canon/CANON.md#term-checker) does not report {1} |
+| Introduce.rel | {1} declares {2}                                          | {1} does not declare {2}                                          |
+| Voice.rel     | a reading in {1} says {2}                                 | no reading in {1} says {2}                                        |
+| Rely.rel      | a claim, a definition or a fact of {1} uses {2}           | no claim, definition or fact of {1} uses {2}                      |
 
 </details>
 
@@ -392,14 +394,14 @@ one sig Frees { rel: Unit -> Scenario }
 one sig Blame { rel: Scenario -> Unit }
 ```
 
-| reading    | holds                                                                    | does not hold                                                                    |
-| ---------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
-| Possible   | {1} is a [scenario] that can happen while every held unit holds          | {1} is not a [scenario] that can happen while every held unit holds              |
-| Impossible | {1} is a [scenario] that cannot happen while every held unit holds       | {1} is not a [scenario] that cannot happen while every held unit holds           |
-| Raised     | [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen |
-| Probe.rel  | the author asks about leaving out {2} for {1}                            | the author does not ask about leaving out {2} for {1}                            |
-| Frees.rel  | leaving out {1} lets {2} happen                                          | leaving out {1} does not let {2} happen                                          |
-| Blame.rel  | [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1} |
+| reading    | holds                                                                        | does not hold                                                                        |
+| ---------- | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Possible   | {1} is a [scenario] that can happen while every held unit holds              | {1} is not a [scenario] that can happen while every held unit holds                  |
+| Impossible | {1} is a [scenario] that cannot happen while every held unit holds           | {1} is not a [scenario] that cannot happen while every held unit holds               |
+| Raised     | the [checker](../canon/CANON.md#term-checker) reports that {1} cannot happen | the [checker](../canon/CANON.md#term-checker) does not report that {1} cannot happen |
+| Probe.rel  | the author asks about leaving out {2} for {1}                                | the author does not ask about leaving out {2} for {1}                                |
+| Frees.rel  | leaving out {1} lets {2} happen                                              | leaving out {1} does not let {2} happen                                              |
+| Blame.rel  | the [checker](../canon/CANON.md#term-checker) names {2} in its report of {1} | the [checker](../canon/CANON.md#term-checker) does not name {2} in its report of {1} |
 
 </details>
 
@@ -432,19 +434,19 @@ one sig Leave { rel: Search -> Unit }
 sig Checked in Document {}
 ```
 
-| reading       | holds                                                                                | does not hold                                                                                |
-| ------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| Trial         | {1} leaves one unit out                                                              | {1} leaves no unit out                                                                       |
-| First         | {1} is asked before any scenario is known to be impossible                           | {1} is not asked before any scenario is known to be impossible                               |
-| Afterwards    | {1} is asked after the first [search] is answered                                    | {1} is not asked after the first [search] is answered                                        |
-| BareFormula   | {1} holds a formula with no keyword                                                  | {1} holds no formula without a keyword                                                       |
-| Held          | the analyzer is asked to hold the formula of {1}                                     | the analyzer is not asked to hold the formula of {1}                                         |
-| Contradicting | {1} is held with units that cannot all hold                                          | {1} is held with units that can all hold                                                     |
-| Named         | [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction |
-| Checked       | the project lists {1} among the documents it checks                                  | the project does not list {1} among the documents it checks                                  |
-| Pose.units    | {1} requires {2} to hold                                                             | {1} does not require {2} to hold                                                             |
-| Pose.scenario | {1} requires {2} to happen                                                           | {1} does not require {2} to happen                                                           |
-| Leave.rel     | {1} leaves out {2}                                                                   | {1} does not leave out {2}                                                                   |
+| reading       | holds                                                                                    | does not hold                                                                                    |
+| ------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| Trial         | {1} leaves one unit out                                                                  | {1} leaves no unit out                                                                           |
+| First         | {1} is asked before any scenario is known to be impossible                               | {1} is not asked before any scenario is known to be impossible                                   |
+| Afterwards    | {1} is asked after the first [search] is answered                                        | {1} is not asked after the first [search] is answered                                            |
+| BareFormula   | {1} holds a formula with no keyword                                                      | {1} holds no formula without a keyword                                                           |
+| Held          | the analyzer is asked to hold the formula of {1}                                         | the analyzer is not asked to hold the formula of {1}                                             |
+| Contradicting | {1} is held with units that cannot all hold                                              | {1} is held with units that can all hold                                                         |
+| Named         | the [checker](../canon/CANON.md#term-checker) names {1} in its report of a contradiction | the [checker](../canon/CANON.md#term-checker) does not name {1} in its report of a contradiction |
+| Checked       | the project lists {1} among the documents it checks                                      | the project does not list {1} among the documents it checks                                      |
+| Pose.units    | {1} requires {2} to hold                                                                 | {1} does not require {2} to hold                                                                 |
+| Pose.scenario | {1} requires {2} to happen                                                               | {1} does not require {2} to happen                                                               |
+| Leave.rel     | {1} leaves out {2}                                                                       | {1} does not leave out {2}                                                                       |
 
 </details>
 
@@ -503,13 +505,13 @@ sig Unchallenged in Unit {}
 pred loneOn[u: Unit, w: Word] { u->w in Rely.rel and (no v: Unit | v != u and v->w in Utter.rel) and (no v: Unit | v->w in Picture.rel) }
 ```
 
-| reading      | holds                                                                               | does not hold                                                                               |
-| ------------ | ----------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| Utter.rel    | a block of {1} names {2} outside its declaration                                    | no block of {1} names {2} outside its declaration                                           |
-| Picture.rel  | a scenario of {1} names {2}                                                         | no scenario of {1} names {2}                                                                |
-| Expose.rel   | [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2} |
-| Unchallenged | no other formula can contradict the formula of {1}                                  | another formula can contradict the formula of {1}                                           |
-| loneOn       | the formula of {1} is [lone](#term-lone-formula) on {2}                             | the formula of {1} is not lone on {2}                                                       |
+| reading      | holds                                                                                   | does not hold                                                                                   |
+| ------------ | --------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Utter.rel    | a block of {1} names {2} outside its declaration                                        | no block of {1} names {2} outside its declaration                                               |
+| Picture.rel  | a scenario of {1} names {2}                                                             | no scenario of {1} names {2}                                                                    |
+| Expose.rel   | the [checker](../canon/CANON.md#term-checker) reports the formula of {1} as lone on {2} | the [checker](../canon/CANON.md#term-checker) does not report the formula of {1} as lone on {2} |
+| Unchallenged | no other formula can contradict the formula of {1}                                      | another formula can contradict the formula of {1}                                               |
+| loneOn       | the formula of {1} is [lone](#term-lone-formula) on {2}                                 | the formula of {1} is not lone on {2}                                                           |
 
 </details>
 
@@ -575,10 +577,10 @@ The intent measures the formula. When the generated statement says something the
 sig Intended, Aimless in Unit {}
 ```
 
-| reading  | holds                                                                      | does not hold                                                                      |
-| -------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| Intended | {1} has an [intent]                                                        | {1} has no [intent]                                                                |
-| Aimless  | [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent] |
+| reading  | holds                                                                          | does not hold                                                                          |
+| -------- | ------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| Intended | {1} has an [intent]                                                            | {1} has no [intent]                                                                    |
+| Aimless  | the [checker](../canon/CANON.md#term-checker) reports that {1} has no [intent] | the [checker](../canon/CANON.md#term-checker) does not report that {1} has no [intent] |
 
 </details>
 
@@ -586,7 +588,7 @@ sig Intended, Aimless in Unit {}
 
 <!-- statement-axiom-a-statement-says-what-its-logic-says:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document) and every [*unit*](../canon/CANON.md#term-unit):\
-> [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit when all of these hold:
 > - the document keeps readings
 > - the document [*holds*](../canon/CANON.md#term-hold) the unit
 > - the unit holds a formula
@@ -615,7 +617,7 @@ all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical 
 > - the document [*holds*](../canon/CANON.md#term-hold) the unit
 > - the unit holds a formula
 > - the [*statement*](#term-generated-statement) of the unit is current
-> - [*checker*](../canon/CANON.md#term-checker) does not report the statement of the unit
+> - the [*checker*](../canon/CANON.md#term-checker) does not report the statement of the unit
 <!-- statement-scenario-1-axiom-a-statement-says-what-its-logic-says:end -->
 
 <details>
@@ -633,8 +635,8 @@ some u: Unit, d: Document | d in Worded and d->u in Hold.units and u in Logical 
 > For every [*document*](../canon/CANON.md#term-document) and every [*unit*](../canon/CANON.md#term-unit):\
 > when the document [*holds*](../canon/CANON.md#term-hold) the unit and keeps no readings,\
 > then all of these hold:
-> - [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates
-> - checker does not report the statement of the unit
+> - the [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates
+> - the checker does not report the statement of the unit
 <!-- statement-spec-a-document-that-keeps-no-readings-is-left-as-it-is:end -->
 
 Readings are what let the checker put a formula into English. A document that keeps none gives it no words, so generate writes no statement in it and check reports none. Whatever a person wrote there stays as it is.
@@ -814,7 +816,7 @@ all u: Unit | u in Twofold implies u in Unsayable
 ##### @spec the-report-of-an-unsayable-formula-says-why
 
 <!-- statement-spec-the-report-of-an-unsayable-formula-says-why:begin — generated by `canon generate`; edits are overwritten -->
-> When the formula of a [*unit*](../canon/CANON.md#term-unit) cannot be said in words, [*checker*](../canon/CANON.md#term-checker) says why the formula of the unit cannot be said.
+> When the formula of a [*unit*](../canon/CANON.md#term-unit) cannot be said in words, the [*checker*](../canon/CANON.md#term-checker) says why the formula of the unit cannot be said.
 <!-- statement-spec-the-report-of-an-unsayable-formula-says-why:end -->
 
 An author can mend only what the checker names. So whenever the checker cannot say a formula, it says why, such as the word that lacks a reading.
@@ -832,7 +834,7 @@ all u: Unit | u in Unsayable implies u in Explained
 
 <!-- statement-spec-a-fault-of-the-verbalizer-fails-the-run-and-is-not-explained-as-unsayable:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - when the verbalizer fails on the formula of a [*unit*](../canon/CANON.md#term-unit) with a fault of its own, [*checker*](../canon/CANON.md#term-checker) does not say why the formula of the unit cannot be said
+> - when the verbalizer fails on the formula of a [*unit*](../canon/CANON.md#term-unit) with a fault of its own, the [*checker*](../canon/CANON.md#term-checker) does not say why the formula of the unit cannot be said
 > - for every [*run*](../canon/CANON.md#term-run), every [*command*](../canon/CANON.md#term-command) C1 and every unit:\
 >   the run does not exit with code 0 when all of these hold:
 >   - the run asks for command C1
@@ -874,8 +876,8 @@ some u: Unit | u in Faulted
 <!-- statement-spec-generate-writes-what-is-not-current-and-nothing-else:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit):\
 > all of these hold:
-> - when [*checker*](../canon/CANON.md#term-checker) writes the [*statement*](#term-generated-statement) of the unit when it generates, the statement of the unit is unwritten or the statement of the unit is stale
-> - when the statement of the unit is unwritten or the statement of the unit is stale, checker writes the statement of the unit when it generates
+> - when the [*checker*](../canon/CANON.md#term-checker) writes the [*statement*](#term-generated-statement) of the unit when it generates, the statement of the unit is unwritten or the statement of the unit is stale
+> - when the statement of the unit is unwritten or the statement of the unit is stale, the checker writes the statement of the unit when it generates
 <!-- statement-spec-generate-writes-what-is-not-current-and-nothing-else:end -->
 
 Generate writes exactly the statements that need it: the unwritten ones and the stale ones. Missing or out of date, those are the checker's to fix, and it leaves every other statement alone.
@@ -898,7 +900,7 @@ This follows because the markers tell the checker that the region is its own, an
 ##### @spec generate-writes-the-statement-of-a-stale-unit-again
 
 <!-- statement-spec-generate-writes-the-statement-of-a-stale-unit-again:begin — generated by `canon generate`; edits are overwritten -->
-> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is stale, [*checker*](../canon/CANON.md#term-checker) writes the statement of the unit when it generates.
+> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is stale, the [*checker*](../canon/CANON.md#term-checker) writes the statement of the unit when it generates.
 <!-- statement-spec-generate-writes-the-statement-of-a-stale-unit-again:end -->
 
 A stale statement sits in the checker's own region but no longer says what the formula says. Generate writes it again, so the region matches the formula once more.
@@ -929,7 +931,7 @@ A word that spells no form of its term is a fault of the reading, which `check` 
 ##### @spec generate-leaves-a-current-statement-as-it-is
 
 <!-- statement-spec-generate-leaves-a-current-statement-as-it-is:begin — generated by `canon generate`; edits are overwritten -->
-> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is current, [*checker*](../canon/CANON.md#term-checker) does not write the statement of the unit when it generates.
+> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is current, the [*checker*](../canon/CANON.md#term-checker) does not write the statement of the unit when it generates.
 <!-- statement-spec-generate-leaves-a-current-statement-as-it-is:end -->
 
 Writing a current statement again changes nothing. Generate skips it, so a second run leaves the document just as the first run left it.
@@ -946,7 +948,7 @@ all u: Unit | u in Current implies u not in Rewritten
 ##### @spec generate-never-overwrites-a-handwritten-statement
 
 <!-- statement-spec-generate-never-overwrites-a-handwritten-statement:begin — generated by `canon generate`; edits are overwritten -->
-> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is handwritten, [*checker*](../canon/CANON.md#term-checker) does not write the statement of the unit when it generates.
+> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is handwritten, the [*checker*](../canon/CANON.md#term-checker) does not write the statement of the unit when it generates.
 <!-- statement-spec-generate-never-overwrites-a-handwritten-statement:end -->
 
 A person's words are not the checker's to replace, even when they drift from the formula. Generate never writes over a handwritten statement. A person who wants the generated text deletes their own.
@@ -963,7 +965,7 @@ all u: Unit | u in Handwritten implies u not in Rewritten
 ##### @spec generate-leaves-an-unsayable-unit-as-it-is
 
 <!-- statement-spec-generate-leaves-an-unsayable-unit-as-it-is:begin — generated by `canon generate`; edits are overwritten -->
-> When the formula of a [*unit*](../canon/CANON.md#term-unit) cannot be said in words, [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates.
+> When the formula of a [*unit*](../canon/CANON.md#term-unit) cannot be said in words, the [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates.
 <!-- statement-spec-generate-leaves-an-unsayable-unit-as-it-is:end -->
 
 When the checker cannot say a formula, it has no statement to write. A half statement would be worse than none, so generate leaves the unit untouched.
@@ -981,7 +983,7 @@ all u: Unit | u in Unsayable implies u not in Rewritten
 
 <!-- statement-spec-check-reports-a-statement-that-is-not-current:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document) and every [*unit*](../canon/CANON.md#term-unit):\
-> [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit when all of these hold:
 > - the document keeps readings
 > - the document [*holds*](../canon/CANON.md#term-hold) the unit
 > - the unit holds a formula
@@ -1002,7 +1004,7 @@ all d: Document, u: Unit | (d in Worded and d->u in Hold.units and u in Logical 
 #### @spec check-does-not-report-a-current-statement
 
 <!-- statement-spec-check-does-not-report-a-current-statement:begin — generated by `canon generate`; edits are overwritten -->
-> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is current, [*checker*](../canon/CANON.md#term-checker) does not report the statement of the unit.
+> When the [*statement*](#term-generated-statement) of a [*unit*](../canon/CANON.md#term-unit) is current, the [*checker*](../canon/CANON.md#term-checker) does not report the statement of the unit.
 <!-- statement-spec-check-does-not-report-a-current-statement:end -->
 
 A current statement says what its formula says, so check has nothing to report about it. A report that cries wolf soon goes unread.
@@ -1020,7 +1022,7 @@ all u: Unit | u in Current implies u not in Reported
 
 <!-- statement-spec-a-report-of-a-statement-fails-check:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*run*](../canon/CANON.md#term-run), every [*check command*](#term-check-command) and every [*unit*](../canon/CANON.md#term-unit):\
-> when the run asks for the check command and [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit, the run does not exit with code 0.
+> when the run asks for the check command and the [*checker*](../canon/CANON.md#term-checker) reports the [*statement*](#term-generated-statement) of the unit, the run does not exit with code 0.
 <!-- statement-spec-a-report-of-a-statement-fails-check:end -->
 
 A reported statement means the canon may be out of date, and a check that passes would hide that. So a run of check that reports a statement never exits with code 0, the code for success.
@@ -1050,7 +1052,7 @@ This follows because generate writes a region only by the name of what it says, 
 > - the unit holds a formula
 > - the unit has no [*intent*](#term-intent)
 >
-> then [*checker*](../canon/CANON.md#term-checker) reports that the unit has no intent.
+> then the [*checker*](../canon/CANON.md#term-checker) reports that the unit has no intent.
 <!-- statement-spec-check-reports-a-unit-with-a-formula-and-no-intent:end -->
 
 The [*intent*](#term-intent) is the measure of a formula. A reader holds the generated statement against it to see whether the formula says what its author meant. A unit with a formula and no intent leaves the reader nothing to hold the statement against. So in a document that keeps readings, check reports such a unit.
@@ -1089,7 +1091,7 @@ some d: Document, u: Unit | d in Worded and d->u in Hold.units and u in Logical 
 #### @spec check-does-not-report-a-unit-with-an-intent
 
 <!-- statement-spec-check-does-not-report-a-unit-with-an-intent:begin — generated by `canon generate`; edits are overwritten -->
-> When a [*unit*](../canon/CANON.md#term-unit) has an [*intent*](#term-intent), [*checker*](../canon/CANON.md#term-checker) does not report that the unit has no intent.
+> When a [*unit*](../canon/CANON.md#term-unit) has an [*intent*](#term-intent), the [*checker*](../canon/CANON.md#term-checker) does not report that the unit has no intent.
 <!-- statement-spec-check-does-not-report-a-unit-with-an-intent:end -->
 
 An intent is what check asks of a unit with a formula. A unit that has one gives check nothing to report, whatever the intent says, since only a person can judge the words.
@@ -1107,7 +1109,7 @@ all u: Unit | u in Intended implies u not in Aimless
 
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-missing-intent-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document) and every [*unit*](../canon/CANON.md#term-unit):\
-> when the document [*holds*](../canon/CANON.md#term-hold) the unit and keeps no readings, [*checker*](../canon/CANON.md#term-checker) does not report that the unit has no [*intent*](#term-intent).
+> when the document [*holds*](../canon/CANON.md#term-hold) the unit and keeps no readings, the [*checker*](../canon/CANON.md#term-checker) does not report that the unit has no [*intent*](#term-intent).
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-missing-intent-reported:end -->
 
 A document that keeps no readings has no generated statements, and a person writes each statement there. That statement is the author's own words, so check asks no intent of its units.
@@ -1125,7 +1127,7 @@ all d: Document, u: Unit | (d->u in Hold.units and d not in Worded) implies u no
 
 <!-- statement-spec-a-report-of-a-missing-intent-fails-check:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*run*](../canon/CANON.md#term-run), every [*check command*](#term-check-command) and every [*unit*](../canon/CANON.md#term-unit):\
-> when the run asks for the check command and [*checker*](../canon/CANON.md#term-checker) reports that the unit has no [*intent*](#term-intent), the run does not exit with code 0.
+> when the run asks for the check command and the [*checker*](../canon/CANON.md#term-checker) reports that the unit has no [*intent*](#term-intent), the run does not exit with code 0.
 <!-- statement-spec-a-report-of-a-missing-intent-fails-check:end -->
 
 A unit with a formula and no intent is a gap in the canon, and a check that passed would hide it. So a run of check that reports one never exits with code 0.
@@ -1143,7 +1145,7 @@ all r: Run, c: CheckCommand, u: Unit | (r->c in Ask.rel and u in Aimless) implie
 
 <!-- statement-spec-generate-fails-on-a-handwritten-statement-and-says-so:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*run*](../canon/CANON.md#term-run), every [*generate command*](#term-generate-command) and every [*unit*](../canon/CANON.md#term-unit):\
-> when the run asks for the generate command and the [*statement*](#term-generated-statement) of the unit is handwritten, [*checker*](../canon/CANON.md#term-checker) reports the statement of the unit and the run does not exit with code 0.
+> when the run asks for the generate command and the [*statement*](#term-generated-statement) of the unit is handwritten, the [*checker*](../canon/CANON.md#term-checker) reports the statement of the unit and the run does not exit with code 0.
 <!-- statement-spec-generate-fails-on-a-handwritten-statement-and-says-so:end -->
 
 Generate cannot write a handwritten statement, so it cannot finish its job. It reports the statement and the run fails, so the author learns which statement it left alone.
@@ -1161,7 +1163,7 @@ all r: Run, c: GenerateCommand, u: Unit | (r->c in Ask.rel and u in Handwritten)
 
 <!-- statement-spec-generate-fails-on-an-unsayable-formula-and-says-why:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*run*](../canon/CANON.md#term-run), every [*generate command*](#term-generate-command) and every [*unit*](../canon/CANON.md#term-unit):\
-> when the run asks for the generate command and the formula of the unit cannot be said in words, [*checker*](../canon/CANON.md#term-checker) says why the formula of the unit cannot be said and the run does not exit with code 0.
+> when the run asks for the generate command and the formula of the unit cannot be said in words, the [*checker*](../canon/CANON.md#term-checker) says why the formula of the unit cannot be said and the run does not exit with code 0.
 <!-- statement-spec-generate-fails-on-an-unsayable-formula-and-says-why:end -->
 
 Generate cannot write a statement for a formula it cannot say either. It says why, so the author knows what to mend, and the run fails instead of passing quietly.
@@ -1184,7 +1186,7 @@ This follows because the words of a generated statement are the words of the rea
 #### @spec a-word-that-a-reading-says-and-nothing-declares-is-undeclared
 
 <!-- statement-spec-a-word-that-a-reading-says-and-nothing-declares-is-undeclared:begin — generated by `canon generate`; edits are overwritten -->
-> A [*word*](#term-word) is said by a reading and declared by nothing when all of these hold:
+> A [*word*](#term-word) is undeclared when all of these hold:
 > - there is a [*unit*](../canon/CANON.md#term-unit) U1 such that a reading in unit U1 says the word
 > - no unit declares the word
 <!-- statement-spec-a-word-that-a-reading-says-and-nothing-declares-is-undeclared:end -->
@@ -1203,8 +1205,8 @@ all w: Word | ((some u: Unit | u->w in Voice.rel) and (no u: Unit | u->w in Intr
 #### @spec a-word-declared-outside-a-term-is-misplaced
 
 <!-- statement-spec-a-word-declared-outside-a-term-is-misplaced:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*unit*](../canon/CANON.md#term-unit) U1 and every [*word*](#term-word):\
-> when unit U1 declares the word and is not a [*term*](../canon/CANON.md#term-term), the word is declared in a unit that is not a term.
+> For every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
+> when the unit declares the word and is not a [*term*](../canon/CANON.md#term-term), the word is misplaced.
 <!-- statement-spec-a-word-declared-outside-a-term-is-misplaced:end -->
 
 A reader looks up a word in the term that names it, with its reading beside it. A word declared in any other kind of unit is not where the reader will look, so it is misplaced.
@@ -1222,7 +1224,7 @@ all u: Unit, w: Word | (u->w in Introduce.rel and u not in Term) implies w in Mi
 
 <!-- statement-spec-a-reading-apart-from-the-declaration-it-says-is-apart:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) U1 and every [*word*](#term-word):\
-> the reading of the word is in another unit than its declaration when all of these hold:
+> the word stands apart from its declaration when all of these hold:
 > - a reading in unit U1 says the word
 > - a unit declares the word
 > - unit U1 does not declare the word
@@ -1242,11 +1244,9 @@ all u: Unit, w: Word | (u->w in Voice.rel and (some v: Unit | v->w in Introduce.
 #### @spec a-declared-word-that-no-claim-uses-is-unused
 
 <!-- statement-spec-a-declared-word-that-no-claim-uses-is-unused:begin — generated by `canon generate`; edits are overwritten -->
-> When all of these hold:
-> - a [*unit*](../canon/CANON.md#term-unit) declares a [*word*](#term-word)
+> A [*word*](#term-word) is unused when all of these hold:
+> - a [*unit*](../canon/CANON.md#term-unit) declares the word
 > - there is no unit U1 such that a claim, a definition or a fact of unit U1 uses the word
->
-> then no claim, definition or fact uses the word.
 <!-- statement-spec-a-declared-word-that-no-claim-uses-is-unused:end -->
 
 A word is declared so that claims, definitions and facts can use it. A declared word that none of them uses adds nothing to the model, and no statement will ever say it, so it is unused.
@@ -1311,18 +1311,18 @@ This follows because a declaration makes the field and says nothing of it, so no
 #### @spec a-word-declared-in-a-term-said-beside-it-and-used-is-not-reported
 
 <!-- statement-spec-a-word-declared-in-a-term-said-beside-it-and-used-is-not-reported:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*term*](../canon/CANON.md#term-term) T1 and every [*word*](#term-word) W1:\
+> For every [*term*](../canon/CANON.md#term-term) and every [*word*](#term-word):\
 > when all of these hold:
-> - term T1 declares word W1
-> - a reading in term T1 says word W1
-> - there is a [*unit*](../canon/CANON.md#term-unit) U1 such that a claim, a definition or a fact of unit U1 uses word W1
+> - the term declares the word
+> - a reading in the term says the word
+> - there is a [*unit*](../canon/CANON.md#term-unit) such that a claim, a definition or a fact of the unit uses the word
 >
 > then all of these hold:
-> - word W1 is said by no reading or is declared
-> - word W1 is not declared in a unit that is not a term
-> - the reading of word W1 is in the unit of its declaration
-> - a claim, a definition or a fact uses word W1
-> - [*checker*](../canon/CANON.md#term-checker) does not report the word word W1
+> - the word is not undeclared
+> - the word is not misplaced
+> - the word does not stand apart from its declaration
+> - the word is not unused
+> - the [*checker*](../canon/CANON.md#term-checker) does not report the word
 <!-- statement-spec-a-word-declared-in-a-term-said-beside-it-and-used-is-not-reported:end -->
 
 A word that its term both declares and gives a reading, and that some unit uses, is exactly where a reader expects it. Its reading sits beside its declaration, and the logic leans on it. So the checker has nothing to say about it: it reports no fault for that word.
@@ -1339,14 +1339,14 @@ all u: Term, w: Word | (u->w in Introduce.rel and u->w in Voice.rel and (some v:
 #### @spec a-document-that-keeps-no-readings-has-no-word-reported
 
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-word-reported:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*document*](../canon/CANON.md#term-document), every [*unit*](../canon/CANON.md#term-unit) U1 and every [*word*](#term-word) W1:\
-> when the document keeps no readings, [*holds*](../canon/CANON.md#term-hold) unit U1 and unit U1 declares word W1,\
+> For every [*document*](../canon/CANON.md#term-document), every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
+> when the document keeps no readings, [*holds*](../canon/CANON.md#term-hold) the unit and the unit declares the word,\
 > then all of these hold:
-> - word W1 is said by no reading or is declared
-> - word W1 is not declared in a unit that is not a term
-> - the reading of word W1 is in the unit of its declaration
-> - a claim, a definition or a fact uses word W1
-> - [*checker*](../canon/CANON.md#term-checker) does not report the word word W1
+> - the word is not undeclared
+> - the word is not misplaced
+> - the word does not stand apart from its declaration
+> - the word is not unused
+> - the [*checker*](../canon/CANON.md#term-checker) does not report the word
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-word-reported:end -->
 
 Only a document that keeps readings asks for its words to be checked. So a word declared in a document without readings is never undeclared, misplaced, apart or unused, and the checker never reports it.
@@ -1381,8 +1381,8 @@ This follows because an author writes a field both ways, and a set that holds th
 #### @spec a-flagged-word-fails-check
 
 <!-- statement-spec-a-flagged-word-fails-check:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*run*](../canon/CANON.md#term-run), every [*check command*](#term-check-command) and every [*word*](#term-word) W1:\
-> when the run asks for the check command and [*checker*](../canon/CANON.md#term-checker) reports the word word W1, the run does not exit with code 0.
+> For every [*run*](../canon/CANON.md#term-run), every [*check command*](#term-check-command) and every [*word*](#term-word):\
+> when the run asks for the check command and the [*checker*](../canon/CANON.md#term-checker) reports the word, the run does not exit with code 0.
 <!-- statement-spec-a-flagged-word-fails-check:end -->
 
 A word out of order lets a statement drift from its logic, so it must not pass. A run of `check` never exits with code 0 while the checker reports any word.
@@ -1399,12 +1399,11 @@ all r: Run, c: CheckCommand, w: Word | (r->c in Ask.rel and w in Flagged) implie
 #### @spec check-reports-nothing-about-a-word-that-is-in-order
 
 <!-- statement-spec-check-reports-nothing-about-a-word-that-is-in-order:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*word*](#term-word) W1:\
-> [*checker*](../canon/CANON.md#term-checker) does not report the word word W1 when all of these hold:
-> - word W1 is said by no reading or is declared
-> - word W1 is not declared in a unit that is not a term
-> - the reading of word W1 is in the unit of its declaration
-> - a claim, a definition or a fact uses word W1
+> The [*checker*](../canon/CANON.md#term-checker) does not report a [*word*](#term-word) when all of these hold:
+> - the word is not undeclared
+> - the word is not misplaced
+> - the word does not stand apart from its declaration
+> - the word is not unused
 <!-- statement-spec-check-reports-nothing-about-a-word-that-is-in-order:end -->
 
 The checker reports a word only for a fault: undeclared, misplaced, apart or unused. A word in order gets no report, since a report that cries wolf soon goes unread.
@@ -1421,12 +1420,11 @@ all w: Word | (w not in Undeclared and w not in Misplaced and w not in Apart and
 #### @spec check-reports-a-word-that-is-not-in-order
 
 <!-- statement-spec-check-reports-a-word-that-is-not-in-order:begin — generated by `canon generate`; edits are overwritten -->
-> For every [*word*](#term-word) W1:\
-> [*checker*](../canon/CANON.md#term-checker) reports the word word W1 when at least one of these holds:
-> - word W1 is said by a reading and declared by nothing
-> - word W1 is declared in a unit that is not a term
-> - the reading of word W1 is in another unit than its declaration
-> - no claim, definition or fact uses word W1
+> The [*checker*](../canon/CANON.md#term-checker) reports a [*word*](#term-word) when at least one of these holds:
+> - the word is undeclared
+> - the word is misplaced
+> - the word stands apart from its declaration
+> - the word is unused
 <!-- statement-spec-check-reports-a-word-that-is-not-in-order:end -->
 
 A statement speaks through the words its readings give, so a faulty word lets it say what the logic does not. So the checker reports every word that is undeclared, misplaced, apart or unused.
@@ -1498,7 +1496,7 @@ This follows because a reader who meets the word follows it to what it means, an
 > - document D2 is [*context*](../canon/CANON.md#term-context) for document D1
 > - document D2 [*holds*](../canon/CANON.md#term-hold) the unit
 >
-> then [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates.
+> then the [*checker*](../canon/CANON.md#term-checker) does not write the [*statement*](#term-generated-statement) of the unit when it generates.
 <!-- statement-spec-generate-writes-no-statement-for-a-unit-of-an-extended-document:end -->
 
 A document the project does not check belongs to someone else, who generates its statements where it lives. So even when it is context for a checked document, the checker writes no statement for any unit it holds.
@@ -1516,7 +1514,7 @@ all d: Document, e: Document, u: Unit | (d in Checked and e not in Checked and d
 
 <!-- statement-spec-a-word-declared-in-an-extended-document-is-declared:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document) D1, every document D2, every [*unit*](../canon/CANON.md#term-unit) U1, every unit U2 and every [*word*](#term-word):\
-> the word is said by no reading or is declared when all of these hold:
+> the word is not undeclared when all of these hold:
 > - document D2 is [*context*](../canon/CANON.md#term-context) for document D1
 > - document D1 [*holds*](../canon/CANON.md#term-hold) unit U1
 > - a reading in unit U1 says the word
@@ -1570,9 +1568,9 @@ This follows because such a noun says nothing the declaration does not: the term
 <!-- statement-axiom-the-claims-of-a-canon-never-contradict-each-other:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
 > - for every [*unit*](../canon/CANON.md#term-unit) U1:\
->   when unit U1 is held with units that cannot all hold, [*checker*](../canon/CANON.md#term-checker) names unit U1 in its report of a contradiction
+>   when unit U1 is held with units that cannot all hold, the [*checker*](../canon/CANON.md#term-checker) names unit U1 in its report of a contradiction
 > - for every [*scenario*](#term-scenario) S1:\
->   when scenario S1 is a scenario that cannot happen while every held unit holds, checker reports that scenario S1 cannot happen.
+>   when scenario S1 is a scenario that cannot happen while every held unit holds, the checker reports that scenario S1 cannot happen.
 <!-- statement-axiom-the-claims-of-a-canon-never-contradict-each-other:end -->
 
 Every claim of a canon says how the project is, and the claims are about one project. If two of them cannot both hold, the canon says nothing. A reader cannot follow both, and a change that obeys one breaks the other.
@@ -1594,9 +1592,9 @@ The same goes for a situation that the canon says must be possible and that one 
 > For some [*scenario*](#term-scenario) S1 and some [*unit*](../canon/CANON.md#term-unit) U1:\
 > all of these hold:
 > - scenario S1 is a scenario that cannot happen while every held unit holds
-> - [*checker*](../canon/CANON.md#term-checker) reports that scenario S1 cannot happen
+> - the [*checker*](../canon/CANON.md#term-checker) reports that scenario S1 cannot happen
 > - leaving out unit U1 lets scenario S1 happen
-> - checker names unit U1 in its report of scenario S1
+> - the checker names unit U1 in its report of scenario S1
 <!-- statement-scenario-1-axiom-the-claims-of-a-canon-never-contradict-each-other:end -->
 
 <details>
@@ -1784,7 +1782,7 @@ all c: Scenario, u: Unit | (c in Impossible and u in Held and c->u in Probe.rel)
 
 <!-- statement-spec-a-scenario-that-cannot-happen-while-every-unit-holds-is-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*scenario*](#term-scenario) S1:\
-> when scenario S1 is a scenario that cannot happen while every held unit holds, [*checker*](../canon/CANON.md#term-checker) reports that scenario S1 cannot happen.
+> when scenario S1 is a scenario that cannot happen while every held unit holds, the [*checker*](../canon/CANON.md#term-checker) reports that scenario S1 cannot happen.
 <!-- statement-spec-a-scenario-that-cannot-happen-while-every-unit-holds-is-reported:end -->
 
 A scenario shows something the canon must allow. When it cannot happen while every held unit holds, the canon rules out what it says is possible. The checker always reports it.
@@ -1802,7 +1800,7 @@ all c: Scenario | c in Impossible implies c in Raised
 
 <!-- statement-spec-a-scenario-that-can-happen-is-not-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*scenario*](#term-scenario) S1:\
-> when scenario S1 is a scenario that can happen while every held unit holds, [*checker*](../canon/CANON.md#term-checker) does not report that scenario S1 cannot happen.
+> when scenario S1 is a scenario that can happen while every held unit holds, the [*checker*](../canon/CANON.md#term-checker) does not report that scenario S1 cannot happen.
 <!-- statement-spec-a-scenario-that-can-happen-is-not-reported:end -->
 
 A scenario that can happen shows the canon working as meant. The checker never reports it, because nobody reads a report that cries wolf.
@@ -1820,8 +1818,8 @@ all c: Scenario | c in Possible implies c not in Raised
 
 <!-- statement-spec-the-report-of-a-scenario-names-each-unit-whose-removal-lets-it-happen:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*scenario*](#term-scenario) and every [*unit*](../canon/CANON.md#term-unit):\
-> [*checker*](../canon/CANON.md#term-checker) names the unit in its report of the scenario when all of these hold:
-> - checker reports that the scenario cannot happen
+> the [*checker*](../canon/CANON.md#term-checker) names the unit in its report of the scenario when all of these hold:
+> - the checker reports that the scenario cannot happen
 > - leaving out the unit lets the scenario happen
 <!-- statement-spec-the-report-of-a-scenario-names-each-unit-whose-removal-lets-it-happen:end -->
 
@@ -1840,7 +1838,7 @@ all c: Scenario, u: Unit | (c in Raised and u->c in Frees.rel) implies c->u in B
 
 <!-- statement-spec-the-report-of-a-scenario-names-no-other-unit:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*scenario*](#term-scenario) and every [*unit*](../canon/CANON.md#term-unit):\
-> when [*checker*](../canon/CANON.md#term-checker) names the unit in its report of the scenario, leaving out the unit lets the scenario happen.
+> when the [*checker*](../canon/CANON.md#term-checker) names the unit in its report of the scenario, leaving out the unit lets the scenario happen.
 <!-- statement-spec-the-report-of-a-scenario-names-no-other-unit:end -->
 
 The report of a scenario names a unit only if leaving it out lets the scenario happen. Any other unit does not stand in the scenario's way, and naming it would send the author to the wrong place.
@@ -1858,7 +1856,7 @@ all c: Scenario, u: Unit | c->u in Blame.rel implies u->c in Frees.rel
 
 <!-- statement-spec-units-that-cannot-all-hold-are-named:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) U1:\
-> when unit U1 is held with units that cannot all hold, [*checker*](../canon/CANON.md#term-checker) names unit U1 in its report of a contradiction.
+> when unit U1 is held with units that cannot all hold, the [*checker*](../canon/CANON.md#term-checker) names unit U1 in its report of a contradiction.
 <!-- statement-spec-units-that-cannot-all-hold-are-named:end -->
 
 When held units cannot all hold together, the author has to find them. So the checker names each of them in its report of a contradiction.
@@ -1876,7 +1874,7 @@ all u: Unit | u in Contradicting implies u in Named
 
 <!-- statement-spec-the-report-of-a-contradiction-names-all-the-units-of-the-group:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) U1 and every unit U2:\
-> [*checker*](../canon/CANON.md#term-checker) names unit U2 in its report of a contradiction when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) names unit U2 in its report of a contradiction when all of these hold:
 > - unit U1 is held with units that cannot all hold
 > - the analyzer is asked about unit U1 together with unit U2
 <!-- statement-spec-the-report-of-a-contradiction-names-all-the-units-of-the-group:end -->
@@ -1946,7 +1944,7 @@ This follows because the analyzer refuses a scope for a signature it does not kn
 > For every [*run*](../canon/CANON.md#term-run) and every [*logic command*](#term-logic-command):\
 > the run exits with code 0 when all of these hold:
 > - the run asks for the logic command
-> - there is no [*scenario*](#term-scenario) such that [*checker*](../canon/CANON.md#term-checker) reports that the scenario cannot happen
+> - there is no [*scenario*](#term-scenario) such that the [*checker*](../canon/CANON.md#term-checker) reports that the scenario cannot happen
 > - no [*unit*](../canon/CANON.md#term-unit) is held with units that cannot all hold
 <!-- statement-spec-logic-succeeds-when-nothing-is-reported:end -->
 
@@ -1968,7 +1966,7 @@ all r: Run, c: LogicCommand | (r->c in Ask.rel and (no x: Scenario | x in Raised
 > the run does not exit with code 0 when all of these hold:
 > - the run asks for the logic command
 > - at least one of these holds:
->   - there is a [*scenario*](#term-scenario) such that [*checker*](../canon/CANON.md#term-checker) reports that the scenario cannot happen
+>   - there is a [*scenario*](#term-scenario) such that the [*checker*](../canon/CANON.md#term-checker) reports that the scenario cannot happen
 >   - there is a [*unit*](../canon/CANON.md#term-unit) that is held with units that cannot all hold
 <!-- statement-spec-a-reported-scenario-or-contradiction-fails-logic:end -->
 
@@ -2035,12 +2033,12 @@ This follows because the extended document is checked where it lives. Asking aga
 
 <!-- statement-axiom-a-formula-can-be-held-against-the-other-formulas:begin — generated by `canon generate`; edits are overwritten -->
 > All of these hold:
-> - [*checker*](../canon/CANON.md#term-checker) reports the formula of a [*unit*](../canon/CANON.md#term-unit) as lone on a [*signature*](#term-signature) when all of these hold:
+> - the [*checker*](../canon/CANON.md#term-checker) reports the formula of a [*unit*](../canon/CANON.md#term-unit) as lone on a [*signature*](#term-signature) when all of these hold:
 >   - the unit holds a formula
 >   - the unit is not a [*term*](../canon/CANON.md#term-term)
 >   - no other formula can contradict the formula of the unit
 > - for every unit and every [*word*](#term-word):\
->   when checker reports the formula of the unit as lone on the word, no other formula can contradict the formula of the unit.
+>   when the checker reports the formula of the unit as lone on the word, no other formula can contradict the formula of the unit.
 <!-- statement-axiom-a-formula-can-be-held-against-the-other-formulas:end -->
 
 A reader takes a unit with a formula as checked. The analyzer holds its formula against the other formulas, and would find a contradiction between them. That holds only when something else in the model speaks of the words the formula uses. A formula that no other formula can contradict holds whatever the rest of the canon says. It looks checked and is not, and the reader trusts a claim that nothing has checked.
@@ -2063,7 +2061,7 @@ So the checker reports a formula that no other formula can contradict, and only 
 > all of these hold:
 > - the unit holds a formula
 > - a claim, a definition or a fact of the unit uses the signature
-> - [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the signature
+> - the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the signature
 <!-- statement-scenario-1-axiom-a-formula-can-be-held-against-the-other-formulas:end -->
 
 <details>
@@ -2078,7 +2076,7 @@ some u: Unit, w: Signature | u in Logical and u->w in Rely.rel and u->w not in E
 #### @spec a-formula-that-no-other-formula-can-contradict-is-reported
 
 <!-- statement-spec-a-formula-that-no-other-formula-can-contradict-is-reported:begin — generated by `canon generate`; edits are overwritten -->
-> [*Checker*](../canon/CANON.md#term-checker) reports the formula of a [*unit*](../canon/CANON.md#term-unit) as lone on a [*signature*](#term-signature) when all of these hold:
+> The [*checker*](../canon/CANON.md#term-checker) reports the formula of a [*unit*](../canon/CANON.md#term-unit) as lone on a [*signature*](#term-signature) when all of these hold:
 > - the unit holds a formula
 > - the unit is not a [*term*](../canon/CANON.md#term-term)
 > - no other formula can contradict the formula of the unit
@@ -2099,7 +2097,7 @@ all u: Unit | (u in Logical and u not in Term and u in Unchallenged) implies (so
 
 <!-- statement-spec-a-formula-that-is-lone-on-a-signature-is-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) and every [*signature*](#term-signature):\
-> [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the signature when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the signature when all of these hold:
 > - the unit holds a formula
 > - the unit is not a [*term*](../canon/CANON.md#term-term)
 > - the formula of the unit is [*lone*](#term-lone-formula) on the signature
@@ -2128,7 +2126,7 @@ The check sees that the signature is named. Whether the name constrains it is a 
 
 <!-- statement-spec-a-formula-is-reported-only-when-no-other-formula-can-contradict-it:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
-> when [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word, no other formula can contradict the formula of the unit.
+> when the [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word, no other formula can contradict the formula of the unit.
 <!-- statement-spec-a-formula-is-reported-only-when-no-other-formula-can-contradict-it:end -->
 
 A lone report tells the author that nothing can contradict the formula. The checker makes it only when that is true, because nobody reads a report that cries wolf.
@@ -2146,7 +2144,7 @@ all u: Unit, w: Word | u->w in Expose.rel implies u in Unchallenged
 
 <!-- statement-spec-a-formula-is-reported-only-on-a-signature-it-is-lone-on:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
-> when [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word,\
+> when the [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word,\
 > then all of these hold:
 > - the unit holds a formula
 > - the unit is not a [*term*](../canon/CANON.md#term-term)
@@ -2169,7 +2167,7 @@ all u: Unit, w: Word | u->w in Expose.rel implies (u in Logical and u not in Ter
 
 <!-- statement-spec-a-signature-that-another-unit-names-keeps-a-formula-from-being-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) U1, every unit U2 and every [*word*](#term-word):\
-> [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word when all of these hold:
 > - unit U2 and unit U1 are different
 > - a block of unit U2 names the word outside its declaration
 <!-- statement-spec-a-signature-that-another-unit-names-keeps-a-formula-from-being-reported:end -->
@@ -2189,7 +2187,7 @@ all u: Unit, v: Unit, w: Word | (v != u and v->w in Utter.rel) implies u->w not 
 
 <!-- statement-spec-a-signature-that-a-scenario-names-keeps-a-formula-from-being-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) U1, every unit U2 and every [*word*](#term-word):\
-> when a scenario of unit U2 names the word, [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word.
+> when a scenario of unit U2 names the word, the [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word.
 <!-- statement-spec-a-signature-that-a-scenario-names-keeps-a-formula-from-being-reported:end -->
 
 A scenario tests every formula on the signatures it names: if a formula rules the scenario out, the checker reports that it cannot happen. So the checker never reports a formula as lone on a signature that any scenario names, even one in the formula's own unit.
@@ -2207,7 +2205,7 @@ all u: Unit, v: Unit, w: Word | v->w in Picture.rel implies u->w not in Expose.r
 
 <!-- statement-spec-a-signature-that-an-extended-document-names-keeps-a-formula-from-being-reported:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document) D1, every document D2, every [*unit*](../canon/CANON.md#term-unit) U1, every unit U2 and every [*word*](#term-word):\
-> [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word when all of these hold:
+> the [*checker*](../canon/CANON.md#term-checker) does not report the formula of unit U1 as lone on the word when all of these hold:
 > - document D2 is [*context*](../canon/CANON.md#term-context) for document D1
 > - document D1 [*holds*](../canon/CANON.md#term-hold) unit U1
 > - document D2 holds unit U2
@@ -2229,7 +2227,7 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 
 <!-- statement-spec-a-formula-is-not-reported-on-a-field-or-a-predicate:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
-> when the word is not a signature, [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the word.
+> when the word is not a signature, the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the word.
 <!-- statement-spec-a-formula-is-not-reported-on-a-field-or-a-predicate:end -->
 
 The checker reports a formula as lone only on a signature, never on a field or a predicate. A predicate needs no report, because its body ties it to other words. Fields wait for now: the check knows a field only by its name, and two signatures can share one.
@@ -2247,7 +2245,7 @@ all u: Unit, w: Word | w not in Signature implies u->w not in Expose.rel
 
 <!-- statement-spec-a-term-is-not-reported-as-lone:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*term*](../canon/CANON.md#term-term) and every [*word*](#term-word):\
-> [*checker*](../canon/CANON.md#term-checker) does not report the formula of the term as lone on the word.
+> the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the term as lone on the word.
 <!-- statement-spec-a-term-is-not-reported-as-lone:end -->
 
 A term gives a word its meaning and claims nothing. So the checker never reports the formula of a term as lone, whatever it uses.
@@ -2265,7 +2263,7 @@ all u: Term, w: Word | u->w not in Expose.rel
 
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-formula-reported-as-lone:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*document*](../canon/CANON.md#term-document), every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
-> when the document keeps no readings and [*holds*](../canon/CANON.md#term-hold) the unit, [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the word.
+> when the document keeps no readings and [*holds*](../canon/CANON.md#term-hold) the unit, the [*checker*](../canon/CANON.md#term-checker) does not report the formula of the unit as lone on the word.
 <!-- statement-spec-a-document-that-keeps-no-readings-has-no-formula-reported-as-lone:end -->
 
 The lone check belongs to the check of words, which reads only documents that keep readings. So the checker never reports a formula as lone in a document without readings.
@@ -2299,7 +2297,7 @@ A formula such as `some Told and no Misquoted` is lone on `Told`, and a formula 
 
 <!-- statement-spec-a-lone-formula-fails-check:begin — generated by `canon generate`; edits are overwritten -->
 > For every [*run*](../canon/CANON.md#term-run), every [*check command*](#term-check-command), every [*unit*](../canon/CANON.md#term-unit) and every [*word*](#term-word):\
-> when the run asks for the check command and [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word, the run does not exit with code 0.
+> when the run asks for the check command and the [*checker*](../canon/CANON.md#term-checker) reports the formula of the unit as lone on the word, the run does not exit with code 0.
 <!-- statement-spec-a-lone-formula-fails-check:end -->
 
 A formula that looks checked but is not must not pass. So a run of `check` never exits with code 0 while the checker reports any formula as lone.
