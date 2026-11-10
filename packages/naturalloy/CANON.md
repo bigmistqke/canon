@@ -23,6 +23,7 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
 - [`@term sentenceable`](#term-sentenceable)
 - [`@term line`](#term-line)
 - [`@term frame`](#term-frame)
+- [`@term standard-verb`](#term-standard-verb)
 - [`@term pass`](#term-pass)
 - [`@term pipeline`](#term-pipeline)
 - [`@fact every-moment-has-a-next-moment`](#fact-every-moment-has-a-next-moment)
@@ -330,6 +331,8 @@ How naturalloy says an Alloy formula in English, and why. It is the canon of the
   - [`@spec a-reading-gives-its-frame-by-a-marked-verb`](#spec-a-reading-gives-its-frame-by-a-marked-verb)
     - [`@spec a-mark-is-no-part-of-the-words-of-a-reading`](#spec-a-mark-is-no-part-of-the-words-of-a-reading)
     - [`@spec a-verb-line-gives-the-forms-of-a-marked-verb`](#spec-a-verb-line-gives-the-forms-of-a-marked-verb)
+    - [`@spec a-verb-line-wins-over-a-standard-verb`](#spec-a-verb-line-wins-over-a-standard-verb)
+    - [`@spec a-standard-verb-needs-no-verb-line`](#spec-a-standard-verb-needs-no-verb-line)
     - [`@spec a-reading-with-no-negative-side-takes-the-negative-of-its-frame`](#spec-a-reading-with-no-negative-side-takes-the-negative-of-its-frame)
     - [`@spec a-reading-whose-negative-its-frame-cannot-give-is-refused`](#spec-a-reading-whose-negative-its-frame-cannot-give-is-refused)
 - [`@thread a-statement-could-be-said-in-tiers-from-its-ir`](#thread-a-statement-could-be-said-in-tiers-from-its-ir)
@@ -935,9 +938,27 @@ A reading gives its frame by its verb, which it marks between carets: `{1} ^keep
 
 The frame tells which words a relative clause about each thing takes: "that keeps readings", "for which a run asks", "whose statement is current".
 
-A reading with no marked verb is a fixed clause, said as it stands. Where its "does not hold" side is empty, the negative comes from the frame: "does not keep", "is not". The five frames follow the frames of OntoLex-Lemon and LexInfo. The forms of a verb follow the lexicon of Attempto Controlled English: its third person, its infinitive and its participle. The mark gives the third person, and the readings give the other two.
+A reading with no marked verb is a fixed clause, said as it stands. Where its "does not hold" side is empty, the negative comes from the frame: "does not keep", "is not".
+
+The five frames follow the frames of OntoLex-Lemon and LexInfo. The forms of a verb follow the lexicon of Attempto Controlled English: its third person, its infinitive and its participle. The mark gives the third person. A verb term of the canon that the mark links to gives the other two, and so does a [*standard verb*](#term-standard-verb).
 
 No reading marks its verb yet.
+
+### @term standard-verb
+
+> A standard verb is a verb whose forms naturalloy gives. A reading can mark it with no verb term of its own.
+
+The standard verbs are the common verbs that readings use, such as "holds", "reports" and "says", with their infinitive and their participle. [`src/core/verbs.ts`](src/core/verbs.ts) lists them. A canon that uses a verb in a sense of its own defines it as a term. A mark that links to the term takes the forms of the term instead.
+
+<details>
+<summary>Grammar</summary>
+
+| grammar |                |
+| ------- | -------------- |
+| type    | noun           |
+| plural  | standard verbs |
+
+</details>
 
 ### @term pass
 
@@ -4115,11 +4136,11 @@ The axiom ranks below [`axiom-a-formula-is-said-without-loss`](#axiom-a-formula-
 
 > The [*verbalizer*](#term-verbalizer) reads the word of a reading between carets as its verb, which gives the reading its [*frame*](#term-frame).
 
-This follows because a relative clause, a passive and a negative each change the words around the verb, and the verb is where a reading's words turn. The verbalizer needs to know where it stands to say any of these.
+This follows because a relative clause, a passive and a negative each change the words around the verb. The verb is where the words of a reading turn. The verbalizer needs to know where it stands to say any of these.
 
 #### @spec a-mark-is-no-part-of-the-words-of-a-reading
 
-> The carets of a mark are no part of the words of a reading: `{1} ^keeps^ readings` is said "keeps readings".
+> The carets of a mark are no part of the words of a reading: `{1} ^keeps^ readings` reads "keeps readings".
 
 This follows because the mark is for the verbalizer, and the reader sees the words alone.
 
@@ -4129,15 +4150,32 @@ This follows because the mark is for the verbalizer, and the reader sees the wor
 
 This follows because the verbalizer inflects no word itself. A rule of English would say "keeped".
 
+#### @spec a-verb-line-wins-over-a-standard-verb
+
+> A `verb` line of the readings gives the forms of its verb in place of those of the [*standard verb*](#term-standard-verb) it spells.
+
+This follows because a canon may use a verb in a sense of its own, and the nearer words count most.
+
+#### @spec a-standard-verb-needs-no-verb-line
+
+> A reading may mark a [*standard verb*](#term-standard-verb) with no `verb` line for it, and takes its forms from naturalloy.
+
+This follows because most readings use common verbs, and a canon should not list the forms of "holds" again.
+
 #### @spec a-reading-with-no-negative-side-takes-the-negative-of-its-frame
 
-> Where a reading marks its verb and gives no negative side, its negative is its positive with "is not" for "is", "are not" for "are", and "does not" and the infinitive for any other verb: `{1} ^keeps^ readings` gives `{1} does not keep readings`.
+> Where a reading marks its verb and gives no negative side, its negative is its positive with one change at the verb:
+> - "is" becomes "is not", and "are" becomes "are not"
+> - any other verb becomes "does not" and its infinitive: `{1} ^keeps^ readings` gives `{1} does not keep readings`
 
 This follows because a negative that says the positive with "not" at its verb says exactly that the positive does not hold. The author writes a negative only where another one reads better, such as "keeps no readings".
 
 #### @spec a-reading-whose-negative-its-frame-cannot-give-is-refused
 
-> The [*verbalizer*](#term-verbalizer) refuses a line of readings that gives no negative side and marks a verb that is not "is" or "are" and that no `verb` line gives the infinitive of.
+> The [*verbalizer*](#term-verbalizer) refuses a line of readings that gives no negative side and marks a verb that:
+> - is not "is" or "are"
+> - has no `verb` line that gives its infinitive
+> - is no [*standard verb*](#term-standard-verb)
 
 This follows because a negative the verbalizer had to guess could say something else than the positive does not hold. The refusal names the verb.
 

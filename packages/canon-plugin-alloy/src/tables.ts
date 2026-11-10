@@ -2,20 +2,18 @@
  * The reading tables and noun tables of a document: the readings and the
  * nouns of its words, as markdown tables in the own text of a unit. A row of a
  * reading table says what a `readings` line says, `Key: positive | negative`,
- * a row of a noun table what a `noun` line says, `noun Key: words`, and a row
- * of a verb table what a `verb` line says, `verb keeps: keep, kept`, so
+ * and a row of a noun table what a `noun` line says, `noun Key: words`, so
  * each table reads as the lines of a `readings` fence, and every reader of
  * readings takes both.
  */
 import { readBlocks } from '@bigmistqke/canon/blocks';
 import { alignTable, cellsOf, maskFences, readUnits, type Unit } from '@bigmistqke/canon/units';
 
-export type TableKind = 'reading' | 'noun' | 'verb';
+export type TableKind = 'reading' | 'noun';
 
 const HEADERS: Record<TableKind, string[]> = {
   reading: ['reading', 'holds', 'does not hold'],
-  noun: ['signature', 'noun'],
-  verb: ['verb', 'infinitive', 'participle']
+  noun: ['signature', 'noun']
 };
 
 const SEPARATOR = /^[ \t]*\|?([ \t]*:?-+:?[ \t]*\|)+[ \t]*(:?-+:?[ \t]*)?$/;
@@ -75,7 +73,6 @@ const linked = (noun: string): string => {
 export function lineOf(kind: TableKind, cells: string[]): string {
   const [key = '', first = '', second = ''] = cells;
   if (kind === 'noun') return `noun ${key}: ${linked(first)}`;
-  if (kind === 'verb') return `verb ${key}: ${first}${second === '' ? '' : `, ${second}`}`;
   return second === '' ? `${key}: ${first}` : `${key}: ${first} | ${second}`;
 }
 

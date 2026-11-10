@@ -3,6 +3,7 @@
  * is said with. Shared by the verbalizer and its passes.
  */
 import { type Decl, type Node, parseModule } from '@bigmistqke/parse-alloy';
+import { STANDARD_VERBS } from './core/verbs.ts';
 
 /**
  * What naturalloy throws when a formula cannot be said without loss: the message names what cannot be said. Anything else
@@ -253,7 +254,8 @@ export const withDefinitions = (readings: Readings, vocabulary: string): Reading
 export function parseReadings(text: string, target?: string, base?: string): Readings {
   const readings: Readings = { nouns: new Map([['Int', 'integer'], ['seq/Int', 'sequence index']]), nounTargets: new Map(), articles: new Map(), atoms: new Map(), verbs: new Map(), definitions: new Map(), fields: new Map(), variables: new Set(), holders: new Map(), functions: new Map(), macros: new Map() };
   const lines = text.split('\n').map(raw => (base === undefined ? raw : raw.replace(/\]\(#([^)\s]+)\)/g, `](${base}#$1)`)).trim());
-  // The verb lines first, so that a reading above its verb's line takes the verb's forms too.
+  // The standard verbs, then the verb lines over them, so that a reading above its verb's line takes the verb's forms too.
+  for (const [third, forms] of STANDARD_VERBS) readings.verbs.set(third, { ...forms });
   for (const line of lines) {
     const verb = /^verb\s+(\S+)\s*:\s*(.+)$/.exec(line);
     if (!verb) continue;

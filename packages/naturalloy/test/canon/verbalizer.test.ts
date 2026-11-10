@@ -91,10 +91,28 @@ describe('a marked verb', () => {
    * @canon spec-a-reading-whose-negative-its-frame-cannot-give-is-refused
    */
   it('refuses a line with no negative side whose verb has no infinitive', () => {
-    expect(() => marked('Asked: {1} ^asks^ for help')).toThrow(Refusal);
-    expect(() => marked('Asked: {1} ^asks^ for help')).toThrow(/asks/);
+    expect(() => marked('Frobbed: {1} ^frobs^ the queue')).toThrow(Refusal);
+    expect(() => marked('Frobbed: {1} ^frobs^ the queue')).toThrow(/frobs/);
     // With a negative side, the verb needs no infinitive.
-    expect(() => marked('Asked: {1} ^asks^ for help | {1} asks for no help')).not.toThrow();
+    expect(() => marked('Frobbed: {1} ^frobs^ the queue | {1} frobs no queue')).not.toThrow();
+  });
+
+  /**
+   * @canon spec-a-standard-verb-needs-no-verb-line
+   */
+  it('takes the forms of a standard verb with no verb line', () => {
+    const readings = parseReadings('noun Unit: unit\nAsked: {1} ^asks^ for help\nHeld: {1} ^holds^ {2}');
+    expect(readings.atoms.get('Asked')?.negative).toBe('{1} does not ask for help');
+    expect(readings.atoms.get('Held')?.negative).toBe('{1} does not hold {2}');
+    expect(readings.verbs.get('holds')).toEqual({ infinitive: 'hold', participle: 'held' });
+  });
+
+  /**
+   * @canon spec-a-verb-line-wins-over-a-standard-verb
+   */
+  it('takes the forms of a verb line over those of the standard verb', () => {
+    const readings = parseReadings('noun Unit: unit\nKept: {1} ^keeps^ readings\nverb keeps: hoard, hoarded');
+    expect(readings.atoms.get('Kept')?.negative).toBe('{1} does not hoard readings');
   });
 });
 

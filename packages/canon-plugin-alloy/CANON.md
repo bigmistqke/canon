@@ -27,7 +27,6 @@ It writes its own terms and claims in Alloy, as the checker does. The plugin say
 - [`@term world`](#term-world)
 - [`@term reading-table`](#term-reading-table)
 - [`@term noun-table`](#term-noun-table)
-- [`@term verb-table`](#term-verb-table)
 - [`@term intent`](#term-intent)
 - [`@axiom a-statement-says-what-its-logic-says`](#axiom-a-statement-says-what-its-logic-says)
   - [`@spec a-document-that-keeps-no-readings-is-left-as-it-is`](#spec-a-document-that-keeps-no-readings-is-left-as-it-is)
@@ -92,7 +91,7 @@ It writes its own terms and claims in Alloy, as the checker does. The plugin say
   - [`@spec generate-writes-no-statement-for-a-unit-of-an-extended-document`](#spec-generate-writes-no-statement-for-a-unit-of-an-extended-document)
   - [`@spec a-word-declared-in-an-extended-document-is-declared`](#spec-a-word-declared-in-an-extended-document-is-declared)
   - [`@spec a-row-of-a-reading-table-is-a-reading`](#spec-a-row-of-a-reading-table-is-a-reading)
-  - [`@spec a-row-of-a-verb-table-gives-the-forms-of-its-verb`](#spec-a-row-of-a-verb-table-gives-the-forms-of-its-verb)
+  - [`@spec a-verb-term-gives-the-forms-of-a-verb-that-links-to-it`](#spec-a-verb-term-gives-the-forms-of-a-verb-that-links-to-it)
   - [`@spec a-row-of-a-noun-table-gives-the-noun-of-its-signature`](#spec-a-row-of-a-noun-table-gives-the-noun-of-its-signature)
   - [`@spec check-reports-a-linked-word-that-no-form-of-its-term-spells`](#spec-check-reports-a-linked-word-that-no-form-of-its-term-spells)
   - [`@spec a-signature-declared-in-a-nested-term-has-the-term-as-its-noun`](#spec-a-signature-declared-in-a-nested-term-has-the-term-as-its-noun)
@@ -533,7 +532,7 @@ A thing is an element of a signature, which the analyzer names after the signatu
 | Installed | the project has installed {1} | the project has not installed {1} |
 ```
 
-A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading. A reading that marks its verb finds the other forms of the verb in a [*verb table*](#term-verb-table).
+A row says what a `readings` line of [naturalloy](../naturalloy/CANON.md) says, `Installed: the project has installed {1} | the project has not installed {1}`, and the plugin reads it as that line. A `readings` fence holds such lines, and the plugin reads it too. A reading table renders on GitHub with its links, and lines up the two sides of each reading. A reading that marks its verb takes its other forms from the verb term the mark links to. A mark that links nowhere takes them from the [*standard verbs*](../naturalloy/CANON.md#term-standard-verb).
 <details>
 <summary>Grammar</summary>
 
@@ -563,30 +562,6 @@ A row says what a `noun` line says with the noun in brackets, `noun Installed: [
 | ------- | ----------- |
 | type    | noun        |
 | plural  | noun tables |
-
-</details>
-
-### @term verb-table
-
-> A verb table is a table in the [*own text*](../canon/CANON.md#term-own-text) of a [*unit*](../canon/CANON.md#term-unit) whose headers are `verb`, `infinitive` and `participle`. Each row gives a verb that a reading marks, and the other forms of that verb.
-
-```md
-| verb    | infinitive | participle |
-| ------- | ---------- | ---------- |
-| keeps   | keep       | kept       |
-| reports | report     | reported   |
-```
-
-A reading marks its verb to give its [*frame*](../naturalloy/CANON.md#term-frame), and the verbalizer needs the other forms of the verb for a negative and a passive. A marked verb that links to a verb term takes its forms from the grammar table of the term, and needs no row. The plugin inflects no word itself, as a grammar table does not. A tool may propose the rows from a lexicon of English, for the author to read and keep. The rows stand in the document, so every form shows in its diff.
-
-No document holds a verb table yet.
-<details>
-<summary>Grammar</summary>
-
-| grammar |             |
-| ------- | ----------- |
-| type    | noun        |
-| plural  | verb tables |
 
 </details>
 
@@ -1563,11 +1538,11 @@ all d: Document, e: Document, u: Unit, v: Unit, w: Word | (d->e in Context.rel a
 
 This follows because the checker says a statement with the readings of its words, wherever the document writes them.
 
-### @spec a-row-of-a-verb-table-gives-the-forms-of-its-verb
+### @spec a-verb-term-gives-the-forms-of-a-verb-that-links-to-it
 
-> The [*checker*](../canon/CANON.md#term-checker) reads each row of a [*verb table*](#term-verb-table) as the infinitive and the participle of its verb, for every reading it reads with the [*document*](../canon/CANON.md#term-document), wherever that reading stands.
+> A verb that a reading marks and links to a [*term*](../canon/CANON.md#term-term) whose grammar table has the type `verb` takes its forms from that term. Its infinitive is the words of the term's [*stem*](../canon/CANON.md#term-stem), its third person the spelling of its row `third person`, and its participle the spelling of its row `participle`.
 
-This follows because a reading that marks its verb and writes no negative takes its negative from the infinitive of the verb. A verb table in one unit serves the readings of every unit, as a noun serves every statement.
+This follows because a verb a project uses in its own sense is a word of its language, which a term defines once. The forms of the term then serve every reading that links to it, in the document and in the documents that extend it.
 
 ### @spec a-row-of-a-noun-table-gives-the-noun-of-its-signature
 

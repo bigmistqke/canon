@@ -63,8 +63,18 @@ export function readingsOf(src: string, context: Context[] = []): Readings | und
   const model = documents.flatMap(d => d.blocks).filter(b => b.lang === 'alloy' && (b.role === 'vocabulary' || (b.role === 'unit' && PARAGRAPHS.test(b.body))));
   // Each block is read for the unit that holds it, so that a word in brackets links to the term that says it.
   const merged = parseReadings('');
-  // A verb table serves the readings of every unit, so each block is read with every verb line of the documents.
-  const verbLines = documents.flatMap(d => d.readings.flatMap(block => block.body.split('\n').filter(line => /^\s*verb\s/.test(line)))).join('\n');
+  // A verb term gives the forms of a verb a reading marks, in any unit and in the documents that extend its own:
+  // its stem is the infinitive, its grammar table its third person and its participle.
+  const verbLines = documents
+    .flatMap(d => d.units)
+    .flatMap(unit => {
+      const grammar = unit.kind === 'term' ? grammarOf(unit.own) : undefined;
+      if (grammar?.type !== 'verb') return [];
+      const participle = grammar.forms.find(f => f.role === 'participle')?.spelling;
+      const infinitive = unit.stem.replace(/-/g, ' ');
+      return grammar.forms.filter(f => f.role === 'third person').map(f => `verb ${f.spelling}: ${infinitive}${participle === undefined ? '' : `, ${participle}`}`);
+    })
+    .join('\n');
   for (const { path, readings } of documents) {
     for (const block of readings) {
       const part = parseReadings(`${verbLines}\n${block.body}`, `${path ?? ''}#${block.unit}`, path);

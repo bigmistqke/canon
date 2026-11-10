@@ -1,0 +1,70 @@
+/**
+ * The standard verbs: the common verbs that readings mark, with their infinitive and their participle, so that a
+ * reading can mark one with no verb line or verb term of its own. Each line says what a `verb` line of the readings
+ * says, and a `verb` line of the readings wins over it. naturalloy inflects no word by rule: a verb is standard only
+ * where this list spells its forms.
+ */
+const LINES = `
+adds: add, added
+applies: apply, applied
+asks: ask, asked
+calls: call, called
+carries: carry, carried
+changes: change, changed
+checks: check, checked
+cites: cite, cited
+contains: contain, contained
+declares: declare, declared
+depends: depend, depended
+derives: derive, derived
+disposes: dispose, disposed
+enters: enter, entered
+exits: exit, exited
+extends: extend, extended
+fails: fail, failed
+fits: fit, fitted
+follows: follow, followed
+gets: get, got
+gives: give, given
+has: have, had
+holds: hold, held
+keeps: keep, kept
+knows: know, known
+lacks: lack, lacked
+leaves: leave, left
+lies: lie, lain
+lists: list, listed
+makes: make, made
+matches: match, matched
+moves: move, moved
+names: name, named
+puts: put, put
+reads: read, read
+refuses: refuse, refused
+repeats: repeat, repeated
+reports: report, reported
+requires: require, required
+returns: return, returned
+runs: run, run
+says: say, said
+shares: share, shared
+sits: sit, sat
+spells: spell, spelled
+stands: stand, stood
+starts: start, started
+stops: stop, stopped
+takes: take, taken
+uses: use, used
+writes: write, written
+`;
+
+/** The forms of each standard verb, by its third person. */
+export const STANDARD_VERBS: ReadonlyMap<string, { infinitive: string; participle: string }> = new Map(
+  LINES.trim()
+    .split('\n')
+    .map(line => {
+      const [third, forms] = line.split(':') as [string, string];
+      const [infinitive, participle] = forms.split(',').map(form => form.trim()) as [string, string];
+      return [third.trim(), { infinitive, participle }] as const;
+    })
+);
