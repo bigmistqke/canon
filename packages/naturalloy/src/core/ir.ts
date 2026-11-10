@@ -85,7 +85,7 @@ export type Moment = 'always' | 'eventually' | 'after' | 'before' | 'once' | 'hi
 export type Sentence =
   | Clause
   /** As bullets, as one sentence, or for `a ; b`: bullets until both are plain clauses, then "a, and at the next moment, b". */
-  | { t: 'and'; items: Sentence[]; form?: 'list' | 'sentence' | 'sequence' | 'sequence-sentence' | 'none-of' }
+  | { t: 'and'; items: Sentence[]; form?: 'list' | 'sentence' | 'sequence' | 'sequence-sentence' | 'none-of'; /** Conditions of a noun phrase that share the first this many words of their readings, said once: "that the tracker knows and has not closed". */ subject?: number }
   | { t: 'or'; items: Sentence[]; form?: 'list' | 'sentence' }
   /**
    * Whole below "it is not the case that", where no formula takes the negation in; as untrue, for a predicate said by

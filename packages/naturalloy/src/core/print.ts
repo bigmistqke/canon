@@ -137,7 +137,20 @@ export class Printer {
       const parts = (np.relative.t === 'and' ? np.relative.items : [np.relative]).map(part => this.sentence(part) as string);
       if (before === undefined) this.names.delete(np.v.id);
       else this.names.set(np.v.id, before);
-      if (parts.every(part => part.startsWith(hole))) {
+      const relative = np.relative;
+      if (relative.t === 'and' && relative.subject !== undefined) {
+        // "an issue that the tracker knows and has not closed": the shared words once, from the first, and the rest of each.
+        const n = relative.subject;
+        const said = relative.items.map(item => {
+          const c = item as Extract<Clause, { t: 'reading' }>;
+          const reading = this.readings.atoms.get(c.key);
+          const words = ((c.negative ? reading?.negative : reading?.positive) ?? '').trim().replace(/\s*\{\d+\}$/, '').split(/\s+/);
+          // The thing itself stands in the last slot, which the relative clause leaves out.
+          const slots = c.args.map(a => (a.t === 'var' && a.v.id === np.v.id ? '' : this.term(a)));
+          return { subject: this.filled(words.slice(0, n).join(' '), reading?.target, slots), rest: this.filled(words.slice(n).join(' '), reading?.target, slots) };
+        });
+        suffix = own` that ${(said[0] as { subject: string }).subject} ${coordinate(said.map(x => x.rest), 'and')}`;
+      } else if (parts.every(part => part.startsWith(hole))) {
         const rests = parts.map(part => part.slice(hole.length).trim());
         const negations = rests.every(rest => rest.startsWith('is not '));
         suffix = own` that ${negations ? 'is not ' : ''}${coordinate(negations ? rests.map(rest => rest.slice('is not '.length)) : rests, negations ? 'or' : 'and')}`;

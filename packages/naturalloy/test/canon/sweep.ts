@@ -299,6 +299,8 @@ export const SWEEP: { what: string; formula: string }[] = [
     // A thing that must differ from another stays where "another" names the thing it differs from.
     'some o, p, q: Owner | o != q and p in o.parent and q in p.parent and q in Disposed'
   ].map(formula => ({ what: 'a thing of a "some" inside its clauses', formula })),
+  // Conditions of a noun phrase with the thing at their end that share their subject: "an owner that pulse has disposed and disposes".
+  ...['some o: Owner | o in c.on and o in Disposed and dispose[o]', 'some o: Owner | o in c.on and o in Disposed and o not in Stopped'].map(formula => ({ what: 'relative clauses that share their subject', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

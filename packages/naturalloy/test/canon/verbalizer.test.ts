@@ -141,6 +141,16 @@ describe('a thing after a preposition', () => {
   });
 });
 
+describe('relative clauses that share their subject', () => {
+  /**
+   * @canon spec-relative-clauses-that-share-their-subject-say-it-once
+   */
+  it('say the subject once for all their verbs', () => {
+    const issues = parseReadings('noun Bug: bug\nnoun Issue: issue\nName.rel: {1} ^names^ {2}\nKnown: the tracker ^knows^ {1}\nClosed: the tracker ^has^ closed {1} | the tracker has not closed {1}');
+    expect(say('some b: Bug | some i: Issue | b->i in Name.rel and i in Known and i not in Closed', issues)).toBe('There is a bug that names an issue that the tracker knows and has not closed.');
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence

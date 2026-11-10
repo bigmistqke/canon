@@ -182,6 +182,17 @@ export class Parser {
     }
     // "an issue that tracker does not know": the variable at the end.
     out.push(...this.clauses(`${words} ${hole}`, inner));
+    // "an issue that the tracker knows and has not closed": each with the variable at its end, and the subject of the first.
+    for (const parts of this.series(words, 'and')) {
+      if (parts.length < 2) continue;
+      const first = (parts[0] as string).split(' ');
+      for (let n = 1; n < first.length; n++) {
+        const subject = first.slice(0, n).join(' ');
+        let all: Sentence[][] = [[]];
+        for (const [i, part] of parts.entries()) all = all.flatMap(done => this.clauses(`${i === 0 ? part : `${subject} ${part}`} ${hole}`, inner).map(c => [...done, c]));
+        for (const said of all) out.push({ t: 'and', items: said });
+      }
+    }
     return out;
   }
 

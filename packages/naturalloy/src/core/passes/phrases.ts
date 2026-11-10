@@ -47,6 +47,34 @@ function template(c: Clause, context: Context): string | undefined {
   }
 }
 
+/** The words that may open the rest of a clause after its subject: the verbs the readings know, and those of English that every clause may use. */
+export function verbWord(word: string, readings: Context['readings']): boolean {
+  const plain = word.replace(/^\[|\].*$/g, '');
+  if (['is', 'are', 'was', 'were', 'has', 'have', 'had', 'does', 'do', 'did', 'can', 'cannot'].includes(plain)) return true;
+  return readings.verbs.has(plain) || [...readings.verbs.values()].some(forms => forms.infinitive === plain);
+}
+
+/**
+ * How many words of their readings clauses with the variable at their end share before the rest of each, which opens
+ * with a verb: 2 for "the tracker knows" and "the tracker has not closed". The other things a clause names count as
+ * words, so that "the bug names" and "the issue names" share none. Undefined where they share no subject.
+ */
+export function sharedSubject(clauses: Clause[], v: Var, context: Context): number | undefined {
+  const words: string[][] = [];
+  for (const c of clauses) {
+    const t = c.t === 'reading' ? template(c, context)?.trim() : undefined;
+    if (t === undefined) return undefined;
+    const at = termsOf(c).findIndex(term => isVar(term, v)) + 1;
+    if (!t.endsWith(`{${at}}`)) return undefined;
+    const filled = t.slice(0, -`{${at}}`.length).replace(/\{(\d+)\}/g, (_, n: string) => `{${JSON.stringify(termsOf(c)[Number(n) - 1])}}`);
+    words.push(filled.trim().split(/\s+/));
+  }
+  let shared = 0;
+  while (words.every(w => w[shared] !== undefined && w[shared] === (words[0] as string[])[shared])) shared++;
+  for (let n = shared; n > 0; n--) if (words.every(w => w.length > n && verbWord(w[n] as string, context.readings))) return n;
+  return undefined;
+}
+
 /** Where the variable stands in a clause that says it once: at its start, at its end, or inside. Undefined where the clause does not say it once. */
 function place(c: Clause, v: Var, context: Context): 'start' | 'end' | 'inside' | undefined {
   const terms = termsOf(c);
@@ -159,10 +187,15 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   if (main === -1) return undefined;
   const relative = ps.filter((_, i) => i !== main);
   // The others say more of the variable: each as its subject, or one with it at its end, "an issue that tracker does not know".
+  let subject: number | undefined;
   if (relative.length > 0) {
     const asSubject = relative.every(p => places[ps.indexOf(p)] === 'start');
     const asObject = relative.length === 1 && places[ps.indexOf(relative[0] as Part)] === 'end';
-    if (!asSubject && !asObject) return undefined;
+    // Several with it at their end, "an issue that the tracker knows and has not closed": they must share their subject.
+    if (!asSubject && !asObject) {
+      subject = relative.every(p => places[ps.indexOf(p)] === 'end') ? sharedSubject(relative.map(p => p.clause), v, context) : undefined;
+      if (subject === undefined) return undefined;
+    }
     // "x and y are different" has the variable in a subject of two, which a relative clause cannot take.
     if (relative.some(p => p.clause.t === 'same')) return undefined;
   }
@@ -170,7 +203,7 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
     t: 'np',
     det: q === 'no' ? 'no' : 'a',
     v,
-    ...(relative.length === 0 ? {} : { relative: relative.length === 1 ? (relative[0] as Part).clause : { t: 'and', items: relative.map(p => p.clause) } }),
+    ...(relative.length === 0 ? {} : { relative: relative.length === 1 ? (relative[0] as Part).clause : { t: 'and', items: relative.map(p => p.clause), ...(subject === undefined ? {} : { subject }) } }),
     ...(other === undefined ? {} : { other })
   };
   const chosen = ps[main] as Part;

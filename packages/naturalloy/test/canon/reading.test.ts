@@ -45,6 +45,19 @@ describe('the rules of reading', () => {
   /**
    * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
    */
+  it('reads the verbs after "and" in a relative clause with the subject of the first', () => {
+    const issues = withDefinitions(
+      parseReadings('noun Bug: bug\nnoun Issue: issue\nName.rel: {1} ^names^ {2}\nKnown: the tracker ^knows^ {1}\nClosed: the tracker ^has^ closed {1} | the tracker has not closed {1}'),
+      'sig Bug {} sig Issue {} one sig Name { rel: Bug -> Issue } sig Known, Closed in Issue {}'
+    );
+    const back = readsBack('some b: Bug | some i: Issue | b->i in Name.rel and i in Known and i not in Closed', issues);
+    expect(back.words).toContain('an issue that the tracker knows and has not closed');
+    expect(back.meanings).toEqual([back.meant]);
+  });
+
+  /**
+   * @canon spec-a-relative-clause-says-more-of-the-noun-it-follows
+   */
   it('reads a preposition and "which" as a relative clause of the noun before it', () => {
     const units = withDefinitions(
       parseReadings('noun Unit: unit\nnoun Test: test\nChecks.rel: {1} ^checks^ {2}\nClean: the checker ^reports^ no finding for {1} | the checker reports a finding for {1}'),
