@@ -116,6 +116,21 @@ describe('a marked verb', () => {
   });
 });
 
+describe('a thing of a "some"', () => {
+  /**
+   * @canon spec-a-thing-of-a-some-is-said-inside-the-clauses-that-name-it
+   */
+  it('is said inside the clauses that name it, where they say a noun phrase of it', () => {
+    expect(say('some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed')).toBe('There is a cleanup that has run and is on an owner that pulse has disposed.');
+    // The cleanup that code has registered is no subject of its clause, so "there is" takes "such that"; the owner is inside all the same.
+    expect(say('some c: Cleanup, o: Owner | c in Registered and o in c.on and o in Disposed')).toBe(
+      'There is a cleanup such that code has registered the cleanup and the cleanup is on an owner that pulse has disposed.'
+    );
+    // Where the clauses of neither thing make a noun phrase of it, the "for some" stays.
+    expect(say('some c: Cleanup, o: Owner | o in c.on and c in Ran and c in Registered and o in Disposed and o in Stopped')).toMatch(/^For some cleanup and some owner:/);
+  });
+});
+
 describe('two rules that go each way', () => {
   /**
    * @canon spec-two-rules-that-go-each-way-are-said-as-one-equivalence

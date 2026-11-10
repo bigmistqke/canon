@@ -17,6 +17,13 @@ const at = (name: string): number => {
 
 describe('the order of the passes', () => {
   /**
+   * @canon spec-a-thing-of-a-some-goes-inside-before-noun-phrases-are-said
+   */
+  it('says a thing of a "some" inside its clauses before it says noun phrases', () => {
+    expect(at('some-inside')).toBeLessThan(at('noun-phrases'));
+  });
+
+  /**
    * @canon spec-two-rules-become-one-equivalence-before-an-equivalence-is-said-with-exactly-when
    */
   it('makes two rules one equivalence before it says an equivalence with "exactly when"', () => {

@@ -289,6 +289,16 @@ export const SWEEP: { what: string; formula: string }[] = [
     'all o: Owner | (o in Disposed implies (o in Stopped or some c: Cleanup | o in c.on)) and ((o in Stopped or some c: Cleanup | o in c.on) implies o in Disposed)',
     'all c: Cleanup | (c in Ran implies c in Registered) and (c in Registered implies c.on in Disposed)'
   ].map(formula => ({ what: 'two rules that go each way', formula })),
+  // A "some" over several things: a thing said inside the clauses that name it where they make a noun phrase, and kept above them where they do not.
+  ...[
+    'some c: Cleanup, o: Owner | c in Registered and o in c.on and o in Disposed',
+    'some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed',
+    'some c: Cleanup, o: Owner | c in Ran and o in c.on and o in Disposed and o in Stopped',
+    'some c: Cleanup, o: Owner | o in c.on and c in Ran and c in Registered and o in Disposed and o in Stopped',
+    'some c, d: Cleanup, o: Owner | c in Ran and o in c.on and d in Registered and o in d.on',
+    // A thing that must differ from another stays where "another" names the thing it differs from.
+    'some o, p, q: Owner | o != q and p in o.parent and q in p.parent and q in Disposed'
+  ].map(formula => ({ what: 'a thing of a "some" inside its clauses', formula })),
   // Negative clauses about one subject that share its verb, each with a noun phrase of its own: "none of these".
   ...['all c: Cleanup | c not in Labelled and c not in Flagged and c not in Pinned and c not in Marked'].map(formula => ({ what: 'negative clauses that share their verb', formula })),
   // `some` over several things, of one type and of two.

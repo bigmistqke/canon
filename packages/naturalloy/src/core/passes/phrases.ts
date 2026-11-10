@@ -178,10 +178,52 @@ export function absorbed(q: 'some' | 'no', v: Var, body: Sentence, context: Cont
   return chosen.next ? { t: 'moment', op: 'after', body: said, form: 'front' } : said;
 }
 
-export const nounPhrases: Pass = {
-  ...everywhere('noun-phrases', 'spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase', (s, context) => {
-  // A quantifier an earlier pass has given a form keeps it.
-  if (s.t !== 'quant' || (s.q !== 'some' && s.q !== 'no') || s.form !== undefined) return undefined;
+/** Whether a part of the IR names the variable. */
+function names(n: unknown, v: Var): boolean {
+  if (Array.isArray(n)) return n.some(x => names(x, v));
+  if (n === null || typeof n !== 'object') return false;
+  const o = n as Record<string, unknown>;
+  if ((o.t === 'var' || o.t === 'np') && (o.v as Var | undefined)?.id === v.id) return true;
+  return Object.values(o).some(x => names(x, v));
+}
+
+/**
+ * A "some" over several things with each thing that only some of its clauses name said inside those clauses, as a
+ * "some" of its own, where they say a noun phrase of it: `some x, v | r and g` is `some x | r and (some v | g)` when
+ * `r` does not name `v`. The later things go first, as the noun phrases say them innermost, and the clause that holds
+ * the noun phrase goes after the others.
+ */
+export const someInside = everywhere('some-inside', 'spec-a-thing-of-a-some-is-said-inside-the-clauses-that-name-it', (s, context) => {
+  if (s.t !== 'quant' || s.q !== 'some' || s.vars.length < 2 || s.form !== undefined || s.origin !== undefined) return undefined;
+  // A "some" that the pass of noun phrases says whole, each thing inside the next, is left to it.
+  if (phrased(s, context)) return undefined;
+  let vars = [...s.vars];
+  let items = s.body.t === 'and' ? [...s.body.items] : [s.body];
+  let changed = false;
+  for (let moved = true; moved && vars.length > 1; ) {
+    moved = false;
+    for (const v of [...vars].reverse()) {
+      const named = items.filter(item => names(item, v));
+      // A thing goes inside only where the words say more of it than the clause that names it beside another.
+      if (named.length < 2 || named.length === items.length) continue;
+      // "another owner" differs from the owner named last before it, which moving the thing would change.
+      if (named.some(item => differsFrom(item, v) !== undefined)) continue;
+      const body: Sentence = named.length === 1 ? (named[0] as Sentence) : { t: 'and', items: named };
+      if (absorbed('some', v, body, context) === undefined) continue;
+      // The clause that holds the noun phrase goes last: a clause after it could be read as part of its relative clause.
+      const inner: Sentence = { t: 'quant', q: 'some', vars: [v], body };
+      items = [...items.filter(item => !named.includes(item)), inner];
+      vars = vars.filter(x => x !== v);
+      changed = moved = true;
+      break;
+    }
+  }
+  if (!changed) return undefined;
+  return { ...s, vars, body: items.length === 1 ? (items[0] as Sentence) : { t: 'and', items } };
+});
+
+/** The quantifier said as noun phrases, each variable inside the next, or undefined where one does not fit. */
+function asPhrases(s: Extract<Sentence, { t: 'quant' }>, context: Context): Sentence | undefined {
   // Variables of different kinds are said one inside the other: the last innermost, under "some", then the first.
   const [first, ...later] = s.vars as [Var, ...Var[]];
   let body: Sentence = s.body;
@@ -190,7 +232,19 @@ export const nounPhrases: Pass = {
     if (inner === undefined) return undefined;
     body = inner;
   }
-  return absorbed(s.q, first, body, context, s.origin === 'set');
+  return absorbed(s.q as 'some' | 'no', first, body, context, s.origin === 'set');
+}
+
+/** Whether the pass of noun phrases says the quantifier whole. */
+function phrased(s: Extract<Sentence, { t: 'quant' }>, context: Context): boolean {
+  return asPhrases(s, context) !== undefined;
+}
+
+export const nounPhrases: Pass = {
+  ...everywhere('noun-phrases', 'spec-a-variable-said-once-takes-the-place-of-its-quantifier-as-a-noun-phrase', (s, context) => {
+  // A quantifier an earlier pass has given a form keeps it.
+  if (s.t !== 'quant' || (s.q !== 'some' && s.q !== 'no') || s.form !== undefined) return undefined;
+  return asPhrases(s, context);
 }),
   evidence: {
     rejected: ['"another" where the formula has no "!=".', 'a noun phrase hanging only from another noun phrase, "a cleanup is on an owner": it reads as said of every cleanup.']
